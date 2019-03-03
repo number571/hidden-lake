@@ -7,9 +7,8 @@ import (
 func PrintHelp() {
 	fmt.Print(`| Arguments:
 | - -a, --address = set ipv4:port;
-| - -n, --nickname = set node name;
 | Example:
-| - ./main -a 127.0.0.1:8080 -n username
+| - ./main -a 127.0.0.1:8080
 | Program arguments:
 | 1 :exit = exit from client
 | 2 :send = send to one node message:
