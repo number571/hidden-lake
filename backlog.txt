@@ -1,0 +1,15 @@
+1. Цифровая подпись
+2. Конфигурационный файл
+3. Веб сокеты
+4. !
+/*
+	(Alice's port is open)
+	(Bob's port is close)
+
+	Alice <-[connected]- Bob
+	// Alice -[can't connect]-> Bob
+
+	+ [Bob's message to Alice] = [Alice receives the message]
+	x [Alice's message to Bob] = [Bob does not receive the message]
+		-> Alice: ERROR RSA
+*/

@@ -1,0 +1,11 @@
+footer > p {
+	color: gray;
+}
+
+textarea {
+	resize: none;
+}
+
+.inline_forms {
+	display: inline-block;
+}

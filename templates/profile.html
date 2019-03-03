@@ -1,0 +1,25 @@
+{{ define "title" }}
+	Profile
+{{ end }}
+
+{{ define "content" }}
+	<p> 
+		<b>Name</b> = {{ .Name }} <br>
+		<b>IPv4</b> = {{ .IPv4 }} <br>
+		<b>Port</b> = {{ .Port }} <br> 
+		<b>Info</b> = 
+		<form name="INFO" method="POST" action="/profile">
+			<textarea type="text" name="info" readonly rows="5" cols="30">{{ .Info }}</textarea> <br>
+			<input type="submit" name="act" value="Set_Info">
+		</form>
+		<br>
+		<b>Connections</b> = 
+	{{ if not .Connections }}
+		None 
+	{{ else }}
+			{{ range .Connections }}
+				<br>| {{ . }}
+			{{ end }}
+	{{ end }}
+	</p>
+{{ end }}

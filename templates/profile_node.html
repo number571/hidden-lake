@@ -1,0 +1,13 @@
+{{ define "title" }}
+	Profile_Node
+{{ end }}
+
+{{ define "content" }}
+	<p> 
+		<b>Name</b> = {{ .Name }} <br>
+		<b>IPv4</b> = {{ .IPv4 }} <br>
+		<b>Port</b> = {{ .Port }} <br>
+		<b>Info</b> = <br> 
+		<textarea readonly rows="5" cols="30">{{ .Info }}</textarea> <br>
+	</p>
+{{ end }}

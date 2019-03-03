@@ -1,0 +1,27 @@
+{{ define "title" }}
+	Network
+{{ end }}
+
+{{ define "content" }}
+	<form name="ADD" method="POST" action="/network/">
+		<input type="text" name="addrs" placeholder="127.0.0.1:7545" value="">
+		<input type="submit" name="act" value="Add_connection">
+	</form>
+
+	<form name="DEL" method="POST" action="/network/">
+		<input type="text" name="addrs" placeholder="127.0.0.1:7545" value="">
+		<input type="submit" name="act" value="Del_connection">
+	</form>
+
+	<p>
+	<b><a href="/network/global">Global_chat</a><br></b>
+	<b>Connections</b> = 
+	{{ if not .Connections }}
+		None 
+	{{ else }}
+		{{ range .Connections }}
+			<br>| <a name="{{ . }}" href="/network/{{ . }}">{{ . }}</a>
+		{{ end }}
+	{{ end }}
+	</p>
+{{ end }}
