@@ -6,6 +6,6 @@ import (
 	"crypto/sha256"
 )
 
-func DecryptRSA(priv *rsa.PrivateKey, data []byte) ([]byte, error) {
+func DecryptRSA(data []byte, priv *rsa.PrivateKey) ([]byte, error) {
     return rsa.DecryptOAEP(sha256.New(), rand.Reader, priv, data, nil)
 }

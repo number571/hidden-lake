@@ -12,11 +12,10 @@ import (
     "../settings"
 )
 
-type ProfileInfo struct {
+type profileInfo struct {
     Name string
-    IPv4 string
-    Port string
     Info string
+    Connections []string
 }
 
 func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
@@ -31,10 +30,10 @@ func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    for _, addr := range settings.User.Connections {
-        if addr == result {
+    for _, username := range settings.User.Connections {
+        if username == result {
             settings.Mutex.Lock()
-            settings.User.TempConnect = addr
+            settings.User.TempConnect = username
             settings.Mutex.Unlock()
             break
         }
@@ -47,13 +46,12 @@ func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
 
     var new_pack = settings.Package {
         From: models.From {
-            Address: settings.User.IPv4 + settings.User.Port,
             Name: settings.User.Name,
         },
         To: settings.User.TempConnect,
         Head: models.Head {
             Header: settings.HEAD_PROFILE,
-            Mode: settings.MODE_GET,
+            Mode: settings.MODE_READ,
         },
     }
 
@@ -64,16 +62,15 @@ func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
     conn.SendEncryptedPackage(new_pack)
     time.Sleep(time.Second * settings.TIME_SLEEP)
 
-    if len(settings.User.TempProfile) != 4 {
+    if len(settings.User.TempProfile) != 3 {
         redirectTo("404", w, r)
         return
     }
 
-    var data = ProfileInfo {
+    var data = profileInfo {
         Name: settings.User.TempProfile[0],
-        IPv4: settings.User.TempProfile[1],
-        Port: settings.User.TempProfile[2],
-        Info: settings.User.TempProfile[3],
+        Info: settings.User.TempProfile[1],
+        Connections: strings.Split(settings.User.TempProfile[2], settings.SEPARATOR_ADDRESS),
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_TEMPLATES + "base.html", settings.PATH_TEMPLATES + "profile_node.html")
@@ -93,10 +90,10 @@ func NetworkArchivePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    for _, addr := range settings.User.Connections {
-        if addr == result {
+    for _, username := range settings.User.Connections {
+        if username == result {
             settings.Mutex.Lock()
-            settings.User.TempConnect = addr
+            settings.User.TempConnect = username
             settings.Mutex.Unlock()
             break
         }
@@ -109,20 +106,19 @@ func NetworkArchivePage(w http.ResponseWriter, r *http.Request) {
 
     var new_pack = settings.Package {
         From: models.From {
-            Address: settings.User.IPv4 + settings.User.Port,
             Name: settings.User.Name,
         },
         To: settings.User.TempConnect,
         Head: models.Head {
             Header: settings.HEAD_ARCHIVE,
-            Mode: settings.MODE_GET_LIST,
+            Mode: settings.MODE_READ_LIST,
         },
     }
 
     conn.SendEncryptedPackage(new_pack)
     time.Sleep(time.Second * settings.TIME_SLEEP)
 
-    var data = FileArchive{
+    var data = fileArchive{
         TempConnect: settings.User.TempConnect,
     }
     for _, file := range settings.User.TempArchive {
@@ -145,13 +141,12 @@ func NetworkGlobalPage(w http.ResponseWriter, r *http.Request) {
             case "Send_message":
                 message := r.FormValue("text")
                 if message != "" {
-                    for _, addr := range settings.User.Connections {
+                    for _, username := range settings.User.Connections {
                         var new_pack = settings.Package {
                             From: models.From {
-                                Address: settings.User.IPv4 + settings.User.Port,
                                 Name: settings.User.Name,
                             },
-                            To: addr,
+                            To: username,
                             Head: models.Head {
                                 Header: settings.HEAD_MESSAGE,
                                 Mode: settings.MODE_GLOBAL,
@@ -163,9 +158,7 @@ func NetworkGlobalPage(w http.ResponseWriter, r *http.Request) {
                     settings.Mutex.Lock()
                     settings.User.GlobalMessages = append(
                         settings.User.GlobalMessages,
-                        fmt.Sprintf("[%s]: %s\n", 
-                            settings.User.IPv4 + settings.User.Port + "/" + 
-                            settings.User.Name, message),
+                        fmt.Sprintf("[%s]: %s\n", settings.User.Name, message),
                     )
                     settings.Mutex.Unlock()
                 }
@@ -191,7 +184,6 @@ func NetworkPage(w http.ResponseWriter, r *http.Request) {
                 if message != "" {
                     var new_pack = settings.Package {
                         From: models.From {
-                            Address: settings.User.IPv4 + settings.User.Port,
                             Name: settings.User.Name,
                         },
                         To: settings.User.TempConnect,
@@ -205,9 +197,7 @@ func NetworkPage(w http.ResponseWriter, r *http.Request) {
                     settings.Mutex.Lock()
                     settings.User.LocalMessages[settings.User.TempConnect] = append(
                         settings.User.LocalMessages[settings.User.TempConnect],
-                        fmt.Sprintf("[%s/%s]: %s\n", 
-                            settings.User.IPv4 + settings.User.Port, 
-                            settings.User.Name, message),
+                        fmt.Sprintf("[%s]: %s\n", settings.User.Name, message),
                     )
                     settings.Mutex.Unlock()
                 }
@@ -225,10 +215,10 @@ func NetworkPage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    for _, addr := range settings.User.Connections {
-        if addr == result {
+    for _, username := range settings.User.Connections {
+        if username == result {
             settings.Mutex.Lock()
-            settings.User.TempConnect = addr
+            settings.User.TempConnect = username
             settings.Mutex.Unlock()
             break
         }

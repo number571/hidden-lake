@@ -3,14 +3,14 @@ package main
 import (
 	"os"
 	"fmt"
-	"net/http"
+	"./conn"
+	"./settings"
 )
 
 import (
-	"./conn"
+	"net/http"
 	"./views"
 	"./utils"
-	"./settings"
 )
 
 func main() {

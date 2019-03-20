@@ -14,23 +14,32 @@ import (
     "../encoding"
 )
 
-func decrypt(from, data string) string {
+func encrypt(session_key []byte, data string) string {
+    result, _ := crypto.EncryptAES(
+        []byte(data),
+        session_key,
+    )
+    return hex.EncodeToString(result)
+}
+
+func decrypt(session_key []byte, data string) string {
     decoded, _ := hex.DecodeString(data)
     result, _ := crypto.DecryptAES(
         decoded,
-        settings.User.NodeSessionKey[from],
+        session_key,
     )
     return string(result)
 }
 
-func nullNode(addr string) {
+func nullNode(username string) {
     settings.Mutex.Lock()
-    settings.User.NodePublicKey[addr] = nil
-    settings.User.NodeSessionKey[addr] = nil
-    settings.User.NodeConnection[addr] = 0
+    settings.User.NodeAddress[username] = ""
+    settings.User.NodeConnection[username] = 0
+    settings.User.NodePublicKey[username]  = nil
+    settings.User.NodeSessionKey[username] = nil
     settings.User.Connections = utils.RemoveByElem(
         settings.User.Connections,
-        addr,
+        username,
     )
     settings.Mutex.Unlock()
 }
@@ -56,8 +65,6 @@ func ServerTCP() {
             message += string(buffer[:length])
         }
 
-        // fmt.Println(message)
-
         var pack settings.Package
         err = json.Unmarshal([]byte(message), &pack)
         if err != nil {
@@ -65,26 +72,26 @@ func ServerTCP() {
             continue
         }
 
-        if settings.User.NodeConnection[pack.From.Address] == 1 &&
+        if settings.User.NodeConnection[pack.From.Name] == 1 &&
            pack.Head.Header != settings.HEAD_CONNECT {
             pack = settings.Package {
                 From: models.From {
                     Address: pack.From.Address,
-                    Name: decrypt(pack.From.Address, pack.From.Name),
+                    Name: pack.From.Name,
                 },
-                To: decrypt(pack.From.Address, pack.To),
+                To: decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.To),
                 Head: models.Head {
-                    Header: decrypt(pack.From.Address, pack.Header),
-                    Mode: decrypt(pack.From.Address, pack.Mode),
+                    Header: decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Header),
+                    Mode: decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Mode),
                 }, 
-                Body: decrypt(pack.From.Address, pack.Body),
+                Body: decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Body),
             }
         }
 
         switch pack.Header {
             case settings.HEAD_ARCHIVE: 
                 switch pack.Mode {
-                    case settings.MODE_GET_LIST: 
+                    case settings.MODE_READ_LIST: 
                         files, err := ioutil.ReadDir(settings.PATH_ARCHIVE)
                         utils.CheckError(err)
                         var files_str = ""
@@ -93,9 +100,9 @@ func ServerTCP() {
                         }
                         var new_pack = settings.Package {
                             From: models.From {
-                                Address: pack.To,
+                                Name: pack.To,
                             },
-                            To: pack.From.Address,
+                            To: pack.From.Name,
                             Head: models.Head {
                                 Header: settings.HEAD_ARCHIVE,
                                 Mode: settings.MODE_SAVE_LIST,
@@ -109,22 +116,21 @@ func ServerTCP() {
                         settings.User.TempArchive = strings.Split(pack.Body, settings.SEPARATOR)
                         settings.Mutex.Unlock()
 
-                    case settings.MODE_GET_FILE:
-                        if !utils.FileIsExist(settings.PATH_ARCHIVE + pack.Body) {
-                            goto close_connection
+                    case settings.MODE_READ_FILE:
+                        if utils.FileIsExist(settings.PATH_ARCHIVE + pack.Body) {
+                            var new_pack = settings.Package {
+                                From: models.From {
+                                    Name: pack.To,
+                                },
+                                To: pack.From.Name,
+                                Head: models.Head {
+                                    Header: settings.HEAD_ARCHIVE,
+                                    Mode: settings.MODE_SAVE_FILE,
+                                },
+                                Body: pack.Body + settings.SEPARATOR + utils.ReadFile(settings.PATH_ARCHIVE + pack.Body),
+                            }
+                            SendEncryptedPackage(new_pack)
                         }
-                        var new_pack = settings.Package {
-                            From: models.From {
-                                Address: pack.To,
-                            },
-                            To: pack.From.Address,
-                            Head: models.Head {
-                                Header: settings.HEAD_ARCHIVE,
-                                Mode: settings.MODE_SAVE_FILE,
-                            },
-                            Body: pack.Body + settings.SEPARATOR + utils.ReadFile(settings.PATH_ARCHIVE + pack.Body),
-                        }
-                        SendEncryptedPackage(new_pack)
 
                     case settings.MODE_SAVE_FILE: 
                         var splited = strings.Split(pack.Body, settings.SEPARATOR)
@@ -137,20 +143,19 @@ func ServerTCP() {
 
             case settings.HEAD_PROFILE: 
                 switch pack.Mode {
-                    case settings.MODE_GET:
+                    case settings.MODE_READ:
                         var new_pack = settings.Package {
                             From: models.From {
-                                Address: pack.To,
+                                Name: pack.To,
                             },
-                            To: pack.From.Address,
+                            To: pack.From.Name,
                             Head: models.Head {
                                 Header: settings.HEAD_PROFILE,
                                 Mode: settings.MODE_SAVE,
                             },
-                            Body:   settings.User.Name + settings.SEPARATOR +
-                                    settings.User.IPv4 + settings.SEPARATOR +
-                                    settings.User.Port + settings.SEPARATOR +
-                                    settings.User.Info,
+                            Body:   settings.User.Name + settings.SEPARATOR + 
+                                    settings.User.Info + settings.SEPARATOR +
+                                    strings.Join(settings.User.Connections, settings.SEPARATOR_ADDRESS),
                         }
                         SendEncryptedPackage(new_pack)
 
@@ -161,14 +166,14 @@ func ServerTCP() {
                 }
 
             case settings.HEAD_MESSAGE: 
-                var message = fmt.Sprintf("[%s/%s]: %s\n", pack.From.Address, pack.From.Name, pack.Body)
-                // var message = fmt.Sprintf("[%s/%s]: %s\n", pack.From.Address, pack.From.Name, pack.Body)
+                var message = fmt.Sprintf("[%s]: %s\n", pack.From.Name, pack.Body)
                 fmt.Print(message)
+
                 switch pack.Mode {
                     case settings.MODE_LOCAL:  
                         settings.Mutex.Lock()
-                        settings.User.LocalMessages[pack.From.Address] = append(
-                            settings.User.LocalMessages[pack.From.Address],
+                        settings.User.LocalMessages[pack.From.Name] = append(
+                            settings.User.LocalMessages[pack.From.Name],
                             message,
                         ) 
                         settings.Mutex.Unlock()
@@ -184,94 +189,129 @@ func ServerTCP() {
 
             case settings.HEAD_CONNECT:
                 switch pack.Mode {
-                    case settings.MODE_GET: 
-                        if settings.User.NodeConnection[pack.From.Address] != 1 {
-                            decoded, err := hex.DecodeString(pack.Body)
-                            utils.CheckError(err)
+                    case settings.MODE_READ: 
+                        if settings.User.NodeConnection[pack.From.Name] == 1 {
+                            goto close_connection
+                        }
 
-                            settings.Mutex.Lock()
-                            settings.User.NodePublicKey[pack.From.Address] = encoding.DecodePublic(string(decoded))
-                            settings.User.NodeSessionKey[pack.From.Address] = crypto.SessionKey(32)
-                            settings.Mutex.Unlock()
-                        } 
+                        for _, addr := range settings.User.BlackList {
+                            if addr == pack.From.Address {
+                                goto close_connection
+                            }
+                        }
 
-                        encrypted, err := crypto.EncryptRSA(
-                            settings.User.NodePublicKey[pack.From.Address],
-                            settings.User.NodeSessionKey[pack.From.Address],
+                        public_key, err := hex.DecodeString(pack.Body)
+                        utils.CheckError(err)
+
+                        settings.Mutex.Lock()
+                        settings.User.NodeAddress[pack.From.Name] = pack.From.Address
+                        settings.User.NodePublicKey[pack.From.Name] = encoding.DecodePublic(string(public_key))
+                        settings.User.NodeSessionKey[pack.From.Name] = crypto.SessionKey(32)
+                        settings.Mutex.Unlock()
+
+                        var encrypted_address = encrypt(settings.User.NodeSessionKey[pack.From.Name], settings.User.IPv4 + settings.User.Port)
+                        var encrypted_name = encrypt(settings.User.NodeSessionKey[pack.From.Name], settings.User.Name)
+
+                        var connections = strings.Join(settings.User.Connections, settings.SEPARATOR_ADDRESS)
+                        var encrypted_connections = encrypt(settings.User.NodeSessionKey[pack.From.Name], connections)
+
+                        encrypted_session_key, err := crypto.EncryptRSA(
+                            settings.User.NodeSessionKey[pack.From.Name],
+                            settings.User.NodePublicKey[pack.From.Name],
                         )
                         utils.CheckError(err)
 
                         var new_pack = settings.Package {
                             From: models.From {
-                                Address: settings.User.IPv4 + settings.User.Port,
-                                Name: settings.User.Name,
+                                Address: encrypted_address,
+                                Name: encrypted_name,
                             },
-                            To: pack.From.Address,
                             Head: models.Head {
                                 Header: settings.HEAD_CONNECT,
                                 Mode: settings.MODE_SAVE,
                             },
-                            Body: hex.EncodeToString(encrypted) + settings.SEPARATOR + hex.EncodeToString([]byte(settings.User.PublicData)),
+                            Body: hex.EncodeToString(encrypted_session_key) + 
+                                settings.SEPARATOR + hex.EncodeToString([]byte(settings.User.PublicData)) +
+                                settings.SEPARATOR + encrypted_connections,
                         }
 
-                        SendPackage(pack.From.Address, new_pack)
+                        var return_code = sendAddrPackage(pack.From.Address, new_pack)
 
-                        if settings.User.NodeConnection[pack.From.Address] == -1 {
+                        if return_code == settings.EXIT_SUCCESS {
                             settings.Mutex.Lock()
                             settings.User.Connections = append(
                                 settings.User.Connections, 
-                                pack.From.Address,
+                                pack.From.Name,
                             )
-                            settings.User.NodeConnection[pack.From.Address] = 1
+                            settings.User.NodeConnection[pack.From.Name] = 1
                             settings.Mutex.Unlock()
+                        } else {
+                            nullNode(pack.From.Name)
                         }
 
                     case settings.MODE_SAVE: 
-                        // if settings.User.NodeConnection[pack.From.Address] == 1 {
-                        //     continue
-                        // }
-
                         var splited = strings.Split(pack.Body, settings.SEPARATOR)
 
-                        encrypted_key, err := hex.DecodeString(splited[0])
+                        encrypted_session_key, err := hex.DecodeString(splited[0])
                         utils.CheckError(err)
 
-                        decrypted, err := crypto.DecryptRSA(
+                        session_key, err := crypto.DecryptRSA(
+                            encrypted_session_key,
                             settings.User.PrivateKey,
-                            encrypted_key,
                         )
                         utils.CheckError(err)
 
                         public_key, err := hex.DecodeString(splited[1])
                         utils.CheckError(err)
 
+                        var address = decrypt(session_key, pack.From.Address) 
+                        var username = decrypt(session_key, pack.From.Name)
+
                         settings.Mutex.Lock()
-                        settings.User.NodePublicKey[pack.From.Address] = encoding.DecodePublic(string(public_key))
-                        settings.User.NodeSessionKey[pack.From.Address] = decrypted
-                        settings.User.NodeConnection[pack.From.Address] = 1
+                        settings.User.NodeAddress[username] = address
+                        settings.User.NodePublicKey[username] = encoding.DecodePublic(string(public_key))
+                        settings.User.NodeSessionKey[username] = session_key
+                        settings.User.NodeConnection[username] = 1
+                        settings.User.Connections = append(
+                            settings.User.Connections, 
+                            username,
+                        )
                         settings.Mutex.Unlock()
+
+                    case settings.MODE_READ_LIST:
+                        var addresses = make([]string, len(settings.User.Connections))
+                        for index, username := range settings.User.Connections {
+                            addresses[index] = settings.User.NodeAddress[username]
+                        }
+
+                        var connections = strings.Join(addresses, settings.SEPARATOR_ADDRESS)
+                        var new_pack = settings.Package {
+                            From: models.From {
+                                Address: settings.User.IPv4 + settings.User.Port,
+                                Name: settings.User.Name,
+                            },
+                            To: pack.From.Name,
+                            Head: models.Head {
+                                Header: settings.HEAD_CONNECT,
+                                Mode: settings.MODE_SAVE_LIST,
+                            },
+                            Body: connections,
+                        }
+                        SendEncryptedPackage(new_pack)
+
+                    case settings.MODE_SAVE_LIST:
+                        var connections = strings.Split(pack.Body, settings.SEPARATOR_ADDRESS)
+                        Connect(connections)
                 }
 
             case settings.HEAD_WARNING:
                 switch pack.Mode {
-                    case settings.MODE_SAVE: 
-                        nullNode(pack.From.Address)
-                        fmt.Printf("[DISCONNECTED]: %s\n", pack.From.Address)
+                    case settings.MODE_SAVE:
+                        nullNode(pack.From.Name)
                 }
 
             default:
-                var new_pack = settings.Package {
-                    From: models.From {
-                        Address: settings.User.IPv4 + settings.User.Port,
-                        Name: settings.User.Name,
-                    },
-                    To: pack.From.Address,
-                    Head: models.Head {
-                        Header: settings.HEAD_WARNING,
-                        Mode: settings.MODE_SAVE,
-                    },
-                }
-                SendPackage(pack.From.Address, new_pack)
+                // pass
         }
 
 close_connection:

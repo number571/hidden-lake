@@ -21,6 +21,11 @@ type Transportation struct {
 	Info string
 }
 
+type Config struct {
+	WhiteList []string
+	BlackList []string
+}
+
 type Keys struct {
 	PrivateKey *rsa.PrivateKey
 	PublicKey *rsa.PublicKey
@@ -35,6 +40,7 @@ type Connection struct {
 	TempConnect string
 	TempProfile []string
 	TempArchive []string
+	NodeAddress map[string]string
 	Connections []string
 }
 

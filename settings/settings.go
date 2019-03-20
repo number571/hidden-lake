@@ -8,13 +8,14 @@ import (
 
 type Package struct {
     From models.From
-    To   string
+    To string
     models.Head
     Body string
 }
 
 type UserNode struct {
 	models.Keys
+	models.Config
 	models.Connection
 	models.ChatMessages
 	models.Transportation
@@ -30,6 +31,9 @@ var User = UserNode {
 		NodeSessionKey: make(map[string][]byte),
 		NodeConnection: make(map[string]int8),
 	},
+	Connection: models.Connection {
+		NodeAddress: make(map[string]string),
+	},
 	ChatMessages: models.ChatMessages {
 		LocalMessages: make(map[string][]string),
 	},
@@ -42,25 +46,29 @@ const (
 	HEAD_CONNECT = "[CONNECT]"
 	HEAD_WARNING = "[WARNING]"
 
-	MODE_GET = "[GET]"
+	MODE_READ = "[READ]"
 	MODE_SAVE = "[SAVE]"
 
-	MODE_LOCAL = "[LOCAL]"
+	MODE_LOCAL  = "[LOCAL]"
 	MODE_GLOBAL = "[GLOBAL]"
 
-	MODE_GET_LIST = MODE_GET + "[LIST]"
-	MODE_SAVE_LIST = MODE_SAVE + "[LIST]"
+	OPT_LIST = "[LIST]"
+	OPT_FILE = "[FILE]"
 
-	MODE_GET_FILE = MODE_GET + "[FILE]"
-	MODE_SAVE_FILE = MODE_SAVE + "[FILE]"
+	MODE_READ_LIST = MODE_READ + OPT_LIST
+	MODE_SAVE_LIST = MODE_SAVE + OPT_LIST
+
+	MODE_READ_FILE = MODE_READ + OPT_FILE
+	MODE_SAVE_FILE = MODE_SAVE + OPT_FILE
 
 	SEPARATOR = "[SEPARATOR]"
+	SEPARATOR_ADDRESS  = SEPARATOR + "[ADDRESS]"
 )
 
 const (
 	PROTOCOL_TCP = "tcp"
 	
-	PORT_HTTP = ":7546"
+	PORT_HTTP = ":7545"
 	IPV4_HTTP = "127.0.0.1"
 
 	IPV4_TEMPLATE = "0.0.0.0"
@@ -71,7 +79,9 @@ const (
 
 const (
 	PATH_KEYS = "Keys/"
+	PATH_CONFIG = "Config/"
 	PATH_ARCHIVE = "Archive/"
+
 	PATH_STATIC = "static/"
 	PATH_TEMPLATES = "templates/"
 )
@@ -80,6 +90,8 @@ const (
 	TERM_EXIT = ":exit"
 	TERM_HELP = ":help"
 	TERM_SEND = ":send"
+	TERM_WHOAMI = ":whoami"
+	TERM_REFRESH = ":refresh"
 	TERM_ARCHIVE = ":archive"
 	TERM_HISTORY = ":history"
 	TERM_NETWORK = ":network"

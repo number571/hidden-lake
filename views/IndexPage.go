@@ -7,6 +7,11 @@ import (
 	"../settings"
 )
 
+type fileArchive struct {
+    TempConnect string
+    Files []string
+}
+
 func IndexPage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		redirectTo("404", w, r)

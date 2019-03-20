@@ -5,9 +5,15 @@
 {{ define "content" }}
 	<p> 
 		<b>Name</b> = {{ .Name }} <br>
-		<b>IPv4</b> = {{ .IPv4 }} <br>
-		<b>Port</b> = {{ .Port }} <br>
 		<b>Info</b> = <br> 
-		<textarea readonly rows="5" cols="30">{{ .Info }}</textarea> <br>
+		<textarea readonly rows="5" cols="30">{{ .Info }}</textarea> <br> <br>
+		<b>Connections</b> = 
+		{{ if not .Connections }}
+			None 
+		{{ else }}
+				{{ range .Connections }}
+					<br>| {{ . }}
+				{{ end }}
+		{{ end }}
 	</p>
 {{ end }}

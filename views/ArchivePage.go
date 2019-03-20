@@ -12,11 +12,6 @@ import (
     "../settings"
 )
 
-type FileArchive struct {
-    TempConnect string
-    Files []string
-}
-
 func ArchivePage(w http.ResponseWriter, r *http.Request) {
     if r.URL.Path != "/archive" {
         redirectTo("404", w, r)
@@ -29,13 +24,12 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
             case "Download": 
                 var new_pack = settings.Package {
                     From: models.From {
-                        Address: settings.User.IPv4 + settings.User.Port,
                         Name: settings.User.Name,
                     },
                     To: settings.User.TempConnect,
                     Head: models.Head {
                         Header: settings.HEAD_ARCHIVE,
-                        Mode: settings.MODE_GET_FILE,
+                        Mode: settings.MODE_READ_FILE,
                     },
                     Body: filename,
                 }
@@ -56,7 +50,7 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
     files, err := ioutil.ReadDir(settings.PATH_ARCHIVE)
     utils.CheckError(err)
 
-    var data = FileArchive {
+    var data = fileArchive {
         TempConnect: settings.User.TempConnect,
     }
 
