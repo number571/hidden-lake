@@ -5,7 +5,7 @@
 
 ```
 $ go build -o main main.go
-$ ./main --address 127.0.0.1:8080 --nickname Name
+$ ./main --address 127.0.0.1:8080
 ```
 ![Image alt](https://github.com/Number571/CNINET/raw/master/image/CNINET_CLI1.png)
 
