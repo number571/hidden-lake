@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			[CNINET] - 
+			{{ block "title" . }}
+				Home
+			{{ end }}
+		</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+	</head>
+	<body>
+		<header>
+			<h3>Cryptographic Non-Indexable Network</h3>
+		</header>
+		<hr>
+		<main>
+			<p>
+				<a href="/">Home</a> | 
+				<a href="/profile">Profile</a> | 
+				<a href="/network/">Network</a> |
+				<a href="/archive">Archive</a>
+				{{ block "content" . }}
+				{{ end }}
+			</p>
+		</main>
+		<hr>
+		<footer>
+			<p> CNINET - Open Source Project </p>
+		</footer>
+	</body>
+</html>
