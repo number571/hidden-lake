@@ -5,8 +5,23 @@ import (
 	"net/http"
 	"html/template"
 	"../utils"
+	"../models"
 	"../settings"
 )
+
+type dataConnections struct {
+    Connections []string
+    Error int
+}
+
+type dataEmail struct {
+    Emails []models.Email
+}
+
+type dataMessages struct {
+    Messages []string
+    TempConnect string
+}
 
 type profileInfo struct {
     Name string
@@ -17,6 +32,13 @@ type profileInfo struct {
 type fileArchive struct {
     TempConnect string
     Files []string
+}
+
+func redirectTo(to string, w http.ResponseWriter, r *http.Request) {
+    switch to {
+        case "404": page404(w, r)
+        case "archive": ArchivePage(w, r)
+    }
 }
 
 func HandleFileServer(fs http.FileSystem) http.Handler {
@@ -30,7 +52,7 @@ func HandleFileServer(fs http.FileSystem) http.Handler {
 }
 
 func page404(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "page404.html")
-	utils.CheckWarning(err)
+	t, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "page404.html")
+	utils.CheckError(err)
     t.Execute(w, nil)
 }

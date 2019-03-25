@@ -3,24 +3,27 @@
 {{ end }}
 
 {{ define "content" }}
-	<form name="ADD" method="POST" action="/network/">
-		<input type="text" name="addrs" placeholder="127.0.0.1:7545" value="">
-		<input type="submit" name="act" value="Add_connection">
+	<hr>
+	<b>
+		<a href="/network/chat/global/">Global chat</a> | 
+		<a href="/network/email/">Email page</a>
+	</b>
+	<hr> 
+
+	<form method="POST" action="/network/">
+		<input type="text" name="addr" placeholder="127.0.0.1:7545" value="">
+		<input type="submit" name="add" value="Add">
+		<input type="submit" name="delete" value="Delete">
 	</form>
 
-	<form name="DEL" method="POST" action="/network/">
-		<input type="text" name="addrs" placeholder="127.0.0.1:7545" value="">
-		<input type="submit" name="act" value="Del_connection">
-	</form>
-
-	<p>
-	<b><a href="/network/global">Global_chat</a><br></b>
+	<br>
+	
 	<b>Connections</b> = 
 	{{ if not .Connections }}
 		None 
 	{{ else }}
 		{{ range .Connections }}
-			<br>| <a name="{{ . }}" href="/network/{{ . }}">{{ . }}</a>
+			<br>| <a name="{{ . }}" href="/network/chat/{{ . }}">{{ . }}</a>
 		{{ end }}
 	{{ end }}
 	</p>

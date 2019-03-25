@@ -1,0 +1,34 @@
+{{ define "title" }}
+    Email
+{{ end }}
+
+{{ define "content" }}
+    <hr>
+    <b>
+        <a href="/network/email/read/">Back to Read</a>
+        <hr>
+    </b>
+    {{ if .Emails }}
+        <table border="1" width="100%" cellpadding="5">
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Delete</th>
+            </tr>
+            {{ range .Emails }}
+                <tr>
+                    <td><a href="/network/email/read/{{ .User }}/{{ .Id }}">{{ .Title }}</a></td>
+                    <td>{{ .Date }}</td>
+                    <td>
+                        <form method="POST" action="/network/email/read/">
+                            <input type="hidden" name="id" value="{{ .Id }}">
+                            <input type="submit" name="delete" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+            {{ end }}
+        </table>
+    {{ else }}
+        No messages!
+    {{ end }}
+{{ end }}

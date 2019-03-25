@@ -14,13 +14,14 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
-		switch r.FormValue("act") {
-			case "Set_Info": 
-				settings.User.Info = r.FormValue("info")
+		r.ParseForm()
+
+		if _, ok := r.Form["set_info"]; ok {
+			settings.User.Info = r.FormValue("info")
 		}
 	}
 
-	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "profile.html")
-    utils.CheckWarning(err)
+	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "profile.html")
+    utils.CheckError(err)
     tmpl.Execute(w, settings.User)
 }

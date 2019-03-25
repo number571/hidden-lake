@@ -1,10 +1,11 @@
 {{ define "title" }}
-	Profile_Node
+	Profile
 {{ end }}
 
 {{ define "content" }}
+	<hr>
 	<p> 
-		<b>Name</b> = {{ .Name }} <br>
+		<b>Node</b> = <a href="/network/email/read/{{ .Name }}">{{ .Name }}</a><br>
 		<b>Info</b> = <br> 
 		<textarea readonly rows="5" cols="30">{{ .Info }}</textarea> <br> <br>
 		<b>Connections</b> = 

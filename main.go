@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"fmt"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"./connect"
 	"./settings"
 )
@@ -14,6 +16,13 @@ import (
 )
 
 func main() {
+	settings.CreateDatabase("database.db")
+
+	db, err := sql.Open("sqlite3", "database.db")
+	utils.CheckError(err)
+	defer db.Close()
+
+	settings.DataBase = db
 	settings.Initialization(os.Args)
 
 	fmt.Println("Server is listening...")
@@ -27,10 +36,15 @@ func main() {
 	)
 
 	http.HandleFunc("/", controllers.IndexPage)
+	http.HandleFunc("/about/", controllers.AboutPage)
 	http.HandleFunc("/profile/", controllers.ProfilePage)
 	http.HandleFunc("/archive/", controllers.ArchivePage)
 	http.HandleFunc("/network/", controllers.NetworkPage)
-	http.HandleFunc("/network/global/", controllers.NetworkGlobalPage)
+	http.HandleFunc("/network/chat/", controllers.NetworkChatPage)
+	http.HandleFunc("/network/chat/global/", controllers.NetworkChatGlobalPage)
+	http.HandleFunc("/network/email/", controllers.NetworkEmailPage)
+	http.HandleFunc("/network/email/read/", controllers.NetworkEmailReadPage)
+	http.HandleFunc("/network/email/write/", controllers.NetworkEmailWritePage)
 	http.HandleFunc("/network/archive/", controllers.NetworkArchivePage)
 	http.HandleFunc("/network/profile/", controllers.NetworkProfilePage)
 

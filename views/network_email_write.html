@@ -1,0 +1,29 @@
+{{ define "title" }}
+    Email
+{{ end }}
+
+{{ define "content" }}
+    <hr>
+    {{ if eq .Error 1 }}
+        <p>
+            Message is not sent!
+        </p>
+    {{ else if eq .Error -1 }}
+        <p>
+            Message is sent!
+        </p>
+    {{ end }}
+    <form method="POST" action="/network/email/write/">
+        <select name="node">
+            <option value="none">Usernode</option>
+            {{ range .Connections }}
+            <option value="{{ . }}">
+                {{ . }}
+            </option>
+            {{ end }}
+        </select> <br>
+        <input type="text" name="title" placeholder="Title"> <br>
+        <textarea rows="8" cols="30" name="body" placeholder="Message"></textarea><br>
+        <input type="submit" name="send" value="Send">
+    </form>
+{{ end }}

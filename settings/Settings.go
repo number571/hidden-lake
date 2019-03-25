@@ -3,6 +3,7 @@ package settings
 import (
 	"sync"
 	"crypto/rsa"
+	"database/sql"
 	"../models"
 )
 
@@ -17,29 +18,27 @@ type UserNode struct {
 	models.Keys
 	models.Config
 	models.Connection
-	models.ChatMessages
 	models.Transportation
 }
 
 var Mutex sync.Mutex
+var DataBase *sql.DB
 var User = UserNode {
 	Transportation: models.Transportation {
 		Info: "default_info",
 	},
 	Keys: models.Keys {
-		NodePublicKey: make(map[string]*rsa.PublicKey),
+		NodePublicKey:  make(map[string]*rsa.PublicKey),
 		NodeSessionKey: make(map[string][]byte),
 		NodeConnection: make(map[string]int8),
 	},
 	Connection: models.Connection {
 		NodeAddress: make(map[string]string),
 	},
-	ChatMessages: models.ChatMessages {
-		LocalMessages: make(map[string][]string),
-	},
 }
 
 const (
+	HEAD_EMAIL   = "[EMAIL]"
 	HEAD_ARCHIVE = "[ARCHIVE]"
 	HEAD_PROFILE = "[PROFILE]"
 	HEAD_MESSAGE = "[MESSAGE]"
@@ -78,9 +77,9 @@ const (
 )
 
 const (
-	PATH_KEYS = "Keys/"
-	PATH_CONFIG = "Config/"
-	PATH_ARCHIVE = "Archive/"
+	PATH_CONFIG = "_Config/"
+	PATH_ARCHIVE = "_Archive/"
+	PATH_KEYS = PATH_CONFIG + "Keys/"
 
 	PATH_VIEWS  = "views/"
 	PATH_STATIC = "static/"

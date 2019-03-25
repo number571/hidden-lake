@@ -13,7 +13,7 @@ func IndexPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html")
-    utils.CheckWarning(err)
+	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html")
+    utils.CheckError(err)
     tmpl.Execute(w, nil)
 }

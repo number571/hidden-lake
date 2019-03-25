@@ -1,0 +1,28 @@
+{{ define "title" }}
+    Email
+{{ end }}
+
+{{ define "content" }}
+    <hr>
+    <b>
+        <a href="/network/email/read/">Back to Read</a>
+        {{ if .Emails }}
+            {{ $data := index .Emails 0 }}
+             | <a href="/network/email/read/{{ $data.User }}">Back to Node</a>
+        {{ end }}
+        <hr>
+    </b>
+    {{ if .Emails }}
+        {{ $data := index .Emails 0 }}
+        --------------------------------------------------------------------------------------------------
+        <br> | Title: {{ $data.Title }} <br>
+        --------------------------------------------------------------------------------------------------
+        <br> | Message: {{ $data.Body }} <br>
+        --------------------------------------------------------------------------------------------------
+        <br> | From: <a href="/network/profile/{{ $data.User }}">{{ $data.User }}</a> <br> 
+        --------------------------------------------------------------------------------------------------
+        <br>
+    {{ else }}
+        Email is not found!
+    {{ end }}
+{{ end }}

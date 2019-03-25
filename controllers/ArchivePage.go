@@ -19,31 +19,33 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
     }
 
     if r.Method == "POST" {
+        r.ParseForm()
         var filename = r.FormValue("filename")
-        switch r.FormValue("act") {
-            case "Download": 
-                var new_pack = settings.Package {
-                    From: models.From {
-                        Name: settings.User.Name,
-                    },
-                    To: settings.User.TempConnect,
-                    Head: models.Head {
-                        Header: settings.HEAD_ARCHIVE,
-                        Mode: settings.MODE_READ_FILE,
-                    },
-                    Body: filename,
-                }
-                connect.SendEncryptedPackage(new_pack)
-                time.Sleep(time.Second * settings.TIME_SLEEP)
 
-            case "Delete": 
-                err := os.Remove(settings.PATH_ARCHIVE + filename)
-                utils.CheckWarning(err)
+        if _, ok := r.Form["delete"]; ok {
+            err := os.Remove(settings.PATH_ARCHIVE + filename)
+            utils.CheckWarning(err)
 
-            case "Copy":
-                utils.WriteFile(settings.PATH_ARCHIVE + "copy_" + filename, 
-                    utils.ReadFile(settings.PATH_ARCHIVE + filename),
-                )
+        } else if _, ok := r.Form["copy"]; ok {
+            utils.WriteFile(
+                settings.PATH_ARCHIVE + "copy_" + filename, 
+                utils.ReadFile(settings.PATH_ARCHIVE + filename),
+            )
+
+        } else if _, ok := r.Form["download"]; ok {
+            var new_pack = settings.Package {
+                From: models.From {
+                    Name: settings.User.Name,
+                },
+                To: settings.User.TempConnect,
+                Head: models.Head {
+                    Header: settings.HEAD_ARCHIVE,
+                    Mode: settings.MODE_READ_FILE,
+                },
+                Body: filename,
+            }
+            connect.SendEncryptedPackage(new_pack)
+            time.Sleep(time.Second * settings.TIME_SLEEP)
         }
     }
 
@@ -58,7 +60,7 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
         data.Files = append(data.Files, file.Name())
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "archive.html")
-    utils.CheckWarning(err)
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "archive.html")
+    utils.CheckError(err)
     tmpl.Execute(w, data)
 }

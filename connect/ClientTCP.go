@@ -148,10 +148,7 @@ func ClientTCP() {
                 Disconnect(splited[1:])
 
             default:
-                if message == "" {
-                    continue
-                }
-
+                if message == "" { continue }
                 for _, username := range settings.User.Connections {
                     var new_pack = settings.Package {
                         From: models.From {

@@ -1,0 +1,31 @@
+{{ define "title" }}
+	Chat
+{{ end }}
+
+{{ define "content" }}
+	<hr>
+	Node: {{ .TempConnect }} <br>
+	<div id="container">
+		<b>
+			<a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
+			<a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
+			<a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
+		</b>
+
+		<form method="POST" action="/network/">
+			<input type="hidden" name="addr" value="{{ .TempConnect }}">
+			<input type="submit" name="delete" value="Delete">
+		</form>
+	</div>
+
+	<hr>
+
+	<form method="POST" action="/network/chat/{{ .TempConnect}}">
+		<input type="submit" name="delete_message" value="Delete messages"> <br>
+		<textarea readonly rows="10" cols="45">
+{{ range .Messages }}{{ . }}{{ end }}
+		</textarea> <br>
+		<input type="text" name="text" placeholder="Message...">
+		<input type="submit" name="send_message" value="Send message">
+	</form>
+{{ end }}

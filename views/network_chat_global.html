@@ -1,0 +1,17 @@
+{{ define "title" }}
+	Chat
+{{ end }}
+
+{{ define "content" }}
+	<hr>
+	<form method="POST" accept="/network/chat/global/">
+		<input type="submit" name="delete" value="Delete messages">
+	</form>
+	<textarea readonly rows="10" cols="45">
+{{ range .Messages }}{{ . }}{{ end }}
+	</textarea>
+	<form method="POST" accept="/network/chat/global/">
+		<input type="text" name="text" placeholder="Send message...">
+		<input type="submit" name="send" value="Send message">
+	</form>
+{{ end }}

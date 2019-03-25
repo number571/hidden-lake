@@ -142,19 +142,21 @@ func ServerTCP() {
                 switch pack.Mode {
                     case settings.MODE_LOCAL:  
                         settings.Mutex.Lock()
-                        settings.User.LocalMessages[pack.From.Name] = append(
-                            settings.User.LocalMessages[pack.From.Name],
-                            message,
-                        ) 
+                        _, err := settings.DataBase.Exec(
+                            "INSERT INTO Local" + pack.From.Name + " (User, Body) VALUES ($1, $2)",
+                            pack.From.Name, message,
+                        )
                         settings.Mutex.Unlock()
+                        utils.CheckError(err)
 
                     case settings.MODE_GLOBAL: 
                         settings.Mutex.Lock()
-                        settings.User.GlobalMessages = append(
-                            settings.User.GlobalMessages,
-                            message,
+                        _, err := settings.DataBase.Exec(
+                            "INSERT INTO GlobalMessages (User, Body) VALUES ($1, $2)",
+                            pack.From.Name, message,
                         )
                         settings.Mutex.Unlock()
+                        utils.CheckError(err)
                 }
 
             case settings.HEAD_CONNECT:
@@ -246,7 +248,16 @@ func ServerTCP() {
                             settings.User.Connections, 
                             username,
                         )
+                        _, err = settings.DataBase.Exec(`
+DROP TABLE IF EXISTS Local` + username + `;
+CREATE TABLE Local` + username + ` (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    User VARCHAR(128),
+    Body TEXT
+);
+`)
                         settings.Mutex.Unlock()
+                        utils.CheckError(err)
 
                     case settings.MODE_READ_LIST:
                         var addresses = make([]string, len(settings.User.Connections))
@@ -278,6 +289,27 @@ func ServerTCP() {
                 switch pack.Mode {
                     case settings.MODE_SAVE:
                         nullNode(pack.From.Name)
+                }
+
+            case settings.HEAD_EMAIL:
+                switch pack.Mode {
+                    case settings.MODE_SAVE: 
+                        var splited = strings.Split(pack.Body, settings.SEPARATOR)
+
+                        if len(splited) != 3 {
+                            goto close_connection
+                        }
+
+                        settings.Mutex.Lock()
+                        _, err := settings.DataBase.Exec(
+                            "INSERT INTO Email (Title, Body, User, Date) VALUES ($1, $2, $3, $4)",
+                            splited[0],
+                            splited[1],
+                            pack.From.Name,
+                            splited[2],
+                        )
+                        settings.Mutex.Unlock()
+                        utils.CheckError(err)
                 }
 
             default:

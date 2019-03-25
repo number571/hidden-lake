@@ -6,6 +6,6 @@ textarea {
 	resize: none;
 }
 
-.inline_forms {
+#container > form {
 	display: inline-block;
 }

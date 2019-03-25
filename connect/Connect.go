@@ -1,6 +1,7 @@
 package connect
 
 import (
+    "time"
     "encoding/hex"
     "../models"
     "../settings"
@@ -34,5 +35,6 @@ func Connect(slice []string) {
         }
 
         sendAddrPackage(addr, new_pack)
+        time.Sleep(time.Millisecond * 500)
     }
 }

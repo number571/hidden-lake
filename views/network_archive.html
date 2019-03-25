@@ -1,12 +1,13 @@
 {{ define "title" }}
-	Archive_Node
+	Archive
 {{ end }}
 
 {{ define "content" }}
+	<hr>
 	{{ if not .Files }}
 		<p>Nothing</p>
 	{{ else }}
-		<form name="DOWNLOAD" method="POST" action="/archive">
+		<form method="POST" action="/archive/">
 			<select name="filename">
 				{{ range .Files }}
 				<option value="{{ . }}">
@@ -14,7 +15,7 @@
 				</option>
 				{{ end }}
 			</select>
-			<input type="submit" name="act" value="Download">
+			<input type="submit" name="download" value="Download">
 		</form>
 	{{ end }}
 {{ end }}

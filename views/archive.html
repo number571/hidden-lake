@@ -3,10 +3,11 @@
 {{ end }}
 
 {{ define "content" }}
+	<hr>
 	{{ if not .Files }}
 		<p>Nothing</p>
 	{{ else }}
-		<form name="DOWNLOAD" method="POST" action="/archive">
+		<form method="POST" action="/archive/">
 			<select name="filename">
 				{{ range .Files }}
 				<option value="{{ . }}">
@@ -14,8 +15,8 @@
 				</option>
 				{{ end }}
 			</select>
-			<input type="submit" name="act" value="Copy">
-			<input type="submit" name="act" value="Delete">
+			<input type="submit" name="copy" value="Copy">
+			<input type="submit" name="delete" value="Delete">
 		</form>
 	{{ end }}
 {{ end }}

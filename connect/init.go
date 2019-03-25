@@ -63,22 +63,39 @@ func findConnects(seconds time.Duration) {
 }
 
 func printGlobalHistory() {
-    for _, mes := range settings.User.GlobalMessages {
-        fmt.Println("|", mes)
+    settings.Mutex.Lock()
+    rows, err := settings.DataBase.Query("SELECT Body FROM GlobalMessages ORDER BY Id")
+    settings.Mutex.Unlock()
+
+    utils.CheckError(err)
+
+    var data string
+
+    for rows.Next() {
+        rows.Scan(&data)
+        fmt.Println("|", data)
     }
+
+    rows.Close()
 }
 
 func printLocalHistory(slice []string) {
-    for _, check := range slice {
-        for _, username := range settings.User.Connections {
-            if username == check {
-                fmt.Printf("| %s:\n", username)
-                for _, mes := range settings.User.LocalMessages[username] {
-                    fmt.Println("|", mes)
-                }
-                break
-            }
+    for _, user := range slice {
+        settings.Mutex.Lock()
+        rows, err := settings.DataBase.Query("SELECT Body FROM Local" + user + " WHERE User=$1 ORDER BY Id")
+        settings.Mutex.Unlock()
+
+        utils.CheckError(err)
+
+        fmt.Printf("| %s:\n", user)
+        var data string
+
+        for rows.Next() {
+            rows.Scan(&data)
+            fmt.Println("|", data)
         }
+
+        rows.Close()
     }
 }
 

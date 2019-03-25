@@ -3,14 +3,15 @@
 {{ end }}
 
 {{ define "content" }}
+	<hr>
 	<p> 
-		<form name="INFO" method="POST" action="/profile">
+		<form name="INFO" method="POST" action="/profile/">
 			<b>Name</b> = {{ .Name }} <br>
 			<b>IPv4</b> = {{ .IPv4 }} <br>
 			<b>Port</b> = {{ .Port }} <br> 
 			<b>Info</b> = <br>
 			<textarea type="text" name="info" rows="5" cols="30">{{ .Info }}</textarea> <br>
-			<input type="submit" name="act" value="Set_Info">
+			<input type="submit" name="set_info" value="Set info">
 		</form>
 		<br>
 		<b>Connections</b> = 

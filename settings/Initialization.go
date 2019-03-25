@@ -16,7 +16,6 @@ func Initialization(args []string) {
         flag_white_list bool
         flag_black_list bool
         flag_private_key bool
-
         change_config [3]string
     )
 
@@ -27,6 +26,7 @@ func Initialization(args []string) {
 
     for _, value := range args[1:] {
         switch value {
+            // Arguments with parameters
             case "-a", "--address": 
                 flag_address = true
                 continue
@@ -69,11 +69,38 @@ func Initialization(args []string) {
         utils.PrintError("port undeclared")
     }
 
-    os.Mkdir(PATH_ARCHIVE, 0777)
     os.Mkdir(PATH_CONFIG, 0777)
-    os.Mkdir(PATH_CONFIG + PATH_KEYS, 0777)
+    os.Mkdir(PATH_KEYS, 0777)
+    os.Mkdir(PATH_ARCHIVE, 0777)
 
+    initDataBase()
     checkConfig(change_config)
+}
+
+func initDataBase() {
+    _, err := DataBase.Exec(`
+CREATE TABLE IF NOT EXISTS Email (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    Title VARCHAR(128),
+    Body TEXT,
+    User VARCHAR(128),
+    Date VARCHAR(64) NULL
+);
+
+DROP TABLE IF EXISTS GlobalMessages;
+CREATE TABLE GlobalMessages (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    User VARCHAR(128),
+    Body TEXT
+);
+`)
+    utils.CheckError(err)
+}
+
+func CreateDatabase(name string) {
+    if !utils.FileIsExist(name) {
+        utils.WriteFile(name, "")
+    }
 }
 
 func checkConfig(config [3]string) {
@@ -121,14 +148,14 @@ func checkConfig(config [3]string) {
         User.PrivateKey = encoding.DecodePrivate(User.PrivateData)
         User.PublicKey = &(User.PrivateKey).PublicKey
     } else {
-        if utils.FileIsExist(PATH_CONFIG + PATH_KEYS + "private_key") {
-            User.PrivateData = utils.ReadFile(PATH_CONFIG + PATH_KEYS + "private_key")
+        if utils.FileIsExist(PATH_KEYS + "private_key") {
+            User.PrivateData = utils.ReadFile(PATH_KEYS + "private_key")
             User.PrivateKey = encoding.DecodePrivate(User.PrivateData)
             User.PublicKey = &(User.PrivateKey).PublicKey
         } else {
             User.PrivateKey, User.PublicKey = crypto.GenerateKeys(2048)
             User.PrivateData = string(encoding.EncodePrivate(User.PrivateKey))
-            utils.WriteFile(PATH_CONFIG + PATH_KEYS + "private_key", User.PrivateData)
+            utils.WriteFile(PATH_KEYS + "private_key", User.PrivateData)
         }
     }
 
@@ -138,5 +165,5 @@ func checkConfig(config [3]string) {
     User.PublicData = string(pub_data)
     User.Name = hex.EncodeToString(hashed[:])
 
-    utils.WriteFile(PATH_CONFIG + PATH_KEYS + "public_key", User.PublicData)
+    utils.WriteFile(PATH_KEYS + "public_key", User.PublicData)
 }
