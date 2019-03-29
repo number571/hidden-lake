@@ -39,7 +39,9 @@ func nullNode(username string) {
         settings.User.Connections,
         username,
     )
+    _, err := settings.DataBase.Exec("DROP TABLE IF EXISTS Local" + username)
     settings.Mutex.Unlock()
+    utils.CheckError(err)
 }
 
 func findConnects(seconds time.Duration) {
@@ -81,21 +83,26 @@ func printGlobalHistory() {
 
 func printLocalHistory(slice []string) {
     for _, user := range slice {
-        settings.Mutex.Lock()
-        rows, err := settings.DataBase.Query("SELECT Body FROM Local" + user + " WHERE User=$1 ORDER BY Id")
-        settings.Mutex.Unlock()
+        for _, check := range settings.User.Connections {
+            if check == user {
+                settings.Mutex.Lock()
+                rows, err := settings.DataBase.Query("SELECT Body FROM Local" + user + " WHERE ORDER BY Id")
+                settings.Mutex.Unlock()
 
-        utils.CheckError(err)
+                utils.CheckError(err)
 
-        fmt.Printf("| %s:\n", user)
-        var data string
+                fmt.Printf("| %s:\n", user)
+                var data string
 
-        for rows.Next() {
-            rows.Scan(&data)
-            fmt.Println("|", data)
+                for rows.Next() {
+                    rows.Scan(&data)
+                    fmt.Println("|", data)
+                }
+
+                rows.Close()
+                break
+            }
         }
-
-        rows.Close()
     }
 }
 

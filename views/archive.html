@@ -3,7 +3,15 @@
 {{ end }}
 
 {{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<i>Archive</i>
+		</p>
+	</div>
 	<hr>
+	<br>
+	<div class="content">
 	{{ if not .Files }}
 		<p>Nothing</p>
 	{{ else }}
@@ -19,4 +27,5 @@
 			<input type="submit" name="delete" value="Delete">
 		</form>
 	{{ end }}
+	</div>
 {{ end }}

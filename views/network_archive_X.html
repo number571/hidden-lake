@@ -1,0 +1,32 @@
+{{ define "title" }}
+	Archive
+{{ end }}
+
+{{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<a href="/network/">Network</a> /
+			<a href="/network/archive/">Archive</a> /
+			<i>{{ .TempConnect }}</i>
+		</p>
+	</div>
+	<hr>
+	<br>
+	<div class="content">
+	{{ if not .Files }}
+		<p>Nothing</p>
+	{{ else }}
+		<form method="POST" action="/archive/">
+			<select name="filename">
+				{{ range .Files }}
+				<option value="{{ . }}">
+					{{ . }}
+				</option>
+				{{ end }}
+			</select>
+			<input type="submit" name="download" value="Download">
+		</form>
+	{{ end }}
+	</div>
+{{ end }}

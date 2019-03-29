@@ -3,18 +3,25 @@
 {{ end }}
 
 {{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<a href="/network/">Network</a> /
+			<i>Profile</i>
+		</p>
+	</div>
 	<hr>
-	<p> 
-		<b>Node</b> = <a href="/network/email/read/{{ .Name }}">{{ .Name }}</a><br>
-		<b>Info</b> = <br> 
-		<textarea readonly rows="5" cols="30">{{ .Info }}</textarea> <br> <br>
+	<br>
+	<div class="content">
+	<p>
+	{{ if .Connections }}
 		<b>Connections</b> = 
-		{{ if not .Connections }}
-			None 
-		{{ else }}
-				{{ range .Connections }}
-					<br>| {{ . }}
-				{{ end }}
+		{{ range .Connections }}
+			<br>| <a href="/network/profile/{{ . }}">{{ . }}</a>
 		{{ end }}
+	{{ else }}
+		<p>Nothing</p>
+	{{ end }}
 	</p>
+	</div>
 {{ end }}

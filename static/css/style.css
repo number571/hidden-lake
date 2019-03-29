@@ -1,11 +1,266 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+body {
+    background-color: rgb(32, 32, 32);
+    background-image: url(/static/image/background.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position:center center;
+    background-size: cover;
+}
+
+#glitch {
+    position: relative;
+    height: 100%;
+    background-size: 100% 100%;
+}
+
+#glitch::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background: url(/static/image/animation.gif);
+    opacity: 0.2;
+    content: "";
+    z-index: -1;
+}
+
+#main_content {
+    position: relative;
+}
+
+.content {
+    overflow: auto;
+}
+
+#main_content::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    /*background: black;*/
+    background-repeat: no-repeat;
+    /*opacity: 0.5;*/
+    content: "";
+    z-index: -1;
+}
+
+#square {
+    position: relative;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60em;
+}
+
+#square::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: black;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    content: "";
+    z-index: -1;
+}
+
+.wrapper {
+    position: relative;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60em;
+}
+
+.wrapper::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: black;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    content: "";
+    z-index: -1;
+}
+
+#head_title {
+    width: 100%;
+    height: 3em;
+}
+
+#head_title > p {
+    padding-top: 0.5em;
+    font-size: 20px;
+}
+
+#navigate {
+    height: 3em;
+}
+
+#navigate > * {
+    padding-top: 0.5em;
+    word-spacing: 40px;
+    display: inline-block;
+    list-style-type: none;
+} 
+
+table {
+    table-layout: fixed;
+    width: 100%;   
+}
+
+th,td {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #BCBCBC;
+    word-wrap: break-word;
+}
+
+footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2em;
+    text-align: center;
+}
+
+footer > div > p {
+    padding-top: 0.5em;
+}
+
 footer > p {
-	color: gray;
+    color: white;
+}
+
+input {
+    opacity: 0.6;
 }
 
 textarea {
-	resize: none;
+    opacity: 0.6;
+    resize: none;
+    width: 99.7%;
+    height: 10em;
 }
 
-#container > form {
-	display: inline-block;
+header {
+    text-align: center;
+}
+
+main, footer {
+    text-align: center;
+}
+
+.button {
+    font: bold 12px Arial;
+    text-decoration: none;
+    background-color: gray;
+    color: #333333;
+    padding: 10px 40px 10px 40px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+    opacity: 0.8;
+}
+
+.container > * {
+    display: inline-block;
+}
+
+.block_left {
+    width: 60em;
+    display: inline-block; 
+    text-align: left;
+}
+
+p {
+    color: gray;
+}
+
+a {
+    color: lightgray;
+}
+
+.bread > i {
+    color: gray;
+}
+
+@media (max-width: 60em){
+    #main_content, #square, .wrapper , .block_left{
+        width: 50em;
+    }
+
+    #navigate > * {
+        word-spacing: 30px;
+    }
+
+    .button {
+        padding: 10px 30px 10px 30px;
+    }
+}
+
+@media (max-width: 50em){
+    #main_content, #square, .wrapper , .block_left{
+        width: 40em;
+    }
+
+    #navigate > * {
+        word-spacing: 20px;
+    }
+
+    .button {
+        padding: 8px 20px 8px 20px;
+    }
+}
+
+@media (max-width: 40em){
+    #main_content, #square, .wrapper , .block_left{
+        width: 30em;
+    }
+
+    #navigate > * {
+        word-spacing: 10px;
+    }
+
+    .button {
+        padding: 8px 15px 8px 15px;
+    }
+
+    #head_title > p {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 30em){
+    #main_content, #square, .wrapper, .block_left {
+        width: 20em;
+    }
+
+    #navigate > * {
+        word-spacing: 0px;
+    }
+
+    .button {
+        padding: 6px 8px 6px 8px;
+    }
+
+    #head_title > p {
+        font-size: 16px;
+    }
 }

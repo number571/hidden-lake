@@ -20,10 +20,10 @@ func NetworkChatGlobalPage(w http.ResponseWriter, r *http.Request) {
     if r.Method == "POST" {
         r.ParseForm()
         
-        if _, ok := r.Form["delete"]; ok {
+        if _, ok := r.Form["delete_message"]; ok {
             connect.DeleteGlobalMessages()
 
-        } else if _, ok := r.Form["send"]; ok {
+        } else if _, ok := r.Form["send_message"]; ok {
             var message = strings.TrimSpace(r.FormValue("text"))
             if message != "" {
                 for _, username := range settings.User.Connections {

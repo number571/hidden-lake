@@ -19,6 +19,7 @@ type dataEmail struct {
 }
 
 type dataMessages struct {
+	Connections []string
     Messages []string
     TempConnect string
 }

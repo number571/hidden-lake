@@ -14,7 +14,13 @@ import (
 
 func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
     if r.URL.Path == "/network/profile/" {
-        redirectTo("404", w, r)
+        var data = dataMessages {
+            Connections: settings.User.Connections,
+        }
+
+        tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_profile.html")
+        utils.CheckError(err)
+        tmpl.Execute(w, data)
         return
     }
 
@@ -67,7 +73,7 @@ func NetworkProfilePage(w http.ResponseWriter, r *http.Request) {
         Connections: strings.Split(settings.User.TempProfile[2], settings.SEPARATOR_ADDRESS),
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_profile.html")
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_profile_X.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }

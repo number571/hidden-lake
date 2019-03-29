@@ -1,35 +1,60 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>
-			[CNINET] - 
-			{{ block "title" . }}
-				Home
-			{{ end }}
-		</title>
-		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="/static/css/style.css">
-	</head>
-	<body>
-		<header>
-			<h3>Cryptographic Non-Indexable Network</h3>
-		</header>
-		<hr>
-		<main>
-			<p>
-				<a href="/">Home</a> | 
-				<a href="/profile/">Profile</a> | 
-				<a href="/archive/">Archive</a> | 
-				<a href="/network/">Network</a> |
-				<a href="/network/email/">Email</a> |
-				<a href="/about/">About</a>
-				{{ block "content" . }}
-				{{ end }}
-			</p>
-		</main>
-		<hr>
-		<footer>
-			<p> [ CNINET ] </p>
-		</footer>
-	</body>
+    <head>
+        <title>
+            [CNINET] - 
+            {{ block "title" . }}
+                Home
+            {{ end }}
+        </title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    </head>
+    <body>
+        <div id="glitch">
+            <div id="square">
+            <header>
+                <div id="head_title" class="wrapper">
+                    <p>
+                        Cryptographic Non-Indexable Network
+                    </p>
+                </div>
+                <div id="navigate" class="wrapper">
+                    <nav>
+                        <a class="button" href="/">Home</a> 
+                        <a class="button" href="/profile/">Profile</a> 
+                        <a class="button" href="/archive/">Archive</a>
+                        <a class="button" href="/network/">Network</a> 
+                        <a class="button" href="/about/">About</a>
+                    </nav>
+                </div>
+            </header>
+            <main>
+                <div id="main_content" class="block_left">
+                {{ block "content" . }}
+                    <div class="div_bread wrapper">
+                        <p class="bread"> /
+                            <i>Home</i>
+                        </p>
+                    </div>
+                    <hr>
+                    <br>
+                    <div class="content">
+                    <p>
+                        hello, world
+                    </p>
+                    </div>
+                {{ end }}
+                </div>
+            </main>
+            <footer>
+                <div class="wrapper">
+                    <p class="block_left"> 
+                        [ CNINET ] 
+                    </p>
+                </div>
+            </footer>
+            </div>
+        </div>
+    </body>
 </html>

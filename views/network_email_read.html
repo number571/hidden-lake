@@ -3,25 +3,36 @@
 {{ end }}
 
 {{ define "content" }}
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/">Home</a> /
+            <a href="/network/">Network</a> /
+            <a href="/network/email/">Email</a> /
+            <i>Read</i>
+        </p>
+    </div>
     <hr>
+    <br>
+    <div class="content">
     {{ if .Emails }}
-        <table border="1" width="100%" cellpadding="5">
+        <table border="1" cellpadding="5">
             <tr>
-                <th>Title</th>
-                <th>User</th>
-                <th>Date</th>
-                <th>Delete</th>
+                <th><p>Title</p></th>
+                <th><p>User</p></th>
+                <th><p>Date</p></th>
+                <th><p>Delete</p></th>
             </tr>
             {{ range .Emails }}
                 <tr>
                     <td><a href="/network/email/read/{{ .User }}/{{ .Id }}">{{ .Title }}</a></td>
                     <td><a href="/network/email/read/{{ .User }}">{{ .User }}</a></td>
-                    <td>{{ .Date }}</td>
-                    <td>
+                    <td><p>{{ .Date }}</p></td>
+                    <td><p>
                         <form method="POST" action="/network/email/read/">
                             <input type="hidden" name="id" value="{{ .Id }}">
                             <input type="submit" name="delete" value="Delete">
                         </form>
+                        </p>
                     </td>
                 </tr>
             {{ end }}
@@ -29,4 +40,5 @@
     {{ else }}
         Nothing
     {{ end }}
+    </div>
 {{ end }}

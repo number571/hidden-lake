@@ -12,6 +12,17 @@ import (
 )
 
 func NetworkChatPage(w http.ResponseWriter, r *http.Request) {
+    if r.URL.Path == "/network/chat/" {
+        var data = dataMessages {
+            Connections: settings.User.Connections,
+        }
+
+        tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_chat.html")
+        utils.CheckError(err)
+        tmpl.Execute(w, data)
+        return
+    }
+
     if r.Method == "POST" {
         r.ParseForm()
 
@@ -83,7 +94,7 @@ func NetworkChatPage(w http.ResponseWriter, r *http.Request) {
         TempConnect: settings.User.TempConnect,
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_chat.html")
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_chat_X.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }

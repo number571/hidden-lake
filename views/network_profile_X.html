@@ -1,0 +1,34 @@
+{{ define "title" }}
+	Profile
+{{ end }}
+
+{{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<a href="/network/">Network</a> /
+			<a href="/network/profile/">Profile</a> /
+			<i>{{ .Name }}</i>
+		</p>
+	</div>
+	<hr>
+	<br>
+	<div class="content">
+		<div class="container">
+			<b>
+				<a href="/network/archive/{{ .Name }}">Archive</a> |
+				<a href="/network/email/read/{{ .Name }}">Email</a> | 
+				<a href="/network/chat/{{ .Name }}">Chat</a> | 
+			</b>
+			<form method="POST" action="/network/">
+				<input type="hidden" name="addr" value="{{ .Name }}">
+				<input type="submit" name="delete" value="Disconnect">
+			</form>
+		</div>
+	<p> 	
+		<b>Node</b> = {{ .Name }}<br>
+		<b>Info</b> = <br> 
+		<textarea readonly>{{ .Info }}</textarea> <br> 
+	</p>
+	</div>	
+{{ end }}

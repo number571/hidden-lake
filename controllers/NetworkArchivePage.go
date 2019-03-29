@@ -13,7 +13,13 @@ import (
 
 func NetworkArchivePage(w http.ResponseWriter, r *http.Request) {
     if r.URL.Path == "/network/archive/" {
-        redirectTo("404", w, r)
+        var data = dataMessages {
+            Connections: settings.User.Connections,
+        }
+
+        tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_archive.html")
+        utils.CheckError(err)
+        tmpl.Execute(w, data)
         return
     }
 
@@ -61,7 +67,7 @@ func NetworkArchivePage(w http.ResponseWriter, r *http.Request) {
         }
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_archive.html")
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_archive_X.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }

@@ -13,7 +13,6 @@ import (
 
 func ClientTCP() {
     Connect(settings.User.WhiteList)
-
     go findConnects(10)
 
     for {

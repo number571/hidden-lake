@@ -3,19 +3,18 @@ package main
 import (
 	"os"
 	"fmt"
+	"net/http"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+
+	"./utils"
 	"./connect"
 	"./settings"
-)
-
-import (
-	"net/http"
-	"./utils"
 	"./controllers"
 )
 
 func main() {
+	// Create and launch database
 	settings.CreateDatabase("database.db")
 
 	db, err := sql.Open("sqlite3", "database.db")
@@ -23,13 +22,21 @@ func main() {
 	defer db.Close()
 
 	settings.DataBase = db
-	settings.Initialization(os.Args)
 
-	fmt.Println("Server is listening...")
+	// Argument checking
+	var gui_interface = settings.Initialization(os.Args)
+
+	// Launch node
+	fmt.Println("[Server is listening]")
+	if gui_interface {
+		go ClientHTTP()
+	}
 
 	go connect.ClientTCP()
-	go connect.ServerTCP()
+	connect.ServerTCP()
+}
 
+func ClientHTTP() {
 	http.Handle("/static/", http.StripPrefix(
 		"/static/", 
 		controllers.HandleFileServer(http.Dir(settings.PATH_STATIC))),

@@ -3,17 +3,25 @@
 {{ end }}
 
 {{ define "content" }}
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/">Home</a> /
+            <a href="/network/">Network</a> /
+            <a href="/network/email/">Email</a> /
+            <a href="/network/email/read/">Read</a> /
+            {{ if .Emails }}
+                {{ $data := index .Emails 0 }}
+                <a href="/network/email/read/{{ $data.User }}">{{ $data.User }}</a> /
+                <i>{{ $data.Id }}</i>
+            {{ end }}
+        </p>
+    </div>
     <hr>
-    <b>
-        <a href="/network/email/read/">Back to Read</a>
-        {{ if .Emails }}
-            {{ $data := index .Emails 0 }}
-             | <a href="/network/email/read/{{ $data.User }}">Back to Node</a>
-        {{ end }}
-        <hr>
-    </b>
+    <br>
+    <div class="content">
     {{ if .Emails }}
         {{ $data := index .Emails 0 }}
+        <p>
         --------------------------------------------------------------------------------------------------
         <br> | Title: {{ $data.Title }} <br>
         --------------------------------------------------------------------------------------------------
@@ -21,8 +29,10 @@
         --------------------------------------------------------------------------------------------------
         <br> | From: <a href="/network/profile/{{ $data.User }}">{{ $data.User }}</a> <br> 
         --------------------------------------------------------------------------------------------------
+        </p>
         <br>
     {{ else }}
         Email is not found!
     {{ end }}
+    </div>
 {{ end }}

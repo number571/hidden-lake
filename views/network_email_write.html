@@ -3,15 +3,21 @@
 {{ end }}
 
 {{ define "content" }}
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/">Home</a> /
+            <a href="/network/">Network</a> /
+            <a href="/network/email/">Email</a> /
+            <i>Write</i>
+        </p>
+    </div>
     <hr>
+    <br>
+    <div class="content">
     {{ if eq .Error 1 }}
-        <p>
-            Message is not sent!
-        </p>
+        <p> Message is not sent! </p>
     {{ else if eq .Error -1 }}
-        <p>
-            Message is sent!
-        </p>
+        <p> Message is sent! </p>
     {{ end }}
     <form method="POST" action="/network/email/write/">
         <select name="node">
@@ -26,4 +32,5 @@
         <textarea rows="8" cols="30" name="body" placeholder="Message"></textarea><br>
         <input type="submit" name="send" value="Send">
     </form>
+    </div>
 {{ end }}

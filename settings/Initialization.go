@@ -10,9 +10,10 @@ import (
     "../encoding"
 )
 
-func Initialization(args []string) {
+func Initialization(args []string) bool {
     var (
         flag_address bool
+        flag_interface bool
         flag_white_list bool
         flag_black_list bool
         flag_private_key bool
@@ -26,6 +27,11 @@ func Initialization(args []string) {
 
     for _, value := range args[1:] {
         switch value {
+            // Arguments without parameters
+            case "-i", "--interface": 
+                flag_interface = true
+                continue
+
             // Arguments with parameters
             case "-a", "--address": 
                 flag_address = true
@@ -73,8 +79,24 @@ func Initialization(args []string) {
     os.Mkdir(PATH_KEYS, 0777)
     os.Mkdir(PATH_ARCHIVE, 0777)
 
+    // Profile info
+    if !utils.FileIsExist(PATH_CONFIG + "profile_info.cfg") {
+        var default_info = "default info"
+        utils.WriteFile(PATH_CONFIG + "profile_info.cgf", default_info)
+        User.Info = default_info
+    } else {
+        User.Info = utils.ReadFile(PATH_CONFIG + "profile_info.cgf")
+    }
+
     initDataBase()
     checkConfig(change_config)
+    return flag_interface
+}
+
+func CreateDatabase(name string) {
+    if !utils.FileIsExist(name) {
+        utils.WriteFile(name, "")
+    }
 }
 
 func initDataBase() {
@@ -95,12 +117,6 @@ CREATE TABLE GlobalMessages (
 );
 `)
     utils.CheckError(err)
-}
-
-func CreateDatabase(name string) {
-    if !utils.FileIsExist(name) {
-        utils.WriteFile(name, "")
-    }
 }
 
 func checkConfig(config [3]string) {

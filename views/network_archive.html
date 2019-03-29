@@ -3,19 +3,23 @@
 {{ end }}
 
 {{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<a href="/network/">Network</a> /
+			<i>Archive</i>
+		</p>
+	</div>
 	<hr>
-	{{ if not .Files }}
-		<p>Nothing</p>
+	<br>
+	<div class="content">
+	{{ if .Connections }}
+		<b>Connections</b> = 
+		{{ range .Connections }}
+			<br>| <a href="/network/archive/{{ . }}">{{ . }}</a>
+		{{ end }}
 	{{ else }}
-		<form method="POST" action="/archive/">
-			<select name="filename">
-				{{ range .Files }}
-				<option value="{{ . }}">
-					{{ . }}
-				</option>
-				{{ end }}
-			</select>
-			<input type="submit" name="download" value="Download">
-		</form>
+		<p>Nothing</p>
 	{{ end }}
+	</div>
 {{ end }}

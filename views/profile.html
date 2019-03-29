@@ -3,17 +3,25 @@
 {{ end }}
 
 {{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<i>Profile</i>
+		</p>
+	</div>
 	<hr>
+	<br>
+	<div class="content">
 	<p> 
 		<form name="INFO" method="POST" action="/profile/">
-			<b>Name</b> = {{ .Name }} <br>
-			<b>IPv4</b> = {{ .IPv4 }} <br>
-			<b>Port</b> = {{ .Port }} <br> 
-			<b>Info</b> = <br>
-			<textarea type="text" name="info" rows="5" cols="30">{{ .Info }}</textarea> <br>
-			<input type="submit" name="set_info" value="Set info">
+			<p>
+				<b>Node</b> = {{ .Name }} <br>
+				<b>IPv4:Port</b> = {{ .IPv4 }}{{ .Port }} <br>
+				<b>Info</b> = <input type="submit" name="set_info" value="Set info"> <br>
+			</p>
+			<textarea type="text" name="info">{{ .Info }}</textarea> <br>
 		</form>
-		<br>
+		<p>
 		<b>Connections</b> = 
 	{{ if not .Connections }}
 		None 
@@ -22,5 +30,7 @@
 				<br>| {{ . }}
 			{{ end }}
 	{{ end }}
+		</p>
 	</p>
+	</div>
 {{ end }}

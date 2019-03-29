@@ -1,0 +1,38 @@
+{{ define "title" }}
+	Chat
+{{ end }}
+
+{{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<a href="/">Home</a> /
+			<a href="/network/">Network</a> /
+			<a href="/network/chat/">Chat</a> /
+			{{ if .TempConnect }}
+				<i>{{ .TempConnect }}</i>
+			{{ else }}
+				<i>None</i>
+			{{ end }}
+		</p>
+	</div>
+	<hr>
+	<br>
+	<div class="content">
+	{{ if .TempConnect }}
+		<form method="POST" action="/network/chat/{{ .TempConnect}}">
+			<b>
+				<a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
+				<a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
+				<a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
+			</b>
+
+			<textarea readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea> <br>
+			<input class="input_size" type="text" name="text" placeholder="Message...">
+			<input autofocus type="submit" name="send_message" value="Send message">
+			<input type="submit" name="delete_message" value="Delete messages">
+		</form>
+	{{ else }}
+		Nothing
+	{{ end }}
+	</div>
+{{ end }}
