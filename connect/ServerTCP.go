@@ -216,7 +216,16 @@ func ServerTCP() {
                                 pack.From.Name,
                             )
                             settings.User.NodeConnection[pack.From.Name] = 1
+                            _, err = settings.DataBase.Exec(`
+DROP TABLE IF EXISTS Local` + pack.From.Name + `;
+CREATE TABLE Local` + pack.From.Name + ` (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    User VARCHAR(128),
+    Body TEXT
+);
+`)
                             settings.Mutex.Unlock()
+                            utils.CheckError(err)
                         } else {
                             nullNode(pack.From.Name)
                         }
