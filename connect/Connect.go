@@ -22,10 +22,11 @@ func Connect(slice []string) {
             }
         }
 
-        var new_pack = settings.Package {
+        var new_pack = settings.PackageTCP {
             From: models.From {
                 Address: address,
-                Name: settings.User.Name,
+                Login: settings.User.Login,
+                Name: settings.User.Hash,
             },
             Head: models.Head {
                 Header: settings.HEAD_CONNECT,

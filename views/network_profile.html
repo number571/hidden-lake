@@ -5,7 +5,6 @@
 {{ define "content" }}
 	<div class="div_bread wrapper">
 		<p class="bread"> /
-			<a href="/">Home</a> /
 			<a href="/network/">Network</a> /
 			<i>Profile</i>
 		</p>
@@ -13,15 +12,16 @@
 	<hr>
 	<br>
 	<div class="content">
-	<p>
-	{{ if .Connections }}
-		<b>Connections</b> = 
-		{{ range .Connections }}
-			<br>| <a href="/network/profile/{{ . }}">{{ . }}</a>
-		{{ end }}
-	{{ else }}
-		<p>Nothing</p>
-	{{ end }}
-	</p>
+		<p>
+	        {{ if .Connections }}
+	            <b>Connections = </b> 
+	            {{ range .Connections }}
+	                <br>
+	                <a href="/network/profile/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+	            {{ end }}
+	        {{ else }}
+	            None connections
+	        {{ end }}
+	    </p>
 	</div>
 {{ end }}

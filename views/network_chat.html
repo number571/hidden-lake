@@ -1,29 +1,57 @@
 {{ define "title" }}
-	Chat
+    Chat
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
-			<a href="/">Home</a> /
-			<a href="/network/">Network</a> /
-			<i>Chat</i>
-		</p>
-	</div>
-	<hr>
-	<br>
-	<div class="content">
-	<p>|> <b><a href="/network/chat/global/">Global chat</a></b></p>
-	<br>
-	<p>
-	{{ if .Connections }}
-		<b>Connections</b> = 
-		{{ range .Connections }}
-			<br>| <a href="/network/chat/{{ . }}">{{ . }}</a>
-		{{ end }}
-	{{ else }}
-		Nothing
-	{{ end }}
-	</p>
-	</div>
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/network/">Network</a> /
+            <i>Chat</i>
+        </p>
+    </div>
+    <hr>
+    <div class="content">
+        <div class="left_div">
+            <br><p>|> <b><a href="/network/chat/">Global chat</a></b></p><br>
+            <p>
+            {{ if .Connections }}
+                <b>Connections = </b> 
+                {{ range .Connections }}
+                    <br>
+                    <a href="/network/chat/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+                {{ end }}
+            {{ else }}
+                None connections
+            {{ end }}
+            </p>
+        </div>
+        <div class="right_div">
+            <input type="submit" name="delete_message" value="Delete messages">
+            <textarea id="plain" readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea>
+            <form method="POST" accept="/network/chat/">
+                <input class="input_size" type="text" name="text" placeholder="Send message...">
+                <input autofocus type="submit" name="send_message" value="Send message">
+            </form>
+            <script>  
+                function show() {  
+                    $.ajax({  
+                        type: "POST",
+                        url: "/api/chat/global/update",  
+                        cache: false,  
+                        success: function(obj) {
+                            console.log(obj);
+                            if (obj.Exists) {
+                                $("#plain").html($("#plain").val() + obj.Body);  
+                            }
+                        },
+                    }).done(function(obj){
+                        show();
+                    });  
+                }  
+                $(document).ready(function(){  
+                    show();
+                });  
+            </script> 
+        </div>
+    </div>
 {{ end }}

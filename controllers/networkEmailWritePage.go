@@ -10,28 +10,27 @@ import (
     "../connect"
 )
 
-func NetworkEmailWritePage(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/network/email/write/" {
+func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
+    if !settings.User.Auth {
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
+        return
+    }
+    
+    if r.URL.Path != "/network/email/write" {
         redirectTo("404", w, r)
         return
     }
 
-    var data = dataConnections{
-        Connections: settings.User.Connections,
-        Error: 0,
-    }
+    var err_page int8
 
     if r.Method == "POST" {
         var node = r.FormValue("node")
         if node == "none" {
-            data = dataConnections{
-                Connections: settings.User.Connections,
-                Error: 1,
-            }
+            err_page = 1
         } else {
-            var new_pack = settings.Package {
+            var new_pack = settings.PackageTCP {
                 From: models.From {
-                    Name: settings.User.Name,
+                    Name: settings.User.Hash,
                 },
                 To: node,
                 Head: models.Head {
@@ -45,14 +44,23 @@ func NetworkEmailWritePage(w http.ResponseWriter, r *http.Request) {
             }
             connect.SendEncryptedPackage(new_pack)
 
-            data = dataConnections{
-                Connections: settings.User.Connections,
-                Error: -1,
-            }
+            err_page = -1
         }
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_email_write.html")
+    var data = struct {
+        Auth bool
+        Login string
+        Connections []string
+        Error int8
+    } {
+        Auth: true,
+        Login: settings.User.Login,
+        Connections: settings.User.Connections,
+        Error: err_page,
+    }
+
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_write.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }

@@ -5,10 +5,9 @@
 {{ define "content" }}
 	<div class="div_bread wrapper">
 		<p class="bread"> /
-			<a href="/">Home</a> /
 			<a href="/network/">Network</a> /
 			<a href="/network/profile/">Profile</a> /
-			<i>{{ .Name }}</i>
+			<i>{{ .UserHash }}</i>
 		</p>
 	</div>
 	<hr>
@@ -16,19 +15,22 @@
 	<div class="content">
 		<div class="container">
 			<b>
-				<a href="/network/archive/{{ .Name }}">Archive</a> |
-				<a href="/network/email/read/{{ .Name }}">Email</a> | 
-				<a href="/network/chat/{{ .Name }}">Chat</a> | 
+				<a href="/network/profile/{{ .UserHash }}">Profile</a> | 
+				<a href="/network/chat/{{ .UserHash }}">Chat</a> | 
+				<a href="/network/email/read/{{ .UserHash }}">Email</a> | 
+				<a href="/network/archive/{{ .UserHash }}">Archive</a> |
 			</b>
 			<form method="POST" action="/network/">
-				<input type="hidden" name="addr" value="{{ .Name }}">
+				<input type="hidden" name="addr" value="{{ .UserHash }}">
 				<input type="submit" name="delete" value="Disconnect">
 			</form>
 		</div>
-	<p> 	
-		<b>Node</b> = {{ .Name }}<br>
-		<b>Info</b> = <br> 
-		<textarea readonly>{{ .Info }}</textarea> <br> 
-	</p>
+		<p>
+			<b>Login</b> = {{ .UserLogin }} <br>
+			<b>Hash</b> = {{ .UserHash }} <br>
+			<b>Status</b> = {{ if .Status }} Connected {{ else }} NotConnected {{ end }} <br>
+			<b>PublicKey</b> = <br>
+			{{ .PublicKey }} <br>
+		</p>
 	</div>	
 {{ end }}

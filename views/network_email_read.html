@@ -5,7 +5,6 @@
 {{ define "content" }}
     <div class="div_bread wrapper">
         <p class="bread"> /
-            <a href="/">Home</a> /
             <a href="/network/">Network</a> /
             <a href="/network/email/">Email</a> /
             <i>Read</i>
@@ -38,7 +37,9 @@
             {{ end }}
         </table>
     {{ else }}
-        Nothing
+        <p>
+            Nothing
+        </p>
     {{ end }}
     </div>
 {{ end }}

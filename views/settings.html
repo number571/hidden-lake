@@ -1,0 +1,28 @@
+{{ define "title" }}
+	Settings
+{{ end }}
+
+{{ define "content" }}
+	<div class="div_bread wrapper">
+		<p class="bread"> /
+			<i>Settings</i>
+		</p>
+	</div>
+	<hr>
+	<br>
+	<div class="content">
+	<p>
+		<form method="POST" action="/settings">
+			<p>
+				<b>Login</b> = {{ .Login }} <br>
+				<b>Hash</b> = {{ .Hash }} <br>
+				<b>IPv4</b> = <input type="text" name="ipv4" placeholder="127.0.0.1" value="{{ .IPv4 }}">  <br>
+				<b>Port</b> = <input type="text" name="port" placeholder="8080" value="{{ .Port }}"> <br>
+				<textarea name="conn" placeholder="Connections...">{{ .Conn }}</textarea>
+				<input type="submit" name="submit" value="Save connections"> <br>
+				<b>PublicKey</b> = <br>
+				{{ .PublicKey }} <br>
+			</p>
+		</form>
+	</div>
+{{ end }}

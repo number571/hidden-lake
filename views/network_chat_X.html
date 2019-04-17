@@ -1,38 +1,74 @@
 {{ define "title" }}
-	Chat
+    Chat
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
-			<a href="/">Home</a> /
-			<a href="/network/">Network</a> /
-			<a href="/network/chat/">Chat</a> /
-			{{ if .TempConnect }}
-				<i>{{ .TempConnect }}</i>
-			{{ else }}
-				<i>None</i>
-			{{ end }}
-		</p>
-	</div>
-	<hr>
-	<br>
-	<div class="content">
-	{{ if .TempConnect }}
-		<form method="POST" action="/network/chat/{{ .TempConnect}}">
-			<b>
-				<a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
-				<a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
-				<a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
-			</b>
-
-			<textarea readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea> <br>
-			<input class="input_size" type="text" name="text" placeholder="Message...">
-			<input autofocus type="submit" name="send_message" value="Send message">
-			<input type="submit" name="delete_message" value="Delete messages">
-		</form>
-	{{ else }}
-		Nothing
-	{{ end }}
-	</div>
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/network/">Network</a> /
+            <a href="/network/chat/">Chat</a> /
+            {{ if .TempConnect }}
+                <i>{{ .TempConnect }}</i>
+            {{ else }}
+                <i>None</i>
+            {{ end }}
+        </p>
+    </div>
+    <hr>
+    <div class="content">
+        <div class="left_div">
+            <br><p>|> <b><a href="/network/chat/">Global chat</a></b></p><br>
+            <p>
+            {{ if .Connections }}
+                <b>Connections = </b> 
+                {{ range .Connections }}
+                    <br>
+                    <a href="/network/chat/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+                {{ end }}
+            {{ else }}
+                None connections
+            {{ end }}
+            </p>
+        </div>
+        <div class="right_div">
+            {{ if .TempConnect }}
+                <form method="POST" action="/network/chat/{{ .TempConnect}}">
+                    <b>
+                        <a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
+                        <a href="/network/chat/{{ .TempConnect }}">Chat</a> | 
+                        <a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
+                        <a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
+                        <input type="submit" name="delete_message" value="Delete messages">
+                    </b>
+                    <textarea id="plain" readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea> <br>
+                    {{ if .Status }}
+                        <input class="input_size" type="text" name="text" placeholder="Message...">
+                        <input autofocus type="submit" name="send_message" value="Send message">
+                    {{ end }}
+                </form>
+                <script>  
+                    function show() {  
+                        $.ajax({  
+                            type: "POST",
+                            url: "/api/chat/{{ .TempConnect }}/update",  
+                            cache: false,  
+                            success: function(obj) {
+                                console.log(obj);
+                                if (obj.Exists) {
+                                    $("#plain").html($("#plain").val() + obj.Body);  
+                                }
+                            },
+                        }).done(function(obj){
+                            show();
+                        });  
+                    }  
+                    $(document).ready(function(){  
+                        show();
+                    });  
+                </script> 
+            {{ else }}
+                Nothing
+            {{ end }}
+        </div>
+    </div>
 {{ end }}

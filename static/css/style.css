@@ -38,6 +38,15 @@ body {
     position: relative;
 }
 
+#login_form {
+    text-align: center;
+}
+
+#login_form > * {
+    display: inline-block; 
+    text-align: left;
+}
+
 .content {
     overflow: auto;
 }
@@ -177,6 +186,17 @@ main, footer {
     border-bottom: 1px solid #333333;
     border-left: 1px solid #CCCCCC;
     opacity: 0.8;
+}
+
+.left_div {
+    margin-left: 2em;
+    float: left;
+}
+
+.right_div {
+    width: 35em;
+    float: right;
+    margin-right: 2em;
 }
 
 .container > * {

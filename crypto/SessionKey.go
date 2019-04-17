@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 )
 
-func SessionKey (max int32) []byte {
+func SessionKey (max int) []byte {
     var slice []byte = make([]byte, max)
     _, err := rand.Read(slice)
     if err != nil { return nil }

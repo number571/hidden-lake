@@ -6,10 +6,23 @@ import (
     "html/template"
     "../utils"
     "../models"
+    "../crypto"
     "../settings"
 )
 
-func NetworkEmailReadPage(w http.ResponseWriter, r *http.Request) {
+func networkEmailReadPage(w http.ResponseWriter, r *http.Request) {
+    if !settings.User.Auth {
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
+        return
+    }
+
+    var data = struct {
+        Auth bool
+        Login string
+        UserHash string
+        Emails []models.Email
+    } {}
+    
     var emails []models.Email
     var email models.Email
 
@@ -33,16 +46,17 @@ func NetworkEmailReadPage(w http.ResponseWriter, r *http.Request) {
                 &email.Date,
             )
             utils.CheckError(err)
+            crypto.DecryptEmail(settings.User.Password, &email)
             emails = append(emails, email)
         }
 
         rows.Close()
 
-        var data = dataEmail {
-            Emails: emails,
-        }
+        data.Auth = true
+        data.Login = settings.User.Login
+        data.Emails = emails
 
-        tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_email_read.html")
+        tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read.html")
         utils.CheckError(err)
         tmpl.Execute(w, data)
         return
@@ -53,7 +67,10 @@ func NetworkEmailReadPage(w http.ResponseWriter, r *http.Request) {
 
     switch len(slice) {
         case 1: 
-            rows, err := settings.DataBase.Query("SELECT Id, Title, User, Date FROM Email WHERE User=$1", username)
+            rows, err := settings.DataBase.Query(
+                "SELECT Id, Title, User, Date FROM Email WHERE User=$1", 
+                username,
+            )
             utils.CheckError(err)
 
             for rows.Next() {
@@ -64,23 +81,29 @@ func NetworkEmailReadPage(w http.ResponseWriter, r *http.Request) {
                     &email.Date,
                 )
                 utils.CheckError(err)
+                crypto.DecryptEmail(settings.User.Password, &email)
                 emails = append(emails, email)
             }
 
             rows.Close()
 
-            var data = dataEmail{
-                Emails: emails,
-            }
+            data.Auth = true
+            data.Login = settings.User.Login
+            data.UserHash = username
+            data.Emails = emails
 
-            tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_email_read_X.html")
+            tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read_X.html")
             utils.CheckError(err)
             tmpl.Execute(w, data)
             return
 
         case 2: 
             var id = slice[1]
-            rows, err := settings.DataBase.Query("SELECT * FROM Email WHERE User=$1 AND Id=$2", username, id)
+            rows, err := settings.DataBase.Query(
+                "SELECT * FROM Email WHERE User=$1 AND Id=$2", 
+                username, 
+                id,
+            )
             utils.CheckError(err)
 
             for rows.Next() {
@@ -92,16 +115,18 @@ func NetworkEmailReadPage(w http.ResponseWriter, r *http.Request) {
                     &email.Date,
                 )
                 utils.CheckError(err)
+                crypto.DecryptEmail(settings.User.Password, &email)
                 emails = append(emails, email)
             }
 
             rows.Close()
 
-            var data = dataEmail {
-                Emails: emails,
-            }
+            data.Auth = true
+            data.Login = settings.User.Login
+            data.UserHash = username
+            data.Emails = emails
 
-            tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_email_read_X_Y.html")
+            tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read_X_Y.html")
             utils.CheckError(err)
             tmpl.Execute(w, data)
             return

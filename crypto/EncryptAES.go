@@ -6,7 +6,16 @@ import (
     "crypto/aes"
     "crypto/rand"
     "crypto/cipher"
+    "encoding/hex"
 )
+
+func Encrypt(session_key []byte, data string) string {
+    result, _ := EncryptAES(
+        []byte(data),
+        session_key,
+    )
+    return hex.EncodeToString(result)
+}
 
 func EncryptAES(data, key []byte) ([]byte, error) {
     block, err := aes.NewCipher(key)

@@ -3,7 +3,17 @@ package crypto
 import (
     "crypto/aes"
     "crypto/cipher"
+    "encoding/hex"
 )
+
+func Decrypt(session_key []byte, data string) string {
+    decoded, _ := hex.DecodeString(data)
+    result, _ := DecryptAES(
+        decoded,
+        session_key,
+    )
+    return string(result)
+}
 
 func DecryptAES(data, key []byte) ([]byte, error) {
     block, err := aes.NewCipher(key)

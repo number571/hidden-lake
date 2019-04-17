@@ -5,7 +5,6 @@
 {{ define "content" }}
     <div class="div_bread wrapper">
         <p class="bread"> /
-            <a href="/">Home</a> /
             <a href="/network/">Network</a> /
             <a href="/network/email/">Email</a> /
             <a href="/network/email/read/">Read</a> /
@@ -20,6 +19,14 @@
     <hr>
     <br>
     <div class="content">
+    <div class="container">
+        <b>
+            <a href="/network/profile/{{ .UserHash }}">Profile</a> | 
+            <a href="/network/chat/{{ .UserHash }}">Chat</a> | 
+            <a href="/network/email/read/{{ .UserHash }}">Email</a> | 
+            <a href="/network/archive/{{ .UserHash }}">Archive</a> |
+        </b>
+    </div>
     {{ if .Emails }}
         <table border="1" width="100%" cellpadding="5">
             <tr>
@@ -43,7 +50,9 @@
             {{ end }}
         </table>
     {{ else }}
-        No messages!
+        <p>
+            No messages!
+        </p>
     {{ end }}
     </div>
 {{ end }}

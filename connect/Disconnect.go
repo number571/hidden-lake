@@ -1,18 +1,16 @@
 package connect
 
 import (
-    "fmt"
     "../models"
     "../settings"
 )
 
 func Disconnect(slice []string) {
     for _, addr := range slice {
-        fmt.Println("|", addr)
-        var new_pack = settings.Package {
+        var new_pack = settings.PackageTCP {
             From: models.From {
                 Address: settings.User.IPv4 + settings.User.Port,
-                Name: settings.User.Name,
+                Name: settings.User.Hash,
             },
             To: addr,
             Head: models.Head {

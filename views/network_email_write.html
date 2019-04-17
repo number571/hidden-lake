@@ -5,7 +5,6 @@
 {{ define "content" }}
     <div class="div_bread wrapper">
         <p class="bread"> /
-            <a href="/">Home</a> /
             <a href="/network/">Network</a> /
             <a href="/network/email/">Email</a> /
             <i>Write</i>
@@ -19,7 +18,7 @@
     {{ else if eq .Error -1 }}
         <p> Message is sent! </p>
     {{ end }}
-    <form method="POST" action="/network/email/write/">
+    <form method="POST" action="/network/email/write">
         <select name="node">
             <option value="none">Usernode</option>
             {{ range .Connections }}

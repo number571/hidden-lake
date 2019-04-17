@@ -1,0 +1,23 @@
+{{ define "title" }}
+	Login
+{{ end }}
+
+{{ define "content" }}
+	<hr>
+	<div id="login_form">
+		{{ if .Auth }}
+			<p>You are success login!</p>
+		{{ else }}
+			<form method="POST" action="/login">
+				<p>
+					{{ if not (eq .Code 0) }}
+						{{ .Result }}
+					{{ end }}
+				</p>
+				<input type="text" name="login" placeholder="Username..."> <br>
+				<input type="password" name="password" placeholder="Password..."> <br>
+				<input type="submit" name="submit" value="Login">
+			</form>
+		{{ end }}
+	</div>
+{{ end }}

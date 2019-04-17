@@ -12,9 +12,9 @@ import (
     "../settings"
 )
 
-func ArchivePage(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/archive/" {
-        redirectTo("404", w, r)
+func archivePage(w http.ResponseWriter, r *http.Request) {
+    if !settings.User.Auth {
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
     }
 
@@ -33,9 +33,9 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
             )
 
         } else if _, ok := r.Form["download"]; ok {
-            var new_pack = settings.Package {
+            var new_pack = settings.PackageTCP {
                 From: models.From {
-                    Name: settings.User.Name,
+                    Name: settings.User.Hash,
                 },
                 To: settings.User.TempConnect,
                 Head: models.Head {
@@ -52,7 +52,14 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
     files, err := ioutil.ReadDir(settings.PATH_ARCHIVE)
     utils.CheckError(err)
 
-    var data = fileArchive {
+    var data = struct {
+        Auth bool
+        Login string
+        Files []string
+        TempConnect string
+    } {
+        Auth: true,
+        Login: settings.User.Login,
         TempConnect: settings.User.TempConnect,
     }
 
@@ -60,7 +67,7 @@ func ArchivePage(w http.ResponseWriter, r *http.Request) {
         data.Files = append(data.Files, file.Name())
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "archive.html")
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "archive.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }

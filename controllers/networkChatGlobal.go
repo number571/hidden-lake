@@ -7,15 +7,20 @@ import (
     "html/template"
     "../utils"
     "../models"
+    "../crypto"
     "../connect"
     "../settings"
 )
 
-func NetworkChatGlobalPage(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/network/chat/global/" {
-        redirectTo("404", w, r)
+func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []models.ConnStatus) {
+    if !settings.User.Auth {
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
     }
+
+    go func() {
+        settings.Messages.NewDataExistGlobal <- true
+    }()
 
     if r.Method == "POST" {
         r.ParseForm()
@@ -27,9 +32,9 @@ func NetworkChatGlobalPage(w http.ResponseWriter, r *http.Request) {
             var message = strings.TrimSpace(r.FormValue("text"))
             if message != "" {
                 for _, username := range settings.User.Connections {
-                    var new_pack = settings.Package {
+                    var new_pack = settings.PackageTCP {
                         From: models.From {
-                        Name: settings.User.Name,
+                        Name: settings.User.Hash,
                         },
                         To: username,
                         Head: models.Head {
@@ -43,9 +48,13 @@ func NetworkChatGlobalPage(w http.ResponseWriter, r *http.Request) {
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(
                     "INSERT INTO GlobalMessages (User, Body) VALUES ($1, $2)",
-                    settings.User.Name,
-                    fmt.Sprintf("[%s]: %s\n", settings.User.Name, message),
+                    settings.User.Hash,
+                    crypto.Encrypt(
+                        settings.User.Password,
+                        fmt.Sprintf("[%s]: %s\n", settings.User.Login, message),
+                    ),
                 )
+                settings.Messages.CurrentIdGlobal++
                 settings.Mutex.Unlock()
                 utils.CheckError(err)
             }
@@ -60,14 +69,22 @@ func NetworkChatGlobalPage(w http.ResponseWriter, r *http.Request) {
 
     for rows.Next() {
         rows.Scan(&message)
-        messages = append(messages, message)
+        messages = append(messages, crypto.Decrypt(settings.User.Password, message))
     }
 
-    var data = dataMessages {
+    var data = struct {
+        Auth bool
+        Login string
+        Messages []string
+        Connections []models.ConnStatus
+    } {
+        Auth: true,
+        Login: settings.User.Login,
         Messages: messages,
+        Connections: list_of_status,
     }
 
-    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "index.html", settings.PATH_VIEWS + "network_chat_global.html")
+    tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_chat.html")
     utils.CheckError(err)
     tmpl.Execute(w, data)
 }
