@@ -57,12 +57,12 @@ var Messages = models.Messages {
 }
 
 const (
-    HEAD_EMAIL   = "[EMAIL]"
-    HEAD_ARCHIVE = "[ARCHIVE]"
-    HEAD_MESSAGE = "[MESSAGE]"
-    HEAD_CONNECT = "[CONNECT]"
-    HEAD_ERROR   = "[ERROR]"
-    HEAD_WARNING = "[WARNING]"
+    HEAD_EMAIL    = "[EMAIL]"
+    HEAD_ARCHIVE  = "[ARCHIVE]"
+    HEAD_MESSAGE  = "[MESSAGE]"
+    HEAD_CONNECT  = "[CONNECT]"
+    HEAD_WARNING  = "[WARNING]"
+    HEAD_REDIRECT = "[REDIRECT]"
 
     MODE_READ   = "[READ]"
     MODE_SAVE   = "[SAVE]"
@@ -90,6 +90,12 @@ const (
 
     DATABASE_NAME = "database.db"
     IPV4_TEMPLATE = "0.0.0.0"
+
+    DYNAMIC_ROUTING_NODES = true
+    QUAN_OF_ROUTING_NODES = 3
+
+    SESSION_KEY_BYTES = 32
+    ROUTING_KEY_BYTES = 16
 
     TIME_SLEEP = 1
     BUFF_SIZE = 512

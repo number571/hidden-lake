@@ -2,12 +2,116 @@ package connect
 
 import (
     "net"
+    "strings"
+    "encoding/hex"
     "encoding/json"
     "../utils"
     "../models"
     "../crypto"
     "../settings"
 )
+
+func onionOverlay(to string, quan uint8) string {
+    var (
+        list []string
+        result string
+    )
+
+    if settings.DYNAMIC_ROUTING_NODES {
+        list = append(list, to)
+    }
+
+    for node := range settings.User.NodeAddress {
+        if node == to { continue }
+        if quan == 0 { break }
+        list = append(list, node)
+        quan--
+    }
+
+    utils.Shuffle(list)
+
+    if !settings.DYNAMIC_ROUTING_NODES {
+        list = append(list, to)
+    }
+
+    for i := len(list)-1; i > 0; i-- {
+        var session_key = crypto.SessionKey(settings.ROUTING_KEY_BYTES)
+        encrypted_key, err := crypto.EncryptRSA(
+            session_key,
+            settings.User.NodePublicKey[list[i-1]],
+        )
+        utils.CheckError(err)
+
+        result = hex.EncodeToString(encrypted_key) + settings.SEPARATOR + 
+            crypto.Encrypt(session_key, list[i] + settings.SEPARATOR + result)
+    }
+
+    var session_key = crypto.SessionKey(settings.ROUTING_KEY_BYTES)
+    encrypted_key, err := crypto.EncryptRSA(
+        session_key,
+        settings.User.PublicKey,
+    )
+    utils.CheckError(err)
+
+    result = hex.EncodeToString(encrypted_key) + settings.SEPARATOR + 
+        crypto.Encrypt(session_key, list[0] + settings.SEPARATOR + result)
+
+    return result
+}
+
+func CreateRedirectPackage(pack *settings.PackageTCP) {
+    encrypted_hashname, err := crypto.EncryptRSA(
+        []byte(settings.User.Hash),
+        settings.User.NodePublicKey[pack.To],
+    )
+    utils.CheckError(err)
+    *pack = settings.PackageTCP {
+        From: models.From {
+            Name: pack.From.Name,
+            Address: onionOverlay(pack.To, settings.QUAN_OF_ROUTING_NODES),
+        },
+        Head: models.Head {
+            Header: settings.HEAD_REDIRECT,
+            Mode: hex.EncodeToString(encrypted_hashname) + settings.SEPARATOR +
+                crypto.Encrypt(
+                    settings.User.NodeSessionKey[pack.To], 
+                    settings.HEAD_MESSAGE + settings.SEPARATOR + settings.MODE_LOCAL,
+                ),
+        },
+        Body: crypto.Encrypt(settings.User.NodeSessionKey[pack.To], pack.Body),
+    }
+}
+
+func SendRedirectPackage(pack settings.PackageTCP) {
+    var data = strings.Split(pack.From.Address, settings.SEPARATOR)
+
+    decoded, err := hex.DecodeString(data[0])
+    utils.CheckError(err)
+
+    session_key, err := crypto.DecryptRSA(
+        []byte(decoded),
+        settings.User.PrivateKey,
+    )
+    utils.CheckError(err)
+
+    var result = crypto.Decrypt(session_key, data[1])
+    var addresses = strings.Split(result, settings.SEPARATOR)
+
+    var new_pack = settings.PackageTCP {
+        From: models.From {
+            Name: settings.User.Hash,
+            Address: strings.Join(addresses[1:], settings.SEPARATOR),
+        },
+        To: addresses[0],
+        Head: models.Head {
+            Header: pack.Head.Header,
+            Mode: pack.Head.Mode,
+        },
+        Body: pack.Body,
+    }
+
+    SendEncryptedPackage(new_pack)
+}
 
 func SendEncryptedPackage(pack settings.PackageTCP) int8 {
     if settings.User.NodeConnection[pack.To] != 1 {
@@ -18,6 +122,7 @@ func SendEncryptedPackage(pack settings.PackageTCP) int8 {
     var new_pack = settings.PackageTCP {
         From: models.From {
             Name: pack.From.Name,
+            Address: crypto.Encrypt(settings.User.NodeSessionKey[pack.To], pack.From.Address),
         },
         To: crypto.Encrypt(settings.User.NodeSessionKey[pack.To], pack.To),
         Head: models.Head {

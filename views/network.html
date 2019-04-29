@@ -11,28 +11,25 @@
 	<hr>
 	<br>
 	<div class="content">
-	<b>
-		<a href="/network/profile/">Profiles</a> | 
-		<a href="/network/chat/">Chat</a> |
-		<a href="/network/email/">Email</a> | 
-		<a href="/network/archive/">Archives</a> | 
-	</b>
-	<form method="POST" action="/network/">
-		<input type="text" name="addr" placeholder="127.0.0.1:7545" value="">
-		<input type="submit" name="add" value="Add">
-		<input type="submit" name="delete" value="Delete">
-	</form>
-	<p>
-		Connections = <br>
-			{{ if .Connections}}
-				{{ range .Connections }}
-					<a href="/network/profile/{{ . }}">{{ . }}</a><br>
-				{{ end }}
-			{{ else}}
-				None
-			{{end}}
-	</p>
-
+		<b>
+			<a href="/network/profile/">Profiles</a> | 
+			<a href="/network/chat/">Chat</a> |
+			<a href="/network/email/">Email</a> | 
+			<a href="/network/archive/">Archives</a> | 
+		</b>
+		<form method="POST" action="/network/">
+			<input type="text" name="addr" placeholder="127.0.0.1:7545" value="">
+			<input type="submit" name="add" value="Add">
+		</form>
+		<p>
+			Connections = <br>
+				{{ if .Connections}}
+					{{ range .Connections }}
+						<a href="/network/profile/{{ . }}">{{ . }}</a><br>
+					{{ end }}
+				{{ else}}
+					None
+				{{end}}
+		</p>
 	</div>
-	
 {{ end }}

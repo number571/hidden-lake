@@ -20,7 +20,7 @@ func apiChatLocal(w http.ResponseWriter, r *http.Request) {
         case "update": 
             updateChatLocal(w, slice[0])
         default: 
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_ERROR})
+            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_WARNING})
     } 
 }
 

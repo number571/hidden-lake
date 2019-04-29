@@ -37,10 +37,10 @@ func DecryptAES(data, key []byte) ([]byte, error) {
     mode := cipher.NewCBCDecrypter(block, iv)
     mode.CryptBlocks(data, data)
 
-    return PKCS5UnPadding(data), nil
+    return PKCS5Unpadding(data), nil
 }
 
-func PKCS5UnPadding(origData []byte) []byte {
+func PKCS5Unpadding(origData []byte) []byte {
     length := len(origData)
     unpadding := int(origData[length-1])
     return origData[:(length - unpadding)]

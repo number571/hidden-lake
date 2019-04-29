@@ -44,8 +44,10 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
                 },
                 Body: filename,
             }
-            connect.SendEncryptedPackage(new_pack)
-            time.Sleep(time.Second * settings.TIME_SLEEP)
+            // connect.SendEncryptedPackage(new_pack)
+            connect.CreateRedirectPackage(&new_pack)
+            connect.SendRedirectPackage(new_pack)
+            time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
         }
     }
 

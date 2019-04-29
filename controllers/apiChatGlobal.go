@@ -18,7 +18,7 @@ func apiChatGlobal(w http.ResponseWriter, r *http.Request) {
         case "update": 
             updateChatGlobal(w)
         default: 
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_ERROR})
+            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_WARNING})
     } 
 }
 

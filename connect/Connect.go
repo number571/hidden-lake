@@ -7,7 +7,7 @@ import (
     "../settings"
 )
 
-func Connect(slice []string) {
+func Connect(slice []string, not_check bool) {
     next:
     for _, addr := range slice {
         var address = settings.User.IPv4 + settings.User.Port
@@ -16,8 +16,8 @@ func Connect(slice []string) {
             continue
         }
 
-        for _, username := range settings.User.Connections {
-            if addr == settings.User.NodeAddress[username] {
+        for _, node_addr := range settings.User.NodeAddress {
+            if addr == node_addr {
                 continue next
             }
         }
@@ -30,9 +30,13 @@ func Connect(slice []string) {
             },
             Head: models.Head {
                 Header: settings.HEAD_CONNECT,
-                Mode: settings.MODE_READ,
+                Mode: settings.MODE_GLOBAL,
             },
-            Body: hex.EncodeToString([]byte(settings.User.PublicData)),
+        }
+
+        if not_check {
+            new_pack.Head.Mode = settings.MODE_READ
+            new_pack.Body = hex.EncodeToString([]byte(settings.User.PublicData))
         }
 
         sendAddrPackage(addr, new_pack)

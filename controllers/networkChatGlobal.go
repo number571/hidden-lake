@@ -31,7 +31,7 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
         } else if _, ok := r.Form["send_message"]; ok {
             var message = strings.TrimSpace(r.FormValue("text"))
             if message != "" {
-                for _, username := range settings.User.Connections {
+                for username := range settings.User.NodeAddress {
                     var new_pack = settings.PackageTCP {
                         From: models.From {
                         Name: settings.User.Hash,
@@ -43,7 +43,9 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
                         },
                         Body: message,
                     }
-                    connect.SendEncryptedPackage(new_pack)
+                    // connect.SendEncryptedPackage(new_pack)
+                    connect.CreateRedirectPackage(&new_pack)
+                    connect.SendRedirectPackage(new_pack)
                 }
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(

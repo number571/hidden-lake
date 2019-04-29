@@ -2,18 +2,19 @@
 
 ## Characteristics:
 1. Based on p2p network
-2. Implemented end-to-end encryption
-3. Symmetric algorithm = AES256-CBC
-4. Asymmetric algorithm = RSA2048-OAEP
-5. Cryptographic hash function = SHA256
+2. Implemented onion routing
+3. Implemented end-to-end encryption
+4. Symmetric algorithm = AES256-CBC
+5. Asymmetric algorithm = RSA2048-OAEP
+6. Cryptographic hash functions = MD5/SHA256
 
-<img src="/images/HiddenLake_GUI_1.png" alt="GUI_1"/>
-
-## Go version should be >= 1.10
+<img src="/images/HiddenLake_GUI_2.png" alt="GUI_2"/>
 
 ## Components are used:
 1. Go: go-sqlite3
 2. JS: jquery
+
+Go version should be >= 1.10
 
 ## Component installation:
 ```
@@ -54,16 +55,15 @@ $ ./main --address 127.0.0.1:8080 --login "user" --password "hello, world"
 4. [:address] = set address ipv4:port
 
 ## Commands in CLI client if authorized:
-1.  [:whoami] = get hashname
-2.  [:logout] = logout from authorized user
-3.  [:network] = get list of connections
-4.  [:send] = send local message to another user
-5.  [:email] = read or write email to another user
-6.  [:archive] = get list or download files from archive another user
-7.  [:history] = get local/global messages or delete messages
-8.  [:connect] = connect to another user
-9.  [:disconnect] = disconnect from user
-10. [] = send global message to another users
+1. [:whoami] = get hashname
+2. [:logout] = logout from authorized user
+3. [:network] = get list of connections
+4. [:send] = send local message to another user
+5. [:email] = read or write email to another user
+6. [:archive] = get list or download files from archive another user
+7. [:history] = get local/global messages or delete messages
+8. [:connect] = connect to another user
+9. [] = send global message to another users
 
 ## Run CLI/GUI client:
 > GUI work in browser on port 7545
@@ -72,6 +72,6 @@ $ ./main --address 127.0.0.1:8080 --login "user" --password "hello, world"
 $ ./main --interface
 $ firefox --new-window 127.0.0.1:7545
 ```
-<img src="/images/HiddenLake_GUI_2.png" alt="GUI_2"/>
+<img src="/images/HiddenLake_GUI_3.png" alt="GUI_3"/>
 
 ## [HiddenLake]

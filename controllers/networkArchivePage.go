@@ -18,6 +18,15 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
     }
     
     if r.URL.Path == "/network/archive/" {
+        var (
+            connects = make([]string, len(settings.User.NodeAddress))
+            index uint32
+        )
+        for username := range settings.User.NodeAddress {
+            connects[index] = username
+            index++
+        }
+
         var data = struct {
             Auth bool
             Login string
@@ -25,7 +34,7 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         } {
             Auth: true,
             Login: settings.User.Login,
-            Connections: settings.User.Connections,
+            Connections: connects,
         }
 
         tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_archive.html")
@@ -40,13 +49,10 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    for _, username := range settings.User.Connections {
-        if username == result {
-            settings.Mutex.Lock()
-            settings.User.TempConnect = username
-            settings.Mutex.Unlock()
-            break
-        }
+    if res, ok := settings.User.NodeAddress[result]; ok {
+        settings.Mutex.Lock()
+        settings.User.TempConnect = res
+        settings.Mutex.Unlock()
     }
 
     if settings.User.TempConnect == "" {
@@ -65,8 +71,10 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         },
     }
 
-    connect.SendEncryptedPackage(new_pack)
-    time.Sleep(time.Second * settings.TIME_SLEEP)
+    // connect.SendEncryptedPackage(new_pack)
+    connect.CreateRedirectPackage(&new_pack)
+    connect.SendRedirectPackage(new_pack)
+    time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
 
     var data = struct {
         Auth bool

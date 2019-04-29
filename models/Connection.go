@@ -6,5 +6,4 @@ type Connection struct {
 	NodeAddress map[string]string
 	NodeLogin map[string]string
 	DefaultConnections []string
-	Connections []string
 }

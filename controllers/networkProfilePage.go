@@ -30,11 +30,8 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         rows.Close()
 
         for index, value := range list_of_status {
-            for _, user := range settings.User.Connections {
-                if value.User == user {
-                    list_of_status[index].Status = true
-                    break
-                }
+            if _, ok := settings.User.NodeAddress[value.User]; ok {
+                list_of_status[index].Status = true
             }
         }
 
@@ -61,11 +58,8 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
     row.Scan(&user_hash, &login, &public_data)
 
     var status = false
-    for _, value := range settings.User.Connections {
-        if value == user_hash {
-            status = true
-            break
-        }
+    if _, ok := settings.User.NodeAddress[user_hash]; ok {
+        status = true
     }
 
     var data = struct {

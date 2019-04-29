@@ -42,10 +42,20 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
                     r.FormValue("body") + settings.SEPARATOR +
                     time.Now().Format(time.RFC850),
             }
-            connect.SendEncryptedPackage(new_pack)
-
+            // connect.SendEncryptedPackage(new_pack)
+            connect.CreateRedirectPackage(&new_pack)
+            connect.SendRedirectPackage(new_pack)
             err_page = -1
         }
+    }
+
+    var (
+        connects = make([]string, len(settings.User.NodeAddress))
+        index uint32
+    )
+    for username := range settings.User.NodeAddress {
+        connects[index] = username
+        index++
     }
 
     var data = struct {
@@ -56,7 +66,7 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
     } {
         Auth: true,
         Login: settings.User.Login,
-        Connections: settings.User.Connections,
+        Connections: connects,
         Error: err_page,
     }
 

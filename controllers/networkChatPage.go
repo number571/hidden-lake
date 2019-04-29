@@ -31,11 +31,8 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
     rows.Close()
 
     for index, value := range list_of_status {
-        for _, user := range settings.User.Connections {
-            if value.User == user {
-                list_of_status[index].Status = true
-                break
-            }
+        if _, ok := settings.User.NodeAddress[value.User]; ok {
+            list_of_status[index].Status = true
         }
     }
     
@@ -64,7 +61,9 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
                     },
                     Body: message,
                 }
-                connect.SendEncryptedPackage(new_pack)
+                // connect.SendEncryptedPackage(new_pack)
+                connect.CreateRedirectPackage(&new_pack)
+                connect.SendRedirectPackage(new_pack)
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(
                     "INSERT INTO Local" + settings.User.TempConnect + " (User, Body) VALUES ($1, $2)",
@@ -104,11 +103,8 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
     }
 
     var status = false
-    for _, value := range settings.User.Connections {
-        if settings.User.TempConnect == value {
-            status = true
-            break
-        }
+    if _, ok := settings.User.NodeAddress[settings.User.TempConnect]; ok {
+        status = true
     }
 
     go func() {

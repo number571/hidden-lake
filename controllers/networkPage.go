@@ -19,11 +19,17 @@ func networkPage(w http.ResponseWriter, r *http.Request) {
        r.ParseForm()
 
         if _, ok := r.Form["add"]; ok {
-            connect.Connect(strings.Split(r.FormValue("addr"), " "))
-
-        } else if _, ok := r.Form["delete"]; ok {
-            connect.Disconnect(strings.Split(r.FormValue("addr"), " "))
+            connect.Connect(strings.Split(r.FormValue("addr"), " "), false)
         }
+    }
+
+    var (
+        connects = make([]string, len(settings.User.NodeAddress))
+        index uint32
+    )
+    for username := range settings.User.NodeAddress {
+        connects[index] = username
+        index++
     }
 
     var data = struct {
@@ -33,7 +39,7 @@ func networkPage(w http.ResponseWriter, r *http.Request) {
     } {
         Auth: true,
         Login: settings.User.Login,
-        Connections: settings.User.Connections,
+        Connections: connects,
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network.html")
