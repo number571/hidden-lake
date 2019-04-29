@@ -91,7 +91,6 @@ const (
     DATABASE_NAME = "database.db"
     IPV4_TEMPLATE = "0.0.0.0"
 
-    DYNAMIC_ROUTING_NODES = true
     QUAN_OF_ROUTING_NODES = 3
 
     SESSION_KEY_BYTES = 32

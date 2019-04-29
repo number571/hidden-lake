@@ -49,9 +49,9 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    if res, ok := settings.User.NodeAddress[result]; ok {
+    if _, ok := settings.User.NodeAddress[result]; ok {
         settings.Mutex.Lock()
-        settings.User.TempConnect = res
+        settings.User.TempConnect = result
         settings.Mutex.Unlock()
     }
 
@@ -71,9 +71,8 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         },
     }
 
-    // connect.SendEncryptedPackage(new_pack)
     connect.CreateRedirectPackage(&new_pack)
-    connect.SendRedirectPackage(new_pack)
+    connect.SendInitRedirectPackage(new_pack)
     time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
 
     var data = struct {

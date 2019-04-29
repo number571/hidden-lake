@@ -1,12 +1,12 @@
 # HiddenLake
 
 ## Characteristics:
-1. Based on p2p network
-2. Implemented onion routing
-3. Implemented end-to-end encryption
-4. Symmetric algorithm = AES256-CBC
-5. Asymmetric algorithm = RSA2048-OAEP
-6. Cryptographic hash functions = MD5/SHA256
+1. Based on p2p network.
+2. Implemented onion routing.
+3. Implemented end-to-end encryption.
+4. Symmetric algorithm = AES256-CBC.
+5. Asymmetric algorithm = RSA2048-OAEP.
+6. Cryptographic hash functions = MD5/SHA256.
 
 <img src="/images/HiddenLake_GUI_2.png" alt="GUI_2"/>
 

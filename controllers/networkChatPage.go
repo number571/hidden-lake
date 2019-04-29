@@ -61,9 +61,8 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
                     },
                     Body: message,
                 }
-                // connect.SendEncryptedPackage(new_pack)
                 connect.CreateRedirectPackage(&new_pack)
-                connect.SendRedirectPackage(new_pack)
+                connect.SendInitRedirectPackage(new_pack)
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(
                     "INSERT INTO Local" + settings.User.TempConnect + " (User, Body) VALUES ($1, $2)",

@@ -43,9 +43,8 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
                         },
                         Body: message,
                     }
-                    // connect.SendEncryptedPackage(new_pack)
                     connect.CreateRedirectPackage(&new_pack)
-                    connect.SendRedirectPackage(new_pack)
+                    connect.SendInitRedirectPackage(new_pack)
                 }
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(

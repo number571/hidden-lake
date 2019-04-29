@@ -42,9 +42,8 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
                     r.FormValue("body") + settings.SEPARATOR +
                     time.Now().Format(time.RFC850),
             }
-            // connect.SendEncryptedPackage(new_pack)
             connect.CreateRedirectPackage(&new_pack)
-            connect.SendRedirectPackage(new_pack)
+            connect.SendInitRedirectPackage(new_pack)
             err_page = -1
         }
     }

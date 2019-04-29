@@ -7,7 +7,6 @@ import (
     "context"
     "strings"
     "io/ioutil"
-    "database/sql"
     "../utils"
     "../crypto"
     "../models"
@@ -96,9 +95,8 @@ func downloadNodeFiles(splited []string) {
             },
             Body: filename,
         }
-        // connect.SendEncryptedPackage(new_pack)
         connect.CreateRedirectPackage(&new_pack)
-        connect.SendRedirectPackage(new_pack)
+        connect.SendInitRedirectPackage(new_pack)
         time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
     }
 }
@@ -116,9 +114,8 @@ func listNodeArchive(splited []string) {
                 Mode: settings.MODE_READ_LIST,
             }, 
         }
-        // connect.SendEncryptedPackage(new_pack)
         connect.CreateRedirectPackage(&new_pack)
-        connect.SendRedirectPackage(new_pack)
+        connect.SendInitRedirectPackage(new_pack)
         time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
         fmt.Printf("| %s:\n", name)
         for _, file := range settings.User.TempArchive {
@@ -207,31 +204,29 @@ func emailWrite(splited []string, length int) {
             set_email.body + settings.SEPARATOR +
             time.Now().Format(time.RFC850),
     }
-    // connect.SendEncryptedPackage(new_pack)
     connect.CreateRedirectPackage(&new_pack)
-    connect.SendRedirectPackage(new_pack)
+    connect.SendInitRedirectPackage(new_pack)
 }
 
 // Read email.
 func emailRead(splited []string, length int) {
-    var rows *sql.Rows
     switch length {
-        case 2: emailReadAll(splited, rows)
-        case 3: emailReadAllByUser(splited, rows)
-        case 4: emailReadByUserAndId(splited, rows)
+        case 2: emailReadAll(splited)
+        case 3: emailReadAllByUser(splited)
+        case 4: emailReadByUserAndId(splited)
     }
-    rows.Close()
 }
 
 // Read list of emails by all nodes.
-func emailReadAll(splited []string, rows *sql.Rows) {
+func emailReadAll(splited []string) {
     var (
         email models.Email
         err error
     )
 
-    rows, err = settings.DataBase.Query("SELECT Id, Title, User, Date FROM Email")
+    rows, err := settings.DataBase.Query("SELECT Id, Title, User, Date FROM Email")
     utils.CheckError(err)
+    defer rows.Close()
 
     for rows.Next() {
         err = rows.Scan(
@@ -247,17 +242,18 @@ func emailReadAll(splited []string, rows *sql.Rows) {
 }
 
 // Read list of emails by one node.
-func emailReadAllByUser(splited []string, rows *sql.Rows) {
+func emailReadAllByUser(splited []string) {
     var (
         email models.Email
         err error
     )
 
-    rows, err = settings.DataBase.Query(
+    rows, err := settings.DataBase.Query(
         "SELECT Id, Title, User, Date FROM Email WHERE User=$1", 
         splited[2],
     )
     utils.CheckError(err)
+    defer rows.Close()
 
     for rows.Next() {
         err = rows.Scan(
@@ -273,18 +269,19 @@ func emailReadAllByUser(splited []string, rows *sql.Rows) {
 }
 
 // Read selected email by user and id.
-func emailReadByUserAndId(splited []string, rows *sql.Rows) {
+func emailReadByUserAndId(splited []string) {
     var (
         email models.Email
         err error
     )
 
-    rows, err = settings.DataBase.Query(
+    rows, err := settings.DataBase.Query(
         "SELECT * FROM Email WHERE User=$1 AND Id=$2", 
         splited[2], 
         splited[3],
     )
     utils.CheckError(err)
+    defer rows.Close()
 
     for rows.Next() {
         err = rows.Scan(
@@ -351,9 +348,8 @@ func sendGlobalMessage(message string) {
             },
             Body: message,
         }
-        // connect.SendEncryptedPackage(new_pack)
         connect.CreateRedirectPackage(&new_pack)
-        connect.SendRedirectPackage(new_pack)
+        connect.SendInitRedirectPackage(new_pack)
     }
 }
 
@@ -371,9 +367,8 @@ func sendLocalMessage(splited []string) {
             }, 
             Body: strings.Join(splited[2:], " "),
         }
-        // connect.SendEncryptedPackage(new_pack)
         connect.CreateRedirectPackage(&new_pack)
-        connect.SendRedirectPackage(new_pack)
+        connect.SendInitRedirectPackage(new_pack)
     }
 }
 

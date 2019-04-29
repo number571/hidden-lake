@@ -116,7 +116,7 @@ func redirect(pack settings.PackageTCP) {
 
     bytes_hashname, err := crypto.DecryptRSA(decoded_hashname, settings.User.PrivateKey)
     if err != nil {
-        SendRedirectPackage(pack)
+        sendRedirectPackage(pack)
         return
     }
 
@@ -189,7 +189,7 @@ func connectReadList(pack settings.PackageTCP) {
         },
         Body: connections,
     }
-    SendEncryptedPackage(new_pack)
+    sendEncryptedPackage(new_pack)
 }
 
 // Accept connection.
@@ -452,9 +452,8 @@ func archiveReadFile(pack settings.PackageTCP) {
             Body: hex.EncodeToString([]byte(pack.Body)) + settings.SEPARATOR + 
                 hex.EncodeToString([]byte(utils.ReadFile(settings.PATH_ARCHIVE + pack.Body))),
         }
-        // SendEncryptedPackage(new_pack)
         CreateRedirectPackage(&new_pack)
-        SendRedirectPackage(new_pack)
+        SendInitRedirectPackage(new_pack)
     }
 }
 
@@ -477,9 +476,8 @@ func archiveReadList(pack settings.PackageTCP) {
         },
         Body: list_of_files,
     }
-    // SendEncryptedPackage(new_pack)
     CreateRedirectPackage(&new_pack)
-    SendRedirectPackage(new_pack)
+    SendInitRedirectPackage(new_pack)
 }
 
 // Save list of files.
