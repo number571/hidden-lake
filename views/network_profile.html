@@ -1,27 +1,34 @@
 {{ define "title" }}
-	Profile
+    Profile
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
-			<a href="/network/">Network</a> /
-			<i>Profile</i>
-		</p>
-	</div>
-	<hr>
-	<br>
-	<div class="content">
-		<p>
-	        {{ if .Connections }}
-	            <b>Connections = </b> 
-	            {{ range .Connections }}
-	                <br>
-	                <a href="/network/profile/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
-	            {{ end }}
-	        {{ else }}
-	            None connections
-	        {{ end }}
-	    </p>
-	</div>
+    <div class="div_bread wrapper">
+        <p class="bread"> /
+            <a href="/network/">Network</a> /
+            <i>Profile</i>
+        </p>
+    </div>
+    <hr>
+    <br>
+    <div class="content">
+        <p>
+            {{ if .Connections }}
+                <b>Connections = </b> 
+                {{ if .ModeF2F }}
+                    {{ range .Connections }}
+                        <br>
+                        <a href="/network/profile/{{ .User }}">{{ .User }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+                    {{ end }}
+                {{ else }}
+                    {{ range .Connections }}
+                        <br>
+                        <a href="/network/profile/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+                    {{ end }}
+                {{ end }}
+            {{ else }}
+                None connections
+            {{ end }}
+        </p>
+    </div>
 {{ end }}

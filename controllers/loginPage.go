@@ -15,6 +15,7 @@ func loginPage(w http.ResponseWriter, r *http.Request) {
         Auth bool
         Hash string
         Login string
+        ModeF2F bool
     }{}
 
     var code int8 = 0
@@ -46,6 +47,7 @@ func loginPage(w http.ResponseWriter, r *http.Request) {
     data.Auth = settings.User.Auth
     data.Hash = settings.User.Hash
     data.Login = settings.User.Login
+    data.ModeF2F = settings.User.ModeF2F
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "login.html")
     utils.CheckError(err)

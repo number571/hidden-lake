@@ -25,6 +25,7 @@ func RouterHTTP() {
 	http.HandleFunc("/network/archive/", networkArchivePage)
 	http.HandleFunc("/network/profile/", networkProfilePage)
 
+	http.HandleFunc("/api/mode", apiMode)
 	http.HandleFunc("/api/chat/", apiChatLocal)
 	http.HandleFunc("/api/chat/global/", apiChatGlobal)
 }

@@ -42,29 +42,26 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
                     r.FormValue("body") + settings.SEPARATOR +
                     time.Now().Format(time.RFC850),
             }
-            connect.CreateRedirectPackage(&new_pack)
-            connect.SendInitRedirectPackage(new_pack)
+            connect.SendPackage(new_pack, settings.User.ModeF2F)
             err_page = -1
         }
     }
 
     var (
-        connects = make([]string, len(settings.User.NodeAddress))
-        index uint32
+        node_address = settings.CurrentNodeAddress()
+        connects = settings.MakeConnects(node_address)
     )
-    for username := range settings.User.NodeAddress {
-        connects[index] = username
-        index++
-    }
 
     var data = struct {
         Auth bool
         Login string
+        ModeF2F bool
         Connections []string
         Error int8
     } {
         Auth: true,
         Login: settings.User.Login,
+        ModeF2F: settings.User.ModeF2F,
         Connections: connects,
         Error: err_page,
     }

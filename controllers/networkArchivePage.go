@@ -16,24 +16,21 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
     }
+
+    var node_address = settings.CurrentNodeAddress()
     
     if r.URL.Path == "/network/archive/" {
-        var (
-            connects = make([]string, len(settings.User.NodeAddress))
-            index uint32
-        )
-        for username := range settings.User.NodeAddress {
-            connects[index] = username
-            index++
-        }
+        var connects = settings.MakeConnects(node_address)
 
         var data = struct {
             Auth bool
             Login string
+            ModeF2F bool
             Connections []string
         } {
             Auth: true,
             Login: settings.User.Login,
+            ModeF2F: settings.User.ModeF2F,
             Connections: connects,
         }
 
@@ -49,7 +46,7 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempConnect = ""
     settings.Mutex.Unlock()
 
-    if _, ok := settings.User.NodeAddress[result]; ok {
+    if _, ok := node_address[result]; ok {
         settings.Mutex.Lock()
         settings.User.TempConnect = result
         settings.Mutex.Unlock()
@@ -71,25 +68,32 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         },
     }
 
-    connect.CreateRedirectPackage(&new_pack)
-    connect.SendInitRedirectPackage(new_pack)
-    time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
+    settings.Mutex.Lock()
+    settings.User.TempArchive = nil
+    settings.Mutex.Unlock()
+
+    connect.SendPackage(new_pack, settings.User.ModeF2F)
+
+check_again:
+    var seconds = 0
+    if settings.User.TempArchive == nil && seconds < 10 {
+        time.Sleep(time.Second * 1)
+        seconds++
+        goto check_again
+    }
 
     var data = struct {
         Auth bool
         Login string
+        ModeF2F bool
         Files []string
         TempConnect string
     } {
         Auth: true,
         Login: settings.User.Login,
+        ModeF2F: settings.User.ModeF2F,
         TempConnect: settings.User.TempConnect,
-    }
-
-    for _, file := range settings.User.TempArchive {
-        if file != "" {
-            data.Files = append(data.Files, file)
-        }
+        Files: settings.User.TempArchive,
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_archive_X.html")

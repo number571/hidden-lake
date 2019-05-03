@@ -19,6 +19,7 @@ func networkEmailReadPage(w http.ResponseWriter, r *http.Request) {
     var data = struct {
         Auth bool
         Login string
+        ModeF2F bool
         UserHash string
         Emails []models.Email
     } {}
@@ -55,6 +56,7 @@ func networkEmailReadPage(w http.ResponseWriter, r *http.Request) {
         data.Auth = true
         data.Login = settings.User.Login
         data.Emails = emails
+        data.ModeF2F = settings.User.ModeF2F
 
         tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read.html")
         utils.CheckError(err)
@@ -91,6 +93,7 @@ func networkEmailReadPage(w http.ResponseWriter, r *http.Request) {
             data.Login = settings.User.Login
             data.UserHash = username
             data.Emails = emails
+            data.ModeF2F = settings.User.ModeF2F
 
             tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read_X.html")
             utils.CheckError(err)
@@ -125,6 +128,7 @@ func networkEmailReadPage(w http.ResponseWriter, r *http.Request) {
             data.Login = settings.User.Login
             data.UserHash = username
             data.Emails = emails
+            data.ModeF2F = settings.User.ModeF2F
 
             tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_email_read_X_Y.html")
             utils.CheckError(err)

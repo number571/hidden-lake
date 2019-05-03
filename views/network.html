@@ -18,8 +18,14 @@
 			<a href="/network/archive/">Archives</a> | 
 		</b>
 		<form method="POST" action="/network/">
-			<input type="text" name="addr" placeholder="127.0.0.1:7545" value="">
-			<input type="submit" name="add" value="Add">
+			{{ if .ModeF2F }}
+				<input class="input_connect" type="text" name="name" placeholder="nodename"> <br>
+				<input class="input_connect" type="text" name="addr" placeholder="address"> <br>
+				<input class="input_connect" type="password" name="pasw" placeholder="password"> <br>
+			{{ else }}
+				<input class="input_connect" type="text" name="addr" placeholder="address">
+			{{ end }}
+			<input type="submit" name="add" value="Connect">
 		</form>
 		<p>
 			Connections = <br>

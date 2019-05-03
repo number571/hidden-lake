@@ -3,6 +3,7 @@ package connect
 import (
     "fmt"
     "net"
+    "time"
     "strings"
     "io/ioutil"
     "encoding/hex"
@@ -13,6 +14,8 @@ import (
     "../settings"
     "../encoding"
 )
+
+var temp_packets = make(map[string]bool) 
 
 func ServerTCP() {
     var err error
@@ -46,52 +49,87 @@ func server(conn net.Conn) {
         return
     }
 
-    decryptPackage(&pack)
-    packageActions(pack)
+    var is_f2f = decryptPackage(&pack)
+    packageActions(pack, is_f2f)
 }
 
 // Decrypt package if connection exists.
-func decryptPackage(pack *settings.PackageTCP) {
-    if settings.User.NodeConnection[pack.From.Name] == 1 &&
-       pack.Head.Header != settings.HEAD_CONNECT {
-        *pack = settings.PackageTCP {
-            From: models.From {
-                Name: pack.From.Name,
-                Address: crypto.Decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.From.Address),
-            },
-            To: crypto.Decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.To),
-            Head: models.Head {
-                Header: crypto.Decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Header),
-                Mode: crypto.Decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Mode),
-            }, 
-            Body: crypto.Decrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Body),
+func decryptPackage(pack *settings.PackageTCP) bool {
+    var (
+        session_key []byte = nil
+        is_f2f bool
+    )
+
+    // F2F
+    if _, ok := settings.User.NodeAddressF2F[pack.From.Name]; ok {
+        var return_code = crypto.TryDecrypt(settings.User.NodeSessionKeyF2F[pack.From.Name], pack.Header)
+        if return_code == 0 { 
+            session_key = settings.User.NodeSessionKeyF2F[pack.From.Name]
+            is_f2f = true
         }
     }
+
+    // P2P
+    if !is_f2f && pack.Head.Header != settings.HEAD_CONNECT &&
+       settings.User.NodeConnection[pack.From.Name] == 1 {
+        var return_code = crypto.TryDecrypt(settings.User.NodeSessionKey[pack.From.Name], pack.Header)
+        if return_code == 0 { 
+            session_key = settings.User.NodeSessionKey[pack.From.Name]
+        }
+    }
+
+    if session_key == nil { return false }
+
+    *pack = settings.PackageTCP {
+        From: models.From {
+            Name: pack.From.Name,
+            Login: crypto.Decrypt(session_key, pack.From.Login),
+            Address: crypto.Decrypt(session_key, pack.From.Address),
+        },
+        To: crypto.Decrypt(session_key, pack.To),
+        Head: models.Head {
+            Header: crypto.Decrypt(session_key, pack.Header),
+            Mode: crypto.Decrypt(session_key, pack.Mode),
+        }, 
+        Body: crypto.Decrypt(session_key, pack.Body),
+    }
+
+    return is_f2f
 }
 
 // Actions with package.
-func packageActions(pack settings.PackageTCP) {
+func packageActions(pack settings.PackageTCP, is_f2f bool) {
     switch pack.Header {
         case settings.HEAD_REDIRECT:
-            redirect(pack)
-        
+            if is_f2f { 
+                redirectF2F(pack) 
+            } else {
+                redirect(pack)
+            }
+            
         case settings.HEAD_ARCHIVE: 
             switch pack.Mode {
-                case settings.MODE_READ_LIST: archiveReadList(pack)
+                case settings.MODE_READ_LIST: archiveReadList(pack, is_f2f)
                 case settings.MODE_SAVE_LIST: archiveSaveList(pack)
-                case settings.MODE_READ_FILE: archiveReadFile(pack)
+                case settings.MODE_READ_FILE: archiveReadFile(pack, is_f2f)
                 case settings.MODE_SAVE_FILE: archiveSaveFile(pack)
             }
 
         case settings.HEAD_MESSAGE: 
-            var message = fmt.Sprintf("[%s]: %s\n", settings.User.NodeLogin[pack.From.Name], pack.Body)
+            var message string
+            if is_f2f {
+                message = fmt.Sprintf("[%s]: %s\n", pack.From.Name, pack.Body)
+            } else {
+                message = fmt.Sprintf("[%s]: %s\n", settings.User.NodeLogin[pack.From.Name], pack.Body)
+            }
             fmt.Print(message)
             switch pack.Mode {
-                case settings.MODE_LOCAL: messageLocal(pack, message)
-                case settings.MODE_GLOBAL: messageGlobal(pack, message)
+                case settings.MODE_LOCAL: messageLocal(pack, message, is_f2f)
+                case settings.MODE_GLOBAL: messageGlobal(pack, message, is_f2f)
             }
 
         case settings.HEAD_CONNECT:
+            if is_f2f { return }
             switch pack.Mode {
                 case settings.MODE_GLOBAL: connectGlobal(pack)
                 case settings.MODE_LOCAL: connectLocal(pack)
@@ -106,6 +144,47 @@ func packageActions(pack settings.PackageTCP) {
                 case settings.MODE_SAVE: emailSave(pack)
             }
     }
+}
+
+// Read package and send to friends.
+func redirectF2F(pack settings.PackageTCP) {
+    var (
+        to_heads = strings.Split(pack.Head.Mode, settings.SEPARATOR)
+        to = to_heads[0]
+        heads = to_heads[1:]
+    )
+
+    if _, ok := temp_packets[heads[2]]; ok { return }
+
+    settings.Mutex.Lock()
+    temp_packets[heads[2]] = true
+    settings.Mutex.Unlock()
+
+    go func() {
+        time.Sleep(time.Second * 15)
+        settings.Mutex.Lock()
+        delete(temp_packets, heads[2])
+        settings.Mutex.Unlock()
+    }()
+
+    if to != settings.User.Hash {
+        sendRedirectF2FPackage(pack)
+        if to != "" { return }
+    }
+
+    var new_pack = settings.PackageTCP {
+        From: models.From {
+            Name: pack.From.Login,
+        },
+        To: settings.User.Hash,
+        Head: models.Head {
+            Header: heads[0],
+            Mode: heads[1],
+        },
+        Body: pack.Body,
+    }
+
+    packageActions(new_pack, true)
 }
 
 // Check package for receiving or redirecting.
@@ -140,7 +219,7 @@ func redirect(pack settings.PackageTCP) {
         Body: crypto.Decrypt(settings.User.NodeSessionKey[hashname], pack.Body),
     }
 
-    packageActions(new_pack)
+    packageActions(new_pack, false)
 }
 
 // Save received email in database.
@@ -161,22 +240,16 @@ func emailSave(pack settings.PackageTCP) {
 
 // Save connections.
 func connectSaveList(pack settings.PackageTCP) {
-    var connections = strings.Split(pack.Body, settings.SEPARATOR_ADDRESS)
+    var connections = strings.Split(pack.Body, settings.SEPARATOR)
     Connect(connections, false)
 }
 
 // Send connections.
 func connectReadList(pack settings.PackageTCP) {
     var (
-        connects = make([]string, len(settings.User.NodeAddress))
-        index uint32
+        connects = settings.MakeConnects(settings.User.NodeAddress)
+        connections = strings.Join(connects, settings.SEPARATOR)
     )
-    for username := range settings.User.NodeAddress {
-        connects[index] = settings.User.NodeAddress[username]
-        index++
-    }
-
-    var connections = strings.Join(connects, settings.SEPARATOR_ADDRESS)
     var new_pack = settings.PackageTCP {
         From: models.From {
             Address: settings.User.IPv4 + settings.User.Port,
@@ -189,7 +262,7 @@ func connectReadList(pack settings.PackageTCP) {
         },
         Body: connections,
     }
-    sendEncryptedPackage(new_pack)
+    sendEncryptedPackage(new_pack, false)
 }
 
 // Accept connection.
@@ -226,6 +299,7 @@ func connectSave(pack settings.PackageTCP) {
 CREATE TABLE IF NOT EXISTS Local` + username + ` (
 Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 User VARCHAR(64),
+Mode VARCHAR(3),
 Body TEXT
 );
 INSERT INTO Connections(User, Login, PublicKey) 
@@ -290,6 +364,7 @@ func connectRead(pack settings.PackageTCP) {
 CREATE TABLE IF NOT EXISTS Local` + pack.From.Name + ` (
 Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 User VARCHAR(64),
+Mode VARCHAR(3),
 Body TEXT
 );
 INSERT INTO Connections(User, Login, PublicKey)
@@ -387,11 +462,19 @@ func connectGlobal(pack settings.PackageTCP) {
 }
 
 // Send global message to all nodes.
-func messageGlobal(pack settings.PackageTCP, message string) {
+func messageGlobal(pack settings.PackageTCP, message string, is_f2f bool) {
+    var mode = "P2P"
+    if is_f2f { 
+        mode = "F2F"
+        if _, ok := settings.User.NodeAddressF2F[pack.From.Name]; !ok {
+            message = "(HiddenFriend)" + message
+        }
+    }
     settings.Mutex.Lock()
     _, err := settings.DataBase.Exec(
-        "INSERT INTO GlobalMessages (User, Body) VALUES ($1, $2)",
+        "INSERT INTO GlobalMessages (User, Mode, Body) VALUES ($1, $2, $3)",
         pack.From.Name, 
+        mode,
         crypto.Encrypt(settings.User.Password, message),
     )
     settings.Messages.CurrentIdGlobal++
@@ -403,16 +486,27 @@ func messageGlobal(pack settings.PackageTCP, message string) {
 }
 
 // Send local message to one node.
-func messageLocal(pack settings.PackageTCP, message string) {
+func messageLocal(pack settings.PackageTCP, message string, is_f2f bool) {
+    var mode = "P2P"
+    if is_f2f { 
+        mode = "F2F"
+        if _, ok := settings.User.NodeAddressF2F[pack.From.Name]; !ok {
+            messageGlobal(pack, message, true)
+            return
+        }
+    }
+
     settings.Mutex.Lock()
     _, err := settings.DataBase.Exec(
-        "INSERT INTO Local" + pack.From.Name + " (User, Body) VALUES ($1, $2)",
-        pack.From.Name, 
+        "INSERT INTO Local" + pack.From.Name + " (User, Mode, Body) VALUES ($1, $2, $3)",
+        pack.From.Name,
+        mode,
         crypto.Encrypt(settings.User.Password, message),
     )
     settings.Messages.CurrentIdLocal[pack.From.Name]++
     settings.Mutex.Unlock()
     utils.CheckError(err)
+
     go func() {
         settings.Messages.NewDataExistLocal[pack.From.Name] <- true
     }()
@@ -438,8 +532,9 @@ func archiveSaveFile(pack settings.PackageTCP) {
 }
 
 // Send file from archive.
-func archiveReadFile(pack settings.PackageTCP) {
-    if utils.FileIsExist(settings.PATH_ARCHIVE + pack.Body) {
+func archiveReadFile(pack settings.PackageTCP, is_f2f bool) {
+    if utils.FileIsExist(settings.PATH_ARCHIVE + pack.Body) && 
+      !strings.Contains(pack.Body, "..") {
         var new_pack = settings.PackageTCP {
             From: models.From {
                 Name: pack.To,
@@ -452,19 +547,20 @@ func archiveReadFile(pack settings.PackageTCP) {
             Body: hex.EncodeToString([]byte(pack.Body)) + settings.SEPARATOR + 
                 hex.EncodeToString([]byte(utils.ReadFile(settings.PATH_ARCHIVE + pack.Body))),
         }
-        CreateRedirectPackage(&new_pack)
-        SendInitRedirectPackage(new_pack)
+        SendPackage(new_pack, is_f2f)
     }
 }
 
 // Send list of files from archive.
-func archiveReadList(pack settings.PackageTCP) {
+func archiveReadList(pack settings.PackageTCP, is_f2f bool) {
     files, err := ioutil.ReadDir(settings.PATH_ARCHIVE)
     utils.CheckError(err)
-    var list_of_files = ""
-    for _, file := range files {
-        list_of_files += file.Name() + settings.SEPARATOR
+    var list = make([]string, len(files))
+    for index, file := range files {
+        list[index] = file.Name()
     }
+
+    var list_of_files = strings.Join(list, settings.SEPARATOR)
     var new_pack = settings.PackageTCP {
         From: models.From {
             Name: pack.To,
@@ -476,8 +572,7 @@ func archiveReadList(pack settings.PackageTCP) {
         },
         Body: list_of_files,
     }
-    CreateRedirectPackage(&new_pack)
-    SendInitRedirectPackage(new_pack)
+    SendPackage(new_pack, is_f2f)
 }
 
 // Save list of files.
@@ -485,4 +580,11 @@ func archiveSaveList(pack settings.PackageTCP) {
     settings.Mutex.Lock()
     settings.User.TempArchive = strings.Split(pack.Body, settings.SEPARATOR)
     settings.Mutex.Unlock()
+
+    fmt.Printf("| %s:\n", pack.From.Name)
+    for _, file := range settings.User.TempArchive {
+        if file != "" {
+            fmt.Println("|", file)
+        }
+    }
 }

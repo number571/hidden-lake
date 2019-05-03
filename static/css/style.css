@@ -17,6 +17,14 @@ body {
     background-size: cover;
 }
 
+a {
+    text-decoration: none;
+}
+
+.input_connect {
+    width: 16em;
+}
+
 #glitch {
     position: relative;
     height: 100%;

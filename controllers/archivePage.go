@@ -44,8 +44,7 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
                 },
                 Body: filename,
             }
-            connect.CreateRedirectPackage(&new_pack)
-            connect.SendInitRedirectPackage(new_pack)
+            connect.SendPackage(new_pack, settings.User.ModeF2F)
             time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
         }
     }
@@ -56,11 +55,13 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
     var data = struct {
         Auth bool
         Login string
+        ModeF2F bool
         Files []string
         TempConnect string
     } {
         Auth: true,
         Login: settings.User.Login,
+        ModeF2F: settings.User.ModeF2F,
         TempConnect: settings.User.TempConnect,
     }
 

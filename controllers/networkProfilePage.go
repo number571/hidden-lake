@@ -3,6 +3,7 @@ package controllers
 import (
     "strings"
     "net/http"
+    "database/sql"
     "html/template"
     "../utils"
     "../crypto"
@@ -15,22 +16,42 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
     }
+
+    var node_address = settings.CurrentNodeAddress()
     
     if r.URL.Path == "/network/profile/" {
-        rows, err := settings.DataBase.Query("SELECT User, Login FROM Connections")
+        var (
+            rows *sql.Rows
+            err error
+        )
+
+        if settings.User.ModeF2F {
+            rows, err = settings.DataBase.Query("SELECT User FROM ConnectionsF2F")
+        } else {
+            rows, err = settings.DataBase.Query("SELECT User, Login FROM Connections")
+        }
         utils.CheckError(err)
 
         var list_of_status []models.ConnStatus
         var temp_list models.ConnStatus
-        for rows.Next() {
-            rows.Scan(&temp_list.User, &temp_list.Login)
-            temp_list.Login = crypto.Decrypt(settings.User.Password, temp_list.Login)
-            list_of_status = append(list_of_status, temp_list)
+
+        if settings.User.ModeF2F {
+            for rows.Next() {
+                rows.Scan(&temp_list.User)
+                list_of_status = append(list_of_status, temp_list)
+            }
+        } else {
+            for rows.Next() {
+                rows.Scan(&temp_list.User, &temp_list.Login)
+                temp_list.Login = crypto.Decrypt(settings.User.Password, temp_list.Login)
+                list_of_status = append(list_of_status, temp_list)
+            }
         }
+        
         rows.Close()
 
         for index, value := range list_of_status {
-            if _, ok := settings.User.NodeAddress[value.User]; ok {
+            if _, ok := node_address[value.User]; ok {
                 list_of_status[index].Status = true
             }
         }
@@ -38,10 +59,12 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         var data = struct {
             Auth bool
             Login string
+            ModeF2F bool
             Connections []models.ConnStatus
         } {
             Auth: true,
             Login: settings.User.Login,
+            ModeF2F: settings.User.ModeF2F,
             Connections: list_of_status,
         }
 
@@ -51,31 +74,42 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var result = strings.TrimPrefix(r.URL.Path, "/network/profile/")
-    var row = settings.DataBase.QueryRow("SELECT User, Login, PublicKey FROM Connections WHERE User = $1", result)
+    var (
+        result = strings.TrimPrefix(r.URL.Path, "/network/profile/")
+        row *sql.Row
+        user_hash, address, login, public_data string
+    )
 
-    var user_hash, login, public_data string
-    row.Scan(&user_hash, &login, &public_data)
-
-    var status = false
-    if _, ok := settings.User.NodeAddress[user_hash]; ok {
-        status = true
+    if settings.User.ModeF2F {
+        row = settings.DataBase.QueryRow("SELECT User, Address FROM ConnectionsF2F WHERE User = $1", result)
+        row.Scan(&user_hash, &address)
+        address = crypto.Decrypt(settings.User.Password, address)
+    } else {
+        row = settings.DataBase.QueryRow("SELECT User, Login, PublicKey FROM Connections WHERE User = $1", result)
+        row.Scan(&user_hash, &login, &public_data)
+        login = crypto.Decrypt(settings.User.Password, login)
     }
+
+    _, status := node_address[user_hash]
 
     var data = struct {
         UserHash string
         UserLogin string
         PublicKey string
+        Address string
         Status bool
         Auth bool
         Login string
+        ModeF2F bool
     } {
         UserHash: user_hash,
-        UserLogin: crypto.Decrypt(settings.User.Password, login),
+        UserLogin: login,
         PublicKey: public_data,
+        Address: address,
         Status: status,
         Auth: true,
         Login: settings.User.Login,
+        ModeF2F: settings.User.ModeF2F,
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_profile_X.html")

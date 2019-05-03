@@ -25,17 +25,22 @@ func apiChatLocal(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateChatLocal(w http.ResponseWriter, user string) {
-    if _, ok := settings.User.NodeAddress[user]; !ok {
+    var (
+        mode = settings.CurrentMode()
+        node_address = settings.CurrentNodeAddress()
+    )
+
+    if _, ok := node_address[user]; !ok {
         json.NewEncoder(w).Encode(settings.PackageHTTP{Exists:false})
         return
     }
 
-    timeout := make (chan bool)
+    timeout := make(chan bool)
     go func() {
         time.Sleep(time.Second * 30)
         timeout <- true
     }()
- 
+
     select {
         case <-timeout:
             json.NewEncoder(w).Encode(settings.PackageHTTP{Exists:false})
@@ -43,7 +48,8 @@ func updateChatLocal(w http.ResponseWriter, user string) {
 
         case <-settings.Messages.NewDataExistLocal[user]:
             rows, err := settings.DataBase.Query(
-                "SELECT Body FROM Local" + user + " ORDER BY Id DESC LIMIT $1",
+                "SELECT Body FROM Local" + user + " WHERE Mode = $1 ORDER BY Id DESC LIMIT $2",
+                mode,
                 settings.Messages.CurrentIdLocal[user],
             )
             utils.CheckError(err)

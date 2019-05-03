@@ -24,7 +24,7 @@ func FindConnects(seconds time.Duration) {
                     Mode: settings.MODE_READ_LIST,
                 },
             }
-            sendEncryptedPackage(new_pack)
+            sendEncryptedPackage(new_pack, false)
         }
         time.Sleep(seconds * time.Second)
     }

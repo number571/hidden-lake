@@ -23,7 +23,9 @@ type PackageHTTP struct {
 }
 
 type UserNode struct {
+    ModeF2F bool
     models.Keys
+    models.KeysP2P
     models.Messages
     models.Connection
     models.Authorization
@@ -39,14 +41,23 @@ var (
 )
 
 var User = UserNode {
-    Keys: models.Keys {
+    ModeF2F: false,
+    KeysP2P: models.KeysP2P {
         NodePublicKey:  make(map[string]*rsa.PublicKey),
         NodeSessionKey: make(map[string][]byte),
-        NodeConnection: make(map[string]int8),
+        KeysF2F: models.KeysF2F {
+            NodeSessionKeyF2F: make(map[string][]byte),
+        },
     },
     Connection: models.Connection {
-        NodeAddress: make(map[string]string),
-        NodeLogin: make(map[string]string),
+        Nodes: models.Nodes {
+            NodeConnection: make(map[string]int8),
+            NodeAddress: make(map[string]string),
+            NodeLogin: make(map[string]string),
+            NodesF2F: models.NodesF2F {
+                NodeAddressF2F: make(map[string]string),
+            },
+        },
     },
 }
 
@@ -79,7 +90,6 @@ const (
     MODE_SAVE_FILE = MODE_SAVE + OPT_FILE
 
     SEPARATOR = "[SEPARATOR]"
-    SEPARATOR_ADDRESS  = SEPARATOR + "[ADDRESS]"
 )
 
 const (
@@ -92,6 +102,7 @@ const (
     IPV4_TEMPLATE = "0.0.0.0"
 
     QUAN_OF_ROUTING_NODES = 3
+    DYNAMIC_ROUTING = false
 
     SESSION_KEY_BYTES = 32
     ROUTING_KEY_BYTES = 16
@@ -119,23 +130,23 @@ const (
 )
 
 const (
-    TERM_EXIT       = ":exit"
-    TERM_HELP       = ":help"
-    TERM_SEND       = ":send"
-    TERM_EMAIL      = ":email"
-    TERM_WHOAMI     = ":whoami"
-    TERM_REFRESH    = ":refresh"
-    TERM_ARCHIVE    = ":archive"
-    TERM_HISTORY    = ":history"
-    TERM_NETWORK    = ":network"
-    TERM_CONNECT    = ":connect"
-    TERM_LOGIN      = ":login"
-    TERM_PASSWORD   = ":password"
-    TERM_LOGOUT     = ":logout"
-    TERM_ADDRESS    = ":address"
-    TERM_ENTER      = ":enter"
-    TERM_INTERFACE  = ":interface"
-    TERM_DISCONNECT = ":disconnect"
+    TERM_MODE           = ":mode"
+    TERM_EXIT           = ":exit"
+    TERM_HELP           = ":help"
+    TERM_SEND           = ":send"
+    TERM_EMAIL          = ":email"
+    TERM_WHOAMI         = ":whoami"
+    TERM_ARCHIVE        = ":archive"
+    TERM_HISTORY        = ":history"
+    TERM_NETWORK        = ":network"
+    TERM_CONNECT        = ":connect"
+    TERM_DISCONNECT     = ":disconnect"
+    TERM_LOGIN          = ":login"
+    TERM_PASSWORD       = ":password"
+    TERM_LOGOUT         = ":logout"
+    TERM_ADDRESS        = ":address"
+    TERM_ENTER          = ":enter"
+    TERM_INTERFACE      = ":interface"
 )
 
 const (

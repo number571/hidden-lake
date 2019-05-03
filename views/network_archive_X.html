@@ -16,7 +16,7 @@
 	{{ if not .Files }}
 		<p>Nothing</p>
 	{{ else }}
-		<form method="POST" action="/archive/">
+		<form method="POST" action="/archive">
 			<select name="filename">
 				{{ range .Files }}
 				<option value="{{ . }}">

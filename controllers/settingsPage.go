@@ -50,6 +50,7 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         Auth bool
         Hash string
         Login string
+        ModeF2F bool
     } {
         IPv4: settings.User.IPv4,
         Port: port,
@@ -58,6 +59,7 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         Auth: true,
         Hash: settings.User.Hash,
         Login: settings.User.Login,
+        ModeF2F: settings.User.ModeF2F,
     }
 
 	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "settings.html")

@@ -1,10 +1,22 @@
 package crypto
 
 import (
+    "errors"
     "crypto/aes"
     "crypto/cipher"
     "encoding/hex"
 )
+
+func TryDecrypt(session_key []byte, data string) int8 {
+    decoded, err := hex.DecodeString(data)
+    if err != nil { return 1 }
+    _, err = DecryptAES(
+        decoded,
+        session_key,
+    )
+    if err != nil { return 2 }
+    return 0
+}
 
 func Decrypt(session_key []byte, data string) string {
     decoded, _ := hex.DecodeString(data)
@@ -37,11 +49,16 @@ func DecryptAES(data, key []byte) ([]byte, error) {
     mode := cipher.NewCBCDecrypter(block, iv)
     mode.CryptBlocks(data, data)
 
-    return PKCS5Unpadding(data), nil
+    return PKCS5Unpadding(data)
 }
 
-func PKCS5Unpadding(origData []byte) []byte {
+func PKCS5Unpadding(origData []byte) ([]byte, error) {
     length := len(origData)
     unpadding := int(origData[length-1])
-    return origData[:(length - unpadding)]
+
+    if length < unpadding {
+        return nil, errors.New("length < unpadding")
+    }
+
+    return origData[:(length - unpadding)], nil
 }

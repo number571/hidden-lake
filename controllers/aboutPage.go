@@ -16,9 +16,11 @@ func aboutPage(w http.ResponseWriter, r *http.Request) {
 	var data = struct {
 		Auth bool
 		Login string
+		ModeF2F bool
 	} {
 		Auth: true,
 		Login: settings.User.Login,
+		ModeF2F: settings.User.ModeF2F,
 	}
 
 	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "about.html")

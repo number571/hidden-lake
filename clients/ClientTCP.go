@@ -36,9 +36,10 @@ func ClientTCP() {
         splited = strings.Split(message, " ")
 
         switch splited[0] {
+            case settings.TERM_MODE: turnModeF2F(); continue
+            case settings.TERM_HELP: utils.PrintHelp(); continue
+            case settings.TERM_INTERFACE: turnInterface(); continue
             case settings.TERM_EXIT: os.Exit(settings.EXIT_SUCCESS)
-            case settings.TERM_HELP: utils.PrintHelp()
-            case settings.TERM_INTERFACE: turnInterface()
         }
 
         if !settings.User.Auth {
@@ -64,6 +65,7 @@ func client(splited []string, message string) {
         case settings.TERM_ARCHIVE: archiveAction(splited)
         case settings.TERM_HISTORY: historyAction(splited)
         case settings.TERM_CONNECT: connectTo(splited)
+        case settings.TERM_DISCONNECT: disconnectFrom(splited)
         default: sendGlobalMessage(message)
     }
 }
@@ -95,9 +97,7 @@ func downloadNodeFiles(splited []string) {
             },
             Body: filename,
         }
-        connect.CreateRedirectPackage(&new_pack)
-        connect.SendInitRedirectPackage(new_pack)
-        time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
+        connect.SendPackage(new_pack, settings.User.ModeF2F)
     }
 }
 
@@ -114,15 +114,7 @@ func listNodeArchive(splited []string) {
                 Mode: settings.MODE_READ_LIST,
             }, 
         }
-        connect.CreateRedirectPackage(&new_pack)
-        connect.SendInitRedirectPackage(new_pack)
-        time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
-        fmt.Printf("| %s:\n", name)
-        for _, file := range settings.User.TempArchive {
-            if file != "" {
-                fmt.Println("|", file)
-            }
-        }
+        connect.SendPackage(new_pack, settings.User.ModeF2F)
     }
 }
 
@@ -153,10 +145,10 @@ func historyAction(splited []string) {
 // Delete global or local messages.
 func historyDelete(splited []string, length int) {
     if length == 2 {
-        connect.DeleteGlobalMessages()
+        settings.DeleteGlobalMessages()
         return
     }
-    connect.DeleteLocalMessages(splited[2:])
+    settings.DeleteLocalMessages(splited[2:])
 }
 
 // Print local messages.
@@ -168,9 +160,23 @@ func historyLocal(splited []string, length int) {
 
 // Connect to nodes.
 func connectTo(splited []string) {
-    if len(splited) > 1 {
-        connect.Connect(splited[1:], false)
+    // P2P
+    if !settings.User.ModeF2F {
+        if len(splited) > 1 {
+            connect.Connect(splited[1:], false)
+        }
+        return
     }
+
+    // F2F
+    if len(splited) < 4 { return }
+    connect.ConnectF2F(splited[1], splited[2], strings.Join(splited[3:], " "))
+}
+
+// Disconnect from nodes.
+func disconnectFrom(splited []string) {
+    if len(splited) < 2 { return }
+    connect.DisconnectF2F(splited[1])
 }
 
 // Actions with email.
@@ -204,8 +210,7 @@ func emailWrite(splited []string, length int) {
             set_email.body + settings.SEPARATOR +
             time.Now().Format(time.RFC850),
     }
-    connect.CreateRedirectPackage(&new_pack)
-    connect.SendInitRedirectPackage(new_pack)
+    connect.SendPackage(new_pack, settings.User.ModeF2F)
 }
 
 // Read email.
@@ -336,44 +341,64 @@ func emailSetBody(splited []string, length int) {
 // Send global message to all nodes.
 func sendGlobalMessage(message string) {
     if message == "" { return }
-    for username := range settings.User.NodeAddress {
-        var new_pack = settings.PackageTCP {
-            From: models.From {
-                Name: settings.User.Hash,
-            },
-            To: username,
-            Head: models.Head {
-                Header: settings.HEAD_MESSAGE,
-                Mode: settings.MODE_GLOBAL,
-            },
-            Body: message,
-        }
-        connect.CreateRedirectPackage(&new_pack)
-        connect.SendInitRedirectPackage(new_pack)
+
+    var list_of_nodes = settings.CurrentNodeAddress()
+
+    var new_pack = settings.PackageTCP {
+        From: models.From {
+            Name: settings.User.Hash,
+        },
+        Head: models.Head {
+            Header: settings.HEAD_MESSAGE,
+            Mode: settings.MODE_GLOBAL,
+        },
+        Body: message,
+    }
+
+    if settings.User.ModeF2F {
+        connect.CreateRedirectF2FPackage(&new_pack, "")
+    }
+
+    for username := range list_of_nodes {
+        new_pack.To = username
+        connect.SendPackage(new_pack, settings.User.ModeF2F)
     }
 }
 
 // Send local message to one node.
 func sendLocalMessage(splited []string) {
-    if len(splited) > 2 {
-        var new_pack = settings.PackageTCP {
-            From: models.From {
-                Name: settings.User.Hash,
-            },
-            To: splited[1],
-            Head: models.Head {
-                Header: settings.HEAD_MESSAGE,
-                Mode: settings.MODE_LOCAL,
-            }, 
-            Body: strings.Join(splited[2:], " "),
-        }
-        connect.CreateRedirectPackage(&new_pack)
-        connect.SendInitRedirectPackage(new_pack)
+    if len(splited) < 3 { return }
+    if splited[1] == settings.User.Hash { return }
+    var new_pack = settings.PackageTCP {
+        From: models.From {
+            Name: settings.User.Hash,
+        },
+        To: splited[1],
+        Head: models.Head {
+            Header: settings.HEAD_MESSAGE,
+            Mode: settings.MODE_LOCAL,
+        }, 
+        Body: strings.Join(splited[2:], " "),
     }
+    if settings.User.ModeF2F {
+        connect.CreateRedirectF2FPackage(&new_pack, splited[1])
+        for username := range settings.User.NodeAddressF2F {
+            new_pack.To = username
+            connect.SendPackage(new_pack, true)
+        }
+        return
+    }
+    connect.SendPackage(new_pack, false)
 }
 
 // Print connections.
 func network() {
+    if settings.User.ModeF2F {
+        for username := range settings.User.NodeAddressF2F {
+            fmt.Println("|", username)
+        }
+        return
+    }
     for username := range settings.User.NodeAddress {
         fmt.Println("|", username)
     }
@@ -396,6 +421,21 @@ func pressEnter(authorization auth) {
             }
             fmt.Println("[SUCCESS]: Authorization")
     }
+}
+
+// Turn on/off F2F.
+func turnModeF2F() {
+    settings.Mutex.Lock()
+    settings.User.ModeF2F = !settings.User.ModeF2F
+    settings.Mutex.Unlock()
+    printMode()
+}
+
+// Print on/off F2F mode.
+func printMode() {
+    var mode = "off"
+    if settings.User.ModeF2F { mode = "on" }
+    fmt.Println("| F2F:", mode)
 }
 
 // Turn on/off interface.

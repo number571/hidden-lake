@@ -35,8 +35,10 @@ func updateChatGlobal(w http.ResponseWriter) {
             return
 
         case <-settings.Messages.NewDataExistGlobal:
+            var mode = settings.CurrentMode()
             rows, err := settings.DataBase.Query(
-                "SELECT Body FROM GlobalMessages ORDER BY Id DESC LIMIT $1",
+                "SELECT Body FROM GlobalMessages WHERE Mode = $1 ORDER BY Id DESC LIMIT $2",
+                mode,
                 settings.Messages.CurrentIdGlobal,
             )
             utils.CheckError(err)
