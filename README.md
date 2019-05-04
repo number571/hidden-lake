@@ -84,10 +84,4 @@ $ firefox --new-window 127.0.0.1:7545
 ### // Login page
 <img src="/images/HiddenLake_GUI_9.png" alt="GUI_9"/>
 
-### // Read email
-<img src="/images/HiddenLake_GUI_5.png" alt="GUI_5"/>
-
-### // F2F Chat
-<img src="/images/HiddenLake_GUI_3.png" alt="GUI_3"/>
-
 ## [HiddenLake]
