@@ -1,0 +1,313 @@
+@media (max-height: 37em) {
+    .content {
+        height: 24em;
+    }
+}
+
+@media (max-height: 35em) {
+    .content {
+        height: 22em;
+    }
+}
+
+@media (max-height: 33em) {
+    .content {
+        height: 20em;
+    }
+}
+
+@media (max-height: 31em) {
+    .content {
+        height: 18em;
+    }
+}
+
+@media (max-height: 29em) {
+    .content {
+        height: 16em;
+    }
+}
+
+@media (max-height: 27em) {
+    .content {
+        height: 14em;
+    }
+}
+
+@media (max-height: 25em) {
+    .content {
+        height: 12em;
+    }
+}
+
+@media (max-height: 23em) {
+    .content {
+        height: 10em;
+    }
+}
+
+@media (max-height: 21em) {
+    .content {
+        height: 8em;
+    }
+}
+
+@media (max-height: 19em) {
+    .content {
+        height: 6em;
+    }
+}
+
+@media (max-height: 17em) {
+    .content {
+        height: 4em;
+    }
+}
+
+@media (max-height: 15em) {
+    .content {
+        height: 3em;
+    }
+}
+
+@media (max-width: 90em){
+    #main_content {
+        width: 100%;
+    }
+
+    #plain {
+        width: 39em;
+    }
+
+    .block_left{
+        width: 60em;
+    }
+
+    #navigate > * {
+        word-spacing: 55px;
+    }
+
+    .button {
+        padding: 10px 50px 10px 50px;
+    }
+}
+
+@media (max-width: 80em){
+    .block_left{
+        width: 60em;
+    }
+
+    #navigate > * {
+        word-spacing: 55px;
+    }
+
+    .button {
+        padding: 10px 50px 10px 50px;
+    }
+}
+
+@media (max-width: 70em){
+    .block_left{
+        width: 54em;
+    }
+
+    #container_message {
+        width: 35em;
+    }
+
+    #navigate > * {
+        word-spacing: 45px;
+    }
+
+    .button {
+        padding: 10px 45px 10px 45px;
+    }
+}
+
+@media (max-width: 60em){
+    .block_left{
+        width: 48em;
+    }
+
+    #navigate > * {
+        word-spacing: 30px;
+    }
+
+    .button {
+        padding: 10px 41px 10px 41px;
+    }
+}
+
+@media (max-width: 50em){
+    .left_div, .right_div {
+        float: none;
+    }
+
+    #plain {
+        width: 44.4em;
+    }
+
+    #container_message {
+        width: 39em;
+    }
+
+    .input_size {
+        width: 34.2em;
+    }
+
+    .block_left{
+        width: 39em;
+    }
+
+    #navigate > * {
+        word-spacing: 20px;
+    }
+
+    .button {
+        padding: 10px 30px 10px 30px;
+    }
+}
+
+@media (max-width: 40em){
+    #plain {
+        width: 34em;
+    }
+
+    .input_size {
+        width: 32em;
+    }
+
+    .button_input {
+        width: 32.7em;
+    }
+
+    #message_send, #button_send {
+        display: block;
+    }
+
+    .right_div, .left_div {
+        width: 10em;
+    }
+
+    #container_message {
+        width: 30em;
+    }
+
+    .block_left{
+        width: 30em;
+    }
+
+    #navigate > * {
+        word-spacing: 10px;
+    }
+
+    .button {
+        padding: 8px 20px 8px 20px;
+    }
+
+    #head_title > p {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 30em){
+    #plain {
+        width: 27em;
+    }
+
+    .input_size {
+        width: 25.3em;
+    }
+
+    .button_input {
+        width: 26em;
+    }
+
+    .block_left{
+        width: 24em;
+    }
+
+    #navigate > * {
+        word-spacing: 0px;
+    }
+
+    .button {
+        padding: 6px 15px 6px 15px;
+    }
+
+    #container_message {
+        width: 24em;
+    }
+
+    #head_title > p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 25em){
+    #plain {
+        width: 23.8em;
+    }
+
+    .input_size {
+        width: 22.2em;
+    }
+
+    .button_input {
+        width: 22.9em;
+    }
+
+    .block_left{
+        width: 21em;
+    }
+
+    #navigate > * {
+        word-spacing: 0px;
+    }
+
+    .button {
+        padding: 6px 10px 6px 10px;
+    }
+
+    #container_message {
+        width: 21em;
+    }
+
+    #head_title > p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 21em){
+    #plain {
+        width: 21em;
+    }
+
+    .input_size {
+        width: 19.5em;
+    }
+
+    .button_input {
+        width: 20.2em;
+    }
+
+    .block_left{
+        width: 19em;
+    }
+
+    #navigate > * {
+        word-spacing: 0px;
+    }
+
+    .button {
+        padding: 6px 6px 6px 6px;
+    }
+
+    #container_message {
+        width: 19em;
+    }
+
+    #head_title > p {
+        font-size: 16px;
+    }
+}

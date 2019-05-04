@@ -3,22 +3,22 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="div_bread wrapper">
-        <p class="bread"> /
+    <div class="wrapper">
+        <p class="block_left"> /
             <a href="/network/">Network</a> /
             <i>Profile</i>
         </p>
     </div>
     <hr>
     <br>
-    <div class="content">
+    <div class="content block_left">
         <p>
             {{ if .Connections }}
                 <b>Connections = </b> 
                 {{ if .ModeF2F }}
                     {{ range .Connections }}
                         <br>
-                        <a href="/network/profile/{{ .User }}">{{ .User }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
+                        <a href="/network/profile/{{ .User }}">{{ .User }}</a>
                     {{ end }}
                 {{ else }}
                     {{ range .Connections }}

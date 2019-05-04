@@ -5,7 +5,6 @@ import (
     "net/http"
     "html/template"
     "../utils"
-    "../crypto"
     "../connect"
     "../settings"
 )
@@ -24,12 +23,9 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
     	settings.User.Port = ":" + r.FormValue("port")
         settings.User.DefaultConnections = strings.Split(connects, "\r\n")  
         settings.Mutex.Unlock()
-
-        utils.WriteFile(settings.FILE_CONNECTS, crypto.Encrypt(settings.User.Password, connects))
-        utils.WriteFile(settings.FILE_SETTINGS, crypto.Encrypt(
-            settings.User.Password, 
-            settings.User.IPv4 + settings.User.Port,
-        ))
+        
+        settings.SaveDefaultConnections(settings.User.DefaultConnections)
+        settings.SaveAddress(settings.User.IPv4, settings.User.Port)
         
     	if !settings.GoroutinesIsRun {
             settings.Mutex.Lock()
@@ -39,8 +35,6 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
             go connect.FindConnects(10)
     	}
     }
-
-    var port = strings.TrimPrefix(settings.User.Port, ":")
 
     var data = struct{
         IPv4 string
@@ -53,8 +47,8 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         ModeF2F bool
     } {
         IPv4: settings.User.IPv4,
-        Port: port,
-        Conn: crypto.Decrypt(settings.User.Password, utils.ReadFile(settings.FILE_CONNECTS)),
+        Port: strings.TrimPrefix(settings.User.Port, ":"),
+        Conn: strings.Join(settings.User.DefaultConnections, "\r\n"),
         PublicKey: settings.User.PublicData,
         Auth: true,
         Hash: settings.User.Hash,

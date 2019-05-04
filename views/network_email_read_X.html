@@ -3,8 +3,8 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="div_bread wrapper">
-        <p class="bread"> /
+    <div class="wrapper">
+        <p class="block_left"> /
             <a href="/network/">Network</a> /
             <a href="/network/email/">Email</a> /
             <a href="/network/email/read/">Read</a> /
@@ -18,41 +18,41 @@
     </div>
     <hr>
     <br>
-    <div class="content">
-    <div class="container">
-        <b>
-            <a href="/network/profile/{{ .UserHash }}">Profile</a> | 
-            <a href="/network/chat/{{ .UserHash }}">Chat</a> | 
-            <a href="/network/email/read/{{ .UserHash }}">Email</a> | 
-            <a href="/network/archive/{{ .UserHash }}">Archive</a> |
-        </b>
-    </div>
-    {{ if .Emails }}
-        <table border="1" width="100%" cellpadding="5">
-            <tr>
-                <th><p>Title</p></th>
-                <th><p>Date</p></th>
-                <th><p>Delete</p></th>
-            </tr>
-            {{ range .Emails }}
+    <div class="content block_left">
+        <div class="container">
+            <b>
+                <a href="/network/profile/{{ .UserHash }}">Profile</a> | 
+                <a href="/network/chat/{{ .UserHash }}">Chat</a> | 
+                <a href="/network/email/read/{{ .UserHash }}">Email</a> | 
+                <a href="/network/archive/{{ .UserHash }}">Archive</a> |
+            </b>
+        </div>
+        {{ if .Emails }}
+            <table border="1" width="100%" cellpadding="5">
                 <tr>
-                    <td><a href="/network/email/read/{{ .User }}/{{ .Id }}">{{ .Title }}</a></td>
-                    <td><p>{{ .Date }}</p></td>
-                    <td>
-                        <p>
-                        <form method="POST" action="/network/email/read/">
-                            <input type="hidden" name="id" value="{{ .Id }}">
-                            <input type="submit" name="delete" value="Delete">
-                        </form>
-                        </p>
-                    </td>
+                    <th><p>Title</p></th>
+                    <th><p>Date</p></th>
+                    <th><p>Delete</p></th>
                 </tr>
-            {{ end }}
-        </table>
-    {{ else }}
-        <p>
-            No messages!
-        </p>
-    {{ end }}
+                {{ range .Emails }}
+                    <tr>
+                        <td><a href="/network/email/read/{{ .User }}/{{ .Id }}">{{ .Title }}</a></td>
+                        <td><p>{{ .Date }}</p></td>
+                        <td>
+                            <p>
+                            <form method="POST" action="/network/email/read/">
+                                <input type="hidden" name="id" value="{{ .Id }}">
+                                <input type="submit" name="delete" value="Delete">
+                            </form>
+                            </p>
+                        </td>
+                    </tr>
+                {{ end }}
+            </table>
+        {{ else }}
+            <p>
+                No messages!
+            </p>
+        {{ end }}
     </div>
 {{ end }}

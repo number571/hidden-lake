@@ -9,14 +9,16 @@
 			<p>You are success login!</p>
 		{{ else }}
 			<form method="POST" action="/login">
+				<br>
 				<p>
 					{{ if not (eq .Code 0) }}
 						{{ .Result }}
 					{{ end }}
 				</p>
-				<input type="text" name="login" placeholder="Username..."> <br>
-				<input type="password" name="password" placeholder="Password..."> <br>
-				<input type="submit" name="submit" value="Login">
+				<br>
+				<input class="login_input" type="text" name="login" placeholder="Username..."> <br>
+				<input class="login_input" type="password" name="password" placeholder="Password..."> <br>
+				<input id="login_button" type="submit" name="submit" value="Login">
 			</form>
 		{{ end }}
 	</div>

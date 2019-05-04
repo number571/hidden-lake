@@ -3,8 +3,8 @@
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
+	<div class="wrapper">
+		<p class="block_left"> /
 			<a href="/network/">Network</a> /
 			<a href="/network/archive/">Archive</a> /
 			<i>{{ .TempConnect }}</i>
@@ -12,7 +12,7 @@
 	</div>
 	<hr>
 	<br>
-	<div class="content">
+	<div class="content block_left">
 	{{ if not .Files }}
 		<p>Nothing</p>
 	{{ else }}

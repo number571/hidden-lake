@@ -3,8 +3,8 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="div_bread wrapper">
-        <p class="bread"> /
+    <div class="wrapper">
+        <p class="block_left"> /
             <a href="/network/">Network</a> /
             <a href="/network/email/">Email</a> /
             <a href="/network/email/read/">Read</a> /
@@ -17,7 +17,7 @@
     </div>
     <hr>
     <br>
-    <div class="content">
+    <div class="content block_left">
     {{ if .Emails }}
         {{ $data := index .Emails 0 }}
         <p>

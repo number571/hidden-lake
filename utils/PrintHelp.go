@@ -17,6 +17,7 @@ func PrintHelp() {
 | 1. [--interface, -i] = run GUI interface in browser on port 7545
 | 2. [--delete, -d] = delete Archive, Config and database files with multiple overwriting
 | 3. [--help, -h] = get information about client
+| 4. [--f2f, -f] = run F2F connection
 
 | II. In the run client:
 

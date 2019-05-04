@@ -50,12 +50,14 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         
         rows.Close()
 
-        for index, value := range list_of_status {
-            if _, ok := node_address[value.User]; ok {
-                list_of_status[index].Status = true
+        if settings.User.ModeF2F {
+            for index, value := range list_of_status {
+                if _, ok := node_address[value.User]; ok {
+                    list_of_status[index].Status = true
+                }
             }
         }
-
+        
         var data = struct {
             Auth bool
             Login string

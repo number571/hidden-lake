@@ -3,23 +3,33 @@
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
+	<div class="wrapper">
+		<p class="block_left"> /
 			<i>Settings</i>
 		</p>
 	</div>
 	<hr>
 	<br>
-	<div class="content">
+	<div class="content block_left">
 	<p>
 		<form method="POST" action="/settings">
+			<div id="settings_left" class="settings_div">
+				<p>
+					<b>Login</b> = {{ .Login }} <br>
+					<b>Hash</b> = {{ .Hash }} <br>
+					<b>IPv4</b> = <input type="text" name="ipv4" placeholder="127.0.0.1" value="{{ .IPv4 }}">  <br>
+					<b>Port</b> = <input type="text" name="port" placeholder="8080" value="{{ .Port }}"> <br>
+				</p>
+			</div>
+			<div id="settings_right" class="settings_div">
+				<p>
+					<b>Default connections</b> = <br>
+					<textarea id="default_connects" name="conn" placeholder="Connections...">{{ .Conn }}</textarea> <br>
+					<input id="save_settings" type="submit" name="submit" value="Save settings"> <br>
+				</p>
+			</div>
+			
 			<p>
-				<b>Login</b> = {{ .Login }} <br>
-				<b>Hash</b> = {{ .Hash }} <br>
-				<b>IPv4</b> = <input type="text" name="ipv4" placeholder="127.0.0.1" value="{{ .IPv4 }}">  <br>
-				<b>Port</b> = <input type="text" name="port" placeholder="8080" value="{{ .Port }}"> <br>
-				<textarea name="conn" placeholder="Connections...">{{ .Conn }}</textarea>
-				<input type="submit" name="submit" value="Save connections"> <br>
 				<b>PublicKey</b> = <br>
 				{{ .PublicKey }} <br>
 			</p>

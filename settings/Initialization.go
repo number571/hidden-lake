@@ -44,6 +44,18 @@ func Initialization(args []string) bool {
                     flag_delete = true
                 }
                 continue
+            case "-dd", "--delete-database":
+                if !flag_delete {
+                    deleteDatabase()
+                    flag_delete = true
+                }
+                continue
+            case "-da", "--delete-archive":
+                if !flag_delete {
+                    deleteArchive()
+                    flag_delete = true
+                }
+                continue
 
             // Arguments with parameters
             case "-a", "--address": 
@@ -77,15 +89,11 @@ func Initialization(args []string) bool {
         }
     }
 
-    os.Mkdir(PATH_CONFIG, 0777)
-    os.Mkdir(PATH_KEYS, 0777)
-    os.Mkdir(PATH_PASW, 0777)
     os.Mkdir(PATH_ARCHIVE, 0777)
-
     switch Authorization(auth.login, auth.password) {
         case 1: // pass
         case 2: utils.PrintError("length of login > 64 bytes")
-        case 3: utils.PrintError("password.hash undefined")
+        case 3: utils.PrintError("passwords hash undefined")
         case 4: utils.PrintError("login or password is wrong")
         default: fmt.Println("[Success]: Authorization")
     }
@@ -99,9 +107,15 @@ func Initialization(args []string) bool {
 }
 
 func deleteAllData() {
-    deleteArchive()
-    deleteConfig()
     deleteDatabase()
+    deleteArchive()
+}
+
+func deleteDatabase() {
+    if !utils.FileIsExist(DATABASE_NAME) {
+        return
+    }
+    overwriteAndDelete(DATABASE_NAME, len(utils.ReadFile(DATABASE_NAME)))
 }
 
 func deleteArchive() {
@@ -114,33 +128,6 @@ func deleteArchive() {
         name := file.Name()
         overwriteAndDelete(PATH_ARCHIVE + name, len(utils.ReadFile(PATH_ARCHIVE + name)))
     }
-}
-
-func deleteConfig() {
-    if !utils.FileIsExist(PATH_CONFIG) {
-        return
-    }
-
-    var list_of_deletes = []string{
-        FILE_PRIVATE_KEY,
-        FILE_PUBLIC_KEY,
-        FILE_PASSWORD,
-        FILE_CONNECTS,
-        FILE_SETTINGS,
-    }
-
-    for _, value := range list_of_deletes {
-        if utils.FileIsExist(value) {
-            overwriteAndDelete(value, len(utils.ReadFile(value)))
-        }
-    }
-}
-
-func deleteDatabase() {
-    if !utils.FileIsExist(DATABASE_NAME) {
-        return
-    }
-    overwriteAndDelete(DATABASE_NAME, len(utils.ReadFile(DATABASE_NAME)))
 }
 
 func overwriteAndDelete(file string, length int) {

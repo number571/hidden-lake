@@ -442,26 +442,30 @@ func printMode() {
 func turnInterface() {
     if settings.ServerListenHTTP == nil {
         go ClientHTTP()
+        fmt.Println("| Interface: on")
     } else {
         if err := settings.ServerListenHTTP.Shutdown(context.TODO()); err != nil {
             utils.PrintWarning("failure shutting down")
         }
+        fmt.Println("| Interface: off")
     }
 }
 
 // Set address ipv4:port.
 func setAddress(splited []string) {
-    if len(splited) > 1 {
-        var ipv4_port = strings.Split(splited[1], ":")
-        if len(ipv4_port) != 2 {
-            utils.PrintWarning("invalid argument for ':address'")
-            return
-        } 
-        settings.Mutex.Lock()
-        settings.User.IPv4 = ipv4_port[0]
-        settings.User.Port = ":" + ipv4_port[1]
-        settings.Mutex.Unlock()
+    if len(splited) < 2 { 
+        fmt.Println("| Address:", settings.User.IPv4 + settings.User.Port)
+        return
     }
+    var ipv4_port = strings.Split(splited[1], ":")
+    if len(ipv4_port) != 2 {
+        utils.PrintWarning("invalid argument for ':address'")
+        return
+    } 
+    settings.Mutex.Lock()
+    settings.User.IPv4 = ipv4_port[0]
+    settings.User.Port = ":" + ipv4_port[1]
+    settings.Mutex.Unlock()
 }
 
 // Set login.

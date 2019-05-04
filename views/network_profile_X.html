@@ -3,8 +3,8 @@
 {{ end }}
 
 {{ define "content" }}
-	<div class="div_bread wrapper">
-		<p class="bread"> /
+	<div class="wrapper">
+		<p class="block_left"> /
 			<a href="/network/">Network</a> /
 			<a href="/network/profile/">Profile</a> /
 			<i>{{ .UserHash }}</i>
@@ -12,7 +12,7 @@
 	</div>
 	<hr>
 	<br>
-	<div class="content">
+	<div class="content block_left">
 		<div class="container">
 			<b>
 				<a href="/network/profile/{{ .UserHash }}">Profile</a> | 
