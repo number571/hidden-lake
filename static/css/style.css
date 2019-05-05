@@ -10,7 +10,7 @@ html, body {
 
 body {
     background-color: rgb(32, 32, 32);
-    background-image: url(/static/img/background.jpg);
+    /*background-image: url(/static/img/background2.png);*/
     background-repeat: no-repeat;
     background-size: 100%;
     background-position:center center;
@@ -50,7 +50,7 @@ a {
     bottom: 0;
     width: 100%;
     background: url(/static/img/animation.gif);
-    opacity: 0.2;
+    opacity: 0.15;
     content: "";
     z-index: -1;
 }
@@ -95,7 +95,7 @@ a {
     right: 0;
     background: black;
     background-repeat: no-repeat;
-    opacity: 0.55;
+    opacity: 0.1;
     content: "";
     z-index: -1;
 }
@@ -116,7 +116,7 @@ a {
     right: 0;
     background: black;
     background-repeat: no-repeat;
-    opacity: 0.4;
+    opacity: 0.5;
     content: "";
     z-index: -1;
 }
@@ -258,7 +258,7 @@ main, footer {
 }
 
 p {
-    color: gray;
+    color: #b3b3b3;
 }
 
 a {

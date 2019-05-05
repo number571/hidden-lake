@@ -20,10 +20,12 @@
 				<a href="/network/email/read/{{ .UserHash }}">Email</a> | 
 				<a href="/network/archive/{{ .UserHash }}">Archive</a> |
 			</b>
-			<form method="POST" action="/network/">
-				<input type="hidden" name="name" value="{{ .UserHash }}">
-				<input type="submit" name="disconnect" value="Disconnect">
-			</form>
+			{{ if (or .ModeF2F (not .Status)) }}
+				<form method="POST" action="/network/">
+					<input type="hidden" name="name" value="{{ .UserHash }}">
+					<input type="submit" name="disconnect" value="Disconnect">
+				</form>
+			{{ end }}
 		</div>
 		<p>
 			{{ if .ModeF2F }}

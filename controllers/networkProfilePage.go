@@ -79,20 +79,28 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
     var (
         result = strings.TrimPrefix(r.URL.Path, "/network/profile/")
         row *sql.Row
-        user_hash, address, login, public_data string
+        address, login, public_data string
     )
 
     if settings.User.ModeF2F {
-        row = settings.DataBase.QueryRow("SELECT User, Address FROM ConnectionsF2F WHERE User = $1", result)
-        row.Scan(&user_hash, &address)
+        row = settings.DataBase.QueryRow("SELECT Address FROM ConnectionsF2F WHERE User = $1", result)
+        row.Scan(&address)
+        if address == "" { 
+            redirectTo("404", w, r) 
+            return
+        }
         address = crypto.Decrypt(settings.User.Password, address)
     } else {
-        row = settings.DataBase.QueryRow("SELECT User, Login, PublicKey FROM Connections WHERE User = $1", result)
-        row.Scan(&user_hash, &login, &public_data)
+        row = settings.DataBase.QueryRow("SELECT Login, PublicKey FROM Connections WHERE User = $1", result)
+        row.Scan(&login, &public_data)
+        if login == "" { 
+            redirectTo("404", w, r) 
+            return
+        }
         login = crypto.Decrypt(settings.User.Password, login)
     }
 
-    _, status := node_address[user_hash]
+    _, status := node_address[result]
 
     var data = struct {
         UserHash string
@@ -104,7 +112,7 @@ func networkProfilePage(w http.ResponseWriter, r *http.Request) {
         Login string
         ModeF2F bool
     } {
-        UserHash: user_hash,
+        UserHash: result,
         UserLogin: login,
         PublicKey: public_data,
         Address: address,

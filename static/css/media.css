@@ -1,3 +1,9 @@
+@media (max-height: 39em) {
+    .content {
+        height: 26em;
+    }
+}
+
 @media (max-height: 37em) {
     .content {
         height: 24em;
