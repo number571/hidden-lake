@@ -7,6 +7,7 @@ import (
     "encoding/json"
     "../utils"
     "../crypto"
+    "../models"
     "../settings"
 )
 
@@ -18,7 +19,7 @@ func apiChatGlobal(w http.ResponseWriter, r *http.Request) {
         case "update": 
             updateChatGlobal(w)
         default: 
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_WARNING})
+            json.NewEncoder(w).Encode(models.PackageHTTP{Head: settings.HEAD_WARNING})
     } 
 }
 
@@ -31,7 +32,7 @@ func updateChatGlobal(w http.ResponseWriter) {
  
     select {
         case <-timeout:
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Exists:false})
+            json.NewEncoder(w).Encode(models.PackageHTTP{Exists:false})
             return
 
         case <-settings.Messages.NewDataExistGlobal:
@@ -49,7 +50,7 @@ func updateChatGlobal(w http.ResponseWriter) {
                 messages += crypto.Decrypt(settings.User.Password, message)
             }
 
-            var data = settings.PackageHTTP {
+            var data = models.PackageHTTP {
                 Exists: true,
                 Head: settings.HEAD_MESSAGE,
                 Body: messages,

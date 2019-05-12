@@ -33,18 +33,18 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
             )
 
         } else if _, ok := r.Form["download"]; ok {
-            var new_pack = settings.PackageTCP {
+            var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.User.Hash,
+                    Name: settings.CurrentHash(),
                 },
                 To: settings.User.TempConnect,
                 Head: models.Head {
-                    Header: settings.HEAD_ARCHIVE,
+                    Title: settings.HEAD_ARCHIVE,
                     Mode: settings.MODE_READ_FILE,
                 },
                 Body: filename,
             }
-            connect.SendPackage(new_pack, settings.User.ModeF2F)
+            connect.SendPackage(new_pack, settings.CurrentModeNet())
             time.Sleep(time.Second * settings.TIME_SLEEP) // FIX
         }
     }

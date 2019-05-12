@@ -12,11 +12,12 @@
 	<br>
 	<div class="content block_left">
 		<b>
-			<a href="/network/profile/">Profiles</a> | 
-			<a href="/network/chat/">Chat</a> |
-			<a href="/network/email/">Email</a> | 
-			<a href="/network/archive/">Archives</a> | 
+			<a class="button" href="/network/chat/">Chat</a>
+			<a class="button" href="/network/profile/">Profiles</a> 
+			<a class="button" href="/network/email/">Email</a> 
+			<a class="button" href="/network/archive/">Archives</a> 
 		</b>
+		<br><br>
 		<form method="POST" action="/network/">
 			{{ if .ModeF2F }}
 				<input class="input_connect" type="text" name="name" placeholder="nodename"> <br>

@@ -57,7 +57,7 @@ func ClientTCP() {
 
 func client(splited []string, message string) {
     switch splited[0] {
-        case settings.TERM_WHOAMI: fmt.Println("|", settings.User.Hash)
+        case settings.TERM_WHOAMI: fmt.Println("|", settings.CurrentHash())
         case settings.TERM_LOGOUT: connect.Logout()
         case settings.TERM_NETWORK: network()
         case settings.TERM_SEND: sendLocalMessage(splited)
@@ -85,36 +85,38 @@ func archiveAction(splited []string) {
 // Download files from node archive.
 func downloadNodeFiles(splited []string) {
     if len(splited) < 4 { return }
+    var hashname = settings.CurrentHash()
     for _, filename := range splited[3:] {
-        var new_pack = settings.PackageTCP {
+        var new_pack = models.PackageTCP {
             From: models.From {
-                Name: settings.User.Hash,
+                Name: hashname,
             },
             To: splited[2],
             Head: models.Head {
-                Header: settings.HEAD_ARCHIVE,
+                Title: settings.HEAD_ARCHIVE,
                 Mode: settings.MODE_READ_FILE,
             },
             Body: filename,
         }
-        connect.SendPackage(new_pack, settings.User.ModeF2F)
+        connect.SendPackage(new_pack, settings.CurrentModeNet())
     }
 }
 
 // Print list of files in nodes archive.
 func listNodeArchive(splited []string) {
+    var hashname = settings.CurrentHash()
     for _, name := range splited[1:] {
-        var new_pack = settings.PackageTCP {
+        var new_pack = models.PackageTCP {
             From: models.From {
-                Name: settings.User.Hash,
+                Name: hashname,
             },
             To: name,
             Head: models.Head {
-                Header: settings.HEAD_ARCHIVE,
+                Title: settings.HEAD_ARCHIVE,
                 Mode: settings.MODE_READ_LIST,
             }, 
         }
-        connect.SendPackage(new_pack, settings.User.ModeF2F)
+        connect.SendPackage(new_pack, settings.CurrentModeNet())
     }
 }
 
@@ -123,7 +125,7 @@ func listArchive() {
     files, err := ioutil.ReadDir(settings.PATH_ARCHIVE)
     utils.CheckError(err)
 
-    fmt.Printf("| %s:\n", settings.User.Hash)
+    fmt.Printf("| %s:\n", settings.CurrentHash())
     for _, file := range files {
         fmt.Println("|", file.Name())
     }
@@ -163,7 +165,7 @@ func connectTo(splited []string) {
     // P2P
     if !settings.User.ModeF2F {
         if len(splited) > 1 {
-            connect.Connect(splited[1:], false)
+            connect.ConnectP2PMerge(splited[1])
         }
         return
     }
@@ -196,13 +198,13 @@ func emailAction(splited []string) {
 // Send email to one node. 
 func emailWrite(splited []string, length int) {
     if length != 3 { return }
-    var new_pack = settings.PackageTCP {
+    var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash,
+            Name: settings.CurrentHash(),
         },
         To: splited[2],
         Head: models.Head {
-            Header: settings.HEAD_EMAIL,
+            Title: settings.HEAD_EMAIL,
             Mode: settings.MODE_SAVE,
         }, 
         Body: 
@@ -210,7 +212,7 @@ func emailWrite(splited []string, length int) {
             set_email.body + settings.SEPARATOR +
             time.Now().Format(time.RFC850),
     }
-    connect.SendPackage(new_pack, settings.User.ModeF2F)
+    connect.SendPackage(new_pack, settings.CurrentModeNet())
 }
 
 // Read email.
@@ -344,12 +346,12 @@ func sendGlobalMessage(message string) {
 
     var list_of_nodes = settings.CurrentNodeAddress()
 
-    var new_pack = settings.PackageTCP {
+    var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash,
+            Name: settings.CurrentHash(),
         },
         Head: models.Head {
-            Header: settings.HEAD_MESSAGE,
+            Title: settings.HEAD_MESSAGE,
             Mode: settings.MODE_GLOBAL,
         },
         Body: message,
@@ -361,45 +363,50 @@ func sendGlobalMessage(message string) {
 
     for username := range list_of_nodes {
         new_pack.To = username
-        connect.SendPackage(new_pack, settings.User.ModeF2F)
+        connect.SendPackage(new_pack, settings.CurrentModeNet())
     }
 }
 
 // Send local message to one node.
 func sendLocalMessage(splited []string) {
     if len(splited) < 3 { return }
-    if splited[1] == settings.User.Hash { return }
-    var new_pack = settings.PackageTCP {
+
+    var hashname = settings.CurrentHash()
+    if splited[1] == hashname { return }
+
+    var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash,
+            Name: hashname,
         },
         To: splited[1],
         Head: models.Head {
-            Header: settings.HEAD_MESSAGE,
+            Title: settings.HEAD_MESSAGE,
             Mode: settings.MODE_LOCAL,
         }, 
         Body: strings.Join(splited[2:], " "),
     }
+
     if settings.User.ModeF2F {
         connect.CreateRedirectF2FPackage(&new_pack, splited[1])
-        for username := range settings.User.NodeAddressF2F {
+        for username := range settings.Node.Address.F2F {
             new_pack.To = username
-            connect.SendPackage(new_pack, true)
+            connect.SendPackage(new_pack, settings.CurrentModeNet())
         }
         return
     }
-    connect.SendPackage(new_pack, false)
+
+    connect.SendPackage(new_pack, settings.CurrentModeNet())
 }
 
 // Print connections.
 func network() {
     if settings.User.ModeF2F {
-        for username := range settings.User.NodeAddressF2F {
-            fmt.Println("|", username)
+        for username := range settings.Node.Address.F2F {
+            fmt.Printf("| %s [%s]\n", username, settings.Node.Login[username])
         }
         return
     }
-    for username := range settings.User.NodeAddress {
+    for username := range settings.Node.Address.P2P {
         fmt.Println("|", username)
     }
 }
@@ -417,7 +424,7 @@ func pressEnter(authorization auth) {
                 settings.GoroutinesIsRun = true
                 settings.Mutex.Unlock()
                 go connect.ServerTCP()
-                go connect.FindConnects(10)
+                go connect.CheckConnects()
             }
             fmt.Println("[SUCCESS]: Authorization")
     }
@@ -499,8 +506,9 @@ func printGlobalHistory() {
 
 // Print local messages from nodes.
 func printLocalHistory(slice []string) {
+    var node_address = settings.CurrentNodeAddress()
     for _, user := range slice {
-        if _, ok := settings.User.NodeAddress[user]; ok {
+        if _, ok := node_address[user]; ok {
             rows, err := settings.DataBase.Query("SELECT Body FROM Local" + user + " WHERE ORDER BY Id")
             utils.CheckError(err)
 

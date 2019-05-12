@@ -7,9 +7,9 @@ import (
 func DeleteLocalMessages(slice []string) {
 	var node_address map[string]string
 	if User.ModeF2F {
-		node_address = User.NodeAddressF2F
+		node_address = Node.Address.F2F
 	} else {
-		node_address = User.NodeAddress
+		node_address = Node.Address.P2P
 	}
     Mutex.Lock()
     for _, user := range slice {

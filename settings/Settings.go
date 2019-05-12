@@ -9,30 +9,14 @@ import (
     "../models"
 )
 
-type PackageTCP struct {
-    From models.From
-    To string
-    models.Head
-    Body string
-}
-
-type PackageHTTP struct {
-    Exists  bool
-    Head    string
-    Body    string
-}
-
-type UserNode struct {
-    ModeF2F bool
-    models.Keys
-    models.KeysP2P
-    models.Messages
-    models.Connection
-    models.Authorization
-    models.Transportation
-}
+type ModeNet int8
+const (
+    P2P_mode ModeNet = 0
+    F2F_mode ModeNet = 1
+)
 
 var (
+    ViewCLI = true
     GoroutinesIsRun = false
     ServerListenTCP net.Listener
     ServerListenHTTP *http.Server
@@ -40,24 +24,21 @@ var (
     DataBase *sql.DB
 )
 
-var User = UserNode {
+var User = models.UserNode {
     ModeF2F: false,
-    KeysP2P: models.KeysP2P {
-        NodePublicKey:  make(map[string]*rsa.PublicKey),
-        NodeSessionKey: make(map[string][]byte),
-        KeysF2F: models.KeysF2F {
-            NodeSessionKeyF2F: make(map[string][]byte),
-        },
+}
+
+var Node = models.Node {
+    Login: make(map[string]string),
+    PublicKey:  make(map[string]*rsa.PublicKey),
+    Connection: make(map[string]int8),
+    SessionKey: models.SessionKey {
+        P2P: make(map[string][]byte),
+        F2F: make(map[string][]byte),
     },
-    Connection: models.Connection {
-        Nodes: models.Nodes {
-            NodeConnection: make(map[string]int8),
-            NodeAddress: make(map[string]string),
-            NodeLogin: make(map[string]string),
-            NodesF2F: models.NodesF2F {
-                NodeAddressF2F: make(map[string]string),
-            },
-        },
+    Address: models.Address {
+        P2P: make(map[string]string),
+        F2F: make(map[string]string),
     },
 }
 
@@ -77,29 +58,40 @@ const (
 
     MODE_READ   = "[READ]"
     MODE_SAVE   = "[SAVE]"
+
+    MODE_LIST   = "[LIST]"
+    MODE_FILE   = "[FILE]"
+    MODE_CHECK  = "[CHECK]"
     MODE_LOCAL  = "[LOCAL]"
     MODE_GLOBAL = "[GLOBAL]"
 
-    OPT_LIST = "[LIST]"
-    OPT_FILE = "[FILE]"
+    MODE_READ_CHECK = MODE_READ + MODE_CHECK
+    MODE_SAVE_CHECK = MODE_SAVE + MODE_CHECK
 
-    MODE_READ_LIST = MODE_READ + OPT_LIST
-    MODE_SAVE_LIST = MODE_SAVE + OPT_LIST
+    MODE_READ_GLOBAL = MODE_READ + MODE_GLOBAL
+    MODE_SAVE_GLOBAL = MODE_SAVE + MODE_GLOBAL
 
-    MODE_READ_FILE = MODE_READ + OPT_FILE
-    MODE_SAVE_FILE = MODE_SAVE + OPT_FILE
+    MODE_READ_LOCAL = MODE_READ + MODE_LOCAL
+    MODE_SAVE_LOCAL = MODE_SAVE + MODE_LOCAL
+
+    MODE_READ_LIST = MODE_READ + MODE_LIST
+    MODE_SAVE_LIST = MODE_SAVE + MODE_LIST
+
+    MODE_READ_FILE = MODE_READ + MODE_FILE
+    MODE_SAVE_FILE = MODE_SAVE + MODE_FILE
 
     SEPARATOR = "[SEPARATOR]"
 )
 
 const (
-    PROTOCOL_TCP = "tcp"
-    
+    PROTOCOL  = "tcp"
     PORT_HTTP = ":7545"
     IPV4_HTTP = "127.0.0.1"
 
     DATABASE_NAME = "database.db"
     IPV4_TEMPLATE = "0.0.0.0"
+
+    ASYMMETRIC_KEY_BITS = 2048
 
     QUAN_OF_ROUTING_NODES = 3
     DYNAMIC_ROUTING = false
@@ -112,21 +104,9 @@ const (
 )
 
 const (
-    PATH_CONFIG  = "_Config/"
     PATH_ARCHIVE = "_Archive/"
-    PATH_KEYS    = PATH_CONFIG + "Keys/"
-    PATH_PASW    = PATH_CONFIG + "Pasw/"
-
     PATH_VIEWS  = "views/"
     PATH_STATIC = "static/"
-)
-
-const (
-    FILE_PRIVATE_KEY = PATH_KEYS + "private.key"
-    FILE_PUBLIC_KEY  = PATH_KEYS + "public.key"
-    FILE_PASSWORD    = PATH_PASW + "password.hash"
-    FILE_SETTINGS    = PATH_CONFIG + "settings.cfg"
-    FILE_CONNECTS    = PATH_CONFIG + "connects.cfg"
 )
 
 const (

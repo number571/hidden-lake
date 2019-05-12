@@ -32,8 +32,15 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
             settings.GoroutinesIsRun = true
             settings.Mutex.Unlock()
 			go connect.ServerTCP()
-            go connect.FindConnects(10)
+            go connect.CheckConnects()
     	}
+    }
+
+    var public_key string
+    if settings.User.ModeF2F {
+        public_key = settings.User.Public.Data.F2F
+    } else {
+        public_key = settings.User.Public.Data.P2P
     }
 
     var data = struct{
@@ -49,9 +56,9 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         IPv4: settings.User.IPv4,
         Port: strings.TrimPrefix(settings.User.Port, ":"),
         Conn: strings.Join(settings.User.DefaultConnections, "\r\n"),
-        PublicKey: settings.User.PublicData,
+        PublicKey: public_key,
         Auth: true,
-        Hash: settings.User.Hash,
+        Hash: settings.CurrentHash(),
         Login: settings.User.Login,
         ModeF2F: settings.User.ModeF2F,
     }

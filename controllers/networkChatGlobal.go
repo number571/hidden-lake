@@ -39,12 +39,12 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
                 node_address = settings.CurrentNodeAddress()
             )
 
-            var new_pack = settings.PackageTCP {
+            var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.User.Hash,
+                    Name: settings.CurrentHash(),
                 },
                 Head: models.Head {
-                    Header: settings.HEAD_MESSAGE,
+                    Title: settings.HEAD_MESSAGE,
                     Mode: settings.MODE_GLOBAL,
                 },
                 Body: message,
@@ -66,11 +66,11 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
 
             for username := range node_address {
                 new_pack.To = username
-                connect.SendPackage(new_pack, settings.User.ModeF2F)
+                connect.SendPackage(new_pack, settings.CurrentModeNet())
             }
 
             var from = settings.User.Login
-            if settings.User.ModeF2F { from = settings.User.Hash }
+            if settings.User.ModeF2F { from = settings.CurrentHash() }
 
             settings.Mutex.Lock()
             _, err := settings.DataBase.Exec(

@@ -37,7 +37,7 @@ func loginPage(w http.ResponseWriter, r *http.Request) {
                     settings.GoroutinesIsRun = true
                     settings.Mutex.Unlock()
                     go connect.ServerTCP()
-                    go connect.FindConnects(10)
+                    go connect.CheckConnects()
                 }
                 http.Redirect(w, r, "/", http.StatusSeeOther)
         }
@@ -45,7 +45,7 @@ func loginPage(w http.ResponseWriter, r *http.Request) {
 
     data.Code = code
     data.Auth = settings.User.Auth
-    data.Hash = settings.User.Hash
+    data.Hash = settings.CurrentHash()
     data.Login = settings.User.Login
     data.ModeF2F = settings.User.ModeF2F
 

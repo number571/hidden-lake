@@ -7,6 +7,7 @@ import (
     "encoding/json"
     "../utils"
     "../crypto"
+    "../models"
     "../settings"
 )
 
@@ -20,7 +21,7 @@ func apiChatLocal(w http.ResponseWriter, r *http.Request) {
         case "update": 
             updateChatLocal(w, slice[0])
         default: 
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Head: settings.HEAD_WARNING})
+            json.NewEncoder(w).Encode(models.PackageHTTP{Head: settings.HEAD_WARNING})
     } 
 }
 
@@ -31,7 +32,7 @@ func updateChatLocal(w http.ResponseWriter, user string) {
     )
 
     if _, ok := node_address[user]; !ok {
-        json.NewEncoder(w).Encode(settings.PackageHTTP{Exists:false})
+        json.NewEncoder(w).Encode(models.PackageHTTP{Exists:false})
         return
     }
 
@@ -43,7 +44,7 @@ func updateChatLocal(w http.ResponseWriter, user string) {
 
     select {
         case <-timeout:
-            json.NewEncoder(w).Encode(settings.PackageHTTP{Exists:false})
+            json.NewEncoder(w).Encode(models.PackageHTTP{Exists:false})
             return
 
         case <-settings.Messages.NewDataExistLocal[user]:
@@ -60,7 +61,7 @@ func updateChatLocal(w http.ResponseWriter, user string) {
                 messages += crypto.Decrypt(settings.User.Password, message)
             }
 
-            var data = settings.PackageHTTP {
+            var data = models.PackageHTTP {
                 Exists: true,
                 Head: settings.HEAD_MESSAGE,
                 Body: messages,

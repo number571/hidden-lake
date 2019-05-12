@@ -3,6 +3,7 @@ package controllers
 import (
     "net/http"
     "encoding/json"
+    "../models"
     "../settings"
 )
 
@@ -14,7 +15,7 @@ func apiMode(w http.ResponseWriter, r *http.Request) {
     settings.Mutex.Unlock()
 
     var mode = settings.CurrentMode()
-    var data = settings.PackageHTTP {
+    var data = models.PackageHTTP {
         Exists: true,
         Head: settings.HEAD_MESSAGE,
         Body: mode,

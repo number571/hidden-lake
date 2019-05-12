@@ -57,13 +57,13 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var new_pack = settings.PackageTCP {
+    var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash,
+            Name: settings.CurrentHash(),
         },
         To: settings.User.TempConnect,
         Head: models.Head {
-            Header: settings.HEAD_ARCHIVE,
+            Title: settings.HEAD_ARCHIVE,
             Mode: settings.MODE_READ_LIST,
         },
     }
@@ -72,10 +72,10 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
     settings.User.TempArchive = nil
     settings.Mutex.Unlock()
 
-    connect.SendPackage(new_pack, settings.User.ModeF2F)
+    connect.SendPackage(new_pack, settings.CurrentModeNet())
 
-check_again:
     var seconds = 0
+check_again:
     if settings.User.TempArchive == nil && seconds < 10 {
         time.Sleep(time.Second * 1)
         seconds++

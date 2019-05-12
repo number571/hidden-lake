@@ -53,6 +53,8 @@ func initDataBase(database_name string) {
 
     _, err = DataBase.Exec(`
 CREATE TABLE IF NOT EXISTS Keys (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    Mode VARCHAR(4) UNIQUE,
     PrivateKey VARCHAR(4096) UNIQUE
 );
 
@@ -113,26 +115,47 @@ func passwordIsNotExist() bool {
 }
 
 func initPrivateKey() {
-    var (
-        row = DataBase.QueryRow("SELECT PrivatKey FROM Keys")
-        private_key string
-    )
-    row.Scan(&private_key)
-    if private_key == "" {
-        createAsymmetricKeys(User.Password)
-    } else {
-        Mutex.Lock()
-        User.PrivateData = crypto.Decrypt(User.Password, private_key)
-        User.PrivateKey = encoding.DecodePrivate(User.PrivateData)
-        User.PublicKey = &(User.PrivateKey).PublicKey
-        Mutex.Unlock()
+    var private_key, mode string
+
+    rows, err := DataBase.Query("SELECT PrivateKey, Mode FROM Keys ORDER BY Id")
+    utils.CheckError(err)
+    
+    for rows.Next() {
+        rows.Scan(&private_key, &mode)
+        if private_key == "" {
+            createAsymmetricKeys(User.Password)
+            break
+        } else {
+            switch mode {
+                case "P2P":
+                    Mutex.Lock()
+                    User.Private.Data.P2P = crypto.Decrypt(User.Password, private_key)
+                    User.Private.Key.P2P = encoding.DecodePrivate(User.Private.Data.P2P)
+                    User.Public.Key.P2P = &(User.Private.Key.P2P).PublicKey
+                    Mutex.Unlock()
+                case "F2F":
+                    Mutex.Lock()
+                    User.Private.Data.F2F = crypto.Decrypt(User.Password, private_key)
+                    User.Private.Key.F2F = encoding.DecodePrivate(User.Private.Data.F2F)
+                    User.Public.Key.F2F = &(User.Private.Key.F2F).PublicKey
+                    Mutex.Unlock()
+            }
+        }
     }
-    var pub_data = encoding.EncodePublic(User.PublicKey)
-    var hashed = md5.Sum(pub_data)
+
+    rows.Close()
+
+    var pub_data_p2p = encoding.EncodePublic(User.Public.Key.P2P)
+    var hashed_p2p = md5.Sum(pub_data_p2p)
+
+    var pub_data_f2f = encoding.EncodePublic(User.Public.Key.F2F)
+    var hashed_f2f = md5.Sum(pub_data_f2f)
 
     Mutex.Lock()
-    User.PublicData = string(pub_data)
-    User.Hash = hex.EncodeToString(hashed[:])
+    User.Public.Data.P2P = string(pub_data_p2p)
+    User.Public.Data.F2F = string(pub_data_f2f)
+    User.Hash.P2P = hex.EncodeToString(hashed_p2p[:])
+    User.Hash.F2F = hex.EncodeToString(hashed_f2f[:])
     Mutex.Unlock()
 }
 
@@ -185,8 +208,8 @@ func initConnectsF2F() {
         utils.CheckError(err)
 
         Messages.NewDataExistLocal[user] = make(chan bool)
-        User.NodeAddressF2F[user] = address
-        User.NodeSessionKeyF2F[user] = session_key
+        Node.Address.F2F[user] = address
+        Node.SessionKey.F2F[user] = session_key
     }
 }
 
@@ -204,14 +227,23 @@ func createPassword(pasw string) []byte {
 
 func createAsymmetricKeys(pasw []byte) {
     Mutex.Lock()
-    User.PrivateKey, User.PublicKey = crypto.GenerateKeys(2048)
-    User.PrivateData = string(encoding.EncodePrivate(User.PrivateKey))
-    _, err := DataBase.Exec(
-        "INSERT INTO Keys (PrivateKey) VALUES ($1)",
-        crypto.Encrypt(pasw, User.PrivateData), 
+    User.Private.Key.P2P, User.Public.Key.P2P = crypto.GenerateKeys(ASYMMETRIC_KEY_BITS)
+    User.Private.Data.P2P = string(encoding.EncodePrivate(User.Private.Key.P2P))
+    _, err1 := DataBase.Exec(
+        "INSERT INTO Keys (PrivateKey, Mode) VALUES ($1, $2)",
+        crypto.Encrypt(pasw, User.Private.Data.P2P), "P2P",
+    )
+    
+    User.Private.Key.F2F, User.Public.Key.F2F = crypto.GenerateKeys(ASYMMETRIC_KEY_BITS)
+    User.Private.Data.F2F = string(encoding.EncodePrivate(User.Private.Key.F2F))
+    _, err2 := DataBase.Exec(
+        "INSERT INTO Keys (PrivateKey, Mode) VALUES ($1, $2)", 
+        crypto.Encrypt(pasw, User.Private.Data.F2F), "F2F",
     )
     Mutex.Unlock()
-    utils.CheckError(err)
+
+    utils.CheckError(err1)
+    utils.CheckError(err2)
 }
 
 func checkPassword(pasw string) int8 {

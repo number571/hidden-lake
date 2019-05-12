@@ -1,7 +1,6 @@
 package controllers
 
 import (
-    "strings"
     "net/http"
     "html/template"
     "../utils"
@@ -28,7 +27,7 @@ func networkPage(w http.ResponseWriter, r *http.Request) {
                     connect.ConnectF2F(name, addr, pasw)
                 }
             } else {
-                connect.Connect(strings.Split(r.FormValue("addr"), " "), false)
+                connect.ConnectP2PMerge(r.FormValue("addr"))
             }
         }
 
@@ -36,7 +35,7 @@ func networkPage(w http.ResponseWriter, r *http.Request) {
             if settings.User.ModeF2F {
                 connect.DisconnectF2F(r.FormValue("name"))
             } else {
-                connect.Disconnect(r.FormValue("name"))
+                connect.DisconnectP2P(r.FormValue("name"))
             }
         }
     }

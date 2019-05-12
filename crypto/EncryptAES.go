@@ -6,16 +6,7 @@ import (
     "crypto/aes"
     "crypto/rand"
     "crypto/cipher"
-    "encoding/hex"
 )
-
-func Encrypt(session_key []byte, data string) string {
-    result, _ := EncryptAES(
-        []byte(data),
-        session_key,
-    )
-    return hex.EncodeToString(result)
-}
 
 func EncryptAES(data, key []byte) ([]byte, error) {
     block, err := aes.NewCipher(key)
@@ -24,7 +15,7 @@ func EncryptAES(data, key []byte) ([]byte, error) {
     }
 
     blockSize := block.BlockSize()
-    data = PKCS5Padding(data, blockSize)
+    data = paddingPKCS5(data, blockSize)
 
     cipherText := make([]byte, blockSize + len(data))
 
@@ -39,7 +30,7 @@ func EncryptAES(data, key []byte) ([]byte, error) {
     return cipherText, nil
 }
 
-func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
+func paddingPKCS5(ciphertext []byte, blockSize int) []byte {
     padding := blockSize - len(ciphertext) % blockSize
     padtext := bytes.Repeat([]byte{byte(padding)}, padding)
     return append(ciphertext, padtext...)

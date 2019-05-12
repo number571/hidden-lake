@@ -16,7 +16,7 @@ func main() {
 	if settings.User.Port != "" {
 		settings.GoroutinesIsRun = true
 		go connect.ServerTCP()
-		go connect.FindConnects(10)
+		go connect.CheckConnects()
 	}
 
 	if gui_interface {

@@ -28,13 +28,13 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
         if node == "none" {
             err_page = 1
         } else {
-            var new_pack = settings.PackageTCP {
+            var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.User.Hash,
+                    Name: settings.CurrentHash(),
                 },
                 To: node,
                 Head: models.Head {
-                    Header: settings.HEAD_EMAIL,
+                    Title: settings.HEAD_EMAIL,
                     Mode: settings.MODE_SAVE,
                 }, 
                 Body: 
@@ -42,7 +42,7 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
                     r.FormValue("body") + settings.SEPARATOR +
                     time.Now().Format(time.RFC850),
             }
-            connect.SendPackage(new_pack, settings.User.ModeF2F)
+            connect.SendPackage(new_pack, settings.CurrentModeNet())
             err_page = -1
         }
     }
