@@ -16,7 +16,7 @@
             <header>
                 <div id="head_title" class="wrapper">
                     <p>
-                        <a id="mode" href="#">{{ if .ModeF2F }}( F2F ){{ else }}( P2P ){{ end }}</a>
+                        <a id="mode" href="#">({{ .Mode }})</a>
                         Hidden Lake Network
                         {{ if .Auth }}
                             [ {{ .Login }} ]
@@ -43,28 +43,12 @@
             <footer>
                 <div class="wrapper">
                     <p class="block_left"> 
-                        [ HiddenLake v0.6.1 ]
+                        [ HiddenLake v0.7 ]
                     </p>
                 </div>
             </footer>
             </div>
         </div>
     </body>
-    <script>
-        $(document).ready(function(){  
-            $('#mode').click(function(){  
-                $.ajax({  
-                    type: "POST",  
-                    url: "/api/mode",
-                    cache: false,
-                    success: function(obj){
-                        if (obj.Exists) {
-                            location.reload();
-                        }
-                    }  
-                });
-                return false;
-            });  
-        });  
-    </script> 
+    <script type="text/javascript" src="/static/js/ajax/base.js"></script>
 </html>

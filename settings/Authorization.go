@@ -7,6 +7,7 @@ import (
     _ "github.com/mattn/go-sqlite3"
     "../utils"
     "../crypto"
+    "../models"
     "../encoding"
 )
 
@@ -38,8 +39,22 @@ func Authorization(login, password string) int8 {
     initAddress()
     initConnects()
     initConnectsF2F()
+    initMode()
 
     return 0
+}
+
+func initMode() {
+    if User.Port == "" { 
+        User.Mode = models.C_S_mode
+        return 
+    }
+
+    if NeedF2FMode { 
+        User.Mode = models.F2F_mode 
+    } else { 
+        User.Mode = models.P2P_mode 
+    }
 }
 
 func initDataBase(database_name string) {
@@ -90,7 +105,6 @@ CREATE TABLE IF NOT EXISTS DefaultConnections (
 CREATE TABLE IF NOT EXISTS Connections (
     Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     User VARCHAR(32) UNIQUE,
-    Login VARCHAR(64),
     PublicKey VARCHAR(1024) UNIQUE
 );
 

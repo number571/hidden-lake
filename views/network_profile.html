@@ -15,17 +15,10 @@
         <p>
             {{ if .Connections }}
                 <b>Connections = </b> 
-                {{ if .ModeF2F }}
                     {{ range .Connections }}
                         <br>
-                        <a href="/network/profile/{{ .User }}">{{ .User }}</a>
+                        <a href="/network/profile/{{ . }}">{{ . }}</a>
                     {{ end }}
-                {{ else }}
-                    {{ range .Connections }}
-                        <br>
-                        <a href="/network/profile/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
-                    {{ end }}
-                {{ end }}
             {{ else }}
                 None connections
             {{ end }}

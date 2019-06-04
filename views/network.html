@@ -11,15 +11,17 @@
 	<hr>
 	<br>
 	<div class="content block_left">
-		<b>
-			<a class="button" href="/network/chat/">Chat</a>
-			<a class="button" href="/network/profile/">Profiles</a> 
-			<a class="button" href="/network/email/">Email</a> 
-			<a class="button" href="/network/archive/">Archives</a> 
-		</b>
+		<div id="button_panel">
+			<b>
+				<a class="button" href="/network/chat/">Chat</a>
+				<a class="button" href="/network/profile/">Profiles</a> 
+				<a class="button" href="/network/email/">Email</a> 
+				<a class="button" href="/network/archive/">Archives</a> 
+			</b>
+		</div>
 		<br><br>
 		<form method="POST" action="/network/">
-			{{ if .ModeF2F }}
+			{{ if (eq .Mode "F2F") }}
 				<input class="input_connect" type="text" name="name" placeholder="nodename"> <br>
 				<input class="input_connect" type="text" name="addr" placeholder="address"> <br>
 				<input class="input_connect" type="password" name="pasw" placeholder="password"> <br>
@@ -30,13 +32,13 @@
 		</form>
 		<p>
 			Connections = <br>
-				{{ if .Connections}}
-					{{ range .Connections }}
-						<a href="/network/profile/{{ . }}">{{ . }}</a><br>
-					{{ end }}
-				{{ else}}
-					None
-				{{end}}
+			{{ if .Connections }}
+				{{ range .Connections }}
+					<a href="/network/profile/{{ . }}">{{ . }}</a><br>
+				{{ end }}
+			{{ else}}
+				None
+			{{end}}
 		</p>
 	</div>
 {{ end }}

@@ -1,9 +1,14 @@
 package models
 
 type From struct {
+	// Login string
+	Hash string
 	Address string
-	Login string
-	Name string
+}
+
+type To struct {
+	Hash string
+	Address string
 }
 
 type Head struct {
@@ -13,7 +18,7 @@ type Head struct {
 
 type PackageTCP struct {
     From From
-    To string
+    To To
     Head Head
     Body string
 }

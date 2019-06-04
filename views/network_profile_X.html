@@ -20,22 +20,17 @@
 				<a href="/network/email/read/{{ .UserHash }}">Email</a> | 
 				<a href="/network/archive/{{ .UserHash }}">Archive</a> |
 			</b>
-			{{ if (or .ModeF2F (not .Status)) }}
-				<form method="POST" action="/network/">
-					<input type="hidden" name="name" value="{{ .UserHash }}">
-					<input type="submit" name="disconnect" value="Disconnect">
-				</form>
-			{{ end }}
+			<form method="POST" action="/network/">
+				<input type="hidden" name="name" value="{{ .UserHash }}">
+				<input type="submit" name="disconnect" value="Disconnect">
+			</form>
 		</div>
 		<p>
-			{{ if .ModeF2F }}
+			{{ if (eq .Mode "F2F") }}
 				<b>Hash</b> = {{ .UserHash }} <br>
 				<b>Address</b> = {{ .Address }} <br>
-				<b>Status</b> = {{ if .Status }} Connected {{ else }} NotConnected {{ end }} <br>
 			{{ else }}
-				<b>Login</b> = {{ .UserLogin }} <br>
 				<b>Hash</b> = {{ .UserHash }} <br>
-				<b>Status</b> = {{ if .Status }} Connected {{ else }} NotConnected {{ end }} <br>
 				<b>PublicKey</b> = <br>
 				{{ .PublicKey }} <br>
 			{{ end }}

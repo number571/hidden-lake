@@ -1,9 +1,17 @@
 package settings
 
+import (
+	"../models"
+)
+
 func CurrentMode() string {
-    if User.ModeF2F {
-        return "F2F"
-    } else {
-        return "P2P"
+	return GetStrMode(User.Mode)
+}
+
+func GetStrMode(mode models.ModeNet) string {
+	switch mode {
+        case models.P2P_mode: return "P2P"
+        case models.F2F_mode: return "F2F"
+    	default: return "C-S"
     }
 }

@@ -12,7 +12,7 @@ import (
     "../settings"
 )
 
-func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []models.ConnStatus) {
+func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_users []string) {
     if !settings.User.Auth {
         http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
@@ -36,12 +36,12 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
 
             var (
                 splited = strings.Split(message, " ")
-                node_address = settings.CurrentNodeAddress()
+                // node_address = settings.CurrentNodeAddress()
             )
 
             var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.CurrentHash(),
+                    Hash: settings.CurrentHash(),
                 },
                 Head: models.Head {
                     Title: settings.HEAD_MESSAGE,
@@ -53,33 +53,35 @@ func networkChatGlobal(w http.ResponseWriter, r *http.Request, list_of_status []
             if len(splited) >= 3 {
                 switch splited[0] {
                     case settings.TERM_SEND: 
-                        new_pack.To = splited[1]
+                        new_pack.To.Hash = splited[1]
                         new_pack.Head.Mode = settings.MODE_LOCAL
                         new_pack.Body = strings.Join(splited[2:], " ")
-                        message = "(" + new_pack.To + ")" + new_pack.Body
+                        message = "(" + new_pack.To.Hash + ")" + new_pack.Body
                 }
             }
 
-            if settings.User.ModeF2F {
-                connect.CreateRedirectF2FPackage(&new_pack, new_pack.To)
-            }
+            connect.SendPackage(new_pack, settings.User.Mode)
 
-            for username := range node_address {
-                new_pack.To = username
-                connect.SendPackage(new_pack, settings.CurrentModeNet())
-            }
+            // if settings.User.Mode == models.F2F_mode {
+            //     connect.CreateRedirectF2FPackage(&new_pack, new_pack.To.Hash)
+            // }
 
-            var from = settings.User.Login
-            if settings.User.ModeF2F { from = settings.CurrentHash() }
+            // for username := range node_address {
+            //     new_pack.To.Hash = username
+            //     connect.SendPackage(new_pack, settings.CurrentModeNet())
+            // }
+
+            // var from = settings.User.Login
+            // if settings.User.Mode == models.F2F_mode { from = settings.CurrentHash() }
 
             settings.Mutex.Lock()
             _, err := settings.DataBase.Exec(
                 "INSERT INTO GlobalMessages (User, Mode, Body) VALUES ($1, $2, $3)",
-                settings.User.Hash,
+                settings.CurrentHash(),
                 mode,
                 crypto.Encrypt(
                     settings.User.Password,
-                    fmt.Sprintf("[%s]: %s\n", from, message),
+                    fmt.Sprintf("(%s)[%s]: %s\n", settings.CurrentMode(), settings.CurrentHash(), message),
                 ),
             )
             settings.Messages.CurrentIdGlobal++
@@ -110,15 +112,15 @@ render_page:
     var data = struct {
         Auth bool
         Login string
-        ModeF2F bool
+        Mode string
         Messages []string
-        Connections []models.ConnStatus
+        Connections []string
     } {
         Auth: true,
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
+        Mode: settings.CurrentMode(),
         Messages: messages,
-        Connections: list_of_status,
+        Connections: list_of_users,
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_chat.html")

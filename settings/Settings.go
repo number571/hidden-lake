@@ -9,15 +9,11 @@ import (
     "../models"
 )
 
-type ModeNet int8
-const (
-    P2P_mode ModeNet = 0
-    F2F_mode ModeNet = 1
-)
-
 var (
-    ViewCLI = true
-    GoroutinesIsRun = false
+    // ViewCLI = true
+    NeedF2FMode bool = false
+    GoroutinesIsRun bool = false
+    ConnectionIsRead bool = false
     ServerListenTCP net.Listener
     ServerListenHTTP *http.Server
     Mutex sync.Mutex
@@ -25,13 +21,12 @@ var (
 )
 
 var User = models.UserNode {
-    ModeF2F: false,
+    Mode: models.C_S_mode,
 }
 
 var Node = models.Node {
-    Login: make(map[string]string),
     PublicKey:  make(map[string]*rsa.PublicKey),
-    Connection: make(map[string]int8),
+    ConnectionMode: make(map[string]models.ModeConn),
     SessionKey: models.SessionKey {
         P2P: make(map[string][]byte),
         F2F: make(map[string][]byte),
@@ -39,6 +34,7 @@ var Node = models.Node {
     Address: models.Address {
         P2P: make(map[string]string),
         F2F: make(map[string]string),
+        C_S: make(map[string]net.Conn),
     },
 }
 
@@ -87,6 +83,7 @@ const (
     PROTOCOL  = "tcp"
     PORT_HTTP = ":7545"
     IPV4_HTTP = "127.0.0.1"
+    END_BLOCK = "[END-BLOCK]"
 
     DATABASE_NAME = "database.db"
     IPV4_TEMPLATE = "0.0.0.0"

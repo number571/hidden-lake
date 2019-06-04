@@ -35,9 +35,11 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
         } else if _, ok := r.Form["download"]; ok {
             var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.CurrentHash(),
+                    Hash: settings.CurrentHash(),
                 },
-                To: settings.User.TempConnect,
+                To: models.To {
+                    Hash: settings.User.TempConnect,
+                },
                 Head: models.Head {
                     Title: settings.HEAD_ARCHIVE,
                     Mode: settings.MODE_READ_FILE,
@@ -55,13 +57,13 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
     var data = struct {
         Auth bool
         Login string
-        ModeF2F bool
+        Mode string
         Files []string
         TempConnect string
     } {
         Auth: true,
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
+        Mode: settings.CurrentMode(),
         TempConnect: settings.User.TempConnect,
     }
 

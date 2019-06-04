@@ -8,17 +8,13 @@ import (
 	"../settings"
 )
 
-func sendAddrPackage(to string, pack models.PackageTCP) int8 {
-    conn, err := net.Dial(settings.PROTOCOL, to)
-    if err != nil {
+// Send package by address node.
+func sendPackageByArchCS(conn net.Conn, pack models.PackageTCP) int8 {
+    if conn == nil {
         return settings.EXIT_FAILED
     }
-
     data, err := json.Marshal(pack)
     utils.CheckError(err)
-
-    conn.Write(data)
-    conn.Close()
-
+    conn.Write(append(data, []byte(settings.END_BLOCK)...))
     return settings.EXIT_SUCCESS
 }

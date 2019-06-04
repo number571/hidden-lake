@@ -6,6 +6,7 @@ import (
     "../settings"
 )
 
+// Send connect-package to node with merge.
 func ConnectP2PMerge(addr string) {
     var address = settings.User.IPv4 + settings.User.Port
 
@@ -22,8 +23,7 @@ func ConnectP2PMerge(addr string) {
     var new_pack = models.PackageTCP {
         From: models.From {
             Address: address,
-            Name: settings.User.Hash.P2P,
-            Login: settings.User.Login,
+            Hash: settings.User.Hash.P2P,
         },
         Head: models.Head {
             Title: settings.HEAD_CONNECT,
@@ -32,5 +32,5 @@ func ConnectP2PMerge(addr string) {
         Body: hex.EncodeToString([]byte(settings.User.Public.Data.P2P)),
     }
 
-    sendAddrPackage(addr, new_pack)
+    sendPackageByAddr(addr, new_pack)
 }

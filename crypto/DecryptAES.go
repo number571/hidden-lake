@@ -10,6 +10,7 @@ func DecryptAES(data, key []byte) ([]byte, error) {
     block, err := aes.NewCipher(key)
     if err != nil {
         panic(err)
+        // return nil, errors.New("invalid key size")
     }
 
     blockSize := block.BlockSize()

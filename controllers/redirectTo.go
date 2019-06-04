@@ -23,11 +23,11 @@ func page404(w http.ResponseWriter, r *http.Request) {
 	var data = struct {
 		Auth bool
 		Login string
-		ModeF2F bool
+		Mode string
 	} {
 		Auth: true,
 		Login: settings.User.Login,
-		ModeF2F: settings.User.ModeF2F,
+		Mode: settings.CurrentMode(),
 	}
 
 	t, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "page404.html")

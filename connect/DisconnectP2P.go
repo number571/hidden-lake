@@ -5,6 +5,7 @@ import (
     "../settings"
 )
 
+// Delete from database node and messages.
 func DisconnectP2P(username string) {
 	nullNode(username)
 	settings.Mutex.Lock()

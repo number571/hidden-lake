@@ -158,7 +158,11 @@
     }
 
     .input_size {
-        width: 34.2em;
+        width: 41.5em;
+    }
+
+    .button_input {
+        width: 42.6em;
     }
 
     .block_left{
@@ -180,7 +184,7 @@
     }
 
     .input_size {
-        width: 32em;
+        width: 31.5em;
     }
 
     .button_input {
@@ -222,7 +226,7 @@
     }
 
     .input_size {
-        width: 25.3em;
+        width: 24.8em;
     }
 
     .button_input {
@@ -256,7 +260,7 @@
     }
 
     .input_size {
-        width: 22.2em;
+        width: 21.8em;
     }
 
     .button_input {
@@ -290,7 +294,7 @@
     }
 
     .input_size {
-        width: 19.5em;
+        width: 19em;
     }
 
     .button_input {

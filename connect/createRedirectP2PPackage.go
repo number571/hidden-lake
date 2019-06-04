@@ -8,29 +8,34 @@ import (
     "../settings"
 )
 
+// Initialize redirect-package with onion routing for P2P.
 func createRedirectP2PPackage(pack *models.PackageTCP) {
     encrypted_hashname, err := crypto.EncryptRSA(
         []byte(settings.User.Hash.P2P),
-        settings.Node.PublicKey[pack.To],
+        settings.Node.PublicKey[pack.To.Hash],
     )
     utils.CheckError(err)
     *pack = models.PackageTCP {
         From: models.From {
-            Name: pack.From.Name,
-            Address: onionOverlay(pack.To, settings.QUAN_OF_ROUTING_NODES),
+            Hash: pack.From.Hash,
+            Address: pack.From.Address,
+        },
+        To: models.To {
+            Address: onionOverlay(pack.To.Hash, settings.QUAN_OF_ROUTING_NODES),
         },
         Head: models.Head {
             Title: settings.HEAD_REDIRECT,
             Mode: hex.EncodeToString(encrypted_hashname) + settings.SEPARATOR +
                 crypto.Encrypt(
-                    settings.Node.SessionKey.P2P[pack.To], 
+                    settings.Node.SessionKey.P2P[pack.To.Hash], 
                     pack.Head.Title + settings.SEPARATOR + pack.Head.Mode,
                 ),
         },
-        Body: crypto.Encrypt(settings.Node.SessionKey.P2P[pack.To], pack.Body),
+        Body: crypto.Encrypt(settings.Node.SessionKey.P2P[pack.To.Hash], pack.Body),
     }
 }
 
+// Generate list of nodes with encrypted usernames.
 func onionOverlay(to string, quan uint8) string {
     var (
         list []string

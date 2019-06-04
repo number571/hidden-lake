@@ -1,6 +1,7 @@
 package models
 
 import (
+	"net"
 	"crypto/rsa"
 )
 
@@ -12,12 +13,18 @@ type SessionKey struct {
 type Address struct {
 	P2P map[string]string
 	F2F map[string]string
+	C_S map[string]net.Conn
+}
+
+type ConnServer struct {
+    Addr net.Conn
+    Hash string
 }
 
 type Node struct {
-	Login map[string]string
-	Connection map[string]int8
-	PublicKey map[string]*rsa.PublicKey
-	SessionKey SessionKey
 	Address Address
+	SessionKey SessionKey
+	ConnServer ConnServer
+	ConnectionMode map[string]ModeConn
+	PublicKey map[string]*rsa.PublicKey
 }

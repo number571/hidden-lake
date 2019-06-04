@@ -25,12 +25,12 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
         var data = struct {
             Auth bool
             Login string
-            ModeF2F bool
+            Mode string
             Connections []string
         } {
             Auth: true,
             Login: settings.User.Login,
-            ModeF2F: settings.User.ModeF2F,
+            Mode: settings.CurrentMode(),
             Connections: connects,
         }
 
@@ -42,26 +42,23 @@ func networkArchivePage(w http.ResponseWriter, r *http.Request) {
 
     var result = strings.TrimPrefix(r.URL.Path, "/network/archive/")
 
-    settings.Mutex.Lock()
-    settings.User.TempConnect = ""
-    settings.Mutex.Unlock()
-
+    var user_is_not_exist = true
     if _, ok := node_address[result]; ok {
-        settings.Mutex.Lock()
-        settings.User.TempConnect = result
-        settings.Mutex.Unlock()
+        user_is_not_exist = false
     }
 
-    if settings.User.TempConnect == "" {
+    if user_is_not_exist {
         redirectTo("404", w, r)
         return
     }
 
     var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.CurrentHash(),
+            Hash: settings.CurrentHash(),
         },
-        To: settings.User.TempConnect,
+        To: models.To {
+            Hash: result,
+        },
         Head: models.Head {
             Title: settings.HEAD_ARCHIVE,
             Mode: settings.MODE_READ_LIST,
@@ -85,14 +82,14 @@ check_again:
     var data = struct {
         Auth bool
         Login string
-        ModeF2F bool
+        Mode models.ModeNet
         Files []string
         TempConnect string
     } {
         Auth: true,
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
-        TempConnect: settings.User.TempConnect,
+        Mode: settings.User.Mode,
+        TempConnect: result,
         Files: settings.User.TempArchive,
     }
 

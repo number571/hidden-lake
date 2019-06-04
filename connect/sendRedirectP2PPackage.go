@@ -9,8 +9,9 @@ import (
     "../settings"
 )
 
+// Send redirect-package to next node in onion-list.
 func sendRedirectP2PPackage(pack models.PackageTCP) {
-    var data = strings.Split(pack.From.Address, settings.SEPARATOR)
+    var data = strings.Split(pack.To.Address, settings.SEPARATOR)
 
     decoded, err := hex.DecodeString(data[0])
     utils.CheckError(err)
@@ -26,10 +27,13 @@ func sendRedirectP2PPackage(pack models.PackageTCP) {
 
     var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash.P2P,
+            Hash: settings.User.Hash.P2P,
+            Address: pack.From.Address,
+        },
+        To: models.To {
+            Hash: addresses[0],
             Address: strings.Join(addresses[1:], settings.SEPARATOR),
         },
-        To: addresses[0],
         Head: models.Head {
             Title: pack.Head.Title,
             Mode: pack.Head.Mode,
@@ -37,5 +41,5 @@ func sendRedirectP2PPackage(pack models.PackageTCP) {
         Body: pack.Body,
     }
 
-    sendEncryptedPackage(new_pack, settings.P2P_mode)
+    SendEncryptedPackage(new_pack, models.P2P_mode)
 }

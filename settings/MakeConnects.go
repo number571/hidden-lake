@@ -1,6 +1,6 @@
 package settings
 
-func MakeConnects(node_address map[string]string) []string {
+func MakeConnects(node_address map[string][]byte) []string {
 	var (
 		connects = make([]string, len(node_address))
 		index uint32

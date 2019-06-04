@@ -7,18 +7,21 @@ import (
     "../settings"
 )
 
-func CreateRedirectF2FPackage(pack *models.PackageTCP, to string) {
+// Initialize redirect-package for F2F.
+func createRedirectF2FPackage(pack *models.PackageTCP, to string) {
     var (
         connects = append(
-            settings.MakeConnects(settings.Node.Address.F2F), 
+            settings.MakeConnects(settings.Node.SessionKey.F2F), 
             settings.User.Hash.F2F,
         )
         session_message = string(crypto.SessionKey(8))
     )
     *pack = models.PackageTCP {
         From: models.From {
-            Name: settings.User.Hash.F2F,
-            Login: pack.From.Name,
+            Hash: settings.User.Hash.F2F,
+            Address: pack.From.Address,
+        },
+        To: models.To {
             Address: strings.Join(connects, settings.SEPARATOR),
         },
         Head: models.Head {

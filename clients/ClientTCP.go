@@ -36,7 +36,7 @@ func ClientTCP() {
         splited = strings.Split(message, " ")
 
         switch splited[0] {
-            case settings.TERM_MODE: turnModeF2F(); continue
+            case settings.TERM_MODE: switchModeNet(); continue
             case settings.TERM_HELP: utils.PrintHelp(); continue
             case settings.TERM_INTERFACE: turnInterface(); continue
             case settings.TERM_EXIT: os.Exit(settings.EXIT_SUCCESS)
@@ -50,24 +50,25 @@ func ClientTCP() {
                 case settings.TERM_ENTER: pressEnter(authorization)
             }
         } else {
-            client(splited, message)
+            switch splited[0] {
+                case settings.TERM_WHOAMI: whoami()
+                case settings.TERM_LOGOUT: connect.Logout()
+                case settings.TERM_NETWORK: network(splited)
+                case settings.TERM_SEND: sendLocalMessage(splited)
+                case settings.TERM_EMAIL: emailAction(splited)
+                case settings.TERM_ARCHIVE: archiveAction(splited)
+                case settings.TERM_HISTORY: historyAction(splited)
+                case settings.TERM_CONNECT: connectTo(splited)
+                case settings.TERM_DISCONNECT: disconnectFrom(splited)
+                default: sendGlobalMessage(message)
+            }
         }
     }
 }
 
-func client(splited []string, message string) {
-    switch splited[0] {
-        case settings.TERM_WHOAMI: fmt.Println("|", settings.CurrentHash())
-        case settings.TERM_LOGOUT: connect.Logout()
-        case settings.TERM_NETWORK: network()
-        case settings.TERM_SEND: sendLocalMessage(splited)
-        case settings.TERM_EMAIL: emailAction(splited)
-        case settings.TERM_ARCHIVE: archiveAction(splited)
-        case settings.TERM_HISTORY: historyAction(splited)
-        case settings.TERM_CONNECT: connectTo(splited)
-        case settings.TERM_DISCONNECT: disconnectFrom(splited)
-        default: sendGlobalMessage(message)
-    }
+func whoami() {
+    fmt.Println("| Hash:", settings.CurrentHash())
+    fmt.Println("| Mode:", settings.CurrentMode())
 }
 
 // Actions with archives.
@@ -89,16 +90,18 @@ func downloadNodeFiles(splited []string) {
     for _, filename := range splited[3:] {
         var new_pack = models.PackageTCP {
             From: models.From {
-                Name: hashname,
+                Hash: hashname,
             },
-            To: splited[2],
+            To: models.To {
+                Hash: splited[2],
+            },
             Head: models.Head {
                 Title: settings.HEAD_ARCHIVE,
                 Mode: settings.MODE_READ_FILE,
             },
             Body: filename,
         }
-        connect.SendPackage(new_pack, settings.CurrentModeNet())
+        connect.SendPackage(new_pack, settings.User.Mode)
     }
 }
 
@@ -108,15 +111,17 @@ func listNodeArchive(splited []string) {
     for _, name := range splited[1:] {
         var new_pack = models.PackageTCP {
             From: models.From {
-                Name: hashname,
+                Hash: hashname,
             },
-            To: name,
+            To: models.To {
+                Hash: name,
+            },
             Head: models.Head {
                 Title: settings.HEAD_ARCHIVE,
                 Mode: settings.MODE_READ_LIST,
             }, 
         }
-        connect.SendPackage(new_pack, settings.CurrentModeNet())
+        connect.SendPackage(new_pack, settings.User.Mode)
     }
 }
 
@@ -162,17 +167,18 @@ func historyLocal(splited []string, length int) {
 
 // Connect to nodes.
 func connectTo(splited []string) {
-    // P2P
-    if !settings.User.ModeF2F {
-        if len(splited) > 1 {
+    switch settings.User.Mode {
+        case models.P2P_mode: 
+            if len(splited) < 2 { return }
             connect.ConnectP2PMerge(splited[1])
-        }
-        return
+        case models.F2F_mode:
+            if len(splited) < 4 { return }
+            connect.ConnectF2F(splited[1], splited[2], strings.Join(splited[3:], " "))
+        case models.C_S_mode:
+            if len(splited) < 2 { return }
+            settings.Node.ConnServer.Addr = connect.GetConnection(splited[1])
+            connect.ConnectArchCS(settings.Node.ConnServer.Addr, true)
     }
-
-    // F2F
-    if len(splited) < 4 { return }
-    connect.ConnectF2F(splited[1], splited[2], strings.Join(splited[3:], " "))
 }
 
 // Disconnect from nodes.
@@ -200,9 +206,11 @@ func emailWrite(splited []string, length int) {
     if length != 3 { return }
     var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.CurrentHash(),
+            Hash: settings.CurrentHash(),
         },
-        To: splited[2],
+        To: models.To {
+            Hash: splited[2],
+        },
         Head: models.Head {
             Title: settings.HEAD_EMAIL,
             Mode: settings.MODE_SAVE,
@@ -212,7 +220,7 @@ func emailWrite(splited []string, length int) {
             set_email.body + settings.SEPARATOR +
             time.Now().Format(time.RFC850),
     }
-    connect.SendPackage(new_pack, settings.CurrentModeNet())
+    connect.SendPackage(new_pack, settings.User.Mode)
 }
 
 // Read email.
@@ -343,12 +351,9 @@ func emailSetBody(splited []string, length int) {
 // Send global message to all nodes.
 func sendGlobalMessage(message string) {
     if message == "" { return }
-
-    var list_of_nodes = settings.CurrentNodeAddress()
-
     var new_pack = models.PackageTCP {
         From: models.From {
-            Name: settings.CurrentHash(),
+            Hash: settings.CurrentHash(),
         },
         Head: models.Head {
             Title: settings.HEAD_MESSAGE,
@@ -357,14 +362,30 @@ func sendGlobalMessage(message string) {
         Body: message,
     }
 
-    if settings.User.ModeF2F {
-        connect.CreateRedirectF2FPackage(&new_pack, "")
-    }
+    // switch settings.User.Mode {
+    //     case models.P2P_mode:
+    //         // for username := range settings.Node.Address.P2P {
+    //         //     new_pack.To.Hash = username
+    //         //     connect.SendEncryptedPackage(new_pack, models.P2P_mode)
+    //         // }
+    //         // for username := range settings.Node.Address.C_S {
+    //         //     new_pack.To.Hash = username
+    //         //     connect.SendEncryptedPackage(new_pack, models.C_S_mode)
+    //         // }
+    //         connect.SendPackage(new_pack, models.P2P_mode)
+    //     case models.F2F_mode:
+    //         connect.SendPackage(new_pack, models.F2F_mode)
+    //         // connect.CreateRedirectF2FPackage(&new_pack, "")
+    //         // for username := range settings.Node.Address.F2F {
+    //         //     new_pack.To.Hash = username
+    //         //     connect.SendEncryptedPackage(new_pack, models.F2F_mode)
+    //         // }
+    //     case models.C_S_mode:
+    //         // if settings.Node.ConnServer.Addr == nil { return }
+    //         connect.SendPackage(new_pack, models.C_S_mode)
+    // }
 
-    for username := range list_of_nodes {
-        new_pack.To = username
-        connect.SendPackage(new_pack, settings.CurrentModeNet())
-    }
+    connect.SendPackage(new_pack, settings.User.Mode)
 }
 
 // Send local message to one node.
@@ -376,9 +397,11 @@ func sendLocalMessage(splited []string) {
 
     var new_pack = models.PackageTCP {
         From: models.From {
-            Name: hashname,
+            Hash: hashname,
         },
-        To: splited[1],
+        To: models.To {
+            Hash: splited[1],
+        },
         Head: models.Head {
             Title: settings.HEAD_MESSAGE,
             Mode: settings.MODE_LOCAL,
@@ -386,28 +409,86 @@ func sendLocalMessage(splited []string) {
         Body: strings.Join(splited[2:], " "),
     }
 
-    if settings.User.ModeF2F {
-        connect.CreateRedirectF2FPackage(&new_pack, splited[1])
-        for username := range settings.Node.Address.F2F {
-            new_pack.To = username
-            connect.SendPackage(new_pack, settings.CurrentModeNet())
-        }
+    // C-S
+    if settings.User.Mode == models.C_S_mode {
+        // if settings.Node.ConnServer.Addr == nil { return }
+        connect.SendPackage(new_pack, models.C_S_mode)
         return
     }
 
-    connect.SendPackage(new_pack, settings.CurrentModeNet())
+    // F2F
+    if settings.User.Mode == models.F2F_mode {
+        connect.SendPackage(new_pack, models.F2F_mode)
+        // connect.CreateRedirectF2FPackage(&new_pack, splited[1])
+        // for username := range settings.Node.Address.F2F {
+        //     new_pack.To.Hash = username
+        //     connect.SendPackage(new_pack, models.F2F_mode)
+        // }
+        return
+    }
+
+    // P2P
+    var hashnames = strings.Split(splited[1], "->")
+    if len(hashnames) < 2 {
+        // hashnames = append(hashnames, "")
+        // var hashname = pack.To.Hash
+        // if hashname == "" { to = settings.Node.ConnServer.Hash }
+    } else {
+        new_pack.From.Address = hashnames[1]
+        // new_pack.Body = crypto.Encrypt(
+        //     settings.Node.SessionKey.P2P[hashnames[1]], 
+        //     new_pack.Body,
+        // )
+    }
+
+    new_pack.To.Hash = hashnames[0]
+    connect.SendPackage(new_pack, models.P2P_mode)
 }
 
 // Print connections.
-func network() {
-    if settings.User.ModeF2F {
-        for username := range settings.Node.Address.F2F {
-            fmt.Printf("| %s [%s]\n", username, settings.Node.Login[username])
-        }
+func network(splited []string) {
+    if settings.User.Mode == models.C_S_mode {
+        fmt.Println("|", settings.Node.ConnServer.Hash)
         return
     }
+
+    if len(splited) < 2 { 
+        printAllConnections() 
+        return
+    }
+
+    switch splited[1] {
+        case "p2p", "P2P": printP2PConnections()
+        case "f2f", "F2F": printF2FConnections()
+        case "c-s", "C-S": printArchCSConnections()
+        default: printAllConnections()
+    }
+}
+
+func printAllConnections() {
+    printF2FConnections()
+    printP2PConnections()
+    printArchCSConnections()
+}
+
+func printF2FConnections() {
+    fmt.Println("| F2F connections:")
+    for username := range settings.Node.Address.F2F {
+        fmt.Println("| -", username)
+    }
+}
+
+func printArchCSConnections() {
+    fmt.Println("| C-S connections:")
+    for username := range settings.Node.Address.C_S {
+        fmt.Println("| -", username)
+    }
+}
+
+func printP2PConnections() {
+    fmt.Println("| P2P connections:")
     for username := range settings.Node.Address.P2P {
-        fmt.Println("|", username)
+        fmt.Println("| -", username)
     }
 }
 
@@ -430,32 +511,37 @@ func pressEnter(authorization auth) {
     }
 }
 
-// Turn on/off F2F.
-func turnModeF2F() {
-    settings.Mutex.Lock()
-    settings.User.ModeF2F = !settings.User.ModeF2F
-    settings.Mutex.Unlock()
-    printMode()
-}
+// Switch P2P/F2F.
+func switchModeNet() {
+    if settings.User.Mode == models.C_S_mode { 
+        goto print_mode 
+    }
 
-// Print on/off F2F mode.
-func printMode() {
-    var mode = "off"
-    if settings.User.ModeF2F { mode = "on" }
-    fmt.Println("| F2F:", mode)
+    settings.Mutex.Lock()
+    if settings.User.Mode == models.P2P_mode {
+        settings.User.Mode = models.F2F_mode
+    } else {
+        settings.User.Mode = models.P2P_mode
+    }
+    settings.Mutex.Unlock()
+
+print_mode:
+    fmt.Println("| Mode:", settings.CurrentMode())
 }
 
 // Turn on/off interface.
 func turnInterface() {
+    var mode string
     if settings.ServerListenHTTP == nil {
         go ClientHTTP()
-        fmt.Println("| Interface: on")
+        mode = "on"
     } else {
         if err := settings.ServerListenHTTP.Shutdown(context.TODO()); err != nil {
             utils.PrintWarning("failure shutting down")
         }
-        fmt.Println("| Interface: off")
+        mode = "off"
     }
+    fmt.Println("| Interface:", mode)
 }
 
 // Set address ipv4:port.
@@ -464,15 +550,16 @@ func setAddress(splited []string) {
         fmt.Println("| Address:", settings.User.IPv4 + settings.User.Port)
         return
     }
-    var ipv4_port = strings.Split(splited[1], ":")
-    if len(ipv4_port) != 2 {
-        utils.PrintWarning("invalid argument for ':address'")
-        return
-    } 
-    settings.Mutex.Lock()
-    settings.User.IPv4 = ipv4_port[0]
-    settings.User.Port = ":" + ipv4_port[1]
-    settings.Mutex.Unlock()
+    switch splited[1] {
+        case "del", "delete": settings.ClearAddress()
+        default: 
+            var ipv4_port = strings.Split(splited[1], ":")
+            if len(ipv4_port) != 2 {
+                utils.PrintWarning("invalid argument for ':address'")
+                return
+            }
+            settings.SetAddress(ipv4_port[0], ipv4_port[1])
+    }
 }
 
 // Set login.

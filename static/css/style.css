@@ -26,7 +26,7 @@ a {
 }
 
 #login_button {
-    width: 15.6em;
+    width: 16em;
 }
 
 .input_connect {
@@ -176,7 +176,7 @@ input {
 }
 
 .input_size {
-    width: 29em;
+    width: 36.2em;
 }
 
 #container_message {
@@ -225,6 +225,11 @@ main, footer {
     text-align: center;
 }
 
+#button_panel {
+    margin-top: 0.5em;
+    margin-bottom: -1em;
+}
+
 .button {
     font: bold 12px Arial;
     text-decoration: none;
@@ -238,15 +243,6 @@ main, footer {
     opacity: 0.8;
 }
 
-.left_div {
-    float: left;
-}
-
-.right_div {
-    width: 35em;
-    float: right;
-}
-
 .container > * {
     display: inline-block;
 }
@@ -257,7 +253,7 @@ main, footer {
     text-align: left;
 }
 
-p {
+p, pre {
     color: #b3b3b3;
 }
 

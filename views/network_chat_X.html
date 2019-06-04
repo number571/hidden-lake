@@ -16,68 +16,56 @@
     </div>
     <hr>
     <div class="content block_left">
-        <div class="left_div">
-            <br><p>|> <b><a href="/network/chat/">Global chat</a></b></p><br>
-            <p>
-            {{ if .Connections }}
-                <b>Connections = </b>
-                {{ if .ModeF2F }}
-                    {{ range .Connections }}
-                        <br>
-                        <a href="/network/chat/{{ .User }}">{{ .User }}</a>
+        {{ if .TempConnect }}
+            <br>
+            <form method="POST" accept="/network/chat/">
+                <b>
+                    <a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
+                    <a href="/network/chat/{{ .TempConnect }}">Chat</a> | 
+                    <a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
+                    <a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
+                </b>
+                <br>
+                <select id="selected_connection" onchange="change_connection();">
+                    <option>Connections</option>
+                    <option>Global</option>
+                    {{ if .Connections }}
+                        {{ range .Connections }}
+                            <option><a href="/network/chat/{{ . }}">{{ . }}</a></option>
+                        {{ end }}
                     {{ end }}
-                {{ else }}
-                    {{ range .Connections }}
-                        <br>
-                        <a href="/network/chat/{{ .User }}">{{ .Login }} [{{ if .Status }} Connected {{ else }} NotConnected {{ end }}]</a>
-                    {{ end }}
-                {{ end }} 
-            {{ else }}
-                None connections
-            {{ end }}
-            </p>
-        </div>
-        <div class="right_div">
-            {{ if .TempConnect }}
-                <form method="POST" accept="/network/chat/">
-                    <b>
-                        <a href="/network/profile/{{ .TempConnect }}">Profile</a> | 
-                        <a href="/network/chat/{{ .TempConnect }}">Chat</a> | 
-                        <a href="/network/email/read/{{ .TempConnect }}">Email</a> | 
-                        <a href="/network/archive/{{ .TempConnect }}">Archive</a> | 
-                        <input type="submit" name="delete_message" value="Delete messages">
-                    </b>
-                </form>
-                <form method="POST" action="/network/chat/{{ .TempConnect}}">
-                    <textarea id="plain" readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea> <br>
-                    {{ if (or .Status .ModeF2F) }}
-                        <input class="input_size" type="text" name="text" placeholder="Message...">
-                        <input autofocus type="submit" name="send_message" value="Send message">
-                    {{ end }}
-                </form>
-                <script>  
-                    function show() {  
-                        $.ajax({  
-                            type: "POST",
-                            url: "/api/chat/{{ .TempConnect }}/update",  
-                            cache: false,  
-                            success: function(obj) {
-                                console.log(obj);
-                                if (obj.Exists) {
-                                    $("#plain").html($("#plain").val() + obj.Body);  
-                                }
-                            },
-                        }).done(function(obj){
-                            show();
-                        });  
-                    }  
-                    $(document).ready(function(){  
+                </select>
+                <input type="submit" name="delete_message" value="Delete messages">
+            </form>
+            <form method="POST" action="/network/chat/{{ .TempConnect }}">
+                <textarea id="plain" readonly>{{ range .Messages }}{{ . }}{{ end }}</textarea> <br>
+                <input class="input_size" type="text" name="text" placeholder="Message...">
+                <br>
+                <input autofocus type="submit" name="send_message" value="Send message">
+            </form>
+            <script type="text/javascript">
+                function show() {  
+                    $.ajax({  
+                        type: "POST",
+                        url: "/api/chat/{{ .TempConnect }}/update",  
+                        cache: false,  
+                        success: function(obj) {
+                            console.log(obj);
+                            if (obj.Exists) {
+                                $("#plain").html($("#plain").val() + obj.Body);  
+                            }
+                        },
+                    }).done(function(obj){
                         show();
                     });  
-                </script> 
-            {{ else }}
-                Nothing
-            {{ end }}
-        </div>
+                }  
+                $(document).ready(function(){  
+                    show();
+                });
+            </script>
+            <script type="text/javascript" src="/static/js/ajax/change_connection.js"></script>
+        {{ else }}
+            Nothing
+        {{ end }}
     </div>
 {{ end }}

@@ -30,7 +30,7 @@ func Initialization(args []string) bool {
                 flag_interface = true
                 continue
             case "-f", "--f2f":
-                User.ModeF2F = true
+                NeedF2FMode = true
                 continue
             case "-h", "--help":
                 if !flag_help {

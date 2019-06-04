@@ -6,9 +6,10 @@ import (
     "../settings"
 )
 
+// Send redirect-package to friends.
 func sendRedirectF2FPackage(pack models.PackageTCP) {
     var (
-        addresses = strings.Split(pack.From.Address, settings.SEPARATOR)
+        addresses = strings.Split(pack.To.Address, settings.SEPARATOR)
         to_addresses []string
     )
     for username := range settings.Node.Address.F2F {
@@ -27,17 +28,19 @@ func sendRedirectF2FPackage(pack models.PackageTCP) {
     for _, address := range to_addresses {
         var new_pack = models.PackageTCP {
             From: models.From {
-                Name: settings.User.Hash.F2F,
-                Login: pack.From.Name,
+                Hash: settings.User.Hash.F2F,
+                Address: pack.From.Address,
+            },
+            To: models.To {
+                Hash: address,
                 Address: strings.Join(addresses, settings.SEPARATOR),
             },
-            To: address,
             Head: models.Head {
                 Title: pack.Head.Title,
                 Mode: pack.Head.Mode,
             },
             Body: pack.Body,
         }
-        sendEncryptedPackage(new_pack, settings.F2F_mode)
+        SendEncryptedPackage(new_pack, models.F2F_mode)
     }
 }

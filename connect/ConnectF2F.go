@@ -4,9 +4,11 @@ import (
     "encoding/hex"
     "../utils"
     "../crypto"
+    "../models"
     "../settings"
 )
 
+// Set password for node by username.
 func ConnectF2F(username, address, password string) {
     var (
         session_key = crypto.HashSum([]byte(password))
@@ -14,6 +16,7 @@ func ConnectF2F(username, address, password string) {
         encrypted_session_key = crypto.Encrypt(settings.User.Password, hex.EncodeToString(session_key))
     )
     settings.Mutex.Lock()
+    settings.Node.ConnectionMode[username] = models.CONN
     settings.Messages.NewDataExistLocal[username] = make(chan bool)
     settings.Node.Address.F2F[username] = address
     settings.Node.SessionKey.F2F[username] = session_key

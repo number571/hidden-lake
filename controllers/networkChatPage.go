@@ -24,48 +24,35 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
         err error
     )
 
-    if settings.User.ModeF2F {
+    if settings.User.Mode == models.F2F_mode {
         rows, err = settings.DataBase.Query("SELECT User FROM ConnectionsF2F")
     } else {
-        rows, err = settings.DataBase.Query("SELECT User, Login FROM Connections")
+        rows, err = settings.DataBase.Query("SELECT User FROM Connections")
     }
     utils.CheckError(err)
 
-    var list_of_status []models.ConnStatus
-    var temp_list models.ConnStatus
+    var list_of_users []string
+    var username string
 
-    if settings.User.ModeF2F {
-        for rows.Next() {
-            rows.Scan(&temp_list.User)
-            list_of_status = append(list_of_status, temp_list)
-        }
-    } else {
-        for rows.Next() {
-            rows.Scan(&temp_list.User, &temp_list.Login)
-            temp_list.Login = crypto.Decrypt(settings.User.Password, temp_list.Login)
-            list_of_status = append(list_of_status, temp_list)
-        }
+    for rows.Next() {
+        rows.Scan(&username)
+        list_of_users = append(list_of_users, username)
     }
 
     rows.Close()
 
-    var node_address = settings.CurrentNodeAddress()
-    if !settings.User.ModeF2F {
-        for index, value := range list_of_status {
-            _, list_of_status[index].Status = node_address[value.User]
-        }
-    }
-    
     if r.URL.Path == "/network/chat/" {
-        networkChatGlobal(w, r, list_of_status)
+        networkChatGlobal(w, r, list_of_users)
         return
     }
+
+    var result = strings.Split(strings.TrimPrefix(r.URL.Path, "/network/chat/"), "/")[0]
 
     if r.Method == "POST" {
         r.ParseForm()
 
         if _, ok := r.Form["delete_message"]; ok {
-            settings.DeleteLocalMessages([]string{settings.User.TempConnect})
+            settings.DeleteLocalMessages([]string{result})
 
         } else if _, ok := r.Form["send_message"]; ok {
             var message = strings.TrimSpace(r.FormValue("text"))
@@ -74,40 +61,44 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
                 var mode = settings.CurrentMode()
                 var new_pack = models.PackageTCP {
                     From: models.From {
-                        Name: hashname,
+                        Hash: hashname,
                     },
-                    To: settings.User.TempConnect,
+                    To: models.To {
+                        Hash: result,
+                    },
                     Head: models.Head {
                         Title: settings.HEAD_MESSAGE,
                         Mode: settings.MODE_LOCAL,
                     },
                     Body: message,
                 }
+
+                connect.SendPackage(new_pack, settings.User.Mode)
                 
-                if settings.User.ModeF2F {
-                    connect.CreateRedirectF2FPackage(&new_pack, settings.User.TempConnect)
-                }
+                // if settings.User.Mode == models.F2F_mode {
+                //     connect.CreateRedirectF2FPackage(&new_pack, settings.User.TempConnect)
+                // }
 
-                if settings.User.ModeF2F {
-                    for username := range settings.Node.Address.F2F {
-                        new_pack.To = username
-                        connect.SendPackage(new_pack, settings.CurrentModeNet())
-                    }
-                } else {
-                    connect.SendPackage(new_pack, settings.CurrentModeNet())
-                }
+                // if settings.User.Mode == models.F2F_mode {
+                //     for username := range settings.Node.Address.F2F {
+                //         new_pack.To.Hash = username
+                //         connect.SendPackage(new_pack, settings.CurrentModeNet())
+                //     }
+                // } else {
+                //     connect.SendPackage(new_pack, settings.CurrentModeNet())
+                // }
 
-                var from = settings.User.Login
-                if settings.User.ModeF2F { from = hashname }
+                // var from = settings.User.Login
+                // if settings.User.Mode == models.F2F_mode { from = hashname }
 
                 settings.Mutex.Lock()
                 _, err := settings.DataBase.Exec(
-                    "INSERT INTO Local" + settings.User.TempConnect + " (User, Mode, Body) VALUES ($1, $2, $3)",
-                    settings.User.Hash,
+                    "INSERT INTO Local" + result + " (User, Mode, Body) VALUES ($1, $2, $3)",
+                    settings.CurrentHash(),
                     mode,
                     crypto.Encrypt(
                         settings.User.Password,
-                        fmt.Sprintf("[%s]: %s\n", from, message),
+                        fmt.Sprintf("(%s)[%s]: %s\n", mode, hashname, message),
                     ),
                 )
                 settings.Mutex.Unlock()
@@ -115,45 +106,33 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
             }
         }
     }
-    
-    var result = strings.Split(strings.TrimPrefix(r.URL.Path, "/network/chat/"), "/")[0]
 
-    settings.Mutex.Lock()
-    settings.User.TempConnect = ""
-    settings.Mutex.Unlock()
-
-    var user_login string
-
-    for _, value := range list_of_status {
-        if value.User == result {
-            settings.Mutex.Lock()
-            settings.User.TempConnect = result
-            settings.Mutex.Unlock()
-            if !settings.User.ModeF2F {
-                user_login = settings.Node.Login[result]
-            }
+    var user_is_not_exist = true
+    for _, value := range list_of_users {
+        if value == result {
+            user_is_not_exist = false
         }
     }
 
-    if settings.User.TempConnect == "" {
+    if user_is_not_exist {
         redirectTo("404", w, r)
         return
     }
 
     settings.Mutex.Lock()
-    settings.Messages.CurrentIdLocal[settings.User.TempConnect] = 0
+    settings.Messages.CurrentIdLocal[result] = 0
     settings.Mutex.Unlock()
 
     var status bool
-    if !settings.User.ModeF2F {
-        _, status = settings.Node.Address.P2P[settings.User.TempConnect]
+    if settings.User.Mode == models.P2P_mode {
+        _, status = settings.Node.Address.P2P[result]
     }
     go func() {
-        settings.Messages.NewDataExistLocal[settings.User.TempConnect] <- true
+        settings.Messages.NewDataExistLocal[result] <- true
     }()
 
     rows, err = settings.DataBase.Query(
-        "SELECT Body FROM Local" + settings.User.TempConnect + " WHERE Mode = $1 ORDER BY Id",
+        "SELECT Body FROM Local" + result + " WHERE Mode = $1 ORDER BY Id",
         settings.CurrentMode(),
     )
     utils.CheckError(err)
@@ -170,22 +149,20 @@ func networkChatPage(w http.ResponseWriter, r *http.Request) {
 
     var data = struct {
         Messages []string
-        Connections []models.ConnStatus
+        Connections []string
         Status bool
-        UserLogin string
         Auth bool
         Login string
-        ModeF2F bool
+        Mode string
         TempConnect string
     } {
         Messages: messages,
-        Connections: list_of_status,
+        Connections: list_of_users,
         Status: status,
-        UserLogin: user_login,
         Auth: true,
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
-        TempConnect: settings.User.TempConnect,
+        Mode: settings.CurrentMode(),
+        TempConnect: result,
     }
 
     tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "network_chat_X.html")

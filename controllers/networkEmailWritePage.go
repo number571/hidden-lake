@@ -30,9 +30,11 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
         } else {
             var new_pack = models.PackageTCP {
                 From: models.From {
-                    Name: settings.CurrentHash(),
+                    Hash: settings.CurrentHash(),
                 },
-                To: node,
+                To: models.To {
+                    Hash: node,
+                },
                 Head: models.Head {
                     Title: settings.HEAD_EMAIL,
                     Mode: settings.MODE_SAVE,
@@ -55,13 +57,13 @@ func networkEmailWritePage(w http.ResponseWriter, r *http.Request) {
     var data = struct {
         Auth bool
         Login string
-        ModeF2F bool
+        Mode string
         Connections []string
         Error int8
     } {
         Auth: true,
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
+        Mode: settings.CurrentMode(),
         Connections: connects,
         Error: err_page,
     }

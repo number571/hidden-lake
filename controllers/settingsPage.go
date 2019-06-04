@@ -5,6 +5,7 @@ import (
     "net/http"
     "html/template"
     "../utils"
+    "../models"
     "../connect"
     "../settings"
 )
@@ -37,7 +38,7 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
     }
 
     var public_key string
-    if settings.User.ModeF2F {
+    if settings.User.Mode == models.F2F_mode {
         public_key = settings.User.Public.Data.F2F
     } else {
         public_key = settings.User.Public.Data.P2P
@@ -51,7 +52,7 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         Auth bool
         Hash string
         Login string
-        ModeF2F bool
+        Mode string
     } {
         IPv4: settings.User.IPv4,
         Port: strings.TrimPrefix(settings.User.Port, ":"),
@@ -60,7 +61,7 @@ func settingsPage(w http.ResponseWriter, r *http.Request) {
         Auth: true,
         Hash: settings.CurrentHash(),
         Login: settings.User.Login,
-        ModeF2F: settings.User.ModeF2F,
+        Mode: settings.CurrentMode(),
     }
 
 	tmpl, err := template.ParseFiles(settings.PATH_VIEWS + "base.html", settings.PATH_VIEWS + "settings.html")
