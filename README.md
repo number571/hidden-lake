@@ -18,6 +18,7 @@
 3. bootstrap: [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap);
 4. go-sqlite3: [github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3);
 5. websocket: [golang.org/x/net/websocket](https://golang.org/x/net/websocket);
+6. jquery: [github.com/jquery/jquery](https://github.com/jquery/jquery);
 
 ### Signup page:
 <img src="/images/HiddenLake2.png" alt="SignupPage"/>
