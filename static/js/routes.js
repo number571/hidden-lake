@@ -49,7 +49,7 @@ export const RoutesData = [
 		},
 	},
 	{ // 7
-		path: "/client/:id", 
+		path: "/network/client/:id", 
 		name: "client",
 		meta: {
 			title: "Client",
