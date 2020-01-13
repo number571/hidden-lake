@@ -44,6 +44,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(20))
 	hash := user.Hashname
+	
+	if token, ok := settings.Tokens[hash]; ok {
+		delete(settings.Users, token)
+	}
 
 	settings.Users[token] = user
 	settings.Tokens[hash] = token
