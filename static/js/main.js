@@ -92,6 +92,7 @@ const app = new Vue({
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
             this.opened = RoutesData[routes.home].name;
+            this.$router.push(RoutesData[routes.home]);
         },
         async signup() {
             if (this.userdata.password !== this.userdata.password_repeat) {
