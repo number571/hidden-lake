@@ -1,40 +1,41 @@
-{{ define "title" }}
-	Settings
-{{ end }}
-
-{{ define "content" }}
-	<div class="wrapper">
-		<p class="block_left"> /
-			<i>Settings</i>
-		</p>
-	</div>
-	<hr>
-	<br>
-	<div class="content block_left">
-	<p>
-		<form method="POST" action="/settings">
-			<div id="settings_left" class="settings_div">
-				<p>
-					<b>Login</b> = {{ .Login }} <br>
-					<b>Hash</b> = {{ .Hash }} <br>
-					<b>IPv4</b> = <input type="text" name="ipv4" placeholder="127.0.0.1" value="{{ .IPv4 }}">  <br>
-					<b>Port</b> = <input type="text" name="port" placeholder="8080" value="{{ .Port }}"> <br>
-				</p>
-			</div>
-			<div id="settings_right" class="settings_div">
-				<p>
-					<b>Default connections</b> = <br>
-					<textarea id="default_connects" name="conn" placeholder="Connections...">{{ .Conn }}</textarea> <br>
-					<input id="save_settings" type="submit" name="submit" value="Save settings"> <br>
-				</p>
-			</div>
-			
-			<p>
-				<b>PublicKey</b> = <br>
-<pre>
-{{ .PublicKey }}
-</pre>
-			</p>
-		</form>
-	</div>
+{{ define "settings_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='settings'">
+    <h2 class="text-center">Settings</h2><br>
+    <div v-if="message" class="text-center col-12">
+        <p class="lead">${message}</p>
+    </div>
+    <div class="text-center mx-auto">
+        <div class="text-center form-group">
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <button v-if="switcher=='connect'"  @click="setswitch('connect')" type="button" class="btn btn-danger w-100">Action</button>
+                    <button v-else  @click="nulldata(), setswitch('connect')" type="button" class="btn btn-secondary w-100">Connect</button>
+                </div>
+                <div class="col-md-6">
+                    <button v-if="switcher=='disconnect'"  @click="setswitch('disconnect')" type="button" class="btn btn-danger w-100">Action</button>
+                    <button v-else  @click="nulldata(), setswitch('disconnect')" type="button" class="btn btn-secondary w-100">Disconnect</button>
+                </div>
+            </div>
+        </div>
+        <div v-if="switcher=='connect'" class="text-center form-group">
+            <form id="feedbackForm" class="text-center">
+                <div class="form-group">
+                    <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Address" v-model="conndata.address">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
+                </div>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect()">Connect</button>
+            </form>
+        </div>
+        <div v-if="switcher=='disconnect'" class="text-center form-group">
+            <form id="feedbackForm" class="text-center">
+                <div class="form-group">
+                    <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Hashname" v-model="conndata.hashname">
+                </div>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="disconnect()">Disconnect</button>
+            </form>
+        </div>
+    </div>
+</div>
 {{ end }}

@@ -1,28 +1,65 @@
-{{ define "title" }}
-    About
-{{ end }}
+{{ define "about_page" }}
+<div class="col-md-8 mx-auto my-3" v-if="opened=='about'">
+    <h2 class="text-center">About</h2><br>
+    <div class="accordion " id="accordionExample">
+        <div class="card bg-dark">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
+                        <h5>Sources</h5>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul class="lead text-light">
+                        <li>Application HiddenLake: <a target="_blank" class="text-info" href="https://github.com/Number571/HiddenLake">HiddenLake.git</a>;</li>
+                        <li>Framework gopeer: <a target="_blank" class="text-info" href="https://github.com/Number571/gopeer">gopeer.git</a>;</li>
+                        <li>Library go-sqlite3: <a target="_blank" class="text-info" href="https://github.com/mattn/go-sqlite3">go-sqlite3.git</a>;</li>
+                        <li>Framework vue.js: <a target="_blank" class="text-info" href="https://github.com/vuejs/vue">vue.git</a>;</li>
+                        <li>Library jquery: <a target="_blank" class="text-info" href="https://github.com/jquery/jquery">jquery.git</a>;</li>
+                        <li>Framework bootstrap: <a target="_blank" class="text-info" href="https://github.com/twbs/bootstrap">bootstrap.git</a>;</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-{{ define "content" }}
-    <div class="wrapper">
-        <p class="block_left"> /
-            <i>About</i>
-        </p>
+        <div class="card bg-dark">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+                        <h5>Characteristics</h5>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul class="lead text-light">
+                        <li>F2F network. End to end encryption;</li>
+                        <li>Package transfer in blockchain;</li>
+                    </ul>
+                </div>
+            </div>
+      </div>
+      
+      <div class="card bg-dark">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                        <h5>Algorithms</h5>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul class="lead text-light">
+                        <li>Symmetric: AES256-CBC;</li>
+                        <li>Asymmetric: RSA2048-OAEP;</li>
+                        <li>Hash function: HMAC(SHA256);</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    <hr>
-    <br>
-    <div class="content block_left">
-    <p>
-        HiddenLake: <br>
-        - Based on p2p network. <br>
-        - Implemented f2f network. <br>
-        - Implemented onion routing. <br>
-        - Implemented end-to-end encryption. <br>
-        - Symmetric algorithm = AES256-CBC. <br>
-        - Asymmetric algorithm = RSA2048-OAEP. <br>
-        - Cryptographic Hash functions = MD5/SHA256. <br>
-        <br>
-        <a href="https://github.com/Number571/HiddenLake">HiddenLake</a> - Network source code. <br> 
-        <a href="https://github.com/Number571">Number571</a> - Network creator. <br>
-    </p>
-    </div>
+</div>
 {{ end }}

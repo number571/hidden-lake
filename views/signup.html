@@ -1,0 +1,39 @@
+{{ define "signup_page" }}
+<div v-if="opened=='signup'">
+    <div class="col-12 col-md-8 mx-auto">
+        <div class="bg-dark jumbotron">
+            <div class="row text-center">
+                <div class="text-center col-12">
+                    <h2>Account creation</h2>
+                </div>
+                <div v-if="message" class="text-center col-12">
+                    <p class="lead">${message}</p>
+                </div>
+                <div class="text-center col-10 mx-auto">
+                    <form id="feedbackForm" class="text-center">
+                        <div class="form-group">
+                            <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Repeat Password" v-model="userdata.password_repeat">
+                        </div>
+                        <div v-if="switcher" class="form-group">
+                            <textarea class="form-control bg-dark text-light" placeholder="PEM Private Key Format" v-model="userdata.private_key"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button v-if="!switcher" @click="setswitch('turn')" type="button" class="btn btn-success w-100">Upload Private Key</button>
+                            <button v-if="switcher" @click="setswitch('turn'), userdata.private_key=null" type="button" class="btn btn-danger w-100">Don't Upload Private Key</button>
+                        </div>
+                        <div class="form-group">
+                            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="signup()">Create account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

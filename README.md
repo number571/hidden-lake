@@ -1,88 +1,64 @@
 # HiddenLake
 
-## Characteristics:
-1. Hybrid network.
-2. Implemented onion routing.
-3. Implemented P2P/F2F connection.
-4. Implemented end-to-end encryption.
-5. Implemented client-server connection.
-6. Symmetric algorithm = AES256-CBC.
-7. Asymmetric algorithm = RSA2048-OAEP.
-8. Cryptographic hash functions = MD5/SHA256.
+> Decentralized network. Version 1.0.0s.
 
-### // Home page
-<img src="/images/HiddenLake_GUI_1.png" alt="GUI_1"/>
+### Characteristics:
+1. F2F network. End to end encryption;
+2. Package transfer in blockchain;
+3. Symmetric algorithm: AES256-CBC;
+4. Asymmetric algorithm: RSA2048-OAEP;
+5. Hash function: HMAC(SHA256);
 
-## Components are used:
-1. Go: go-sqlite3
-2. JS: jquery
+### Home page:
+<img src="/images/HiddenLake1.png" alt="HomePage"/>
 
-Go version should be >= 1.10
+### Used libraries/frameworks:
+1. gopeer: [github.com/number571/gopeer](https://github.com/number571/gopeer);
+2. vuejs: [github.com/vuejs/vue](https://github.com/vuejs/vue);
+3. bootstrap: [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap);
+4. go-sqlite3: [github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3);
+5. websocket: [golang.org/x/net/websocket](https://golang.org/x/net/websocket);
 
-## Component installation:
+### Signup page:
+<img src="/images/HiddenLake2.png" alt="SignupPage"/>
+
+### Modules:
+1. Network (kernel): 
+* connects/disconnects servers;
+* creates blockchain transfer;
+* sends Packages with a response to servers (TCP);
+2. Intermediate (server): 
+* sends API responses to the client (HTTP/S, WS/S);
+* sends Packages with a requests to the network (TCP);
+* saves information in a database;
+3. Interface (client): 
+* sends API requests to the server (HTTP/S, WS/S);
+* single page application;
+* native application routing;
+
+### Account page:
+<img src="/images/HiddenLake3.png" alt="AccountPage"/>
+
+### Default configuration (config.cfg): 
+> Configuration file is created when the application starts.
+```json
+{
+	"host": {
+		"http": {
+			"ipv4": "localhost",
+			"port": ":7545",
+			"tls": {
+				"crt": "",
+				"key": ""
+			}
+		},
+		"tcp": {
+			"ipv4": "localhost",
+			"port": ":8080"
+		}
+	}
+}
 ```
-$ go get github.com/mattn/go-sqlite3
-```
 
-## Compile:
-```
-$ cd HiddenLake/
-$ go build -ldflags "-w -s" main.go
-```
-
-## Commands in the start client with parameters:
-1. [--login, -l] = set login (first run is signup)
-2. [--password, -p] = set password (first run is signup)
-3. [--address, -a] = set address ipv4:port
-
-## Commands in the start client without parameters:
-1. [--interface, -i] = run GUI interface in browser on port 7545
-2. [--help, -h] = get information about client
-3. [--f2f, -f] = run F2F connection
-4. [--delete, -d] = delete database and archive files with multiple overwriting
-4. [--delete-database, -dd] = delete database file with multiple overwriting
-4. [--delete-archive, -da] = delete archive files with multiple overwriting
-
-## Run CLI client:
-```
-$ ./main --login "user" --password "hello, world" --address 127.0.0.1:8080
-```
-
-### // CLI
-<img src="/images/HiddenLake_CLI_1.png" alt="CLI_1"/>
-
-## Commands in CLI client for all users:
-1. [:exit] = exit from client
-2. [:help] = get information about client
-3. [:mode] = on/off F2F connection
-4. [:interface] = on/off GUI interface
-
-## Commands in CLI client if not authorized:
-1. [:login] = set login (first run is signup)
-2. [:password] = set password (first run in signup)
-3. [:enter] = authorization from the entered login and password
-4. [:address] = set address ipv4:port
-
-## Commands in CLI client if authorized:
-1.  [:whoami] = get hashname
-2.  [:logout] = logout from authorized user
-3.  [:network] = get list of connections
-4.  [:send] = send local message to another user
-5.  [:email] = read or write email to another user
-6.  [:archive] = get list or download files from archive another user
-7.  [:history] = get local/global messages or delete messages
-8.  [:connect] = connect to another user
-9.  [:disconnect] = disconnect from user
-10. [] = send global message to another users
-
-## Run CLI/GUI client:
-> GUI work in browser on port 7545
-
-```
-$ ./main --interface
-$ firefox --new-window 127.0.0.1:7545
-```
-### // Login page
-<img src="/images/HiddenLake_GUI_9.png" alt="GUI_9"/>
-
-## [HiddenLake]
+### Network page:
+<img src="/images/HiddenLake4.png" alt="NetworkPage"/>

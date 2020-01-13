@@ -6,17 +6,21 @@ import (
 
 func ReadFile(filename string) string {
 	file, err := os.Open(filename)
-	CheckError(err)
+	if err != nil {
+		return ""
+	}
 	defer file.Close()
 
 	var (
 		buffer []byte = make([]byte, 512)
-		data string
+		data   string
 	)
 
 	for {
 		length, err := file.Read(buffer)
-		if length == 0 || err != nil { break }
+		if length == 0 || err != nil {
+			break
+		}
 		data += string(buffer[:length])
 	}
 

@@ -1,25 +1,27 @@
-{{ define "title" }}
-	Login
-{{ end }}
-
-{{ define "content" }}
-	<hr>
-	<div id="login_form">
-		{{ if .Auth }}
-			<p>You are success login!</p>
-		{{ else }}
-			<form method="POST" action="/login">
-				<br>
-				<p>
-					{{ if not (eq .Code 0) }}
-						{{ .Result }}
-					{{ end }}
-				</p>
-				<br>
-				<input class="login_input" type="text" name="login" placeholder="Username..."> <br>
-				<input class="login_input" type="password" name="password" placeholder="Password..."> <br>
-				<input id="login_button" type="submit" name="submit" value="Login">
-			</form>
-		{{ end }}
-	</div>
+{{ define "login_page" }}
+<div v-if="opened=='login'">
+    <div class="col-12 col-md-8 mx-auto">
+        <div class="bg-dark jumbotron">
+            <div class="row text-center">
+                <div class="text-center col-12">
+                    <h2>Authorization</h2>
+                </div>
+                <div v-if="message" class="text-center col-12">
+                    <p class="lead">${message}</p>
+                </div>
+                <div class="text-center col-10 mx-auto">
+                    <form id="feedbackForm" class="text-center">
+                        <div class="form-group">
+                            <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+                        </div>
+                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="login()">Enter to account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {{ end }}

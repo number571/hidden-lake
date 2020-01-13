@@ -1,53 +1,66 @@
-{{ define "title" }}
-    Home
-{{ end }}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <script type="text/javascript">
+        const ws   = {{ .WS }};
+        const http = {{ .HTTP }};
+        const host = {{ .HOST }};
+    </script>
+    <script defer type="text/javascript" src="/static/js/jquery.js"></script>
+    <script defer type="text/javascript" src="/static/js/bootstrap.js"></script>
+    <script defer type="text/javascript" src="/static/js/vue.js"></script>
+    <script defer type="text/javascript" src="/static/js/vue-router.js"></script>
+    <script defer type="module" src="/static/js/main.js"></script>
+</head>
+<body id="page-top" class="bg-dark">
+    <main>
+        {{ template "navbar_part" }}
+        <br><br><br>
 
-{{ define "content" }}
-    <div class="wrapper">
-        <p class="block_left"> /
-            <i>Home</i>
-        </p>
-    </div>
-    <hr>
-    <br>
-    <div class="content block_left">
-        <p>
-            <b><i>Version 0.7:</i></b><br>
-            1. Network is now hybrid;<br>
-            2. Client-Server connection to P2P node;<br>
-            3. Rewritten functions P2P connections; <br>
-            4. Individual asymmetric keys for P2P and F2F modes;<br>
-            <br>
-            <b><i>Version 0.6:</i></b><br>
-            1. F2F connection; <br>
-            2. Authorization from database; <br>
-            <br>
-            <b><i>Version 0.5:</i></b><br>
-            1. Onion routing; <br>
-            2. Routing mode: static/dynamic; <br>
-            <br>
-            <b><i>Version 0.4:</i></b><br> 
-            1. Interface extension; <br>
-            2. Added login and password; <br>
-            3. Password - the importance of the first order; <br>
-            4. Multiple overwriting and deletion file; <br>
-            <br>
-            <b><i>Version 0.3:</i></b><br>
-            1. GUI; <br>
-            2. Emails; <br>
-            3. Database; <br>
-            <br>
-            <b><i>Version 0.2:</i></b><br>
-            1. DHT; <br>
-            2. Argument Initialization; <br>
-            <br>
-            <b><i>Version 0.1:</i></b><br>
-            1. CLI; <br>
-            2. Archive; <br>
-            3. P2P network; <br>
-            4. End-to-end encryption; <br>
-            5. Global and Local chat; <br>
-            <br>
-        </p>
-    </div>
-{{ end }}
+        <!-- HOME PAGE -->
+        {{ template "home_header" }}
+
+        <div class="container">
+            <div class="row">
+                <div class="text-light col-lg-12 mx-auto">
+                    <!-- HOME PAGE -->
+                    {{ template "home_page" }}
+
+                    <!-- ABOUT PAGE -->
+                    {{ template "about_page" }}
+
+                    <!-- LOGIN PAGE -->
+                    {{ template "login_page" }}
+
+                    <!-- SIGNUP PAGE -->
+                    {{ template "signup_page" }}
+
+                    <!-- ACCOUNT PAGE -->
+                    {{ template "account_page" }}
+
+                    <!-- NETWORK PAGE -->
+                    {{ template "network_page" }}
+
+                    <!-- NETWORK / SETTINGS PAGE -->
+                    {{ template "settings_page" }}
+
+                    <!-- NETWORK / CLIENT PAGE -->
+                    {{ template "client_page" }}
+
+                    <!-- 404 PAGE -->
+                    {{ template "notfound_page" }}
+                </div>
+            </div>
+        </div>
+
+        <br><br><br>
+        {{ template "footer_part" }}
+
+        <router-view></router-view>
+    </main>
+</body>
+</html>

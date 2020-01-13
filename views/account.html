@@ -1,0 +1,60 @@
+{{ define "account_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='account'">
+    <h2 class="text-center">Account</h2><br>
+    <div v-if="message" class="text-center col-12">
+        <p class="lead">${message}</p>
+    </div>
+    <pre class="text-white lead">
+Address: "${conndata.address}".
+Username: "${authdata.username}".
+Hashname: "${conndata.hashname}".
+Public Key: 
+${conndata.public_key}</pre>
+    <br>
+    <div class="form-group row">
+        <div class="col-md-6">
+            <div v-if="!userdata.private_key">
+                <button v-if="switcher!='private_key'" @click="nulldata(), setswitch('private_key')" type="button" class="btn btn-danger w-100">View Private Key</button>
+                <button v-else @click="setswitch('private_key')" type="button" class="btn btn-danger w-100">View Private Key</button>
+            </div>
+            <div v-else>
+                <button @click="nulldata()" type="button" class="btn btn-success w-100">Close Private Key</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <button v-if="switcher!='delete_user'" @click="nulldata(), setswitch('delete_user')" type="button" class="btn btn-danger w-100">Delete User</button>
+            <button v-else @click="setswitch('delete_user')" type="button" class="btn btn-danger w-100">Delete User</button>
+        </div>
+    </div>
+
+    <div v-if="switcher=='private_key' && !userdata.private_key" class="text-center">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group">
+                <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="viewkey()">View Private Key</button>
+        </form>
+    </div>
+
+    <div v-if="switcher=='delete_user'" class="text-center">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group">
+                <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="deluser()">Delete User</button>
+        </form>
+    </div>
+
+    <div v-if="userdata.private_key">
+        <pre class="text-white lead">
+Private Key:
+${userdata.private_key}</pre>
+    </div>
+</div>
+{{ end }}
