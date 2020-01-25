@@ -39,19 +39,13 @@ func main() {
 		handleFileServer(http.Dir(settings.PATH_STATIC))),
 	)
 
-	http.HandleFunc("/", indexPage)
-	http.HandleFunc("/api/login", api.Login)
-	http.HandleFunc("/api/logout", api.Logout)
-	http.HandleFunc("/api/signup", api.Signup)
-	http.HandleFunc("/api/account", api.Account)
-	http.HandleFunc("/api/network", api.Network)
-	http.HandleFunc("/api/client", api.Client)
-	http.HandleFunc("/api/viewkey", api.Viewkey)
-	http.HandleFunc("/api/deluser", api.Deluser)
-	http.HandleFunc("/api/connect", api.Connect)
-	http.HandleFunc("/api/disconnect", api.Disconnect)
-	http.HandleFunc("/api/sendmsg", api.Sendmsg)
-	http.HandleFunc("/api/delchat", api.Delchat)
+	http.HandleFunc("/", indexPage) // GET
+	http.HandleFunc("/api/login", api.Login) // POST
+	http.HandleFunc("/api/logout", api.Logout) // POST
+	http.HandleFunc("/api/signup", api.Signup) // POST
+	http.HandleFunc("/api/account", api.Account) // GET, POST, DELETE
+	http.HandleFunc("/api/network/", api.Network) // GET, POST, DELETE
+	http.HandleFunc("/api/network/client/", api.Client) // GET, POST, DELETE
 
 	http.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -77,67 +71,68 @@ func handleServerHTTP(model *models.Http) {
 }
 
 func handleActions(client *gopeer.Client, pack *gopeer.Package) {
-	client.HandleAction(settings.TITLE_MESSAGE, pack,
-		func(client *gopeer.Client, pack *gopeer.Package) (set string) {
-			var (
-				hashname = pack.From.Sender.Hashname
-				token    = settings.Tokens[client.Hashname]
-				user     = settings.Users[token]
-				time     = utils.CurrentTime()
-			)
+	client.HandleAction(settings.TITLE_MESSAGE, pack, getMessage, setMessage)
+}
 
-			if !db.InClients(user, hashname) {
-				db.SetClient(user, &models.Client{
-					Hashname: hashname,
-					Address:  pack.From.Address,
-					Public:   client.Connections[hashname].Public,
-				})
-			}
+func setMessage(client *gopeer.Client, pack *gopeer.Package) {
+	// if package delivered
+}
 
-			if user.Hashname == hashname {
-				return
-			}
+func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
+	var (
+		hashname = pack.From.Sender.Hashname
+		token    = settings.Tokens[client.Hashname]
+		user     = settings.Users[token]
+		time     = utils.CurrentTime()
+	)
 
-			db.SetChat(user, &models.Chat{
-				Companion: hashname,
-				Messages: []models.Message{
-					models.Message{
-						Name: hashname,
-						Text: pack.Body.Data,
-						Time: time,
-					},
-				},
-			})
+	if !db.InClients(user, hashname) {
+		db.SetClient(user, &models.Client{
+			Hashname: hashname,
+			Address:  pack.From.Address,
+			Public:   client.Connections[hashname].Public,
+		})
+	}
 
-			var wsdata = struct {
-				Comp struct {
-					From string `json:"from"`
-					To   string `json:"to"`
-				} `json:"comp"`
-				Text string `json:"text"`
-				Time string `json:"time"`
-			}{
-				Comp: struct {
-					From string `json:"from"`
-					To   string `json:"to"`
-				}{
-					From: hashname,
-					To:   user.Hashname,
-				},
+	if user.Hashname == hashname {
+		return
+	}
+
+	db.SetChat(user, &models.Chat{
+		Companion: hashname,
+		Messages: []models.Message{
+			models.Message{
+				Name: hashname,
 				Text: pack.Body.Data,
 				Time: time,
-			}
-
-			if user.Session.Socket != nil {
-				websocket.JSON.Send(user.Session.Socket, wsdata)
-			}
-
-			return
+			},
 		},
-		func(client *gopeer.Client, pack *gopeer.Package) {
-			// if package delivered
+	})
+
+	var wsdata = struct {
+		Comp struct {
+			From string `json:"from"`
+			To   string `json:"to"`
+		} `json:"comp"`
+		Text string `json:"text"`
+		Time string `json:"time"`
+	}{
+		Comp: struct {
+			From string `json:"from"`
+			To   string `json:"to"`
+		}{
+			From: hashname,
+			To:   user.Hashname,
 		},
-	)
+		Text: pack.Body.Data,
+		Time: time,
+	}
+
+	if user.Session.Socket != nil {
+		websocket.JSON.Send(user.Session.Socket, wsdata)
+	}
+	
+	return
 }
 
 func handleFileServer(fs http.FileSystem) http.Handler {

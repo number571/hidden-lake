@@ -11,19 +11,19 @@ Hashname: "${conndata.hashname}".
 Public Key: 
 ${conndata.public_key}</pre>
     <br>
-    <div class="form-group row">
+    <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
         <div class="col-md-6">
             <!-- , client(conndata.hashname) -->
             <button v-if="conndata.connected" @click="disconnect(), client(conndata.hashname)" type="button" class="btn btn-danger w-100">Disconnect</button>
             <button v-else @click="connect(), client(conndata.hashname)" type="button" class="btn btn-success w-100">Connect</button>
         </div>
         <div class="col-md-6">
-            <button v-if="switcher!='delete_chat'" @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
+            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
             <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
         </div>
     </div>
 
-    <div v-if="switcher=='delete_chat'" class="text-center">
+    <div v-if="conndata.hashname!=authdata.hashname&&switcher=='delete_chat'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
                 <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">

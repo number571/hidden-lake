@@ -13,6 +13,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	var data struct {
 		Token string `json:"token"`
+		Hashname string `json:"hashname"`
 		State string `json:"state"`
 	}
 
@@ -54,6 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	settings.Listener.NewClient(user.Keys.Private)
 
 	data.Token = token
+	data.Hashname = hash
 
 	json.NewEncoder(w).Encode(data)
 }

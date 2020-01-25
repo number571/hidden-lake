@@ -19,16 +19,15 @@ const routes = {
     notfound: 8,
 };
 
-const fapi = async(url, method = "GET", data = null, token = null) => {
+const f = async(url, method = "GET", data = null, token = null) => {
     method = method.toLocaleUpperCase()
     let fullurl = `${apihost}${url}`;
     let options = {url, method, headers: {}};
-    options.headers["Accept"] = "application/json";
     options.headers["Content-Type"] = "application/json";
     if (token) {
         options.headers["Authorization"] = `Bearer ${token}`;
     }
-    if (["POST", "PUT", "PATCH"].includes(method)) {
+    if (["POST", "DELETE"].includes(method)) {
         options.body = JSON.stringify(data);
     }
     const res = await fetch(fullurl, options);
@@ -59,6 +58,7 @@ const app = new Vue({
         authdata: {
             token: null,
             username: null,
+            hashname: null,
         },
         conndata: {
             connected: null,
@@ -81,16 +81,18 @@ const app = new Vue({
     },
     methods: {
         async login() {
-            let res = await fapi("login", "POST", this.userdata);
+            let res = await f("login", "POST", this.userdata);
             if (res.state) {
                 this.message = res.state;
                 return;
             }
             localStorage.setItem("token", res.token);
             localStorage.setItem("username", this.userdata.username);
+            localStorage.setItem("hashname", res.hashname);
 
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
+            this.authdata.hashname = localStorage.getItem("hashname");
             this.opened = RoutesData[routes.home].name;
             this.$router.push(RoutesData[routes.home]);
         },
@@ -106,7 +108,7 @@ const app = new Vue({
                 this.message = "Username needs [6-64] ch and password needs [6-128] ch";
                 return;
             }
-            let res = await fapi("signup", "POST", this.userdata);
+            let res = await f("signup", "POST", this.userdata);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -116,11 +118,11 @@ const app = new Vue({
             this.message = "Signup success";
         },
         async logout() {
-            let res = await fapi("logout", "POST", null, this.authdata.token);
+            let res = await f("logout", "POST", null, this.authdata.token);
             this.nullauth();
         },
         async account() {
-            let res = await fapi("account", "POST", null, this.authdata.token);
+            let res = await f("account", "GET", null, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -130,7 +132,7 @@ const app = new Vue({
             this.conndata.public_key = res.public_key;
         },
         async viewkey() {
-            let res = await fapi("viewkey", "POST", this.userdata, this.authdata.token);
+            let res = await f("account", "POST", this.userdata, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -138,16 +140,17 @@ const app = new Vue({
             this.userdata.private_key = res.private_key;
         },
         async deluser() {
-            let res = await fapi("deluser", "POST", this.userdata, this.authdata.token);
+            let res = await f("account", "DELETE", this.userdata, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
             }
             this.nullauth();
             this.opened = RoutesData[routes.login].name;
+            this.$router.push(RoutesData[routes.login]);
         },
         async network(name) {
-            let res = await fapi("network", "POST", {hashname: name}, this.authdata.token);
+            let res = await f(`network/${name}`, "GET", null, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -187,8 +190,39 @@ const app = new Vue({
                 // console.debug("closed");
             }
         },
+        async sendmsg() {
+            let obj = {
+                hashname: this.netdata.chat.companion,
+                message: this.netdata.message,
+            };
+            let res = await f("network/", "POST", obj, this.authdata.token);
+            if (res.state) {
+                this.message = res.state;
+                return;
+            }
+            this.message = null;
+        },
+        async delchat() {
+            let obj = {
+                hashname: this.conndata.hashname,
+                username: this.userdata.username,
+                password: this.userdata.password,
+            };
+            let res = await f("network/", "DELETE", obj, this.authdata.token);
+            if (res.state) {
+                this.message = res.state;
+                return;
+            }
+
+            this.netdata.list.splice(this.netdata.list.indexOf(this.conndata.hashname), 1);
+            this.netdata.chat.companion = null;
+            this.netdata.chat.messages = [];
+
+            this.opened = RoutesData[routes.network].name;
+            this.$router.push(RoutesData[routes.network]);
+        },
         async client(name) {
-            let res = await fapi("client", "POST", {hashname: name}, this.authdata.token);
+            let res = await f(`network/client/${name}`, "GET", null, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -200,7 +234,7 @@ const app = new Vue({
         },
         async connect() {
             this.message = "Please wait a few seconds";
-            let res = await fapi("connect", "POST", this.conndata, this.authdata.token);
+            let res = await f("network/client/", "POST", this.conndata, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
@@ -209,37 +243,13 @@ const app = new Vue({
         },
         async disconnect() {
             this.message = "Please wait a few seconds";
-            let res = await fapi("disconnect", "POST", {hashname: this.conndata.hashname}, this.authdata.token);
+            let res = await f("network/client/", "DELETE", {hashname: this.conndata.hashname}, this.authdata.token);
             if (res.state) {
                 this.message = res.state;
                 return;
             }
             this.conndata.connected = false;
             this.message = "Disconnection success"
-        },
-        async sendmsg() {
-            let obj = {
-                hashname: this.netdata.chat.companion,
-                message: this.netdata.message,
-            };
-            let res = await fapi("sendmsg", "POST", obj, this.authdata.token);
-            if (res.state) {
-                this.message = res.state;
-                return;
-            }
-        },
-        async delchat() {
-            let obj = {
-                hashname: this.conndata.hashname,
-                username: this.userdata.username,
-                password: this.userdata.password,
-            };
-            let res = await fapi("delchat", "POST", obj, this.authdata.token);
-            if (res.state) {
-                this.message = res.state;
-                return;
-            }
-            this.message = "Chat deleted success";
         },
         async keycheck(e) {
             if (e.keyCode == 13) { // Enter
@@ -251,16 +261,20 @@ const app = new Vue({
             this.authdata = {
                 token: null,
                 username: null,
+                hashname: null,
             };
             localStorage.removeItem("token");
             localStorage.removeItem("username");
+            localStorage.removeItem("hashname");
+        },
+        nullconn() {
+            this.conndata.hashname = null;
+            this.conndata.address = null;
+            this.conndata.public_key = null;
         },
         nulldata() {
             this.message = null;
             this.switcher = null;
-            this.conndata.hashname = null;
-            this.conndata.address = null;
-            this.conndata.public_key = null;
             this.userdata.username = null;
             this.userdata.password = null;
             this.userdata.password_repeat = null;
@@ -275,6 +289,7 @@ const app = new Vue({
         if (token) {
             this.authdata.token = token;
             this.authdata.username = localStorage.getItem("username");
+            this.authdata.hashname = localStorage.getItem("hashname");
         }
         this.opened = this.$route.name;
         switch (this.opened) {
@@ -293,6 +308,7 @@ const app = new Vue({
     },
     watch: {
         '$route' (to, from) {
+            this.nullconn();
             this.nulldata();
             this.opened = to.name;
         },
