@@ -93,5 +93,5 @@ CREATE TABLE IF NOT EXISTS Chat (
 );
 ```
 
-### Network page:
+### Settings page:
 <img src="/images/HiddenLake5.png" alt="SettingsPage"/>
