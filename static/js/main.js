@@ -76,14 +76,19 @@ const app = new Vue({
         },
         socket: null,
         switcher: null,
-        message: null,
+        message: {
+            wait: null,
+            curr: null,
+            desc: null,
+        },
         opened: null,
     },
     methods: {
         async login() {
             let res = await f("login", "POST", this.userdata);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
             localStorage.setItem("token", res.token);
@@ -93,29 +98,37 @@ const app = new Vue({
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
             this.authdata.hashname = localStorage.getItem("hashname");
+
+            this.message.wait = "Login success";
+            this.message.desc = "success";
+
             this.opened = RoutesData[routes.home].name;
             this.$router.push(RoutesData[routes.home]);
         },
         async signup() {
             if (this.userdata.password !== this.userdata.password_repeat) {
-                this.message = "Passwords not equal";
+                this.message.curr = "Passwords not equal";
+                this.message.desc = "danger";
                 return;
             }
             if (
                 this.userdata.username.length < 6 || this.userdata.password.length < 6 ||
                 this.userdata.username.length > 64 || this.userdata.password.length > 128
             ) {
-                this.message = "Username needs [6-64] ch and password needs [6-128] ch";
+                this.message.curr = "Username needs [6-64] ch and password needs [6-128] ch";
+                this.message.desc = "danger";
                 return;
             }
             let res = await f("signup", "POST", this.userdata);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
-            this.nulldata();
+            this.message.wait = "Signup success";
+            this.message.desc = "success";
             this.opened = RoutesData[routes.login].name;
-            this.message = "Signup success";
+            this.$router.push(RoutesData[routes.login]);
         },
         async logout() {
             let res = await f("logout", "POST", null, this.authdata.token);
@@ -124,7 +137,8 @@ const app = new Vue({
         async account() {
             let res = await f("account", "GET", null, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "warning";
                 return;
             }
             this.conndata.hashname = res.hashname;
@@ -134,7 +148,8 @@ const app = new Vue({
         async viewkey() {
             let res = await f("account", "POST", this.userdata, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
             this.userdata.private_key = res.private_key;
@@ -142,17 +157,21 @@ const app = new Vue({
         async deluser() {
             let res = await f("account", "DELETE", this.userdata, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
             this.nullauth();
+            this.message.wait = "Delete success";
+            this.message.desc = "success";
             this.opened = RoutesData[routes.login].name;
             this.$router.push(RoutesData[routes.login]);
         },
         async network(name) {
             let res = await f(`network/${name}`, "GET", null, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "warning";
                 return;
             }
             this.netdata.list = res.netdata.list;
@@ -197,10 +216,11 @@ const app = new Vue({
             };
             let res = await f("network/", "POST", obj, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "warning";
                 return;
             }
-            this.message = null;
+            this.message.curr = null;
         },
         async delchat() {
             let obj = {
@@ -210,7 +230,8 @@ const app = new Vue({
             };
             let res = await f("network/", "DELETE", obj, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
 
@@ -218,13 +239,16 @@ const app = new Vue({
             this.netdata.chat.companion = null;
             this.netdata.chat.messages = [];
 
+            this.message.wait = "Delete success";
+            this.message.desc = "success";
             this.opened = RoutesData[routes.network].name;
             this.$router.push(RoutesData[routes.network]);
         },
         async client(name) {
             let res = await f(`network/client/${name}`, "GET", null, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "warning";
                 return;
             }
             this.conndata.connected = res.connected;
@@ -233,23 +257,26 @@ const app = new Vue({
             this.conndata.public_key = res.public_key;
         },
         async connect() {
-            this.message = "Please wait a few seconds";
+            this.message.curr = "Please wait a few seconds";
             let res = await f("network/client/", "POST", this.conndata, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
-            this.message = "Connection success"
+            this.message.curr = "Connection success"
+            this.message.desc = "success";
         },
         async disconnect() {
-            this.message = "Please wait a few seconds";
+            this.message.curr = "Please wait a few seconds";
             let res = await f("network/client/", "DELETE", {hashname: this.conndata.hashname}, this.authdata.token);
             if (res.state) {
-                this.message = res.state;
+                this.message.curr = res.state;
+                this.message.desc = "danger";
                 return;
             }
-            this.conndata.connected = false;
-            this.message = "Disconnection success"
+            this.message.curr = "Disconnection success"
+            this.message.desc = "success";
         },
         async keycheck(e) {
             if (e.keyCode == 13) { // Enter
@@ -258,11 +285,9 @@ const app = new Vue({
             }
         },
         nullauth() {
-            this.authdata = {
-                token: null,
-                username: null,
-                hashname: null,
-            };
+            this.authdata.token = null;
+            this.authdata.username = null;
+            this.authdata.hashname = null;
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             localStorage.removeItem("hashname");
@@ -273,8 +298,8 @@ const app = new Vue({
             this.conndata.public_key = null;
         },
         nulldata() {
-            this.message = null;
             this.switcher = null;
+            this.message.curr = null;
             this.userdata.username = null;
             this.userdata.password = null;
             this.userdata.password_repeat = null;
@@ -311,6 +336,10 @@ const app = new Vue({
             this.nullconn();
             this.nulldata();
             this.opened = to.name;
+            if (this.message.wait != null) {
+                this.message.curr = this.message.wait;
+                this.message.wait = null;
+            }
         },
     },
 });

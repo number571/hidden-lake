@@ -1,8 +1,25 @@
 {{ define "account_page" }}
 <div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='account'">
     <h2 class="text-center">Account</h2><br>
-    <div v-if="message" class="text-center col-12">
-        <p class="lead">${message}</p>
+    <div v-if="message.curr">
+        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
+           ${message.curr}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
+           ${message.curr}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
+           ${message.curr}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
     </div>
     <pre class="text-white lead">
 Address: "${conndata.address}".
