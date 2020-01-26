@@ -16,6 +16,7 @@ var (
 )
 
 const (
+	PATH_TLS 	= "tls/"
 	PATH_VIEWS  = "views/"
 	PATH_STATIC = "static/"
 	DB_NAME     = "database.db"

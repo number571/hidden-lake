@@ -24,8 +24,5 @@ func Network(ws *websocket.Conn) {
 	user := settings.Users[token]
 	user.Session.Socket = ws
 
-	// for {
-		websocket.JSON.Receive(ws, &read)
-	// 	return
-	// }
+	websocket.JSON.Receive(ws, &read)
 }

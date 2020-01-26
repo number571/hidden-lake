@@ -29,11 +29,11 @@
 * creates blockchain transfer;
 * sends Packages with a response to servers (TCP);
 2. Intermediate (server): 
-* sends API responses to the client (HTTP/S, WS/S);
+* sends API responses to the client (HTTPS, WSS);
 * sends Packages with a requests to the network (TCP);
 * saves information in a database;
 3. Interface (client): 
-* sends API requests to the server (HTTP/S, WS/S);
+* sends API requests to the server (HTTPS, WSS);
 * single page application;
 * native application routing;
 
@@ -49,8 +49,8 @@
 			"ipv4": "localhost",
 			"port": ":7545",
 			"tls": {
-				"crt": "",
-				"key": ""
+				"crt": "tls/cert.crt",
+				"key": "tls/cert.key"
 			}
 		},
 		"tcp": {

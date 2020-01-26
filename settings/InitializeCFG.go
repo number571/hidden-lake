@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"os"
 	"../models"
 	"../utils"
 	"encoding/json"
@@ -12,6 +13,7 @@ func InitializeCFG(cfgname string) {
 		if err != nil {
 			panic("can't encode config")
 		}
+		os.Mkdir(PATH_TLS, 0777)
 		utils.WriteFile(cfgname, string(cfgJSON))
 	}
 	cfgJSON := utils.ReadFile(cfgname)
@@ -28,8 +30,8 @@ func newConfig() *models.Config {
 				Ipv4: "localhost",
 				Port: ":7545",
 				Tls: models.Tls{
-					Crt: "",
-					Key: "",
+					Crt: "tls/cert.crt",
+					Key: "tls/cert.key",
 				},
 			},
 			Tcp: models.Tcp{
