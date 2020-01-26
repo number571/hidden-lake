@@ -165,8 +165,6 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"about.html",
 		settings.PATH_VIEWS+"login.html",
 		settings.PATH_VIEWS+"signup.html",
-		settings.PATH_VIEWS+"navbar.html",
-		settings.PATH_VIEWS+"footer.html",
 		settings.PATH_VIEWS+"account.html",
 		settings.PATH_VIEWS+"network.html",
 		settings.PATH_VIEWS+"settings.html",

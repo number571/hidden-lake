@@ -63,3 +63,35 @@
 
 ### Network page:
 <img src="/images/HiddenLake4.png" alt="NetworkPage"/>
+
+### SQL Tables (database.db):
+> Database file is created when the application starts.
+```sql
+/* Authorization user; */
+/* Hashpasw = hash(hash(username+password)); */
+CREATE TABLE IF NOT EXISTS User (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    Hashpasw VARCHAR(44) UNIQUE,
+    Key VARCHAR(4096) UNIQUE
+);
+/* User connections; */
+CREATE TABLE IF NOT EXISTS Client (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    Contributor VARCHAR(44),
+    Hashname VARCHAR(44),
+    Address VARCHAR(64),
+    Public VARCHAR(2048)
+);
+/* User chat; */
+CREATE TABLE IF NOT EXISTS Chat (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    Hashname VARCHAR(44),
+    Companion VARCHAR(44),
+    Name VARCHAR(44),
+    Text TEXT,
+    Time VARCHAR(128)
+);
+```
+
+### Network page:
+<img src="/images/HiddenLake5.png" alt="SettingsPage"/>
