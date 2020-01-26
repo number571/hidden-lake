@@ -22,8 +22,6 @@ func InitializeCFG(cfgname string) {
 		if err != nil {
 			panic("can't encode config")
 		}
-		os.Mkdir(PATH_TLS, 0777)
-		createRandomCertificate(2048, cfg)
 		utils.WriteFile(cfgname, string(cfgJSON))
 	}
 	cfgJSON := utils.ReadFile(cfgname)
@@ -31,10 +29,13 @@ func InitializeCFG(cfgname string) {
 	if err != nil {
 		panic("can't decode config")
 	}
+	os.Mkdir(PATH_TLS, 0777)
+	if !utils.FileIsExist(CFG.Host.Http.Tls.Crt) && !utils.FileIsExist(CFG.Host.Http.Tls.Key) {
+		generateCertificate(2048, CFG)
+	}
 }
 
-// Create RSA certificates.
-func createRandomCertificate(bits int, cfg *models.Config) error {
+func generateCertificate(bits int, cfg *models.Config) error {
 	ca := &x509.Certificate{
 		SerialNumber: big.NewInt(int64(gopeer.GenerateRandomIntegers(1)[0])),
 		Subject: pkix.Name{
@@ -84,8 +85,8 @@ func newConfig() *models.Config {
 				Ipv4: "localhost",
 				Port: ":7545",
 				Tls: models.Tls{
-					Crt: "tls/cert.crt",
-					Key: "tls/cert.key",
+					Crt: PATH_TLS + "cert.crt",
+					Key: PATH_TLS + "cert.key",
 				},
 			},
 			Tcp: models.Tcp{
