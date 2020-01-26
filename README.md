@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS User (
     Key VARCHAR(4096) UNIQUE
 );
 /* User connections; */
+/* Hashname = hash(public_key); */
 CREATE TABLE IF NOT EXISTS Client (
     Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     Contributor VARCHAR(44),
