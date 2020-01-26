@@ -2,9 +2,9 @@ package api
 
 import (
 	"../db"
+	"../models"
 	"../settings"
 	"../utils"
-	"../models"
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"net/http"
@@ -15,7 +15,7 @@ func Client(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
-		State     string `json:"state"`
+		State string `json:"state"`
 	}
 
 	switch r.Method {

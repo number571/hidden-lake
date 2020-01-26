@@ -12,9 +12,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
-		Token string `json:"token"`
+		Token    string `json:"token"`
 		Hashname string `json:"hashname"`
-		State string `json:"state"`
+		State    string `json:"state"`
 	}
 
 	if r.Method != "POST" {
@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(20))
 	hash := user.Hashname
-	
+
 	if token, ok := settings.Tokens[hash]; ok {
 		delete(settings.Users, token)
 	}

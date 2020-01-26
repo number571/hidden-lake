@@ -14,7 +14,7 @@ func Account(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
-		State      string `json:"state"`
+		State string `json:"state"`
 	}
 
 	switch r.Method {

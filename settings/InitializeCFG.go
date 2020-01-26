@@ -1,10 +1,10 @@
 package settings
 
 import (
-	"os"
 	"../models"
 	"../utils"
 	"encoding/json"
+	"os"
 )
 
 func InitializeCFG(cfgname string) {

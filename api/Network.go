@@ -20,13 +20,13 @@ type netData struct {
 
 func Network(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	var data struct {
-		State   string  `json:"state"`
+		State string `json:"state"`
 	}
 
 	switch r.Method {
-	case "GET": 
+	case "GET":
 		networkGET(w, r)
 		return
 	case "POST":
@@ -36,7 +36,7 @@ func Network(w http.ResponseWriter, r *http.Request) {
 		networkDELETE(w, r)
 		return
 	}
-	
+
 	data.State = "Method should be GET or POST"
 	json.NewEncoder(w).Encode(data)
 }
