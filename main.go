@@ -60,17 +60,23 @@ func handleServerTCP(model *models.Tcp) {
 	settings.Listener.Open().Run(handleActions)
 }
 
-// $ openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp521r1) -keyout tls/cert.key -out tls/cert.crt -days 3650
 func handleServerHTTP(model *models.Http, mux *http.ServeMux) {
 	srv := &http.Server{
 		Addr:    model.Ipv4 + model.Port,
 		Handler: mux,
 		TLSConfig: &tls.Config{
-			MinVersion:               tls.VersionTLS12,
-			CurvePreferences:         []tls.CurveID{tls.CurveP521},
+			MinVersion: tls.VersionTLS12,
+			CurvePreferences: []tls.CurveID{
+				tls.CurveP521,
+				tls.CurveP384,
+				tls.CurveP256,
+			},
 			PreferServerCipherSuites: true,
 			CipherSuites: []uint16{
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 			},
 		},
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
