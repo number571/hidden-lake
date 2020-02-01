@@ -1,0 +1,29 @@
+@media (min-height: 1600px) {
+    .card.chat-room .chat-1 {
+        height: 800px;
+    }
+}
+
+@media (max-height: 1600px) {
+    .card.chat-room .chat-1 {
+        height: 700px;
+    }
+}
+
+@media (max-height: 1200px) {
+    .card.chat-room .chat-1 {
+        height: 550px;
+    }
+}
+
+@media (max-height: 1000px) {
+    .card.chat-room .chat-1 {
+        height: 400px;
+    }
+}
+
+@media (max-height: 800px) {
+    .card.chat-room .chat-1 {
+        height: 200px;
+    }
+}

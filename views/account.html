@@ -28,7 +28,7 @@ Hashname: "${conndata.hashname}".
 Public Key: 
 ${conndata.public_key}</pre>
     <br>
-    <div class="form-group row">
+    <div v-if="!message.curr" class="form-group row">
         <div class="col-md-6">
             <div v-if="!userdata.private_key">
                 <button v-if="switcher!='private_key'" @click="nulldata(), setswitch('private_key')" type="button" class="btn btn-secondary w-100">View Private Key</button>

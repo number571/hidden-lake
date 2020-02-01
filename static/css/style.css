@@ -7,8 +7,13 @@
     display:block;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
 #chat-textarea {
-    height: 60px;
     resize: none;
 }
 
@@ -18,12 +23,8 @@
     overflow-y: scroll; 
 }
 
-.card.chat-room .members-panel-1 {
-    height: 395px; 
-}
-
-.card.chat-room .chat-1 {
-    height: 273px; 
+.w-95 {
+    width: 95%;
 }
 
 .card.chat-room .friend-list li {

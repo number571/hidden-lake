@@ -20,60 +20,67 @@
           </button>
         </div>
     </div>
-    <div class="card bg-dark chat-room">
-        <div class="card-body">
-            <div class="row">  <!-- px-lg-2 px-2 -->
 
-                <div class="col-md-4 col-xl-3 px-2">
-                    <div class="white z-depth-1 pb-0 members-panel-1 scrollbar-light-blue"> <!-- px-2  -->
-                        <ul class="list-unstyled friend-list">
-                            <li v-for="dialog in netdata.list">
-                                <a href="#" @click="network(dialog.companion)" class="d-flex justify-content-between">
-                                    <div class="col-10 hideOverflow">
-                                        <div class="chat-footer">
-                                            <p class="text-smaller text-muted mb-0">${dialog.message.time}</p>
-                                        </div>
-                                        <div class="hideOverflow text-small text-info">
-                                            <strong>${dialog.companion}</strong><br>
-                                            <i>${dialog.message.name}</i>:
-                                            <p class="last-message text-white">${dialog.message.text}</p>
-                                        </div>
-                                        
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col-md-8 col-xl-9 pl-md-3 px-lg-auto px-2">
-                    <div class="chat-message">
-                        <ul ref="bottomChat" class="list-unstyled chat-1 scrollbar-light-blue">
-                            <li v-for="msg in netdata.chat.messages" class="d-flex justify-content-between">
-                                <div class="chat-body white p-3 overflow-auto z-depth-1">
-                                    <div class="header" @click="client(msg.name)">
-                                        <router-link :to="{name: 'client', params: { id: msg.name }}">
-                                            <strong class="primary-font text-info">${msg.name}</strong>
-                                        </router-link>
-                                        <small class="pull-right text-muted"><i class="far fa-clock"></i>${msg.time}</small>
-                                    </div>
-                                    <p class="mb-0">${msg.text}</p>
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="white">
-                            <div class="form-group basic-textarea">
-                                <textarea id="chat-textarea" class="form-control bg-dark pl-2 my-0 text-white" id="exampleFormControlTextarea2" v-model="netdata.message" rows="3" placeholder="Type your message here..." v-on:keyup="keycheck"></textarea>
+    <div id="chatbox" class="card bg-dark chat-room">
+         <div class="btn-group">
+            <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Connections
+            </button>
+            <ul class="bg-dark dropdown-menu scrollable-menu" role="menu">
+                <li v-for="dialog in netdata.list">
+                    <a href="#" @click="network(dialog.companion)" class="d-flex justify-content-between">
+                        <div class="col-10 hideOverflow">
+                            <div class="chat-footer">
+                                <p class="text-smaller text-muted mb-0">${dialog.message.time}</p>
+                            </div>
+                            <div class="hideOverflow text-small text-info">
+                                <strong>${dialog.companion}</strong><br>
+                                <i>${dialog.message.name}</i>:
+                                <p class="last-message">${dialog.message.text}</p>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-md-3">
-                                <router-link to="/network/settings">
-                                    <button type="button" class="btn bg-danger text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Settings</button>
-                                </router-link>
-                            </div>
-                            <div class="col-md-9">
-                                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="btn bg-secondary text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send Message</button>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="row h-100">  <!-- px-lg-2 px-2 -->
+                <div class="mx-auto w-95">
+                <!-- <div class="col-md-8 col-xl-9 pl-md-3 px-lg-auto px-2"> -->
+                    <div class="h-100 chat-message">
+                        <div class="py-2">
+                           <ul ref="bottomChat" class="list-unstyled chat-1 scrollbar-light-blue">
+                                <li v-for="msg in netdata.chat.messages" class="d-flex justify-content-between">
+                                    <div class="chat-body white p-3 overflow-auto z-depth-1">
+                                        <div class="header" @click="client(msg.name)">
+                                            <router-link :to="{name: 'client', params: { id: msg.name }}">
+                                                <strong class="primary-font text-info">${msg.name}</strong>
+                                            </router-link>
+                                            <small class="pull-right text-muted"><i class="far fa-clock"></i>${msg.time}</small>
+                                        </div>
+                                        <p class="mb-0">${msg.text}</p>
+                                    </div>
+                                </li>
+                            </ul> 
+                        </div>
+                        <div class="row h-25">
+                            <div class="h-100 col-md-12 my-auto">
+                                <div class="h-75 white">
+                                    <div class="h-100 form-group basic-textarea">
+                                        <textarea id="chat-textarea" class="h-75 form-control bg-dark pl-2 my-0 text-white" id="exampleFormControlTextarea2" v-model="netdata.message" rows="3" placeholder="Type your message here..." v-on:keyup="keycheck"></textarea>
+                                    </div>
+                                </div>
+                                <div class="h-25 form-group row">
+                                    <div class="col-md-3">
+                                        <router-link to="/network/settings">
+                                            <button type="button" class="h-100 btn bg-danger text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Settings</button>
+                                        </router-link>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="h-100 btn bg-secondary text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send Message</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
