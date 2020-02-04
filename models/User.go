@@ -9,6 +9,7 @@ type User struct {
 	Hashname string // hash(pubkey)
 	Auth     Auth
 	Keys     Keys
+	FileList []File
 	Session  Session
 }
 

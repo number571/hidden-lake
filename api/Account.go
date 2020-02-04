@@ -20,17 +20,14 @@ func Account(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		accountGET(w, r)
-		return
 	case "POST":
 		accountPOST(w, r)
-		return
 	case "DELETE":
 		accountDELETE(w, r)
-		return
+	default:
+		data.State = "Method should be GET, POST or DELETE"
+		json.NewEncoder(w).Encode(data)
 	}
-
-	data.State = "Method should be GET, POST or DELETE"
-	json.NewEncoder(w).Encode(data)
 }
 
 // Delete account.
@@ -139,7 +136,6 @@ func accountPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.PrivateKey = gopeer.StringPrivate(settings.Users[token].Keys.Private)
-
 	json.NewEncoder(w).Encode(data)
 }
 

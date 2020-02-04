@@ -52,7 +52,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	settings.Users[token] = user
 	settings.Tokens[hash] = token
-	settings.Listener.NewClient(user.Keys.Private)
+
+	client := settings.Listener.NewClient(user.Keys.Private)
+	client.Sharing.Perm = true
+	client.Sharing.Path = "./" + settings.PATH_ARCHIVE
 
 	data.Token = token
 	data.Hashname = hash

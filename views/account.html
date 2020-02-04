@@ -3,43 +3,53 @@
     <h2 class="text-center">Account</h2><br>
     <div v-if="message.curr">
         <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
+        </div>
+    </div>
+    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
+        <div class="col-md-3">
+            <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
+        </div>
+        <div class="col-md-9">
+            <router-link to="/account/archive" exact>
+                <button type="button" @click="archivelist(authdata.hashname)" class="btn btn-secondary w-100">Archive</button>
+            </router-link>
         </div>
     </div>
     <pre class="text-white lead">
 Address: "${conndata.address}".
 Username: "${authdata.username}".
-Hashname: "${conndata.hashname}".
+Hashname: "${authdata.hashname}".
 Public Key: 
-${conndata.public_key}</pre>
+<p ref="publickey">${conndata.public_key}</p></pre>
     <br>
-    <div v-if="!message.curr" class="form-group row">
+    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
         <div class="col-md-6">
             <div v-if="!userdata.private_key">
-                <button v-if="switcher!='private_key'" @click="nulldata(), setswitch('private_key')" type="button" class="btn btn-secondary w-100">View Private Key</button>
+                <button v-if="switcher!='private_key'" @click="nulldata(), setswitch('private_key')" type="button" class="btn btn-secondary w-100">View private key</button>
                 <button v-else @click="setswitch('private_key')" type="button" class="btn btn-danger w-100">Action</button>
             </div>
             <div v-else>
-                <button @click="nulldata()" type="button" class="btn btn-success w-100">Close Private Key</button>
+                <button @click="nulldata()" type="button" class="btn btn-success w-100">Close private key</button>
             </div>
         </div>
         <div class="col-md-6">
-            <button v-if="switcher!='delete_user'" @click="nulldata(), setswitch('delete_user')" type="button" class="btn btn-secondary w-100">Delete User</button>
+            <button v-if="switcher!='delete_user'" @click="nulldata(), setswitch('delete_user')" type="button" class="btn btn-secondary w-100">Delete user</button>
             <button v-else @click="setswitch('delete_user')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
     </div>
@@ -52,7 +62,7 @@ ${conndata.public_key}</pre>
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="viewkey()">View Private Key</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="viewkey()">View private key</button>
         </form>
     </div>
 
@@ -64,7 +74,7 @@ ${conndata.public_key}</pre>
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="deluser()">Delete User</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="deluser()">Delete user</button>
         </form>
     </div>
 

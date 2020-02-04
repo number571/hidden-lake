@@ -1,23 +1,23 @@
 {{ define "network_page" }}
-<div class="mx-auto my-2" v-if="opened=='network'">
+<div class="mx-auto my-2" v-if="opened=='chat' || opened=='chatnull'">
     <div v-if="message.curr" class="card bg-dark">
         <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
     </div>
 
@@ -28,17 +28,19 @@
             </button>
             <ul class="bg-dark dropdown-menu scrollable-menu" role="menu">
                 <li v-for="dialog in netdata.list">
-                    <a href="#" @click="network(dialog.companion)" class="d-flex justify-content-between">
-                        <div class="col-10 hideOverflow">
-                            <div class="chat-footer">
-                                <p class="text-smaller text-muted mb-0">${dialog.message.time}</p>
+                    <a href="#" @click="chat(dialog.companion)" class="d-flex justify-content-between">
+                        <router-link :to="{name: 'chat', params: { id: dialog.companion }}">
+                            <div class="col-10 hideOverflow">
+                                <div class="chat-footer">
+                                    <p class="text-smaller text-muted mb-0">${dialog.message.time}</p>
+                                </div>
+                                <div class="hideOverflow text-small text-info">
+                                    <strong>${dialog.companion}</strong><br>
+                                    <i>${dialog.message.name}</i>:
+                                    <p class="last-message">${dialog.message.text}</p>
+                                </div>
                             </div>
-                            <div class="hideOverflow text-small text-info">
-                                <strong>${dialog.companion}</strong><br>
-                                <i>${dialog.message.name}</i>:
-                                <p class="last-message">${dialog.message.text}</p>
-                            </div>
-                        </div>
+                        </router-link>
                     </a>
                     <div class="dropdown-divider"></div>
                 </li>
@@ -74,11 +76,11 @@
                                 <div class="h-25 form-group row">
                                     <div class="col-md-3">
                                         <router-link to="/network/settings">
-                                            <button type="button" class="h-100 btn bg-danger text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Settings</button>
+                                            <button type="button" @click="connects()" class="h-100 btn bg-secondary text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Settings</button>
                                         </router-link>
                                     </div>
                                     <div class="col-md-9">
-                                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="h-100 btn bg-secondary text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send Message</button>
+                                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="h-100 btn bg-success text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send message</button>
                                     </div>
                                 </div>
                             </div>

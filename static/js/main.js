@@ -7,23 +7,37 @@ const routes = {
     login: 2,
     signup: 3,
     account: 4,
-    network: 5,
-    settings: 6,
-    client: 7,
-    notfound: 8,
+    archive: 5,
+    archivefile: 6,
+    chatnull: 7,
+    chat: 8,
+    settings: 9,
+    client: 10,
+    hdvwhuhjj: 11,
+    notfound: 12,
 };
 
 const f = async(url, method = "GET", data = null, token = null) => {
     method = method.toLocaleUpperCase()
     let fullurl = `${apihost}${url}`;
-    let options = {url, method, headers: {}};
-    options.headers["Content-Type"] = "application/json";
-    if (token) {
-        options.headers["Authorization"] = `Bearer ${token}`;
+    let options = {
+        method: method, 
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+    };
+
+    switch(method) {
+        case "PUT":
+            delete options.headers["Content-Type"];
+            options.body = data;
+            break;
+        case "POST": case "DELETE":
+            options.body = JSON.stringify(data);
+            break;
     }
-    if (["POST", "DELETE"].includes(method)) {
-        options.body = JSON.stringify(data);
-    }
+
     const res = await fetch(fullurl, options);
     return await res.json();
 };
@@ -38,6 +52,14 @@ router.beforeEach((to, from, next) => {
     next();
 });
 
+Vue.component("notfound", {
+    template: "",
+    created: function() {
+        // Redirect outside the app using plain old javascript
+        window.location.href = "/notfound";
+    },
+});
+
 const app = new Vue({
     delimiters: ['${', '}'],
     el: "main",
@@ -48,6 +70,7 @@ const app = new Vue({
             password: null,
             password_repeat: null,
             private_key: null,
+            connects: [],
         },
         authdata: {
             token: null,
@@ -59,6 +82,13 @@ const app = new Vue({
             address: null,
             hashname: null,
             public_key: null,
+        },
+        filelist: [],
+        filedata: {
+            name: null,
+            hash: null,
+            path: null,
+            size: null,
         },
         netdata: {
             message: null,
@@ -161,8 +191,17 @@ const app = new Vue({
             this.opened = RoutesData[routes.login].name;
             this.$router.push(RoutesData[routes.login]);
         },
-        async network(name) {
-            let res = await f(`network/${name}`, "GET", null, this.authdata.token);
+        async connects() {
+            let res = await f("account/connects", "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            this.userdata.connects = res.connects;
+        },
+        async chat(name) {
+            let res = await f(`network/chat/${name}`, "GET", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "warning";
@@ -208,10 +247,10 @@ const app = new Vue({
                 hashname: this.netdata.chat.companion,
                 message: this.netdata.message,
             };
-            let res = await f("network/", "POST", obj, this.authdata.token);
+            let res = await f("network/chat/", "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
-                this.message.desc = "warning";
+                this.message.desc = "danger";
                 return;
             }
             this.message.curr = null;
@@ -222,7 +261,7 @@ const app = new Vue({
                 username: this.userdata.username,
                 password: this.userdata.password,
             };
-            let res = await f("network/", "DELETE", obj, this.authdata.token);
+            let res = await f("network/chat/", "DELETE", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -252,6 +291,7 @@ const app = new Vue({
         },
         async connect() {
             this.message.curr = "Please wait a few seconds";
+            this.message.desc = "warning";
             let res = await f("network/client/", "POST", this.conndata, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
@@ -263,6 +303,7 @@ const app = new Vue({
         },
         async disconnect() {
             this.message.curr = "Please wait a few seconds";
+            this.message.desc = "warning";
             let res = await f("network/client/", "DELETE", {hashname: this.conndata.hashname}, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
@@ -272,11 +313,123 @@ const app = new Vue({
             this.message.curr = "Disconnection success"
             this.message.desc = "success";
         },
+        async archivelist(hashname) {
+            if (hashname == this.authdata.hashname) {
+                let res = await f(`account/archive/`, "GET", null, this.authdata.token);
+                if (res.state) {
+                    this.message.curr = res.state;
+                    this.message.desc = "warning";
+                    return;
+                }
+                this.filelist = res.files;
+                return;
+            }
+            let res = await f(`network/client/${hashname}/archive/`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            this.filelist = res.files;
+        },
+        async archivefile(hashname, filehash) {
+            if (hashname == this.authdata.hashname) {
+                let res = await f(`account/archive/${filehash}`, "GET", null, this.authdata.token);
+                if (res.state) {
+                    this.message.curr = res.state;
+                    this.message.desc = "warning";
+                    return;
+                }
+                this.filedata.name = res.files[0].name;
+                this.filedata.hash = res.files[0].hash;
+                this.filedata.path = res.files[0].path;
+                this.filedata.size = res.files[0].size;
+                return;
+            }
+            let res = await f(`network/client/${hashname}/archive/${filehash}`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            this.filedata.name = res.files[0].name;
+            this.filedata.hash = res.files[0].hash;
+            this.filedata.path = res.files[0].path;
+            this.filedata.size = res.files[0].size;
+        },
+        async installfile(hashname, filename, filehash) {
+            let res = await f(`network/client/${hashname}/archive/`, "POST", {filehash: filehash}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Download success";
+            this.message.desc = "success";
+        },
+        async downloadfile(filehash) {
+            var win = window.open(`${http}${host}/static/archive/${filehash}?token=${encodeURIComponent(this.authdata.token)}`, '_blank');
+            win.focus();
+            return;
+        },
+        async deletefile(filehash) {
+            let res = await f(`account/archive/`, "DELETE", {filehash: filehash}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.wait = "Delete success";
+            this.message.desc = "success";
+            this.archivelist(this.authdata.hashname);
+            this.opened = RoutesData[routes.archive].name;
+            this.$router.push(RoutesData[routes.archive]);
+        },
+        async uploadfile() {
+            const formData = new FormData();
+            const fileField = document.querySelector('#uploadfile');
+            formData.append("uploadfile", fileField.files[0]);
+            let res = await f(`account/archive/`, "PUT", formData, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = `Upload success; Hash: ${res.filehash}`;
+            this.message.desc = "success";
+            this.archivelist(this.authdata.hashname);
+            this.opened = RoutesData[routes.archive].name;
+            this.$router.push(RoutesData[routes.archive]);
+        },
         async keycheck(e) {
             if (e.keyCode == 13) { // Enter
                 this.sendmsg();
                 this.netdata.message = "";
             }
+        },
+        selectText(element) {
+            var range;
+            if (document.selection) {
+                range = document.body.createTextRange();
+                range.moveToElementText(element);
+                range.select();
+            } else if (window.getSelection) {
+                range = document.createRange();
+                range.selectNode(element);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }
+        },
+        savepublic() {
+            this.selectText(this.$refs.publickey);
+            let res = document.execCommand("copy");
+            if (!res) {
+                this.message.curr = "Public key not copied to clipboard"
+                this.message.desc = "danger";
+                return
+            }
+            this.message.curr = "Public key copied to clipboard successfully"
+            this.message.desc = "success";
         },
         nullauth() {
             this.authdata.token = null;
@@ -285,6 +438,13 @@ const app = new Vue({
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             localStorage.removeItem("hashname");
+        },
+        nullfile() {
+            this.filedata.name = null;
+            this.filedata.hash = null;
+            this.filedata.path = null;
+            this.filedata.size = null;
+            this.filelist = [];
         },
         nullconn() {
             this.conndata.hashname = null;
@@ -310,15 +470,19 @@ const app = new Vue({
             this.authdata.username = localStorage.getItem("username");
             this.authdata.hashname = localStorage.getItem("hashname");
         }
-        this.opened = this.$route.name;
-        switch (this.opened) {
+        switch (this.$route.name) {
+            case RoutesData[routes.settings].name: this.connects(); break;
             case RoutesData[routes.account].name: this.account(); break;
-            case RoutesData[routes.network].name: this.network(); break;
+            case RoutesData[routes.archive].name: this.archivelist(this.authdata.hashname); break;
+            case RoutesData[routes.archivefile].name: this.archivefile(this.authdata.hashname, this.$route.params.id); break;
+            case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
+            case RoutesData[routes.chatnull].name: this.chat("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;
         }
+        this.opened = this.$route.name;
     },
     updated() {
-        if (this.opened == RoutesData[routes.network].name) {
+        if (this.opened == RoutesData[routes.chat].name) {
             this.$nextTick(() => {
                 var bottomChat = this.$refs.bottomChat;
                 bottomChat.scrollTop = bottomChat.scrollHeight;
@@ -327,7 +491,6 @@ const app = new Vue({
     },
     watch: {
         '$route' (to, from) {
-            this.nullconn();
             this.nulldata();
             this.opened = to.name;
             if (this.message.wait != null) {

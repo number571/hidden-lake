@@ -1,17 +1,24 @@
 package api
 
 import (
+	// "fmt"
 	"../db"
 	"../models"
 	"../settings"
 	"../utils"
 	"encoding/json"
 	"github.com/number571/gopeer"
+	"golang.org/x/net/websocket"
 	"net/http"
 	"strings"
 )
 
-func Client(w http.ResponseWriter, r *http.Request) {
+type netData struct {
+	List []models.LastMessage `json:"list"`
+	Chat *models.Chat         `json:"chat"`
+}
+
+func NetworkChat(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
@@ -20,28 +27,27 @@ func Client(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		clientGET(w, r)
-		return
+		networkGET(w, r)
 	case "POST":
-		clientPOST(w, r)
-		return
+		networkPOST(w, r)
 	case "DELETE":
-		clientDELETE(w, r)
-		return
+		networkDELETE(w, r)
+	default:
+		data.State = "Method should be GET or POST"
+		json.NewEncoder(w).Encode(data)
 	}
-
-	data.State = "Method should be GET"
-	json.NewEncoder(w).Encode(data)
 }
 
-// Disconnect from client.
-func clientDELETE(w http.ResponseWriter, r *http.Request) {
+// Delete chat.
+func networkDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
 
 	var read struct {
 		Hashname string `json:"hashname"`
+		Username string `json:"username"`
+		Password string `json:"password"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&read)
@@ -68,7 +74,73 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 		settings.Users[token].Session.Time = utils.CurrentTime()
 	}
 
-	hash := settings.Users[token].Hashname
+	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
+	user := db.GetUser(pasw)
+	if user == nil {
+		data.State = "User undefined"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	if user.Auth.Hashpasw != settings.Users[token].Auth.Hashpasw {
+		data.State = "Users not equal"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	if user.Hashname == read.Hashname {
+		data.State = "Can't delete own chat"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err = db.DeleteChat(user, read.Hashname)
+	if err != nil {
+		data.State = "Can't delete chat"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+
+// Send message.
+func networkPOST(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		State string `json:"state"`
+	}
+
+	var read struct {
+		Hashname string `json:"hashname"`
+		Message  string `json:"message"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&read)
+	if err != nil {
+		data.State = "Error decode json format"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	token := r.Header.Get("Authorization")
+	token = strings.Replace(token, "Bearer ", "", 1)
+	if _, ok := settings.Users[token]; !ok {
+		data.State = "Tokened user undefined"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err = settings.CheckLifetimeToken(token)
+	if err != nil {
+		data.State = "Token lifetime is over"
+		json.NewEncoder(w).Encode(data)
+		return
+	} else {
+		settings.Users[token].Session.Time = utils.CurrentTime()
+	}
+
+	user := settings.Users[token]
+	hash := user.Hashname
 	client, ok := settings.Listener.Clients[hash]
 	if !ok {
 		data.State = "Current client is not exist"
@@ -82,13 +154,14 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dest := &gopeer.Destination{
-		Address: client.Connections[read.Hashname].Address,
-		Public:  client.Connections[read.Hashname].Public,
-	}
-
-	message := "connection closed"
-	_, err = client.SendTo(dest, &gopeer.Package{
+	message := strings.Replace(read.Message, "\n", " ", -1)
+	_, err = client.Send(&gopeer.Package{
+		To: gopeer.To{
+			Receiver: gopeer.Receiver{
+				Hashname: read.Hashname,
+			},
+			Address: client.Connections[read.Hashname].Address,
+		},
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
 			Option: settings.OPTION_GET,
@@ -103,122 +176,14 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.SetChat(settings.Users[token], &models.Chat{
+	time := utils.CurrentTime()
+	err = db.SetChat(user, &models.Chat{
 		Companion: read.Hashname,
 		Messages: []models.Message{
 			models.Message{
 				Name: hash,
 				Text: message,
-				Time: utils.CurrentTime(),
-			},
-		},
-	})
-	client.Disconnect(dest)
-
-	json.NewEncoder(w).Encode(data)
-}
-
-// Connect to another client.
-func clientPOST(w http.ResponseWriter, r *http.Request) {
-	var data struct {
-		State string `json:"state"`
-	}
-
-	var read struct {
-		Address   string `json:"address"`
-		PublicKey string `json:"public_key"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if len(strings.Split(read.Address, ":")) != 2 {
-		data.State = "Address is not corrected"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	public := gopeer.ParsePublic(read.PublicKey)
-	if public == nil {
-		data.State = "Error decode public key"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	user := settings.Users[token]
-	client, ok := settings.Listener.Clients[user.Hashname]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	dest := &gopeer.Destination{
-		Address: read.Address,
-		Public:  public,
-	}
-	err = client.Connect(dest)
-	if err != nil {
-		data.State = "Connect error"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	hash := gopeer.HashPublic(public)
-	err = db.SetClient(user, &models.Client{
-		Hashname: hash,
-		Address:  read.Address,
-		Public:   public,
-	})
-	if err != nil {
-		data.State = "Set client error"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	message := "connection created"
-	_, err = client.SendTo(dest, &gopeer.Package{
-		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
-		},
-		Body: gopeer.Body{
-			Data: message,
-		},
-	})
-	if err != nil {
-		data.State = "User can't receive message"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = db.SetChat(user, &models.Chat{
-		Companion: hash,
-		Messages: []models.Message{
-			models.Message{
-				Name: hash,
-				Text: message,
-				Time: utils.CurrentTime(),
+				Time: time,
 			},
 		},
 	})
@@ -228,24 +193,43 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var wsdata = struct {
+		Comp struct {
+			From string `json:"from"`
+			To   string `json:"to"`
+		} `json:"comp"`
+		Text string `json:"text"`
+		Time string `json:"time"`
+	}{
+		Comp: struct {
+			From string `json:"from"`
+			To   string `json:"to"`
+		}{
+			From: hash,
+			To:   read.Hashname,
+		},
+		Text: message,
+		Time: time,
+	}
+	if user.Session.Socket != nil {
+		websocket.JSON.Send(user.Session.Socket, wsdata)
+	}
+
 	json.NewEncoder(w).Encode(data)
 }
 
-// Get client public information.
-func clientGET(w http.ResponseWriter, r *http.Request) {
+// Get chat.
+func networkGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Connected bool   `json:"connected"`
-		Address   string `json:"address"`
-		Hashname  string `json:"hashname"`
-		PublicKey string `json:"public_key"`
-		State     string `json:"state"`
+		State   string  `json:"state"`
+		NetData netData `json:"netdata"`
 	}
 
 	var read struct {
 		Hashname string `json:"hashname"`
 	}
 
-	read.Hashname = strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
+	read.Hashname = strings.Replace(r.URL.Path, "/api/network/chat/", "", 1)
 
 	token := r.Header.Get("Authorization")
 	token = strings.Replace(token, "Bearer ", "", 1)
@@ -254,6 +238,7 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	}
+
 	err := settings.CheckLifetimeToken(token)
 	if err != nil {
 		data.State = "Token lifetime is over"
@@ -264,27 +249,14 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := settings.Users[token]
-	clientData := db.GetClient(user, read.Hashname)
-	if clientData == nil {
-		data.State = "Client undefined"
-		json.NewEncoder(w).Encode(data)
-		return
+	data.NetData.List = db.GetLastMessages(user)
+	
+	switch read.Hashname {
+	case "", "null", "undefined":
+		data.NetData.Chat = new(models.Chat)
+	default:
+		data.NetData.Chat = db.GetChat(user, read.Hashname)
 	}
-
-	client, ok := settings.Listener.Clients[user.Hashname]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if client.InConnections(read.Hashname) {
-		data.Connected = true
-	}
-
-	data.Address = clientData.Address
-	data.Hashname = read.Hashname
-	data.PublicKey = gopeer.StringPublic(clientData.Public)
 
 	json.NewEncoder(w).Encode(data)
 }

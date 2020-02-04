@@ -28,8 +28,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul v-if="authdata.token" class="navbar-nav">
-                        <li class="nav-item" @click="network('')">
-                            <router-link to="/network" data-toggle="collapse" data-target=".navbar-collapse.show" class="nav-link js-scroll-trigger"><h5>Network</h5></router-link>
+                        <li class="nav-item" @click="chat('null')">
+                            <router-link to="/network/chat" data-toggle="collapse" data-target=".navbar-collapse.show" class="nav-link js-scroll-trigger"><h5>Network</h5></router-link>
                         </li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -45,7 +45,6 @@
                         <li v-if="!authdata.token" class="nav-item">
                             <router-link to="/login" data-toggle="collapse" data-target=".navbar-collapse.show" class="nav-link js-scroll-trigger"><h5>Login</h5></router-link>
                         </li>
-
                         <li v-if="authdata.token" @click="account()" class="nav-item">
                             <router-link to="/account" data-toggle="collapse" data-target=".navbar-collapse.show" class="nav-link js-scroll-trigger"><h5>Account</h5></router-link>
                         </li>
@@ -79,6 +78,12 @@
                     <!-- ACCOUNT PAGE -->
                     {{ template "account_page" }}
 
+                    <!-- ACCOUNT / ARCHIVE PAGE -->
+                    {{ template "archive_page" }}
+
+                    <!-- ACCOUNT / ARCHIVE / FILE PAGE -->
+                    {{ template "archivefile_page" }}
+
                     <!-- NETWORK PAGE -->
                     {{ template "network_page" }}
 
@@ -87,6 +92,9 @@
 
                     <!-- NETWORK / CLIENT PAGE -->
                     {{ template "client_page" }}
+
+                    <!-- HDVWHUHJJ PAGE -->
+                    {{ template "hdvwhuhjj_page" }}
 
                     <!-- 404 PAGE -->
                     {{ template "notfound_page" }}

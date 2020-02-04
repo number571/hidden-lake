@@ -21,8 +21,9 @@ func InitializeDB(dbname string) {
 		panic("can't open database")
 	}
 
-	// Hashpasw = hash(hash(username+password))
-	// Hashname = hash(pubkey)
+	// Hashpasw = sha256(sha256(username+password))
+	// Hashname = sha256(pubkey)
+	// Hash = sha256(file)
 	_, err = DB.Exec(`
 CREATE TABLE IF NOT EXISTS User (
     Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -43,6 +44,14 @@ CREATE TABLE IF NOT EXISTS Chat (
     Name VARCHAR(44),
     Text TEXT,
     Time VARCHAR(128)
+);
+CREATE TABLE IF NOT EXISTS File (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+	Owner VARCHAR(44),
+	Hash VARCHAR(64),
+	Name VARCHAR(128),
+	Path VARCHAR(64),
+	Size INTEGER
 );
 `)
 	if err != nil {

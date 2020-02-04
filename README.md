@@ -93,6 +93,15 @@ CREATE TABLE IF NOT EXISTS Chat (
     Text TEXT,
     Time VARCHAR(128)
 );
+/* Hash = sha256(file); */
+CREATE TABLE IF NOT EXISTS File (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+	Owner VARCHAR(44),
+	Hash VARCHAR(64),
+	Name VARCHAR(128),
+	Path VARCHAR(64),
+	Size INTEGER
+);
 ```
 
 ### Settings page:

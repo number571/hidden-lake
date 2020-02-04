@@ -18,5 +18,9 @@ func DeleteUser(user *models.User) error {
 	if err != nil {
 		panic("exec 'deleteuser.chat' failed")
 	}
+	_, err = settings.DB.Exec("DELETE FROM File WHERE Owner=$1", user.Hashname)
+	if err != nil {
+		panic("exec 'deleteuser.chat' failed")
+	}
 	return nil
 }

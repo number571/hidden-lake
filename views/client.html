@@ -3,34 +3,43 @@
     <h2 class="text-center">Client</h2><br>
     <div v-if="message.curr">
         <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
         <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
         </div>
+    </div>
+    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
+        <div class="col-md-6">
+            <button @click="savepublic()" type="button" class="btn btn-success w-100">Save public key in buffer</button>
+        </div>
+        <!-- <div class="col-md-6">
+            <router-link to="/account/archive" exact>
+                <button type="button" @click="archivelist(authdata.hashname)" class="btn btn-secondary w-100">Archive</button>
+            </router-link>
+        </div> -->
     </div>
     <pre class="text-white lead">
 Connected: "${conndata.connected}".
 Address: "${conndata.address}".
 Hashname: "${conndata.hashname}".
 Public Key: 
-${conndata.public_key}</pre>
+<p ref="publickey">${conndata.public_key}</p></pre>
     <br>
     <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
         <div class="col-md-6">
-            <!-- , client(conndata.hashname) -->
             <button v-if="conndata.connected" @click="disconnect(), client(conndata.hashname)" type="button" class="btn btn-danger w-100">Disconnect</button>
             <button v-else @click="connect(), client(conndata.hashname)" type="button" class="btn btn-success w-100">Connect</button>
         </div>

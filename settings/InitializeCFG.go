@@ -30,6 +30,7 @@ func InitializeCFG(cfgname string) {
 		panic("can't decode config")
 	}
 	os.Mkdir(PATH_TLS, 0777)
+	os.Mkdir(PATH_ARCHIVE, 0777)
 	if !utils.FileIsExist(CFG.Host.Http.Tls.Crt) && !utils.FileIsExist(CFG.Host.Http.Tls.Key) {
 		generateCertificate(2048, CFG)
 	}

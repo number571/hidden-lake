@@ -13,6 +13,10 @@
     overflow-x: hidden;
 }
 
+.divtext {
+    overflow-x: hidden;
+}
+
 #chat-textarea {
     resize: none;
 }

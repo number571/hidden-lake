@@ -1,0 +1,74 @@
+{{ define "archive_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='archive'">
+    <h2 class="text-center">Archive</h2><br>
+    <div v-if="message.curr" class="card bg-dark">
+        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
+        </div>
+        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
+        </div>
+        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            ${message.curr}
+        </div>
+    </div>
+
+    <div class="text-center form-group">
+        <div class="form-group row">
+            <div class="col-md-6">
+                <button v-if="switcher=='upload'"  @click="setswitch('upload')" type="button" class="btn btn-danger w-100">Action</button>
+                <button v-else  @click="nullconn(), nullfile(), setswitch('upload')" type="button" class="btn btn-secondary w-100">Upload</button>
+            </div>
+            <div class="col-md-6">
+                <button v-if="switcher=='download'"  @click="setswitch('download')" type="button" class="btn btn-danger w-100">Action</button>
+                <button v-else  @click="nullconn(), nullfile(), setswitch('download')" type="button" class="btn btn-secondary w-100">Download</button>
+            </div>
+        </div>
+    </div>
+    <div v-if="switcher=='upload'" class="text-center form-group">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group btn btn-default w-100 bg-secondary">
+                <input id="uploadfile" type="file" name="name" class="text-light w-100">
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="uploadfile()">Upload</button>
+        </form>
+    </div>
+    <div v-if="switcher=='download'" class="text-center form-group">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group w-100">
+                <select v-model="filedata.hash" class="browser-default custom-select text-light bg-secondary w-100">
+                    <option disabled value="">Choose filename</option>
+                    <option v-for="file in filelist" v-bind:value="file.hash">${file.name}</option>
+                </select>
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="downloadfile(filedata.hash)">Download</button>
+        </form>
+    </div>
+    <hr>
+    <div class="mx-auto w-100">
+        <ul class="list-unstyled chat-1 scrollbar-light-blue">
+            <li v-for="file in filelist">
+                <div class="h-25 form-group row">
+                    <div class="col-md-9">
+                        <router-link :to="{name: 'archivefile', params: { id: file.hash }}">
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="archivefile(authdata.hashname, file.hash)">"${file.name}"</button>
+                        </router-link>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-success divtext w-100" @click="downloadfile(file.hash)">Download</button>
+                    </div>
+                </div>
+            </li>
+        </ul> 
+    </div>
+</div>
+{{ end }}

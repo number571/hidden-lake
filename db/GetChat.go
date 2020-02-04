@@ -5,7 +5,7 @@ import (
 	"../settings"
 )
 
-func GetChat(comp string, user *models.User) *models.Chat {
+func GetChat(user *models.User, comp string) *models.Chat {
 	var (
 		err  error
 		msg  models.Message
