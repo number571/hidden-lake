@@ -26,11 +26,11 @@
         <div class="form-group row">
             <div class="col-md-6">
                 <button v-if="switcher=='upload'"  @click="setswitch('upload')" type="button" class="btn btn-danger w-100">Action</button>
-                <button v-else  @click="nullconn(), nullfile(), setswitch('upload')" type="button" class="btn btn-secondary w-100">Upload</button>
+                <button v-else  @click="setswitch('upload')" type="button" class="btn btn-secondary w-100">Upload</button>
             </div>
             <div class="col-md-6">
                 <button v-if="switcher=='download'"  @click="setswitch('download')" type="button" class="btn btn-danger w-100">Action</button>
-                <button v-else  @click="nullconn(), nullfile(), setswitch('download')" type="button" class="btn btn-secondary w-100">Download</button>
+                <button v-else  @click="setswitch('download')" type="button" class="btn btn-secondary w-100">Download</button>
             </div>
         </div>
     </div>

@@ -55,7 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	client := settings.Listener.NewClient(user.Keys.Private)
 	client.Sharing.Perm = true
-	client.Sharing.Path = "./" + settings.PATH_ARCHIVE
+	client.Sharing.Path = settings.PATH_ARCHIVE
 
 	data.Token = token
 	data.Hashname = hash

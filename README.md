@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized network. Version 1.0.0s.
+> Decentralized network. Version 1.1.0s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
@@ -21,8 +21,8 @@
 6. jquery: [github.com/jquery/jquery](https://github.com/jquery/jquery);
 7. popper: [github.com/popperjs/popper-core](https://github.com/popperjs/popper-core);
 
-### Signup page:
-<img src="/images/HiddenLake2.png" alt="SignupPage"/>
+### Chat room page:
+<img src="/images/HiddenLake8.png" alt="ChatRoomPage"/>
 
 ### Modules:
 1. Network (kernel): 
@@ -39,7 +39,7 @@
 * native application routing;
 
 ### Account page:
-<img src="/images/HiddenLake3.png" alt="AccountPage"/>
+<img src="/images/HiddenLake4.png" alt="AccountPage"/>
 
 ### Default configuration (config.cfg): 
 > Configuration file is created when the application starts.
@@ -62,8 +62,8 @@
 }
 ```
 
-### Network page:
-<img src="/images/HiddenLake4.png" alt="NetworkPage"/>
+### Settings page:
+<img src="/images/HiddenLake5.png" alt="SettingsPage"/>
 
 ### SQL Tables (database.db):
 > Database file is created when the application starts.
@@ -93,7 +93,8 @@ CREATE TABLE IF NOT EXISTS Chat (
     Text TEXT,
     Time VARCHAR(128)
 );
-/* Hash = sha256(file); */
+/* File information; */
+/* Hash = hash(file); */
 CREATE TABLE IF NOT EXISTS File (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 	Owner VARCHAR(44),
@@ -104,5 +105,5 @@ CREATE TABLE IF NOT EXISTS File (
 );
 ```
 
-### Settings page:
-<img src="/images/HiddenLake5.png" alt="SettingsPage"/>
+### Archive page:
+<img src="/images/HiddenLake6.png" alt="ArchivePage"/>

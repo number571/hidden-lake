@@ -27,28 +27,28 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 // List of connections.
 func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-        State   string  `json:"state"`
-        Connects []string `json:"connects"`
-    }
+		State    string   `json:"state"`
+		Connects []string `json:"connects"`
+	}
 
-    token := r.Header.Get("Authorization")
-    token = strings.Replace(token, "Bearer ", "", 1)
-    if _, ok := settings.Users[token]; !ok {
-        data.State = "Tokened user undefined"
-        json.NewEncoder(w).Encode(data)
-        return
-    }
+	token := r.Header.Get("Authorization")
+	token = strings.Replace(token, "Bearer ", "", 1)
+	if _, ok := settings.Users[token]; !ok {
+		data.State = "Tokened user undefined"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
 
-    err := settings.CheckLifetimeToken(token)
-    if err != nil {
-        data.State = "Token lifetime is over"
-        json.NewEncoder(w).Encode(data)
-        return
-    } else {
-        settings.Users[token].Session.Time = utils.CurrentTime()
-    }
+	err := settings.CheckLifetimeToken(token)
+	if err != nil {
+		data.State = "Token lifetime is over"
+		json.NewEncoder(w).Encode(data)
+		return
+	} else {
+		settings.Users[token].Session.Time = utils.CurrentTime()
+	}
 
-    user := settings.Users[token]
+	user := settings.Users[token]
 	client, ok := settings.Listener.Clients[user.Hashname]
 	if !ok {
 		data.State = "Current client is not exist"

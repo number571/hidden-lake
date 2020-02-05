@@ -9,9 +9,9 @@ import (
 func GetAllFiles(user *models.User) []models.File {
 	var (
 		files []models.File
-		hash string
-		name string
-		size uint64
+		hash  string
+		name  string
+		size  uint64
 	)
 	rows, err := settings.DB.Query(
 		"SELECT Hash, Name, Size FROM File WHERE Owner=$1",

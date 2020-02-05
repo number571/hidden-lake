@@ -44,7 +44,7 @@
                         <option v-for="file in filelist" v-bind:value="file.hash">${file.name}</option>
                     </select>
                 </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="installfile(conndata.hashname, filedata.name, filedata.hash)">Install</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="installfile(conndata.hashname, filedata.hash)">Install</button>
             </form>
         </div>
 

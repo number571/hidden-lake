@@ -250,7 +250,7 @@ func networkGET(w http.ResponseWriter, r *http.Request) {
 
 	user := settings.Users[token]
 	data.NetData.List = db.GetLastMessages(user)
-	
+
 	switch read.Hashname {
 	case "", "null", "undefined":
 		data.NetData.Chat = new(models.Chat)

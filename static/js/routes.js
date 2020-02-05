@@ -56,34 +56,62 @@ export const RoutesData = [
 		},
 	},
 	{ // 8
+		path: "/network/", 
+		name: "network",
+		meta: {
+			title: "Network",
+		},
+	},
+	{ // 9
 		path: "/network/chat/:id", 
 		name: "chat",
 		meta: {
 			title: "Chat",
 		},
 	},
-	{ // 9
+	{ // 10
 		path: "/network/settings", 
 		name: "settings",
 		meta: {
 			title: "Settings",
 		},
 	},
-	{ // 10
+	{ // 11
+		path: "/network/connections", 
+		name: "connections",
+		meta: {
+			title: "Connections",
+		},
+	},
+	{ // 12
 		path: "/network/client/:id", 
 		name: "client",
 		meta: {
 			title: "Client",
 		},
 	},
-	{ // 11
+	{ // 13
+		path: "/network/client/archive/:id", 
+		name: "clientarchive",
+		meta: {
+			title: "Client Archive",
+		},
+	},
+	{ // 14
+		path: "/network/client/:id0/archive/:id1", 
+		name: "clientarchivefile",
+		meta: {
+			title: "Client Archive File",
+		},
+	},
+	{ // 15
 		path: "/hdvwhuhjj", 
 		name: "hdvwhuhjj",
 		meta: {
 			title: "Hdvwhu Hjj",
 		},
 	},
-	{ // 12
+	{ // 16
 		path: "*", 
 		name: "notfound",
 		meta: {

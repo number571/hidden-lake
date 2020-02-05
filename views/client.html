@@ -21,15 +21,28 @@
             ${message.curr}
         </div>
     </div>
-    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
+
+    <!-- <div class="form-group row">
         <div class="col-md-6">
-            <button @click="savepublic()" type="button" class="btn btn-success w-100">Save public key in buffer</button>
+            <select v-model="filedata.hash" class="browser-default custom-select text-light bg-secondary w-100">
+                <option disabled value="">Choose filename</option>
+                <option v-for="file in filelist" v-bind:value="file.hash">${file.name}</option>
+            </select>
         </div>
-        <!-- <div class="col-md-6">
-            <router-link to="/account/archive" exact>
-                <button type="button" @click="archivelist(authdata.hashname)" class="btn btn-secondary w-100">Archive</button>
+        <div class="col-md-6">
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="installfile(conndata.hashname, filedata.hash)">Install file</button>
+        </div>
+    </div> -->
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
+        </div>
+        <div class="col-md-9" v-if="conndata.hashname">
+            <router-link :to="{name: 'clientarchive', params: {id: conndata.hashname}}" exact>
+                <button type="button" @click="archivelist(conndata.hashname)" class="btn btn-secondary w-100">Archive</button>
             </router-link>
-        </div> -->
+        </div>
     </div>
     <pre class="text-white lead">
 Connected: "${conndata.connected}".

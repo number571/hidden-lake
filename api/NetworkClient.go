@@ -5,12 +5,12 @@ import (
 	"../models"
 	"../settings"
 	"../utils"
-	"os"
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -150,7 +150,7 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	}
-	
+
 	err = settings.CheckLifetimeToken(token)
 	if err != nil {
 		data.State = "Token lifetime is over"
@@ -239,9 +239,9 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// Install file from another node.
 func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) {
 	var data struct {
-		Filehash string `json:"filehash"`
 		State string `json:"state"`
 	}
 
@@ -263,7 +263,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 		json.NewEncoder(w).Encode(data)
 		return
 	}
-	
+
 	err = settings.CheckLifetimeToken(token)
 	if err != nil {
 		data.State = "Token lifetime is over"
@@ -309,89 +309,72 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 
 	if len(user.FileList) == 0 {
 		data.State = "File not found"
-        json.NewEncoder(w).Encode(data)
+		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	filename := user.FileList[0].Name
-	tempname1 := utils.RandomString(16)
-	client.LoadFile(dest, user.FileList[0].Path, settings.PATH_ARCHIVE + tempname1)
-
-	input, err := os.Open(settings.PATH_ARCHIVE + tempname1)
+	hash, err := hex.DecodeString(user.FileList[0].Hash)
 	if err != nil {
-		data.State = "Temp file not opened"
-        json.NewEncoder(w).Encode(data)
-        return
+		data.State = "Error decode hex format"
+		json.NewEncoder(w).Encode(data)
+		return
 	}
 
-	tempname2 := utils.RandomString(16)
-	output, err := os.OpenFile(
-        settings.PATH_ARCHIVE + tempname2, 
-        os.O_WRONLY | os.O_CREATE, 
-        0666,
-    )
-    if err != nil {
-        data.State = "Error push file to archive"
-        json.NewEncoder(w).Encode(data)
-        return
-    }
+	pathhash := hex.EncodeToString(gopeer.HashSum(bytes.Join(
+		[][]byte{
+			hash,
+			gopeer.HashSum(gopeer.GenerateRandomBytes(16)),
+			gopeer.Base64Decode(user.Hashname),
+		},
+		[]byte{},
+	)))
 
-    var (
-        size = uint64(0)
-        hash = make([]byte, 32)
-        buffer = make([]byte, settings.BUFFER_SIZE)
-    )
+	file := db.GetFile(user, user.FileList[0].Hash)
+	if file != nil {
+		data.State = "This file already exist"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
 
-    for {
-        length, err := input.Read(buffer)
-        if err != nil {
-            break
-        }
-        size += uint64(length)
-        hash = gopeer.HashSum(bytes.Join(
-            [][]byte{hash, buffer[:length]},
-            []byte{},
-        ))
-        output.Write(buffer[:length])
-    }
+	client.LoadFile(dest, user.FileList[0].Path, settings.PATH_ARCHIVE+pathhash)
 
-    output.Close()
-    input.Close()
+	output, err := os.Open(settings.PATH_ARCHIVE + pathhash)
+	if err != nil {
+		data.State = "Installed file does not open"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+	var (
+		checkhash = make([]byte, 32)
+		buffer    = make([]byte, settings.BUFFER_SIZE)
+	)
+	for {
+		length, err := output.Read(buffer)
+		if err != nil {
+			break
+		}
+		checkhash = gopeer.HashSum(bytes.Join(
+			[][]byte{checkhash, buffer[:length]},
+			[]byte{},
+		))
+	}
+	output.Close()
 
-    os.Remove(settings.PATH_ARCHIVE + tempname1)
-    filehash := hex.EncodeToString(hash)
+	if hex.EncodeToString(checkhash) != user.FileList[0].Hash {
+		os.Remove(settings.PATH_ARCHIVE + pathhash)
+		data.State = "Hashes not equal"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
 
-    file := db.GetFile(user, filehash)
-    if file != nil {
-        os.Remove(settings.PATH_ARCHIVE + tempname2)
-        data.State = "This file already exist"
-        json.NewEncoder(w).Encode(data)
-        return
-    }
+	db.SetFile(user, &models.File{
+		Name: user.FileList[0].Name,
+		Hash: user.FileList[0].Hash,
+		Path: pathhash,
+		Size: user.FileList[0].Size,
+	})
 
-    pathhash := hex.EncodeToString(gopeer.HashSum(bytes.Join(
-        [][]byte{
-            hash,
-            gopeer.HashSum(gopeer.GenerateRandomBytes(16)),
-            gopeer.Base64Decode(user.Hashname),
-        },
-        []byte{},
-    )))
-
-    os.Rename(
-        settings.PATH_ARCHIVE + tempname2, 
-        settings.PATH_ARCHIVE + pathhash,
-    )
-
-    db.SetFile(user, &models.File{
-        Name: filename,
-        Hash: filehash,
-        Path: pathhash,
-        Size: size,
-    })
-
-    data.Filehash = filehash
-    json.NewEncoder(w).Encode(data)
+	json.NewEncoder(w).Encode(data)
 }
 
 // Get client public information.
@@ -420,7 +403,7 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	}
-	
+
 	err := settings.CheckLifetimeToken(token)
 	if err != nil {
 		data.State = "Token lifetime is over"
@@ -461,9 +444,10 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// Get list info of files / file from another node.
 func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User, client *gopeer.Client, splited []string) {
 	var data struct {
-		State string `json:"state"`
+		State string        `json:"state"`
 		Files []models.File `json:"files"`
 	}
 

@@ -28,8 +28,8 @@ const (
 // Tools: check and sign messages
 // Archive: files
 const (
-	TITLE_MESSAGE  = "[TITLE-MESSAGE]"
-	TITLE_ARCHIVE  = "[TITLE-ARCHIVE]"
+	TITLE_MESSAGE = "[TITLE-MESSAGE]"
+	TITLE_ARCHIVE = "[TITLE-ARCHIVE]"
 	// TITLE_REDIRECT = "[TITLE-REDIRECT]"
 )
 
@@ -40,8 +40,8 @@ var (
 const (
 	// len(base64(sha256(x))) = 44
 	LEN_BASE64_SHA256 = 44
-	PACKAGE_SIZE	  = 16 << 20 // 16MiB
-	BUFFER_SIZE		  = 1  << 10 // 1KiB
+	PACKAGE_SIZE      = 16 << 20 // 16MiB
+	BUFFER_SIZE       = 1 << 10  // 1KiB
 	CHECK_DURING      = 12 * time.Hour
 	LIFETIME_TOKEN    = 24 * time.Hour
 )

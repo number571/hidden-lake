@@ -1,4 +1,4 @@
-{{ define "network_page" }}
+{{ define "chat_page" }}
 <div class="mx-auto my-2" v-if="opened=='chat' || opened=='chatnull'">
     <div v-if="message.curr" class="card bg-dark">
         <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
@@ -37,7 +37,7 @@
                                 <div class="hideOverflow text-small text-info">
                                     <strong>${dialog.companion}</strong><br>
                                     <i>${dialog.message.name}</i>:
-                                    <p class="last-message">${dialog.message.text}</p>
+                                    <p class="last-message text-light">${dialog.message.text}</p>
                                 </div>
                             </div>
                         </router-link>
@@ -73,15 +73,8 @@
                                         <textarea id="chat-textarea" class="h-75 form-control bg-dark pl-2 my-0 text-white" id="exampleFormControlTextarea2" v-model="netdata.message" rows="3" placeholder="Type your message here..." v-on:keyup="keycheck"></textarea>
                                     </div>
                                 </div>
-                                <div class="h-25 form-group row">
-                                    <div class="col-md-3">
-                                        <router-link to="/network/settings">
-                                            <button type="button" @click="connects()" class="h-100 btn bg-secondary text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Settings</button>
-                                        </router-link>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="h-100 btn bg-success text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send message</button>
-                                    </div>
+                                <div class="form-group">
+                                    <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg()" class="h-100 btn bg-success text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send message</button>
                                 </div>
                             </div>
                         </div>

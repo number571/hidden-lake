@@ -21,7 +21,7 @@
             ${message.curr}
         </div>
     </div>
-    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
+    <div class="form-group row">
         <div class="col-md-3">
             <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
         </div>
@@ -38,7 +38,7 @@ Hashname: "${authdata.hashname}".
 Public Key: 
 <p ref="publickey">${conndata.public_key}</p></pre>
     <br>
-    <div v-if="!(message.curr&&message.desc=='warning')" class="form-group row">
+    <div class="form-group row">
         <div class="col-md-6">
             <div v-if="!userdata.private_key">
                 <button v-if="switcher!='private_key'" @click="nulldata(), setswitch('private_key')" type="button" class="btn btn-secondary w-100">View private key</button>
