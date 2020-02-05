@@ -25,10 +25,10 @@
         <ul class="list-unstyled chat-1 scrollbar-light-blue">
             <li v-for="cli in userdata.connects">
                 <div class="form-group row">
-                    <div class="col-md-9">
-                    <router-link :to="{name: 'client', params: { id: cli.hashname }}" class="w-100">
-                        <button type="button" class="btn btn-secondary divtext w-100" @click="client(cli.hashname)">${cli.hashname}</button>
-                    </router-link>
+                    <div class="col-md-9" v-if="cli.hashname">
+                        <router-link :to="{name: 'client', params: { id: cli.hashname }}" class="w-100">
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="client(cli.hashname)">${cli.hashname}</button>
+                        </router-link>
                     </div>
                     <div class="col-md-3" v-if="cli.connected">
                         <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="disconnect(cli.hashname), cli.connected=false">Disconnect</button>
