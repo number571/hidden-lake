@@ -1,8 +1,8 @@
 package db
 
 import (
-	"../models"
-	"../settings"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
 )
 
 func InClients(user *models.User, hashname string) bool {

@@ -1,8 +1,6 @@
 package settings
 
 import (
-	"../models"
-	"../utils"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -10,6 +8,8 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/utils"
 	"math/big"
 	"os"
 	"time"

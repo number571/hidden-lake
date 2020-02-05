@@ -1,8 +1,8 @@
 package db
 
 import (
-	"../models"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
 )
 
 func decryptMessage(user *models.User, msg *models.Message) {

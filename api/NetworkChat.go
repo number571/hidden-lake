@@ -1,13 +1,12 @@
 package api
 
 import (
-	// "fmt"
-	"../db"
-	"../models"
-	"../settings"
-	"../utils"
 	"encoding/json"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 	"golang.org/x/net/websocket"
 	"net/http"
 	"strings"

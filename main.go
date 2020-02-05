@@ -7,16 +7,16 @@ package main
 */
 
 import (
-	"./api"
-	"./db"
-	"./handle"
-	"./models"
-	"./settings"
-	"./utils"
-	"./ws"
 	"crypto/tls"
 	"fmt"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/api"
+	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/handle"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
+	"github.com/number571/hiddenlake/ws"
 	"golang.org/x/net/websocket"
 	"html/template"
 	"net/http"
@@ -132,7 +132,7 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", file.Name))
-	http.ServeFile(w, r, settings.PATH_ARCHIVE + file.Path)
+	http.ServeFile(w, r, settings.PATH_ARCHIVE+file.Path)
 }
 
 func indexPage(w http.ResponseWriter, r *http.Request) {

@@ -1,10 +1,10 @@
 package db
 
 import (
-	"../models"
-	"../settings"
 	"errors"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
 )
 
 func SetUser(user *models.User) error {

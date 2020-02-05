@@ -1,7 +1,7 @@
 package db
 
 import (
-	"../settings"
+	"github.com/number571/hiddenlake/settings"
 )
 
 func InUsers(hashpasw string) bool {

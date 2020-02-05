@@ -1,9 +1,9 @@
 package settings
 
 import (
-	"../models"
 	"database/sql"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
 	"time"
 )
 

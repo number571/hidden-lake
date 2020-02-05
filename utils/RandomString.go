@@ -7,7 +7,7 @@ import (
 func RandomString(max int) string {
 	list := gopeer.GenerateRandomBytes(max)
 	for i := range list {
-		list[i] = list[i] % 26 + 'A'
+		list[i] = list[i]%26 + 'A'
 	}
 	return string(list)
 }

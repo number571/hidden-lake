@@ -1,11 +1,11 @@
 package api
 
 import (
-	"../db"
-	"../settings"
-	"../utils"
 	"encoding/json"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 	"net/http"
 	"strings"
 )

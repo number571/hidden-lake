@@ -1,9 +1,9 @@
 package db
 
 import (
-	"../models"
-	"../settings"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
 )
 
 func GetFile(user *models.User, filehash string) *models.File {

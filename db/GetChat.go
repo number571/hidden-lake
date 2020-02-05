@@ -1,8 +1,8 @@
 package db
 
 import (
-	"../models"
-	"../settings"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
 )
 
 func GetChat(user *models.User, comp string) *models.Chat {

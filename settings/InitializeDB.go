@@ -1,9 +1,9 @@
 package settings
 
 import (
-	"../utils"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/number571/hiddenlake/utils"
 )
 
 func InitializeDB(dbname string) {

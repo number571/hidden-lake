@@ -1,10 +1,10 @@
 package db
 
 import (
-	"../models"
-	"../settings"
-	"../utils"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/models"
+	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 )
 
 func GetUser(pasw []byte) *models.User {

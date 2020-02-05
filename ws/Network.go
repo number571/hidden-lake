@@ -1,7 +1,7 @@
 package ws
 
 import (
-	"../settings"
+	"github.com/number571/hiddenlake/settings"
 	"golang.org/x/net/websocket"
 )
 

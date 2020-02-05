@@ -1,8 +1,8 @@
 package api
 
 import (
-	"../settings"
 	"encoding/json"
+	"github.com/number571/hiddenlake/settings"
 	"net/http"
 	"strings"
 )

@@ -1,8 +1,8 @@
 package settings
 
 import (
-	"../utils"
 	"errors"
+	"github.com/number571/hiddenlake/utils"
 )
 
 func CheckLifetimeToken(token string) error {
