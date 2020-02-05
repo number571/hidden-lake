@@ -1,11 +1,5 @@
 package main
 
-/*
-   github.com/mattn/go-sqlite3
-   github.com/number571/gopeer
-   golang.org/x/net/websocket
-*/
-
 import (
 	"crypto/tls"
 	"fmt"
@@ -51,11 +45,11 @@ func main() {
 	mux.HandleFunc("/api/logout", api.Logout)                    // POST
 	mux.HandleFunc("/api/signup", api.Signup)                    // POST
 	mux.HandleFunc("/api/account", api.Account)                  // GET, POST, DELETE
-	mux.HandleFunc("/api/account/connects", api.AccountConnects) // GET
+	mux.HandleFunc("/api/account/connects", api.AccountConnects) // GET, PATCH
 	mux.HandleFunc("/api/account/archive/", api.AccountArchive)  // GET, PUT, DELETE
 	mux.HandleFunc("/api/network/chat/", api.NetworkChat)        // GET, POST, DELETE
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, DELETE
-	// "/api/network/client/:id/archive/" // GET, POST
+	//             "/api/network/client/:id/archive/"            // GET, POST
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
