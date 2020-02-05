@@ -71,37 +71,40 @@
 /* Authorization user; */
 /* Hashpasw = hash(hash(username+password)); */
 CREATE TABLE IF NOT EXISTS User (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    Hashpasw VARCHAR(44) UNIQUE,
-    Key VARCHAR(4096) UNIQUE
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Hashpasw VARCHAR(44) UNIQUE,
+	PrivateKey VARCHAR(4096) UNIQUE
 );
 /* User connections; */
 /* Hashname = hash(public_key); */
 CREATE TABLE IF NOT EXISTS Client (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    Contributor VARCHAR(44),
-    Hashname VARCHAR(44),
-    Address VARCHAR(64),
-    Public VARCHAR(2048)
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Hashname VARCHAR(44),
+	Address VARCHAR(64),
+	PublicKey VARCHAR(2048),
+	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 /* User chat; */
 CREATE TABLE IF NOT EXISTS Chat (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    Hashname VARCHAR(44),
-    Companion VARCHAR(44),
-    Name VARCHAR(44),
-    Text TEXT,
-    Time VARCHAR(128)
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Companion VARCHAR(44),
+	Name VARCHAR(44),
+	Message TEXT,
+	LastTime VARCHAR(128),
+	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 /* File information; */
 /* Hash = hash(file); */
 CREATE TABLE IF NOT EXISTS File (
-	Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-	Owner VARCHAR(44),
-	Hash VARCHAR(64),
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Hash VARCHAR(44),
 	Name VARCHAR(128),
-	Path VARCHAR(64),
-	Size INTEGER
+	Path VARCHAR(44),
+	Size INTEGER,
+	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 ```
 
