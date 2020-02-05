@@ -8,10 +8,10 @@ import (
 
 func GetAllClients(user *models.User) []models.Client {
 	var (
-		clients []models.Client
+		clients  []models.Client
 		hashname string
-		address string
-		public  string
+		address  string
+		public   string
 	)
 	id := GetUserId(user.Auth.Hashpasw)
 	if id < 0 {

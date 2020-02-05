@@ -11,7 +11,7 @@ func SetClient(user *models.User, client *models.Client) error {
 	if gopeer.HashPublic(client.Public) != client.Hashname {
 		return errors.New("hashname is not derived from the public key")
 	}
-	
+
 	id := GetUserId(user.Auth.Hashpasw)
 	if id < 0 {
 		return errors.New("User id undefined")

@@ -11,7 +11,7 @@ func SetChat(user *models.User, chat *models.Chat) error {
 	if id < 0 {
 		return errors.New("User id undefined")
 	}
-	
+
 	for index := range chat.Messages {
 		encryptMessage(user, &chat.Messages[index])
 		_, err := settings.DB.Exec(

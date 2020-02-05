@@ -29,7 +29,7 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 }
 
 type connect struct {
-	Connected bool `json:"connected"`
+	Connected bool   `json:"connected"`
 	Address   string `json:"address"`
 	Hashname  string `json:"hashname"`
 	Public    string `json:"public_key"`
@@ -38,7 +38,7 @@ type connect struct {
 // List of all clients.
 func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State    string   `json:"state"`
+		State    string    `json:"state"`
 		Connects []connect `json:"connects"`
 	}
 
@@ -80,9 +80,9 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 		}
 		data.Connects = append(data.Connects, connect{
 			Connected: client.InConnections(c.Hashname),
-			Address: c.Address,
-			Hashname: c.Hashname,
-			Public: gopeer.StringPublic(c.Public),
+			Address:   c.Address,
+			Hashname:  c.Hashname,
+			Public:    gopeer.StringPublic(c.Public),
 		})
 	}
 

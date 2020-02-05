@@ -2,9 +2,9 @@ package db
 
 import (
 	"errors"
-	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 )
 
 func DeleteChat(user *models.User, hashname string) error {
@@ -20,7 +20,7 @@ func DeleteChat(user *models.User, hashname string) error {
 	if err != nil {
 		panic("exec 'deleteuser.chat' failed")
 	}
-	var(
+	var (
 		message = "chat is cleared"
 		time    = utils.CurrentTime()
 	)
