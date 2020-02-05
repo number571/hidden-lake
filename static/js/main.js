@@ -13,7 +13,7 @@ const routes = {
     network: 8,
     chat: 9,
     settings: 10,
-    connections: 11,
+    clients: 11,
     client: 12,
     clientarchive: 13,
     clientarchivefile: 14,
@@ -195,8 +195,18 @@ const app = new Vue({
             this.opened = RoutesData[routes.login].name;
             this.$router.push(RoutesData[routes.login]);
         },
-        async connects() {
+        async allconnects() {
             let res = await f("account/connects", "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+
+            this.userdata.connects = res.connects;
+        },
+        async connects() {
+            let res = await f("account/connects", "PATCH", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "warning";
@@ -281,8 +291,8 @@ const app = new Vue({
             this.opened = RoutesData[routes.network].name;
             this.$router.push(RoutesData[routes.network]);
         },
-        async client(name) {
-            let res = await f(`network/client/${name}`, "GET", null, this.authdata.token);
+        async client(hashname) {
+            let res = await f(`network/client/${hashname}`, "GET", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "warning";
@@ -292,15 +302,11 @@ const app = new Vue({
             this.conndata.address = res.address;
             this.conndata.hashname = res.hashname;
             this.conndata.public_key = res.public_key;
-
-            // this.archivelist(name);
-            // this.opened = RoutesData[routes.client].name;
-            // this.$router.push(RoutesData[routes.client]);
         },
-        async connect() {
+        async connect(address, public_key) {
             this.message.curr = "Please wait a few seconds";
             this.message.desc = "warning";
-            let res = await f("network/client/", "POST", this.conndata, this.authdata.token);
+            let res = await f("network/client/", "POST", {address: address, public_key: public_key}, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -309,10 +315,10 @@ const app = new Vue({
             this.message.curr = "Connection success"
             this.message.desc = "success";
         },
-        async disconnect() {
+        async disconnect(hashname) {
             this.message.curr = "Please wait a few seconds";
             this.message.desc = "warning";
-            let res = await f("network/client/", "DELETE", {hashname: this.conndata.hashname}, this.authdata.token);
+            let res = await f("network/client/", "DELETE", {hashname: hashname}, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -322,6 +328,7 @@ const app = new Vue({
             this.message.desc = "success";
         },
         async archivelist(hashname) {
+            this.nullfile();
             if (hashname == this.authdata.hashname) {
                 let res = await f(`account/archive/`, "GET", null, this.authdata.token);
                 if (res.state) {
@@ -342,6 +349,7 @@ const app = new Vue({
             this.filelist = res.files;
         },
         async archivefile(hashname, filehash) {
+            this.nullfile();
             if (hashname == this.authdata.hashname) {
                 let res = await f(`account/archive/${filehash}`, "GET", null, this.authdata.token);
                 if (res.state) {
@@ -493,7 +501,7 @@ const app = new Vue({
             case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
             case RoutesData[routes.chatnull].name: this.chat("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;
-            case RoutesData[routes.connections].name: this.connects(); break;
+            case RoutesData[routes.clients].name: this.allconnects(); break;
             case RoutesData[routes.clientarchive].name: this.archivelist(this.$route.params.id); break;
             case RoutesData[routes.clientarchivefile].name: this.archivefile(this.$route.params.id0, this.$route.params.id1); break;
         }

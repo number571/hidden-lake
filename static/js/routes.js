@@ -77,10 +77,10 @@ export const RoutesData = [
 		},
 	},
 	{ // 11
-		path: "/network/connections", 
-		name: "connections",
+		path: "/network/clients", 
+		name: "clients",
 		meta: {
-			title: "Connections",
+			title: "Clients",
 		},
 	},
 	{ // 12

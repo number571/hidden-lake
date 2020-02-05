@@ -6,13 +6,17 @@ import (
 )
 
 func InClients(user *models.User, hashname string) bool {
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return false
+	}
 	var (
 		public string
 		err    error
 	)
 	row := settings.DB.QueryRow(
-		"SELECT Public FROM User WHERE Contributor=$1 AND Hashname=$2",
-		user.Hashname,
+		"SELECT Public FROM User WHERE IdUser=$1 AND Hashname=$2",
+		id,
 		hashname,
 	)
 	err = row.Scan(&public)

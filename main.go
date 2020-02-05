@@ -149,7 +149,7 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"client.html",
 		settings.PATH_VIEWS+"clientarchive.html",
 		settings.PATH_VIEWS+"clientarchivefile.html",
-		settings.PATH_VIEWS+"connections.html",
+		settings.PATH_VIEWS+"clients.html",
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",
 		settings.PATH_VIEWS+"notfound.html",

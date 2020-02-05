@@ -12,9 +12,13 @@ func GetFile(user *models.User, filehash string) *models.File {
 		path string
 		size uint64
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	row := settings.DB.QueryRow(
-		"SELECT Name, Path, Size FROM File WHERE Owner=$1 AND Hash=$2",
-		user.Hashname,
+		"SELECT Name, Path, Size FROM File WHERE IdUser=$1 AND Hash=$2",
+		id,
 		filehash,
 	)
 	err := row.Scan(&name, &path, &size)

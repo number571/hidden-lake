@@ -1,6 +1,6 @@
-{{ define "connections_page" }}
-<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='connections'">
-    <h2 class="text-center">Connections</h2><br>
+{{ define "clients_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='clients'">
+    <h2 class="text-center">Clients</h2><br>
     <div v-if="message.curr" class="card bg-dark">
         <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -23,14 +23,22 @@
     </div>
     <div class="mx-auto w-100">
         <ul class="list-unstyled chat-1 scrollbar-light-blue">
-            <li v-for="hash in userdata.connects">
-                <div class="h-25 form-group row">
-                    <router-link :to="{name: 'client', params: { id: hash }}" class="w-100">
-                        <button type="button" class="btn btn-secondary divtext w-100" @click="client(hash)">${hash}</button>
+            <li v-for="cli in userdata.connects">
+                <div class="form-group row">
+                    <div class="col-md-9">
+                    <router-link :to="{name: 'client', params: { id: cli.hashname }}" class="w-100">
+                        <button type="button" class="btn btn-secondary divtext w-100" @click="client(cli.hashname)">${cli.hashname}</button>
                     </router-link>
+                    </div>
+                    <div class="col-md-3" v-if="cli.connected">
+                        <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="disconnect(cli.hashname), cli.connected=false">Disconnect</button>
+                    </div>
+                    <div class="col-md-3" v-else>
+                        <button type="button" class="btn btn-secondary divtext w-100 bg-success" @click="connect(cli.address, cli.public_key), cli.connected=true">Connect</button>
+                    </div>
                 </div>
             </li>
-        </ul> 
+        </ul>
     </div>
 </div>
 {{ end }}

@@ -11,9 +11,13 @@ func GetClient(user *models.User, hashname string) *models.Client {
 		address string
 		public  string
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	row := settings.DB.QueryRow(
-		"SELECT Address, Public FROM Client WHERE Contributor=$1 AND Hashname=$2",
-		user.Hashname,
+		"SELECT Address, PublicKey FROM Client WHERE IdUser=$1 AND Hashname=$2",
+		id,
 		hashname,
 	)
 	err := row.Scan(&address, &public)

@@ -10,9 +10,13 @@ func GetLastChat(comp string, user *models.User) *models.Chat {
 		msg  models.Message
 		chat = new(models.Chat)
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	row := settings.DB.QueryRow(
-		"SELECT Name, Text, Time FROM Chat WHERE Hashname=$1 AND Companion=$2 DESC",
-		user.Hashname,
+		"SELECT Name, Message, LastTime FROM Chat WHERE IdUser=$1 AND Companion=$2 DESC",
+		id,
 		comp,
 	)
 	chat.Companion = comp

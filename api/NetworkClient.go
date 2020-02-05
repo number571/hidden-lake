@@ -433,9 +433,7 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if client.InConnections(hashname) {
-		data.Connected = true
-	}
+	data.Connected = client.InConnections(hashname)
 
 	data.Address = clientData.Address
 	data.Hashname = hashname

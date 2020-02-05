@@ -11,15 +11,18 @@ func GetLastMessages(user *models.User) []models.LastMessage {
 		msg  models.LastMessage
 		msgs []models.LastMessage
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	rows, err := settings.DB.Query(`
-SELECT Companion, Name, Text, Time FROM (
-    SELECT * FROM Chat WHERE Hashname=$1 ORDER BY Id DESC
+SELECT Companion, Name, Message, LastTime FROM (
+    SELECT * FROM Chat WHERE IdUser=$1 ORDER BY Id DESC
 ) GROUP BY Companion ORDER BY Id DESC
 `,
-		user.Hashname,
+		id,
 	)
 	if err != nil {
-		println(err)
 		panic("query 'getlastmessages' failed")
 	}
 	defer rows.Close()

@@ -11,9 +11,13 @@ func GetChat(user *models.User, comp string) *models.Chat {
 		msg  models.Message
 		chat = new(models.Chat)
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	rows, err := settings.DB.Query(
-		"SELECT Name, Text, Time FROM Chat WHERE Hashname=$1 AND Companion=$2",
-		user.Hashname,
+		"SELECT Name, Message, LastTime FROM Chat WHERE IdUser=$1 AND Companion=$2",
+		id,
 		comp,
 	)
 	if err != nil {

@@ -68,7 +68,7 @@
                 <div class="form-group">
                     <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
                 </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect()">Connect</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect(conndata.address, conndata.public_key)">Connect</button>
             </form>
         </div>
         <div v-if="switcher=='disconnect'" class="text-center form-group">
@@ -79,7 +79,7 @@
                         <option v-for="hash in userdata.connects" v-bind:value="hash">${hash}</option>
                     </select>
                 </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="disconnect()">Disconnect</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="disconnect(conndata.hashname)">Disconnect</button>
             </form>
         </div>
 

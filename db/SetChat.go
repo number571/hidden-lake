@@ -1,16 +1,22 @@
 package db
 
 import (
+	"errors"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 )
 
 func SetChat(user *models.User, chat *models.Chat) error {
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return errors.New("User id undefined")
+	}
+	
 	for index := range chat.Messages {
 		encryptMessage(user, &chat.Messages[index])
 		_, err := settings.DB.Exec(
-			"INSERT INTO Chat (Hashname, Companion, Name, Text, Time) VALUES ($1, $2, $3, $4, $5)",
-			user.Hashname,
+			"INSERT INTO Chat (IdUser, Companion, Name, Message, LastTime) VALUES ($1, $2, $3, $4, $5)",
+			id,
 			chat.Companion,
 			chat.Messages[index].Name,
 			chat.Messages[index].Text,

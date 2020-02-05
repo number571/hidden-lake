@@ -16,7 +16,7 @@ func GetUser(pasw []byte) *models.User {
 		key string
 		err error
 	)
-	row := settings.DB.QueryRow("SELECT Key FROM User WHERE Hashpasw=$1", hashpasw)
+	row := settings.DB.QueryRow("SELECT PrivateKey FROM User WHERE Hashpasw=$1", hashpasw)
 	err = row.Scan(&key)
 	if err != nil {
 		return nil

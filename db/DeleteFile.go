@@ -13,8 +13,13 @@ func DeleteFile(user *models.User, filehash string) error {
 		return errors.New("File undefined")
 	}
 
-	_, err := settings.DB.Exec("DELETE FROM File WHERE Owner=$1 AND Hash=$2",
-		user.Hashname,
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return errors.New("User id undefined")
+	}
+
+	_, err := settings.DB.Exec("DELETE FROM File WHERE IdUser=$1 AND Hash=$2",
+		id,
 		filehash,
 	)
 	if err != nil {

@@ -12,7 +12,7 @@ func SetUser(user *models.User) error {
 		return errors.New("User already exist")
 	}
 	_, err := settings.DB.Exec(
-		"INSERT INTO User (Hashpasw, Key) VALUES ($1, $2)",
+		"INSERT INTO User (Hashpasw, PrivateKey) VALUES ($1, $2)",
 		user.Auth.Hashpasw,
 		gopeer.Base64Encode(
 			gopeer.EncryptAES(

@@ -13,9 +13,13 @@ func GetAllFiles(user *models.User) []models.File {
 		name  string
 		size  uint64
 	)
+	id := GetUserId(user.Auth.Hashpasw)
+	if id < 0 {
+		return nil
+	}
 	rows, err := settings.DB.Query(
-		"SELECT Hash, Name, Size FROM File WHERE Owner=$1",
-		user.Hashname,
+		"SELECT Hash, Name, Size FROM File WHERE IdUser=$1",
+		id,
 	)
 	if err != nil {
 		panic("query 'getallfiles' failed")
