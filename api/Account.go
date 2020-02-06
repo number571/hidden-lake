@@ -4,15 +4,13 @@ import (
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
-	"github.com/number571/hiddenlake/utils"
 	"net/http"
-	"strings"
 )
 
 func Account(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	var data struct {
 		State string `json:"state"`
 	}
@@ -30,66 +28,29 @@ func Account(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Delete account.
-func accountDELETE(w http.ResponseWriter, r *http.Request) {
+// Get public information.
+func accountGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		PrivateKey string `json:"private_key"`
-		State      string `json:"state"`
+		Address   string `json:"address"`
+		Hashname  string `json:"hashname"`
+		PublicKey string `json:"public_key"`
+		State     string `json:"state"`
 	}
 
-	var read struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+	var (
+		client = new(gopeer.Client)
+		token string
+	)
+
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isGetClientError(w, r, client, token): return
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := db.GetUser(pasw)
-	if user == nil {
-		data.State = "User undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if user.Auth.Hashpasw != settings.Users[token].Auth.Hashpasw {
-		data.State = "Users not equal"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = db.DeleteUser(user)
-	if err != nil {
-		data.State = "User not deleted"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	hash := user.Hashname
-	delete(settings.Listener.Clients, hash)
-	delete(settings.Tokens, hash)
-	delete(settings.Users, token)
+	data.Address = client.Address
+	data.Hashname = client.Hashname
+	data.PublicKey = gopeer.StringPublic(client.Keys.Public)
 
 	json.NewEncoder(w).Encode(data)
 }
@@ -101,80 +62,49 @@ func accountPOST(w http.ResponseWriter, r *http.Request) {
 		State      string `json:"state"`
 	}
 
-	var read struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
+	var (
+		read = new(userdata)
+		user = new(models.User)
+		token string
+	)
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := db.GetUser(pasw)
-	if user == nil {
-		data.State = "User undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if user.Auth.Hashpasw != settings.Users[token].Auth.Hashpasw {
-		data.State = "Users not equal"
-		json.NewEncoder(w).Encode(data)
-		return
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, read): return
+	case isGetUserError(w, r, user, read): return
 	}
 
 	data.PrivateKey = gopeer.StringPrivate(settings.Users[token].Keys.Private)
 	json.NewEncoder(w).Encode(data)
 }
 
-// Get public information.
-func accountGET(w http.ResponseWriter, r *http.Request) {
+// Delete account.
+func accountDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Address   string `json:"address"`
-		Hashname  string `json:"hashname"`
-		PublicKey string `json:"public_key"`
-		State     string `json:"state"`
+		State string `json:"state"`
 	}
 
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
+	var (
+		read = new(userdata)
+		user = new(models.User)
+		token string
+	)
+
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, read): return
+	case isGetUserError(w, r, user, read): return
 	}
-	err := settings.CheckLifetimeToken(token)
+
+	err := db.DeleteUser(user)
 	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	hash := settings.Users[token].Hashname
-	client, ok := settings.Listener.Clients[hash]
-	if !ok {
-		data.State = "Current client is not exist"
+		data.State = "User not deleted"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	data.Address = client.Address
-	data.Hashname = hash
-	data.PublicKey = gopeer.StringPublic(settings.Users[token].Keys.Public)
-
+	deleteUserAuth(user)
 	json.NewEncoder(w).Encode(data)
 }

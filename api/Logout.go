@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"github.com/number571/hiddenlake/settings"
 	"net/http"
-	"strings"
 )
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	var data struct {
 		State string `json:"state"`
 	}
@@ -20,18 +18,11 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
+	var token string
+	switch {
+	case isTokenAuthError(w, r, &token): return
 	}
 
-	hash := settings.Users[token].Hashname
-	delete(settings.Listener.Clients, hash)
-	delete(settings.Tokens, hash)
-	delete(settings.Users, token)
-
+	deleteUserAuth(settings.Users[token])
 	json.NewEncoder(w).Encode(data)
 }

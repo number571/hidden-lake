@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-type netData struct {
+type netdata struct {
 	List []models.LastMessage `json:"list"`
 	Chat *models.Chat         `json:"chat"`
 }
@@ -37,67 +37,33 @@ func NetworkChat(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Delete chat.
-func networkDELETE(w http.ResponseWriter, r *http.Request) {
+// Get chat.
+func networkGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State string `json:"state"`
+		State   string  `json:"state"`
+		NetData netdata `json:"netdata"`
 	}
 
 	var read struct {
 		Hashname string `json:"hashname"`
-		Username string `json:"username"`
-		Password string `json:"password"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
+	read.Hashname = strings.Replace(r.URL.Path, "/api/network/chat/", "", 1)
+
+	var token string
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
 	}
 
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+	user := settings.Users[token]
+	data.NetData.List = db.GetLastMessages(user)
 
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := db.GetUser(pasw)
-	if user == nil {
-		data.State = "User undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if user.Auth.Hashpasw != settings.Users[token].Auth.Hashpasw {
-		data.State = "Users not equal"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if user.Hashname == read.Hashname {
-		data.State = "Can't delete own chat"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = db.DeleteChat(user, read.Hashname)
-	if err != nil {
-		data.State = "Can't delete chat"
-		json.NewEncoder(w).Encode(data)
-		return
+	switch read.Hashname {
+	case "", "null", "undefined":
+		data.NetData.Chat = new(models.Chat)
+	default:
+		data.NetData.Chat = db.GetChat(user, read.Hashname)
 	}
 
 	json.NewEncoder(w).Encode(data)
@@ -114,47 +80,20 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 		Message  string `json:"message"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	user := settings.Users[token]
-	hash := user.Hashname
-	client, ok := settings.Listener.Clients[hash]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if !client.InConnections(read.Hashname) {
-		data.State = "User is not connected"
-		json.NewEncoder(w).Encode(data)
-		return
+	var (
+		client = new(gopeer.Client)
+		token string
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, &read): return
+	case isGetClientError(w, r, client, token): return
+	case isNotInConnectionsError(w, r, client, read.Hashname): return
 	}
 
 	message := strings.Replace(read.Message, "\n", " ", -1)
-	_, err = client.Send(&gopeer.Package{
+	_, err := client.Send(&gopeer.Package{
 		To: gopeer.To{
 			Receiver: gopeer.Receiver{
 				Hashname: read.Hashname,
@@ -175,12 +114,13 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := settings.Users[token]
 	time := utils.CurrentTime()
 	err = db.SetChat(user, &models.Chat{
 		Companion: read.Hashname,
 		Messages: []models.Message{
 			models.Message{
-				Name: hash,
+				Name: client.Hashname,
 				Text: message,
 				Time: time,
 			},
@@ -204,7 +144,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 			From string `json:"from"`
 			To   string `json:"to"`
 		}{
-			From: hash,
+			From: client.Hashname,
 			To:   read.Hashname,
 		},
 		Text: message,
@@ -217,44 +157,29 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-// Get chat.
-func networkGET(w http.ResponseWriter, r *http.Request) {
+// Delete chat.
+func networkDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State   string  `json:"state"`
-		NetData netData `json:"netdata"`
+		State string `json:"state"`
 	}
 
-	var read struct {
-		Hashname string `json:"hashname"`
+	var (
+		read = new(userdata)
+		user = new(models.User)
+		token string
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, read): return
+	case isGetUserError(w, r, user, read): return
 	}
 
-	read.Hashname = strings.Replace(r.URL.Path, "/api/network/chat/", "", 1)
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err := settings.CheckLifetimeToken(token)
+	err := db.DeleteChat(user, read.Hashname)
 	if err != nil {
-		data.State = "Token lifetime is over"
+		data.State = "Can't delete chat"
 		json.NewEncoder(w).Encode(data)
 		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	user := settings.Users[token]
-	data.NetData.List = db.GetLastMessages(user)
-
-	switch read.Hashname {
-	case "", "null", "undefined":
-		data.NetData.Chat = new(models.Chat)
-	default:
-		data.NetData.Chat = db.GetChat(user, read.Hashname)
 	}
 
 	json.NewEncoder(w).Encode(data)

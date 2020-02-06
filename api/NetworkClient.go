@@ -34,67 +34,101 @@ func NetworkClient(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Disconnect from client.
-func clientDELETE(w http.ResponseWriter, r *http.Request) {
+// Get client public information.
+func clientGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State string `json:"state"`
+		Connected bool   `json:"connected"`
+		Address   string `json:"address"`
+		Hashname  string `json:"hashname"`
+		PublicKey string `json:"public_key"`
+		State     string `json:"state"`
 	}
 
 	var read struct {
 		Hashname string `json:"hashname"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
+	read.Hashname = strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
+	splited := strings.Split(read.Hashname, "/archive/")
+
+	hashname := splited[0]
+
+	var (
+		token string
+		client = new(gopeer.Client)
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isGetClientError(w, r, client, token): return
+	}
+
+	user := settings.Users[token]
+	clientData := db.GetClient(user, hashname)
+	if clientData == nil {
+		data.State = "Client undefined"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
+	if len(splited) == 2 {
+		clientArchiveGET(w, r, user, client, splited)
 		return
 	}
 
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
+	data.Connected = client.InConnections(hashname)
+
+	data.Address = clientData.Address
+	data.Hashname = hashname
+	data.PublicKey = gopeer.StringPublic(clientData.Public)
+
+	json.NewEncoder(w).Encode(data)
+}
+
+// Get list info of files / file from another node.
+func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User, client *gopeer.Client, splited []string) {
+	var data struct {
+		State string        `json:"state"`
+		Files []models.File `json:"files"`
 	}
 
-	hash := settings.Users[token].Hashname
-	client, ok := settings.Listener.Clients[hash]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+	hashname := splited[0]
+	filehash := splited[1]
 
-	if !client.InConnections(read.Hashname) {
-		data.State = "User is not connected"
-		json.NewEncoder(w).Encode(data)
-		return
+	switch {
+	case isNotInConnectionsError(w, r, client, hashname): return
 	}
 
 	dest := &gopeer.Destination{
-		Address: client.Connections[read.Hashname].Address,
-		Public:  client.Connections[read.Hashname].Public,
+		Address: client.Connections[hashname].Address,
+		Public:  client.Connections[hashname].Public,
 	}
 
-	message := "connection closed"
-	_, err = client.SendTo(dest, &gopeer.Package{
+	if filehash == "" {
+		_, err := client.SendTo(dest, &gopeer.Package{
+			Head: gopeer.Head{
+				Title:  settings.TITLE_ARCHIVE,
+				Option: settings.OPTION_GET,
+			},
+		})
+		if err != nil {
+			data.State = "User can't receive message"
+			json.NewEncoder(w).Encode(data)
+			return
+		}
+
+		data.Files = user.FileList
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
+			Title:  settings.TITLE_ARCHIVE,
 			Option: settings.OPTION_GET,
 		},
 		Body: gopeer.Body{
-			Data: message,
+			Data: filehash,
 		},
 	})
 	if err != nil {
@@ -103,18 +137,7 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.SetChat(settings.Users[token], &models.Chat{
-		Companion: read.Hashname,
-		Messages: []models.Message{
-			models.Message{
-				Name: hash,
-				Text: message,
-				Time: utils.CurrentTime(),
-			},
-		},
-	})
-	client.Disconnect(dest)
-
+	data.Files = user.FileList
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -136,30 +159,18 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		PublicKey string `json:"public_key"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
+	var (
+		token string
+		client = new(gopeer.Client)
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, &read): return
+	case isGetClientError(w, r, client, token): return
 	}
 
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
+	user := settings.Users[token]
 	if len(strings.Split(read.Address, ":")) != 2 {
 		data.State = "Address is not corrected"
 		json.NewEncoder(w).Encode(data)
@@ -173,19 +184,11 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := settings.Users[token]
-	client, ok := settings.Listener.Clients[user.Hashname]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
 	dest := &gopeer.Destination{
 		Address: read.Address,
 		Public:  public,
 	}
-	err = client.Connect(dest)
+	err := client.Connect(dest)
 	if err != nil {
 		data.State = "Connect error"
 		json.NewEncoder(w).Encode(data)
@@ -249,50 +252,25 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 		Filehash string `json:"filehash"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
+	var (
+		client = new(gopeer.Client)
+		token string
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, &read): return
+	case isGetClientError(w, r, client, token): return
+	case isNotInConnectionsError(w, r, client, hashname): return
 	}
 
 	user := settings.Users[token]
-	client, ok := settings.Listener.Clients[user.Hashname]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if !client.InConnections(hashname) {
-		data.State = "User is not connected"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
 	dest := &gopeer.Destination{
 		Address: client.Connections[hashname].Address,
 		Public:  client.Connections[hashname].Public,
 	}
 
-	_, err = client.SendTo(dest, &gopeer.Package{
+	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_ARCHIVE,
 			Option: settings.OPTION_GET,
@@ -377,117 +355,41 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	json.NewEncoder(w).Encode(data)
 }
 
-// Get client public information.
-func clientGET(w http.ResponseWriter, r *http.Request) {
+// Disconnect from client.
+func clientDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Connected bool   `json:"connected"`
-		Address   string `json:"address"`
-		Hashname  string `json:"hashname"`
-		PublicKey string `json:"public_key"`
-		State     string `json:"state"`
+		State string `json:"state"`
 	}
 
 	var read struct {
 		Hashname string `json:"hashname"`
 	}
 
-	read.Hashname = strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
-	splited := strings.Split(read.Hashname, "/archive/")
-
-	hashname := splited[0]
-
-	token := r.Header.Get("Authorization")
-	token = strings.Replace(token, "Bearer ", "", 1)
-	if _, ok := settings.Users[token]; !ok {
-		data.State = "Tokened user undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err := settings.CheckLifetimeToken(token)
-	if err != nil {
-		data.State = "Token lifetime is over"
-		json.NewEncoder(w).Encode(data)
-		return
-	} else {
-		settings.Users[token].Session.Time = utils.CurrentTime()
-	}
-
-	user := settings.Users[token]
-	clientData := db.GetClient(user, hashname)
-	if clientData == nil {
-		data.State = "Client undefined"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	client, ok := settings.Listener.Clients[user.Hashname]
-	if !ok {
-		data.State = "Current client is not exist"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	if len(splited) == 2 {
-		clientArchiveGET(w, r, user, client, splited)
-		return
-	}
-
-	data.Connected = client.InConnections(hashname)
-
-	data.Address = clientData.Address
-	data.Hashname = hashname
-	data.PublicKey = gopeer.StringPublic(clientData.Public)
-
-	json.NewEncoder(w).Encode(data)
-}
-
-// Get list info of files / file from another node.
-func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User, client *gopeer.Client, splited []string) {
-	var data struct {
-		State string        `json:"state"`
-		Files []models.File `json:"files"`
-	}
-
-	hashname := splited[0]
-	filehash := splited[1]
-
-	if !client.InConnections(hashname) {
-		data.State = "User is not connected"
-		json.NewEncoder(w).Encode(data)
-		return
+	var (
+		client = new(gopeer.Client)
+		token string
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, &read): return
+	case isGetClientError(w, r, client, token): return
+	case isNotInConnectionsError(w, r, client, read.Hashname): return
 	}
 
 	dest := &gopeer.Destination{
-		Address: client.Connections[hashname].Address,
-		Public:  client.Connections[hashname].Public,
+		Address: client.Connections[read.Hashname].Address,
+		Public:  client.Connections[read.Hashname].Public,
 	}
 
-	if filehash == "" {
-		_, err := client.SendTo(dest, &gopeer.Package{
-			Head: gopeer.Head{
-				Title:  settings.TITLE_ARCHIVE,
-				Option: settings.OPTION_GET,
-			},
-		})
-		if err != nil {
-			data.State = "User can't receive message"
-			json.NewEncoder(w).Encode(data)
-			return
-		}
-
-		data.Files = user.FileList
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
+	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_ARCHIVE,
+			Title:  settings.TITLE_MESSAGE,
 			Option: settings.OPTION_GET,
 		},
 		Body: gopeer.Body{
-			Data: filehash,
+			Data: message,
 		},
 	})
 	if err != nil {
@@ -496,6 +398,17 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		return
 	}
 
-	data.Files = user.FileList
+	db.SetChat(settings.Users[token], &models.Chat{
+		Companion: read.Hashname,
+		Messages: []models.Message{
+			models.Message{
+				Name: client.Hashname,
+				Text: message,
+				Time: utils.CurrentTime(),
+			},
+		},
+	})
+	client.Disconnect(dest)
+
 	json.NewEncoder(w).Encode(data)
 }

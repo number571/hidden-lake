@@ -3,14 +3,13 @@ package api
 import (
 	"encoding/json"
 	"github.com/number571/gopeer"
-	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"net/http"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	var data struct {
 		Token    string `json:"token"`
 		Hashname string `json:"hashname"`
@@ -23,24 +22,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var read struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
+	var (
+		read = new(userdata)
+		user = new(models.User)
+	)
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := db.GetUser(pasw)
-	if user == nil {
-		data.State = "User undefined"
-		json.NewEncoder(w).Encode(data)
-		return
+	switch {
+	case isDecodeError(w, r, read): return
+	case isGetUserError(w, r, user, read): return
 	}
 
 	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(20))
@@ -59,6 +48,5 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	data.Token = token
 	data.Hashname = hash
-
 	json.NewEncoder(w).Encode(data)
 }

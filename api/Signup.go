@@ -23,16 +23,15 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var read struct {
-		Username       string `json:"username"`
-		Password       string `json:"password"`
-		PasswordRepeat string `json:"password_repeat"`
-		PrivateKey     string `json:"private_key"`
+	var read = new(userdata)
+	switch {
+	case isDecodeError(w, r, read): return
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&read)
-	if err != nil {
-		data.State = "Error decode json format"
+	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
+	user := newUser(pasw, read.PrivateKey)
+	if user == nil {
+		data.State = "Error decode private key"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
@@ -45,22 +44,13 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	user_len := len(read.Password)
 	pasw_len := len(read.Password)
-	if pasw_len < 6 || pasw_len > 128 ||
-		user_len < 6 || user_len > 64 {
+	if pasw_len < 6 || pasw_len > 128 || user_len < 6 || user_len > 64 {
 		data.State = "Length username or password does not match"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := newUser(pasw, read.PrivateKey)
-	if user == nil {
-		data.State = "Error decode private key"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
-	err = db.SetUser(user)
+	err := db.SetUser(user)
 	if err != nil {
 		data.State = "User already exist"
 		json.NewEncoder(w).Encode(data)
