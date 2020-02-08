@@ -21,7 +21,7 @@ import (
 func init() {
 	gopeer.Set(gopeer.SettingsType{
 		"NETWORK": "[HIDDEN-LAKE]",
-		"VERSION": "[1.1.0s]",
+		"VERSION": "[1.0.2s]",
 		"HMACKEY": "9163571392708145",
 		"GENESIS": "[GENESIS-LAKE]",
 		"NOISE":   "h19dlI#L9dkc8JA]1s-zSp,Nl/qs4;qf",
@@ -149,6 +149,7 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",
 		settings.PATH_VIEWS+"notfound.html",
+		settings.PATH_VIEWS+"message_part.html",
 	)
 	if err != nil {
 		panic("can't load hmtl files")

@@ -1,27 +1,7 @@
 {{ define "archive_page" }}
 <div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='archive'">
     <h2 class="text-center">Archive</h2><br>
-    <div v-if="message.curr" class="card bg-dark">
-        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-    </div>
-
+    {{ template "message_part" }}
     <div class="text-center form-group">
         <div class="form-group row">
             <div class="col-md-6">

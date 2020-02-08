@@ -517,9 +517,12 @@ const app = new Vue({
             this.userdata.connects = [];
             this.userdata.hiddenconnects = [];
         },
-        nullcurr() {
+        nullcurr(page) {
             this.switcher = null;
             this.message.curr = null;
+            if (page == RoutesData[routes.login].name || page == RoutesData[routes.signup].name) {
+                this.nulldata();
+            }
         },
         setswitch(name) {
             this.switcher = (this.switcher === name) ? null : name;
@@ -557,7 +560,7 @@ const app = new Vue({
     },
     watch: {
         '$route' (to, from) {
-            this.nullcurr();
+            this.nullcurr(to.name);
             this.opened = to.name;
             if (this.message.wait != null) {
                 this.message.curr = this.message.wait;

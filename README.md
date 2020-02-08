@@ -17,9 +17,8 @@
 2. vuejs: [github.com/vuejs/vue](https://github.com/vuejs/vue);
 3. bootstrap: [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap);
 4. go-sqlite3: [github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3);
-5. websocket: [golang.org/x/net/websocket](https://golang.org/x/net/websocket);
-6. jquery: [github.com/jquery/jquery](https://github.com/jquery/jquery);
-7. popper: [github.com/popperjs/popper-core](https://github.com/popperjs/popper-core);
+5. jquery: [github.com/jquery/jquery](https://github.com/jquery/jquery);
+6. popper: [github.com/popperjs/popper-core](https://github.com/popperjs/popper-core);
 
 ### Chat room page:
 <img src="/images/HiddenLake8.png" alt="ChatRoomPage"/>

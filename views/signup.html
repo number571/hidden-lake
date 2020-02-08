@@ -10,27 +10,8 @@
             Be careful when logging in to the global network.
         </div>
     </div>
-    <div v-if="message.curr" class="text-center col-10 mx-auto">
-        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-    </div>
     <div class="text-center col-10 mx-auto">
+        {{ template "message_part" }}
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
                 <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">

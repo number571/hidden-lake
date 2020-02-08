@@ -13,32 +13,31 @@
 {{ define "home_page" }}
 <div class="col-12 col-md-8 mx-auto" v-if="opened=='home'">
     <h2 class="text-center">Updates</h2><br>
-    <div v-if="message.curr">
-        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-           ${message.curr}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-    </div>
+    {{ template "message_part" }}
     <div class="accordion " id="accordionExample">
         <div class="card bg-dark">
             <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
                     <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
-                        <h5>Version 1.1.0s</h5>
+                        <h5>Version 1.0.2s</h5>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul class="lead text-light">
+                        <li>Added hidden connections</li>
+                        <li>Added redirect transfer packages;</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-dark">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
+                        <h5>Version 1.0.1s</h5>
                     </button>
                 </h2>
             </div>
@@ -69,140 +68,6 @@
                         <li>GUI is now based on single page;</li>
                         <li>Requests to client throw API over HTTP/S, WS/S;</li>
                         <li>Requests to network throw Packages over TCP;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-      
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
-                        <h5>Version 0.7</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Network is now hybrid;</li>
-                        <li>Client-Server connection to P2P node;</li>
-                        <li>Rewritten functions P2P connections;</li>
-                        <li>Individual asymmetric keys for P2P and F2F modes;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
-                        <h5>Version 0.6</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>F2F connection;</li>
-                        <li>Authorization from database;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
-                        <h5>Version 0.5</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse5" class="collapse" aria-labelledby="heading5" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Onion routing;</li>
-                        <li>Routing mode: static/dynamic;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-                        <h5>Version 0.4</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse4" class="collapse" aria-labelledby="heading4" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Interface extension;</li>
-                        <li>Added login and password;</li>
-                        <li>Password - the importance of the first order;</li>
-                        <li>Multiple overwriting and deletion file;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
-                        <h5>Version 0.3</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse3" class="collapse" aria-labelledby="heading3" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>GUI;</li>
-                        <li>Emails;</li>
-                        <li>Database;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                        <h5>Version 0.2</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse2" class="collapse" aria-labelledby="heading2" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>DHT;</li>
-                        <li>Argument Initialization;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
-                        <h5>Version 0.1</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse1" class="collapse" aria-labelledby="heading1" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>CLI;</li>
-                        <li>Archive;</li>
-                        <li>P2P network;</li>
-                        <li>End-to-end encryption;</li>
-                        <li>Global and Local chat;</li>
                     </ul>
                 </div>
             </div>

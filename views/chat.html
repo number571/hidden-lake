@@ -1,26 +1,6 @@
 {{ define "chat_page" }}
 <div class="mx-auto my-2" v-if="opened=='chat' || opened=='chatnull'">
-    <div v-if="message.curr" class="card bg-dark">
-        <div v-if="message.desc=='success'" class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='danger'" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-        <div v-if="message.desc=='warning'" class="alert alert-warning" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            ${message.curr}
-        </div>
-    </div>
-
+    {{ template "message_part" }}
     <div id="chatbox" class="card bg-dark chat-room">
          <div class="btn-group">
             <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
