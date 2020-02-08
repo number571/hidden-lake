@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized network. Version 1.1.0s.
+> Decentralized network. Version 1.0.2s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
