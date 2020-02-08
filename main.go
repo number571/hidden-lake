@@ -50,6 +50,7 @@ func main() {
 	mux.HandleFunc("/api/network/chat/", api.NetworkChat)        // GET, POST, DELETE
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, DELETE
 	//             "/api/network/client/:id/archive/"            // GET, POST
+	//             "/api/network/client/:id/connects"            // GET, POST
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -143,6 +144,7 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"client.html",
 		settings.PATH_VIEWS+"clientarchive.html",
 		settings.PATH_VIEWS+"clientarchivefile.html",
+		settings.PATH_VIEWS+"clientconnects.html",
 		settings.PATH_VIEWS+"clients.html",
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",

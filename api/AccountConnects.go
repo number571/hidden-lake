@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"net/http"
 )
@@ -25,18 +26,11 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type connect struct {
-	Connected bool   `json:"connected"`
-	Address   string `json:"address"`
-	Hashname  string `json:"hashname"`
-	Public    string `json:"public_key"`
-}
-
 // List of all clients.
 func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State    string    `json:"state"`
-		Connects []connect `json:"connects"`
+		Connects []models.Connect `json:"connects"`
 	}
 
 	var (
@@ -56,15 +50,22 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, c := range clients {
-		if c.Hashname == client.Hashname {
+	for _, cl := range clients {
+		if cl.Hashname == client.Hashname {
 			continue
 		}
-		data.Connects = append(data.Connects, connect{
-			Connected: client.InConnections(c.Hashname),
-			Address:   c.Address,
-			Hashname:  c.Hashname,
-			Public:    gopeer.StringPublic(c.Public),
+
+		pub1 := gopeer.StringPublic(cl.Public)
+		pub2 := gopeer.StringPublic(cl.PublicRecv)
+		if pub1 != pub2 {
+			continue
+		}
+
+		data.Connects = append(data.Connects, models.Connect{
+			Connected: client.InConnections(cl.Hashname),
+			Address:   cl.Address,
+			Hashname:  cl.Hashname,
+			PublicKey: gopeer.StringPublic(cl.Public),
 		})
 	}
 
@@ -75,7 +76,7 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 func accountConnectsPATCH(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State    string   `json:"state"`
-		Connects []string `json:"connects"`
+		Connects []models.Connect `json:"connects"`
 	}
 
 	var (
@@ -88,8 +89,19 @@ func accountConnectsPATCH(w http.ResponseWriter, r *http.Request) {
 	case isGetClientError(w, r, client, token): return
 	}
 
-	for hash := range client.Connections {
-		data.Connects = append(data.Connects, hash)
+	for hash, cl := range client.Connections {
+		if hash == client.Hashname {
+			continue
+		}
+
+		data.Connects = append(data.Connects, models.Connect{
+			Connected: client.InConnections(hash),
+			Hidden:    gopeer.HashPublic(cl.Public) != gopeer.HashPublic(cl.PublicRecv),
+			Address:   cl.Address,
+			Hashname:  hash,
+			ThrowNode: gopeer.HashPublic(cl.Public),
+			PublicKey: gopeer.StringPublic(cl.PublicRecv),
+		})
 	}
 
 	json.NewEncoder(w).Encode(data)

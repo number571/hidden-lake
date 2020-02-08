@@ -9,8 +9,13 @@ type User struct {
 	Hashname string // hash(pubkey)
 	Auth     Auth
 	Keys     Keys
-	FileList []File
+	Temp     Temp
 	Session  Session
+}
+
+type Temp struct {
+	FileList []File
+	ConnList []Connect
 }
 
 type Auth struct {

@@ -105,13 +105,20 @@ export const RoutesData = [
 		},
 	},
 	{ // 15
+		path: "/network/client/:id/connects", 
+		name: "clientconnects",
+		meta: {
+			title: "Client Connections",
+		},
+	},
+	{ // 16
 		path: "/hdvwhuhjj", 
 		name: "hdvwhuhjj",
 		meta: {
 			title: "Hdvwhu Hjj",
 		},
 	},
-	{ // 16
+	{ // 17
 		path: "*", 
 		name: "notfound",
 		meta: {

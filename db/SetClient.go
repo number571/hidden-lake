@@ -8,7 +8,11 @@ import (
 )
 
 func SetClient(user *models.User, client *models.Client) error {
-	if gopeer.HashPublic(client.Public) != client.Hashname {
+	if client.PublicRecv == nil {
+		client.PublicRecv = client.Public
+	}
+
+	if gopeer.HashPublic(client.PublicRecv) != client.Hashname {
 		return errors.New("hashname is not derived from the public key")
 	}
 
@@ -27,7 +31,7 @@ func SetClient(user *models.User, client *models.Client) error {
 	}
 
 	_, err = settings.DB.Exec(
-		"INSERT INTO Client (IdUser, Hashname, Address, PublicKey) VALUES ($1, $2, $3, $4)",
+		"INSERT INTO Client (IdUser, Hashname, Address, PublicKey, PublicRecv) VALUES ($1, $2, $3, $4, $5)",
 		id,
 		client.Hashname,
 		gopeer.Base64Encode(
@@ -37,6 +41,7 @@ func SetClient(user *models.User, client *models.Client) error {
 			),
 		),
 		gopeer.StringPublic(client.Public),
+		gopeer.StringPublic(client.PublicRecv),
 	)
 	if err != nil {
 		panic("exec 'setclient.insert' failed")

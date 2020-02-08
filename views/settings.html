@@ -23,10 +23,14 @@
     </div>
     <div class="text-center mx-auto">
 
-        <div class="text-center form-group">
-            <div class="w-100">
+        <div class="text-center form-group row">
+            <div class="col-md-6">
                 <button v-if="switcher=='download'"  @click="setswitch('download')" type="button" class="btn btn-danger w-100">Action</button>
-                <button v-else  @click="nullconn(), nullfile(), setswitch('download')" type="button" class="btn btn-secondary w-100">Install</button>
+                <button v-else  @click="nullconn(), setswitch('download')" type="button" class="btn btn-secondary w-100">Install</button>
+            </div>
+            <div class="col-md-6">
+                 <button v-if="switcher=='hiddenconnect'"  @click="setswitch('hiddenconnect')" type="button" class="btn btn-danger w-100">Action</button>
+                <button v-else  @click="nullconn(), setswitch('hiddenconnect')" type="button" class="btn btn-secondary w-100">Hidden connect</button>
             </div>
         </div>
 
@@ -35,7 +39,7 @@
                 <div class="form-group w-100">
                     <select v-model="conndata.hashname" class="browser-default custom-select text-light bg-secondary w-100">
                         <option disabled value="">Choose hashname</option>
-                        <option v-for="hash in userdata.connects" v-on:click="archivelist(hash)" v-bind:value="hash">${hash}</option>
+                        <option v-for="user in userdata.connects" v-on:click="archivelist(user.hashname)" v-bind:value="user.hashname">${user.hashname}</option>
                     </select>
                 </div>
                 <div class="form-group w-100">
@@ -48,41 +52,23 @@
             </form>
         </div>
 
-        <div class="text-center form-group">
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <button v-if="switcher=='connect'"  @click="setswitch('connect')" type="button" class="btn btn-danger w-100">Action</button>
-                    <button v-else  @click="nullconn(), setswitch('connect')" type="button" class="btn btn-secondary w-100">Connect</button>
-                </div>
-                <div class="col-md-6">
-                    <button v-if="switcher=='disconnect'"  @click="setswitch('disconnect')" type="button" class="btn btn-danger w-100">Action</button>
-                    <button v-else  @click="nullconn(), setswitch('disconnect')" type="button" class="btn btn-secondary w-100">Disconnect</button>
-                </div>
-            </div>
-        </div>
-        <div v-if="switcher=='connect'" class="text-center form-group">
-            <form id="feedbackForm" class="text-center">
-                <div class="form-group">
-                    <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Address" v-model="conndata.address">
-                </div>
-                <div class="form-group">
-                    <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
-                </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect(conndata.address, conndata.public_key)">Connect</button>
-            </form>
-        </div>
-        <div v-if="switcher=='disconnect'" class="text-center form-group">
+        <div v-if="switcher=='hiddenconnect'" class="text-center form-group">
             <form id="feedbackForm" class="text-center">
                 <div class="form-group w-100">
                     <select v-model="conndata.hashname" class="browser-default custom-select text-light bg-secondary w-100">
                         <option disabled value="">Choose hashname</option>
-                        <option v-for="hash in userdata.connects" v-bind:value="hash">${hash}</option>
+                        <option v-for="user in userdata.connects" v-on:click="hiddenconnects(user.hashname)" v-bind:value="user.hashname" v-if="!user.hidden">${user.hashname}</option>
                     </select>
                 </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="disconnect(conndata.hashname)">Disconnect</button>
+                <div class="form-group w-100">
+                    <select v-model="conndata.public_key" class="browser-default custom-select text-light bg-secondary w-100">
+                        <option disabled value="">Choose connection</option>
+                        <option v-for="user in userdata.hiddenconnects" v-bind:value="user.public_key">${user.hashname}</option>
+                    </select>
+                </div>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="hiddenconnect(conndata.hashname, conndata.public_key)">Hidden connect</button>
             </form>
         </div>
-
     </div>
 </div>
 {{ end }}

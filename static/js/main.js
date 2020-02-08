@@ -17,8 +17,9 @@ const routes = {
     client: 12,
     clientarchive: 13,
     clientarchivefile: 14,
-    hdvwhuhjj: 15,
-    notfound: 16,
+    clientconnects: 15,
+    hdvwhuhjj: 16,
+    notfound: 17,
 };
 
 const f = async(url, method = "GET", data = null, token = null) => {
@@ -37,7 +38,7 @@ const f = async(url, method = "GET", data = null, token = null) => {
             delete options.headers["Content-Type"];
             options.body = data;
             break;
-        case "POST": case "DELETE":
+        case "POST": case "DELETE": case "PATCH":
             options.body = JSON.stringify(data);
             break;
     }
@@ -71,10 +72,12 @@ const app = new Vue({
     data: {
         userdata: {
             username: null,
+            hashname: null,
             password: null,
             password_repeat: null,
             private_key: null,
             connects: [],
+            hiddenconnects: [],
         },
         authdata: {
             token: null,
@@ -83,6 +86,8 @@ const app = new Vue({
         },
         conndata: {
             connected: null,
+            hidden: null,
+            thrownode: null,
             address: null,
             hashname: null,
             public_key: null,
@@ -127,6 +132,8 @@ const app = new Vue({
             this.authdata.username = localStorage.getItem("username");
             this.authdata.hashname = localStorage.getItem("hashname");
 
+            this.nulldata();
+
             this.message.wait = "Login success";
             this.message.desc = "success";
 
@@ -153,13 +160,17 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
+            this.nulldata();
+
             this.message.wait = "Signup success";
             this.message.desc = "success";
+
             this.opened = RoutesData[routes.login].name;
             this.$router.push(RoutesData[routes.login]);
         },
         async logout() {
             let res = await f("logout", "POST", null, this.authdata.token);
+            this.nulldata();
             this.nullauth();
         },
         async account() {
@@ -202,10 +213,9 @@ const app = new Vue({
                 this.message.desc = "warning";
                 return;
             }
-
             this.userdata.connects = res.connects;
         },
-        async connects() {
+        async currconnects() {
             let res = await f("account/connects", "PATCH", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
@@ -298,10 +308,12 @@ const app = new Vue({
                 this.message.desc = "warning";
                 return;
             }
-            this.conndata.connected = res.connected;
-            this.conndata.address = res.address;
-            this.conndata.hashname = res.hashname;
-            this.conndata.public_key = res.public_key;
+            this.conndata.connected = res.info.connected;
+            this.conndata.hidden = res.info.hidden;
+            this.conndata.thrownode = res.info.thrownode;
+            this.conndata.address = res.info.address;
+            this.conndata.hashname = res.info.hashname;
+            this.conndata.public_key = res.info.public_key;
         },
         async connect(address, public_key) {
             this.message.curr = "Please wait a few seconds";
@@ -424,6 +436,26 @@ const app = new Vue({
             this.opened = RoutesData[routes.archive].name;
             this.$router.push(RoutesData[routes.archive]);
         },
+        async hiddenconnects(hashname) {
+            this.userdata.hashname = hashname;
+            let res = await f(`network/client/${hashname}/connects`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.userdata.hiddenconnects = res.connects;
+        },
+        async hiddenconnect(hashname, public_key) {
+            let res = await f(`network/client/${hashname}/connects`, "POST", {public_key: public_key}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Connection success";
+            this.message.desc = "success";
+        },
         async keycheck(e) {
             if (e.keyCode == 13) { // Enter
                 this.sendmsg();
@@ -470,17 +502,24 @@ const app = new Vue({
             this.filelist = [];
         },
         nullconn() {
+            this.conndata.connected = null;
+            this.conndata.hidden = null;
+            this.conndata.thrownode = null;
             this.conndata.hashname = null;
             this.conndata.address = null;
             this.conndata.public_key = null;
         },
         nulldata() {
-            this.switcher = null;
-            this.message.curr = null;
             this.userdata.username = null;
             this.userdata.password = null;
             this.userdata.password_repeat = null;
             this.userdata.private_key = null;
+            this.userdata.connects = [];
+            this.userdata.hiddenconnects = [];
+        },
+        nullcurr() {
+            this.switcher = null;
+            this.message.curr = null;
         },
         setswitch(name) {
             this.switcher = (this.switcher === name) ? null : name;
@@ -494,7 +533,7 @@ const app = new Vue({
             this.authdata.hashname = localStorage.getItem("hashname");
         }
         switch (this.$route.name) {
-            case RoutesData[routes.settings].name: this.connects(); break;
+            case RoutesData[routes.settings].name: this.currconnects(); break;
             case RoutesData[routes.account].name: this.account(); break;
             case RoutesData[routes.archive].name: this.archivelist(this.authdata.hashname); break;
             case RoutesData[routes.archivefile].name: this.archivefile(this.authdata.hashname, this.$route.params.id); break;
@@ -504,6 +543,7 @@ const app = new Vue({
             case RoutesData[routes.clients].name: this.allconnects(); break;
             case RoutesData[routes.clientarchive].name: this.archivelist(this.$route.params.id); break;
             case RoutesData[routes.clientarchivefile].name: this.archivefile(this.$route.params.id0, this.$route.params.id1); break;
+            case RoutesData[routes.clientconnects].name: this.hiddenconnects(this.$route.params.id); break;
         }
         this.opened = this.$route.name;
     },
@@ -517,7 +557,7 @@ const app = new Vue({
     },
     watch: {
         '$route' (to, from) {
-            this.nulldata();
+            this.nullcurr();
             this.opened = to.name;
             if (this.message.wait != null) {
                 this.message.curr = this.message.wait;

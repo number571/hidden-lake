@@ -37,11 +37,8 @@ func NetworkClient(w http.ResponseWriter, r *http.Request) {
 // Get client public information.
 func clientGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Connected bool   `json:"connected"`
-		Address   string `json:"address"`
-		Hashname  string `json:"hashname"`
-		PublicKey string `json:"public_key"`
 		State     string `json:"state"`
+		Info models.Connect `json:"info"`
 	}
 
 	var read struct {
@@ -49,9 +46,8 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	read.Hashname = strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
-	splited := strings.Split(read.Hashname, "/archive/")
-
-	hashname := splited[0]
+	hashname := strings.Split(read.Hashname, "/archive/")[0]
+	hashname  = strings.Split(hashname, "/connects")[0]
 
 	var (
 		token string
@@ -71,17 +67,59 @@ func clientGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(splited) == 2 {
+	if strings.Contains(read.Hashname, "/archive/") {
+		splited := strings.Split(read.Hashname, "/archive/")
 		clientArchiveGET(w, r, user, client, splited)
 		return
 	}
 
-	data.Connected = client.InConnections(hashname)
+	if strings.Contains(read.Hashname, "/connects") {
+		clientConnectsGET(w, r, user, client, hashname)
+		return
+	}
 
-	data.Address = clientData.Address
-	data.Hashname = hashname
-	data.PublicKey = gopeer.StringPublic(clientData.Public)
+	data.Info = models.Connect{
+		Hidden: gopeer.HashPublic(clientData.Public) != gopeer.HashPublic(clientData.PublicRecv),
+		Connected: client.InConnections(hashname),
+		Address: clientData.Address,
+		Hashname: hashname,
+		ThrowNode: gopeer.HashPublic(clientData.Public),
+		PublicKey: gopeer.StringPublic(clientData.PublicRecv),
+	}
+	json.NewEncoder(w).Encode(data)
+}
 
+// Get list of clients.
+func clientConnectsGET(w http.ResponseWriter, r *http.Request, user *models.User, client *gopeer.Client, hashname string) {
+	var data struct {
+		State string              `json:"state"`
+		Connects []models.Connect `json:"connects"`
+	}
+
+	switch {
+	case isNotInConnectionsError(w, r, client, hashname): return
+	}
+
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: client.Connections[hashname].Address,
+        Public: client.Connections[hashname].Public,
+        Receiver: client.Connections[hashname].PublicRecv,
+    })
+
+	_, err := client.SendTo(dest, &gopeer.Package{
+		Head: gopeer.Head{
+			Title:  settings.TITLE_CONNLIST,
+			Option: settings.OPTION_GET,
+		},
+	})
+
+	if err != nil {
+		data.State = "User can't receive message"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	data.Connects = user.Temp.ConnList
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -99,10 +137,11 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	case isNotInConnectionsError(w, r, client, hashname): return
 	}
 
-	dest := &gopeer.Destination{
-		Address: client.Connections[hashname].Address,
-		Public:  client.Connections[hashname].Public,
-	}
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: client.Connections[hashname].Address,
+        Public: client.Connections[hashname].Public,
+        Receiver: client.Connections[hashname].PublicRecv,
+    })
 
 	if filehash == "" {
 		_, err := client.SendTo(dest, &gopeer.Package{
@@ -117,7 +156,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 			return
 		}
 
-		data.Files = user.FileList
+		data.Files = user.Temp.FileList
 		json.NewEncoder(w).Encode(data)
 		return
 	}
@@ -137,7 +176,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		return
 	}
 
-	data.Files = user.FileList
+	data.Files = user.Temp.FileList
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -148,9 +187,16 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashname := strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
+
 	if strings.Contains(hashname, "/archive/") {
 		hashname = strings.Split(hashname, "/archive/")[0]
 		clientArchivePOST(w, r, hashname)
+		return
+	}
+
+	if strings.Contains(hashname, "/connects") {
+		hashname = strings.Split(hashname, "/connects")[0]
+		clientConnectsPOST(w, r, hashname)
 		return
 	}
 
@@ -184,10 +230,11 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dest := &gopeer.Destination{
-		Address: read.Address,
-		Public:  public,
-	}
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: read.Address,
+        Public: public,
+    })
+
 	err := client.Connect(dest)
 	if err != nil {
 		data.State = "Connect error"
@@ -200,6 +247,97 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 		Hashname: hash,
 		Address:  read.Address,
 		Public:   public,
+	})
+	if err != nil {
+		data.State = "Set client error"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	message := "connection created"
+	_, err = client.SendTo(dest, &gopeer.Package{
+		Head: gopeer.Head{
+			Title:  settings.TITLE_MESSAGE,
+			Option: settings.OPTION_GET,
+		},
+		Body: gopeer.Body{
+			Data: message,
+		},
+	})
+	if err != nil {
+		data.State = "User can't receive message"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err = db.SetChat(user, &models.Chat{
+		Companion: hash,
+		Messages: []models.Message{
+			models.Message{
+				Name: hash,
+				Text: message,
+				Time: utils.CurrentTime(),
+			},
+		},
+	})
+	if err != nil {
+		data.State = "Set chat error"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+
+// Hidden connect throw node.
+func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string) {
+	var data struct {
+		State string `json:"state"`
+	}
+
+	var read struct {
+		PublicKey string `json:"public_key"`
+	}
+
+	var (
+		token string
+		client = new(gopeer.Client)
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, &read): return
+	case isGetClientError(w, r, client, token): return
+	case isNotInConnectionsError(w, r, client, hashname): return
+	}
+
+	user := settings.Users[token]
+	public := gopeer.ParsePublic(read.PublicKey)
+	if public == nil {
+		data.State = "Error decode public key"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: client.Connections[hashname].Address,
+        Public: client.Connections[hashname].Public,
+        Receiver: public,
+    })
+
+    err := client.Connect(dest)
+	if err != nil {
+		data.State = "Connect error"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	hash := gopeer.HashPublic(public)
+	err = db.SetClient(user, &models.Client{
+		Hashname: hash,
+		Address:  client.Connections[hashname].Address,
+		Public:   client.Connections[hashname].Public,
+		PublicRecv: public,
 	})
 	if err != nil {
 		data.State = "Set client error"
@@ -265,10 +403,11 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 
 	user := settings.Users[token]
-	dest := &gopeer.Destination{
-		Address: client.Connections[hashname].Address,
-		Public:  client.Connections[hashname].Public,
-	}
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: client.Connections[hashname].Address,
+        Public: client.Connections[hashname].Public,
+        Receiver: client.Connections[hashname].PublicRecv,
+    })
 
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
@@ -285,13 +424,13 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 		return
 	}
 
-	if len(user.FileList) == 0 {
+	if len(user.Temp.FileList) == 0 {
 		data.State = "File not found"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	hash, err := hex.DecodeString(user.FileList[0].Hash)
+	hash, err := hex.DecodeString(user.Temp.FileList[0].Hash)
 	if err != nil {
 		data.State = "Error decode hex format"
 		json.NewEncoder(w).Encode(data)
@@ -307,14 +446,14 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 		[]byte{},
 	)))
 
-	file := db.GetFile(user, user.FileList[0].Hash)
+	file := db.GetFile(user, user.Temp.FileList[0].Hash)
 	if file != nil {
 		data.State = "This file already exist"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	client.LoadFile(dest, user.FileList[0].Path, settings.PATH_ARCHIVE+pathhash)
+	client.LoadFile(dest, user.Temp.FileList[0].Path, settings.PATH_ARCHIVE+pathhash)
 
 	output, err := os.Open(settings.PATH_ARCHIVE + pathhash)
 	if err != nil {
@@ -338,7 +477,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 	output.Close()
 
-	if hex.EncodeToString(checkhash) != user.FileList[0].Hash {
+	if hex.EncodeToString(checkhash) != user.Temp.FileList[0].Hash {
 		os.Remove(settings.PATH_ARCHIVE + pathhash)
 		data.State = "Hashes not equal"
 		json.NewEncoder(w).Encode(data)
@@ -346,10 +485,10 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 
 	db.SetFile(user, &models.File{
-		Name: user.FileList[0].Name,
-		Hash: user.FileList[0].Hash,
+		Name: user.Temp.FileList[0].Name,
+		Hash: user.Temp.FileList[0].Hash,
 		Path: pathhash,
-		Size: user.FileList[0].Size,
+		Size: user.Temp.FileList[0].Size,
 	})
 
 	json.NewEncoder(w).Encode(data)
@@ -377,10 +516,11 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 	case isNotInConnectionsError(w, r, client, read.Hashname): return
 	}
 
-	dest := &gopeer.Destination{
-		Address: client.Connections[read.Hashname].Address,
-		Public:  client.Connections[read.Hashname].Public,
-	}
+	dest := gopeer.NewDestination(&gopeer.Destination{
+        Address: client.Connections[read.Hashname].Address,
+        Public: client.Connections[read.Hashname].Public,
+        Receiver: client.Connections[read.Hashname].PublicRecv,
+    })
 
 	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{

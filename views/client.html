@@ -22,27 +22,39 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
+    </div>
+
     <div class="form-group row">
-        <div class="col-md-3">
-            <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
-        </div>
-        <div class="col-md-9" v-if="conndata.hashname">
+        <div class="col-md-6" v-if="conndata.hashname">
             <router-link :to="{name: 'clientarchive', params: {id: conndata.hashname}}" exact>
                 <button type="button" @click="archivelist(conndata.hashname)" class="btn btn-secondary w-100">Archive</button>
             </router-link>
         </div>
+        <div class="col-md-6" v-if="conndata.hashname">
+            <router-link :to="{name: 'clientconnects', params: {id: conndata.hashname}}" exact>
+                <button type="button" @click="hiddenconnects(conndata.hashname)" class="btn btn-secondary w-100">Connections</button>
+            </router-link>
+        </div>
     </div>
     <pre class="text-white lead">
-Connected: "${conndata.connected}".
-Address: "${conndata.address}".
-Hashname: "${conndata.hashname}".
+Connected: "${conndata.connected}";
+Address: "${conndata.address}";
+Hashname: "${conndata.hashname}";
+Connection hidden: "${conndata.hidden}";
+Throw node: "${conndata.thrownode}";
 Public Key: 
 <p ref="publickey">${conndata.public_key}</p></pre>
     <br>
     <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
         <div class="col-md-6">
             <button v-if="conndata.connected" @click="disconnect(conndata.hashname), conndata.connected=false" type="button" class="btn btn-danger w-100">Disconnect</button>
-            <button v-else @click="connect(conndata.address, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+            <div v-else class="w-100">
+                <button v-if="conndata.hidden" @click="hiddenconnect(conndata.thrownode, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+                <button v-else @click="connect(conndata.address, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+            </div>
+            
         </div>
         <div class="col-md-6">
             <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
