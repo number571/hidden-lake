@@ -59,7 +59,11 @@ func main() {
 }
 
 func handleServerTCP(model *models.Tcp) {
-	settings.Listener = gopeer.NewListener(model.Ipv4 + model.Port)
+	address := model.Ipv4 + model.Port
+	if address == "" {
+		address = settings.IS_CLIENT
+	}
+	settings.Listener = gopeer.NewListener(address)
 	settings.Listener.Open().Run(handle.Actions)
 }
 

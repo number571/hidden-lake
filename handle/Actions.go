@@ -81,25 +81,26 @@ func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 
 func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
-		hashname = pack.From.Sender.Hashname
 		token    = settings.Tokens[client.Hashname]
+		hash     = pack.From.Sender.Hashname
 		user     = settings.Users[token]
 		time     = utils.CurrentTime()
 	)
 
-	if !db.InClients(user, hashname) {
+	if !db.InClients(user, hash) {
 		db.SetClient(user, &models.Client{
-			Hashname: hashname,
+			Hashname: hash,
 			Address:  pack.From.Address,
-			Public:   client.Connections[hashname].Public,
+			Public:   client.Connections[hash].Public,
+			PublicRecv: client.Connections[hash].PublicRecv,
 		})
 	}
 
 	db.SetChat(user, &models.Chat{
-		Companion: hashname,
+		Companion: hash,
 		Messages: []models.Message{
 			models.Message{
-				Name: hashname,
+				Name: hash,
 				Text: pack.Body.Data,
 				Time: time,
 			},
@@ -118,7 +119,7 @@ func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 			From string `json:"from"`
 			To   string `json:"to"`
 		}{
-			From: hashname,
+			From: hash,
 			To:   user.Hashname,
 		},
 		Text: pack.Body.Data,

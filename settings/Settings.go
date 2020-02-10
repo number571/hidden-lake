@@ -28,13 +28,14 @@ const (
 // Tools: check and sign messages
 // Archive: files
 const (
-	TITLE_MESSAGE = "[TITLE-MESSAGE]"
-	TITLE_ARCHIVE = "[TITLE-ARCHIVE]"
+	TITLE_MESSAGE  = "[TITLE-MESSAGE]"
+	TITLE_ARCHIVE  = "[TITLE-ARCHIVE]"
 	TITLE_CONNLIST = "[TITLE-CONNLIST]"
 )
 
 var (
 	OPTION_GET = gopeer.Get("OPTION_GET").(string)
+	IS_CLIENT  = gopeer.Get("IS_CLIENT").(string)
 )
 
 const (
