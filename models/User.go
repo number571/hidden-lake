@@ -7,6 +7,7 @@ import (
 
 type User struct {
 	Hashname string // hash(pubkey)
+	UsedF2F  bool
 	Auth     Auth
 	Keys     Keys
 	Temp     Temp

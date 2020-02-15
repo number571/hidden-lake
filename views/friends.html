@@ -1,0 +1,42 @@
+{{ define "friends_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='friends'">
+    <h2 class="text-center">Friends</h2><br>
+    {{ template "message_part" }}
+    <div class="text-center mx-auto">
+        <div class="text-center form-group row">
+            <div class="col-md-9">
+                <button v-if="switcher=='appendfriend'"  @click="setswitch('appendfriend')" type="button" class="btn btn-danger w-100">Action</button>
+                <button v-else  @click="nullconn(), setswitch('appendfriend')" type="button" class="btn btn-secondary w-100">Append friend</button>
+            </div>
+            <div class="col-md-3">
+                <button v-if="userdata.statef2f" type="button" class="btn btn-success w-100" @click="turnf2f()">F2F</button>
+                <button v-else type="button" class="btn btn-danger w-100" @click="turnf2f()">F2F</button>
+            </div>
+        </div>
+
+        <div v-if="switcher=='appendfriend'" class="text-center form-group">
+            <form id="feedbackForm" class="text-center">
+                <div class="form-group">
+                    <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Hashname" v-model="conndata.hashname">
+                </div>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="addfriend(conndata.hashname)">Append friend</button>
+            </form>
+        </div>
+
+        <div class="mx-auto w-100">
+            <ul class="list-unstyled chat-1 scrollbar-light-blue">
+                <li v-for="hashname in userdata.connects">
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <button type="button" class="btn btn-secondary divtext w-100" disabled>${hashname}</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="delfriend(hashname)">Delete</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{{ end }}

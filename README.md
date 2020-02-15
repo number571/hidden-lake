@@ -1,10 +1,10 @@
 # HiddenLake
 
-> Decentralized network. Version 1.0.2s.
+> Decentralized network. Version 1.0.3s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
-2. Package transfer in blockchain;
+2. Supported hidden connections;
 3. Symmetric algorithm: AES256-CBC;
 4. Asymmetric algorithm: RSA2048-OAEP;
 5. Hash function: HMAC(SHA256);
@@ -26,7 +26,6 @@
 ### Modules:
 1. Network (kernel): 
 * connects/disconnects servers;
-* creates blockchain transfer;
 * sends Packages with a response to servers (TCP);
 2. Intermediate (server): 
 * sends API responses to the client (HTTPS, WSS);
@@ -45,13 +44,13 @@
 ```json
 {
 	"host": {
+		"tls": {
+			"crt": "tls/cert.crt",
+			"key": "tls/cert.key"
+		},
 		"http": {
 			"ipv4": "localhost",
 			"port": ":7545",
-			"tls": {
-				"crt": "tls/cert.crt",
-				"key": "tls/cert.key"
-			}
 		},
 		"tcp": {
 			"ipv4": "localhost",
@@ -104,6 +103,20 @@ CREATE TABLE IF NOT EXISTS File (
 	Path VARCHAR(44),
 	Size INTEGER,
 	FOREIGN KEY (IdUser)  REFERENCES User (Id)
+);
+/* Connection list for F2F network */
+CREATE TABLE IF NOT EXISTS Friends (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Hashname VARCHAR(44),
+	FOREIGN KEY (IdUser) REFERENCES User (Id)
+);
+/* User saved state */
+CREATE TABLE IF NOT EXISTS State (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	UsedF2F BOOLEAN,
+	FOREIGN KEY (IdUser) REFERENCES User (Id)
 );
 ```
 

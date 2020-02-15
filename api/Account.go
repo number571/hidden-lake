@@ -31,10 +31,11 @@ func Account(w http.ResponseWriter, r *http.Request) {
 // Get public information.
 func accountGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Address   string `json:"address"`
-		Hashname  string `json:"hashname"`
-		PublicKey string `json:"public_key"`
-		State     string `json:"state"`
+		Address     string `json:"address"`
+		Hashname    string `json:"hashname"`
+		PublicKey   string `json:"public_key"`
+		Certificate string `json:"certificate"`
+		State       string `json:"state"`
 	}
 
 	var (
@@ -51,6 +52,7 @@ func accountGET(w http.ResponseWriter, r *http.Request) {
 	data.Address = client.Address
 	data.Hashname = client.Hashname
 	data.PublicKey = gopeer.StringPublic(client.Keys.Public)
+	data.Certificate = string(settings.Listener.Certificate)
 
 	json.NewEncoder(w).Encode(data)
 }

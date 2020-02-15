@@ -81,6 +81,9 @@
                     <!-- ACCOUNT / ARCHIVE PAGE -->
                     {{ template "archive_page" }}
 
+                    <!-- ACCOUNT / FRIENDS PAGE -->
+                    {{ template "friends_page" }}
+
                     <!-- ACCOUNT / ARCHIVE / FILE PAGE -->
                     {{ template "archivefile_page" }}
 
@@ -98,9 +101,6 @@
 
                     <!-- NETWORK / CLIENT PAGE -->
                     {{ template "client_page" }}
-
-                    <!-- NETWORK / CLIENT / CONNECTS PAGE -->
-                    {{ template "clientconnects_page" }}
 
                     <!-- NETWORK / CLIENT / ARCHIVE PAGE -->
                     {{ template "clientarchive_page" }}
@@ -121,7 +121,7 @@
         <footer class="navbar fixed-bottom py-3 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-secondary">Remake by #571</p>
-                <p class="navbar-nav ml-auto text-secondary">Version 1.0.2s</p>
+                <p class="navbar-nav ml-auto text-secondary">Version 1.0.3s</p>
             </div>
         </footer>
         <router-view></router-view>

@@ -104,11 +104,11 @@ export const RoutesData = [
 			title: "Client Archive File",
 		},
 	},
-	{ // 15
-		path: "/network/client/:id/connects", 
-		name: "clientconnects",
+	{ // 16
+		path: "/account/friends", 
+		name: "friends",
 		meta: {
-			title: "Client Connections",
+			title: "Friends",
 		},
 	},
 	{ // 16

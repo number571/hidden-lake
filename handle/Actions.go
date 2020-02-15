@@ -10,50 +10,8 @@ import (
 )
 
 func Actions(client *gopeer.Client, pack *gopeer.Package) {
-	client.HandleAction(settings.TITLE_CONNLIST, pack, getConnlist, setConnlist)
 	client.HandleAction(settings.TITLE_ARCHIVE, pack, getArchive, setArchive)
 	client.HandleAction(settings.TITLE_MESSAGE, pack, getMessage, setMessage)
-}
-
-func getConnlist(client *gopeer.Client, pack *gopeer.Package) (set string) {
-	var (
-		templist []models.Connect
-	)
-	if pack.From.Sender.Hashname != pack.From.Hashname {
-		return ""
-	}
-	for hash, cl := range client.Connections {
-		if hash == client.Hashname || hash == pack.From.Sender.Hashname {
-			continue
-		}
-		pub1 := gopeer.StringPublic(cl.Public)
-		pub2 := gopeer.StringPublic(cl.PublicRecv)
-		if pub1 != pub2 {
-			continue
-		}
-		templist = append(templist, models.Connect{
-			Hashname: hash,
-			PublicKey: pub1,
-		})
-	}
-	return string(gopeer.PackJSON(templist))
-}
-
-func setConnlist(client *gopeer.Client, pack *gopeer.Package) {
-	var (
-		templist []models.Connect
-		token = settings.Tokens[client.Hashname]
-	)
-	gopeer.UnpackJSON([]byte(pack.Body.Data), &templist)
-	for i, cl := range templist {
-		if cl.Hashname == client.Hashname {
-			continue
-		}
-		if client.InConnections(cl.Hashname) {
-			templist[i].Connected = true
-		}
-	}
-	settings.Users[token].Temp.ConnList = templist
 }
 
 func getArchive(client *gopeer.Client, pack *gopeer.Package) (set string) {
@@ -77,6 +35,7 @@ func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 		user  = settings.Users[token]
 	)
 	gopeer.UnpackJSON([]byte(pack.Body.Data), &user.Temp.FileList)
+	client.Connections[pack.From.Sender.Hashname].IsAction <- true
 }
 
 func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
@@ -92,7 +51,8 @@ func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 			Hashname: hash,
 			Address:  pack.From.Address,
 			Public:   client.Connections[hash].Public,
-			PublicRecv: client.Connections[hash].PublicRecv,
+			ThrowClient: client.Connections[hash].ThrowClient,
+			Certificate: string(client.Connections[hash].Certificate),
 		})
 	}
 

@@ -22,7 +22,10 @@
             <div class="form-group">
                 <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect(conndata.address, conndata.public_key)">Connect</button>
+            <div class="form-group">
+                <textarea class="form-control bg-dark text-light" placeholder="PEM Certificate" v-model="conndata.certificate"></textarea>
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="connect(conndata.address, conndata.certificate, conndata.public_key)">Connect</button>
         </form>
     </div>
     <div v-if="switcher=='disconnect'" class="text-center form-group">
@@ -49,7 +52,7 @@
                         <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="disconnect(user.hashname), user.connected=false">Disconnect</button>
                     </div>
                     <div class="col-md-3" v-else>
-                        <button type="button" class="btn btn-secondary divtext w-100 bg-success" @click="connect(user.address, user.public_key), user.connected=true">Connect</button>
+                        <button type="button" class="btn btn-secondary divtext w-100 bg-success" @click="connect(user.address, user.certificate, user.public_key), user.connected=true">Connect</button>
                     </div>
                 </div>
             </li>

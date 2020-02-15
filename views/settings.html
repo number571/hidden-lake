@@ -4,10 +4,15 @@
     {{ template "message_part" }}
     <div class="text-center mx-auto">
 
+        <div class="text-center form-group">
+            <button v-if="switcher=='download'"  @click="setswitch('download')" type="button" class="btn btn-danger w-100">Action</button>
+            <button v-else  @click="nullconn(), setswitch('download')" type="button" class="btn btn-secondary w-100">Install</button>
+        </div>
+
         <div class="text-center form-group row">
             <div class="col-md-6">
-                <button v-if="switcher=='download'"  @click="setswitch('download')" type="button" class="btn btn-danger w-100">Action</button>
-                <button v-else  @click="nullconn(), setswitch('download')" type="button" class="btn btn-secondary w-100">Install</button>
+                <button v-if="switcher=='findconnect'"  @click="setswitch('findconnect')" type="button" class="btn btn-danger w-100">Action</button>
+                <button v-else  @click="nullconn(), setswitch('findconnect')" type="button" class="btn btn-secondary w-100">Find connection</button>
             </div>
             <div class="col-md-6">
                  <button v-if="switcher=='hiddenconnect'"  @click="setswitch('hiddenconnect')" type="button" class="btn btn-danger w-100">Action</button>
@@ -33,22 +38,53 @@
             </form>
         </div>
 
+        <div v-if="switcher=='findconnect'" class="text-center form-group">
+            <form id="feedbackForm" class="text-center">
+                <div class="form-group w-100">
+                    <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
+                </div>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="findconnect(conndata.public_key)">Find connection</button>
+            </form>
+        </div>
+
         <div v-if="switcher=='hiddenconnect'" class="text-center form-group">
             <form id="feedbackForm" class="text-center">
                 <div class="form-group w-100">
                     <select v-model="conndata.hashname" class="browser-default custom-select text-light bg-secondary w-100">
                         <option disabled value="">Choose hashname</option>
-                        <option v-for="user in userdata.connects" v-on:click="hiddenconnects(user.hashname)" v-bind:value="user.hashname" v-if="!user.hidden">${user.hashname}</option>
+                        <option v-for="user in userdata.connects" v-bind:value="user.hashname" v-if="!user.hidden">${user.hashname}</option>
                     </select>
                 </div>
                 <div class="form-group w-100">
-                    <select v-model="conndata.public_key" class="browser-default custom-select text-light bg-secondary w-100">
-                        <option disabled value="">Choose connection</option>
-                        <option v-for="user in userdata.hiddenconnects" v-bind:value="user.public_key">${user.hashname}</option>
-                    </select>
+                    <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
                 </div>
                 <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="hiddenconnect(conndata.hashname, conndata.public_key)">Hidden connect</button>
             </form>
+        </div>
+
+        <div class="mx-auto w-100">
+            <ul class="list-unstyled chat-1 scrollbar-light-blue">
+                <li v-for="user in userdata.connects">
+                    <div class="form-group row">
+                        <div class="col-md-2">
+                            <button v-if="user.hidden" type="button" class="btn btn-info divtext w-100" disabled>Hidden</button>
+                            <button v-else type="button" class="btn btn-info divtext w-100" disabled>Direct</button>
+                        </div>
+                        <div class="col-md-7" v-if="user.hashname">
+                            <router-link :to="{name: 'client', params: { id: user.hashname }}" class="w-100">
+                                <button type="button" class="btn btn-secondary divtext w-100" @click="client(user.hashname)">${user.hashname}</button>
+                            </router-link>
+                        </div>
+                        <div class="col-md-3" v-if="user.connected">
+                            <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="disconnect(user.hashname), user.connected=false">Disconnect</button>
+                        </div>
+                        <div class="col-md-3" v-else>
+                            <button v-if="user.hidden" @click="hiddenconnect(user.throwclient, user.public_key), user.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+                            <button v-else @click="connect(user.address, user.certificate, user.public_key), user.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

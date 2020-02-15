@@ -34,8 +34,9 @@ const (
 )
 
 var (
-	OPTION_GET = gopeer.Get("OPTION_GET").(string)
-	IS_CLIENT  = gopeer.Get("IS_CLIENT").(string)
+	WAITING_TIME = gopeer.Get("WAITING_TIME").(uint8)
+	OPTION_GET   = gopeer.Get("OPTION_GET").(string)
+	IS_CLIENT    = gopeer.Get("IS_CLIENT").(string)
 )
 
 const (

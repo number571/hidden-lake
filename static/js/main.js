@@ -17,7 +17,7 @@ const routes = {
     client: 12,
     clientarchive: 13,
     clientarchivefile: 14,
-    clientconnects: 15,
+    friends: 15,
     hdvwhuhjj: 16,
     notfound: 17,
 };
@@ -38,7 +38,7 @@ const f = async(url, method = "GET", data = null, token = null) => {
             delete options.headers["Content-Type"];
             options.body = data;
             break;
-        case "POST": case "DELETE": case "PATCH":
+        case "POST": case "PATCH": case "DELETE":
             options.body = JSON.stringify(data);
             break;
     }
@@ -74,10 +74,10 @@ const app = new Vue({
             username: null,
             hashname: null,
             password: null,
+            statef2f: null,
             password_repeat: null,
             private_key: null,
             connects: [],
-            hiddenconnects: [],
         },
         authdata: {
             token: null,
@@ -87,10 +87,11 @@ const app = new Vue({
         conndata: {
             connected: null,
             hidden: null,
-            thrownode: null,
+            throwclient: null,
             address: null,
             hashname: null,
             public_key: null,
+            certificate: null,
         },
         filelist: [],
         filedata: {
@@ -183,6 +184,7 @@ const app = new Vue({
             this.conndata.hashname = res.hashname;
             this.conndata.address = res.address;
             this.conndata.public_key = res.public_key;
+            this.conndata.certificate = res.certificate;
         },
         async viewkey() {
             let res = await f("account", "POST", this.userdata, this.authdata.token);
@@ -277,11 +279,12 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
+            this.netdata.message = null;
             this.message.curr = null;
         },
-        async delchat() {
+        async delchat(hashname) {
             let obj = {
-                hashname: this.conndata.hashname,
+                hashname: hashname,
                 username: this.userdata.username,
                 password: this.userdata.password,
             };
@@ -296,7 +299,25 @@ const app = new Vue({
             this.netdata.chat.companion = null;
             this.netdata.chat.messages = [];
 
-            this.message.wait = "Delete success";
+            this.message.wait = "Delete chat success";
+            this.message.desc = "success";
+            this.opened = RoutesData[routes.network].name;
+            this.$router.push(RoutesData[routes.network]);
+        },
+        async delclient(hashname) {
+            let obj = {
+                hashname: hashname,
+                username: this.userdata.username,
+                password: this.userdata.password,
+            };
+            let res = await f("account/connects", "DELETE", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+
+            this.message.wait = "Delete client success";
             this.message.desc = "success";
             this.opened = RoutesData[routes.network].name;
             this.$router.push(RoutesData[routes.network]);
@@ -310,15 +331,21 @@ const app = new Vue({
             }
             this.conndata.connected = res.info.connected;
             this.conndata.hidden = res.info.hidden;
-            this.conndata.thrownode = res.info.thrownode;
+            this.conndata.throwclient = res.info.throwclient;
             this.conndata.address = res.info.address;
             this.conndata.hashname = res.info.hashname;
             this.conndata.public_key = res.info.public_key;
+            this.conndata.certificate = res.info.certificate;
         },
-        async connect(address, public_key) {
+        async connect(address, certificate, public_key) {
             this.message.curr = "Please wait a few seconds";
             this.message.desc = "warning";
-            let res = await f("network/client/", "POST", {address: address, public_key: public_key}, this.authdata.token);
+            let obj = {
+                address: address, 
+                certificate: certificate,
+                public_key: public_key,
+            };
+            let res = await f("network/client/", "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -436,15 +463,16 @@ const app = new Vue({
             this.opened = RoutesData[routes.archive].name;
             this.$router.push(RoutesData[routes.archive]);
         },
-        async hiddenconnects(hashname) {
-            this.userdata.hashname = hashname;
-            let res = await f(`network/client/${hashname}/connects`, "GET", null, this.authdata.token);
+        async findconnect(public_key) {
+            let res = await f(`network/client/`, "PATCH", {public_key: public_key}, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
                 return;
             }
-            this.userdata.hiddenconnects = res.connects;
+            this.currconnects();
+            this.message.curr = "Connection success";
+            this.message.desc = "success";
         },
         async hiddenconnect(hashname, public_key) {
             let res = await f(`network/client/${hashname}/connects`, "POST", {public_key: public_key}, this.authdata.token);
@@ -453,7 +481,51 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
+            this.currconnects();
             this.message.curr = "Connection success";
+            this.message.desc = "success";
+        },
+        async getfriends() {
+            let res = await f(`account/friends`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            this.userdata.statef2f = res.statef2f;
+            this.userdata.connects = res.friends;
+        },
+        async delfriend(hashname) {
+            let res = await f(`account/friends`, "DELETE", {hashname: hashname}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Delete friend success";
+            this.message.desc = "success";
+            this.getfriends();
+        },
+        async addfriend(hashname) {
+            let res = await f(`account/friends`, "PATCH", {hashname: hashname}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Append friend success";
+            this.message.desc = "success";
+            this.getfriends();
+        },
+        async turnf2f() {
+            let res = await f(`account/friends`, "POST", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.userdata.statef2f = res.statef2f;
+            this.message.curr = `Turn ${res.statef2f ? "ON" : "OFF"} success`;
             this.message.desc = "success";
         },
         async keycheck(e) {
@@ -486,6 +558,17 @@ const app = new Vue({
             this.message.curr = "Public key copied to clipboard successfully"
             this.message.desc = "success";
         },
+        savecertificate() {
+            this.selectText(this.$refs.certificate);
+            let res = document.execCommand("copy");
+            if (!res) {
+                this.message.curr = "Public key not copied to clipboard"
+                this.message.desc = "danger";
+                return
+            }
+            this.message.curr = "Certificate copied to clipboard successfully"
+            this.message.desc = "success";
+        },
         nullauth() {
             this.authdata.token = null;
             this.authdata.username = null;
@@ -504,10 +587,11 @@ const app = new Vue({
         nullconn() {
             this.conndata.connected = null;
             this.conndata.hidden = null;
-            this.conndata.thrownode = null;
+            this.conndata.throwclient = null;
             this.conndata.hashname = null;
             this.conndata.address = null;
             this.conndata.public_key = null;
+            this.conndata.certificate = null;
         },
         nulldata() {
             this.userdata.username = null;
@@ -515,7 +599,7 @@ const app = new Vue({
             this.userdata.password_repeat = null;
             this.userdata.private_key = null;
             this.userdata.connects = [];
-            this.userdata.hiddenconnects = [];
+            this.userdata.statef2f = null;
         },
         nullcurr(page) {
             this.switcher = null;
@@ -537,6 +621,7 @@ const app = new Vue({
         }
         switch (this.$route.name) {
             case RoutesData[routes.settings].name: this.currconnects(); break;
+            case RoutesData[routes.friends].name: this.getfriends(); break;
             case RoutesData[routes.account].name: this.account(); break;
             case RoutesData[routes.archive].name: this.archivelist(this.authdata.hashname); break;
             case RoutesData[routes.archivefile].name: this.archivefile(this.authdata.hashname, this.$route.params.id); break;
@@ -546,7 +631,6 @@ const app = new Vue({
             case RoutesData[routes.clients].name: this.allconnects(); break;
             case RoutesData[routes.clientarchive].name: this.archivelist(this.$route.params.id); break;
             case RoutesData[routes.clientarchivefile].name: this.archivefile(this.$route.params.id0, this.$route.params.id1); break;
-            case RoutesData[routes.clientconnects].name: this.hiddenconnects(this.$route.params.id); break;
         }
         this.opened = this.$route.name;
     },

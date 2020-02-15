@@ -20,11 +20,10 @@ import (
 
 func init() {
 	gopeer.Set(gopeer.SettingsType{
+		"SERVER_NAME": "HIDDEN-LAKE",
 		"NETWORK": "[HIDDEN-LAKE]",
-		"VERSION": "[1.0.2s]",
+		"VERSION": "[1.0.3s]",
 		"HMACKEY": "9163571392708145",
-		"GENESIS": "[GENESIS-LAKE]",
-		"NOISE":   "h19dlI#L9dkc8JA]1s-zSp,Nl/qs4;qf",
 	})
 	settings.InitializeDB(settings.DB_NAME)
 	settings.InitializeCFG(settings.CFG_NAME)
@@ -45,29 +44,33 @@ func main() {
 	mux.HandleFunc("/api/logout", api.Logout)                    // POST
 	mux.HandleFunc("/api/signup", api.Signup)                    // POST
 	mux.HandleFunc("/api/account", api.Account)                  // GET, POST, DELETE
-	mux.HandleFunc("/api/account/connects", api.AccountConnects) // GET, PATCH
+	mux.HandleFunc("/api/account/friends", api.AccountFriends)   // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/account/connects", api.AccountConnects) // GET, PATCH, DELETE
 	mux.HandleFunc("/api/account/archive/", api.AccountArchive)  // GET, PUT, DELETE
 	mux.HandleFunc("/api/network/chat/", api.NetworkChat)        // GET, POST, DELETE
-	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, DELETE
+	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, PATCH, DELETE
 	//             "/api/network/client/:id/archive/"            // GET, POST
-	//             "/api/network/client/:id/connects"            // GET, POST
+	//             "/api/network/client/:id/connects"            // POST
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
-	handleServerTCP(&settings.CFG.Host.Tcp)
-	handleServerHTTP(&settings.CFG.Host.Http, mux)
+	handleServerTCP(&settings.CFG.Host.Tcp, &settings.CFG.Host.Tls)
+	handleServerHTTP(&settings.CFG.Host.Http, &settings.CFG.Host.Tls, mux)
 }
 
-func handleServerTCP(model *models.Tcp) {
+func handleServerTCP(model *models.Tcp, tmodel *models.Tls) {
 	address := model.Ipv4 + model.Port
 	if address == "" {
 		address = settings.IS_CLIENT
 	}
 	settings.Listener = gopeer.NewListener(address)
-	settings.Listener.Open().Run(handle.Actions)
+	settings.Listener.Open(&gopeer.Certificate{
+        Cert: []byte(utils.ReadFile(tmodel.Crt)),
+        Key:  []byte(utils.ReadFile(tmodel.Key)),
+    }).Run(handle.Actions)
 }
 
-func handleServerHTTP(model *models.Http, mux *http.ServeMux) {
+func handleServerHTTP(model *models.Http, tmodel *models.Tls, mux *http.ServeMux) {
 	srv := &http.Server{
 		Addr:    model.Ipv4 + model.Port,
 		Handler: mux,
@@ -88,7 +91,7 @@ func handleServerHTTP(model *models.Http, mux *http.ServeMux) {
 		},
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
-	srv.ListenAndServeTLS(model.Tls.Crt, model.Tls.Key)
+	srv.ListenAndServeTLS(tmodel.Crt, tmodel.Key)
 }
 
 func handleFileServer(fs http.FileSystem) http.Handler {
@@ -148,10 +151,10 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"client.html",
 		settings.PATH_VIEWS+"clientarchive.html",
 		settings.PATH_VIEWS+"clientarchivefile.html",
-		settings.PATH_VIEWS+"clientconnects.html",
 		settings.PATH_VIEWS+"clients.html",
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",
+		settings.PATH_VIEWS+"friends.html",
 		settings.PATH_VIEWS+"notfound.html",
 		settings.PATH_VIEWS+"message_part.html",
 	)

@@ -20,8 +20,10 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 		accountConnectsGET(w, r)
 	case "PATCH":
 		accountConnectsPATCH(w, r)
+	case "DELETE":
+		accountConnectsDELETE(w, r)
 	default:
-		data.State = "Method should be GET"
+		data.State = "Method should be GET, PATCH or DELETE"
 		json.NewEncoder(w).Encode(data)
 	}
 }
@@ -44,7 +46,7 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	clients := db.GetAllClients(settings.Users[token])
-	if client == nil {
+	if clients == nil {
 		data.State = "Error load clients from database"
 		json.NewEncoder(w).Encode(data)
 		return
@@ -55,17 +57,16 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		pub1 := gopeer.StringPublic(cl.Public)
-		pub2 := gopeer.StringPublic(cl.PublicRecv)
-		if pub1 != pub2 {
+		if gopeer.HashPublic(cl.Public) != gopeer.HashPublic(cl.ThrowClient) {
 			continue
 		}
 
 		data.Connects = append(data.Connects, models.Connect{
-			Connected: client.InConnections(cl.Hashname),
-			Address:   cl.Address,
-			Hashname:  cl.Hashname,
-			PublicKey: gopeer.StringPublic(cl.Public),
+			Connected:   client.InConnections(cl.Hashname),
+			Address:     cl.Address,
+			Hashname:    cl.Hashname,
+			Public:      gopeer.StringPublic(cl.Public),
+			Certificate: cl.Certificate,
 		})
 	}
 
@@ -95,13 +96,42 @@ func accountConnectsPATCH(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.Connects = append(data.Connects, models.Connect{
-			Connected: client.InConnections(hash),
-			Hidden:    gopeer.HashPublic(cl.Public) != gopeer.HashPublic(cl.PublicRecv),
-			Address:   cl.Address,
-			Hashname:  hash,
-			ThrowNode: gopeer.HashPublic(cl.Public),
-			PublicKey: gopeer.StringPublic(cl.PublicRecv),
+			Connected:   client.InConnections(hash),
+			Hidden:      gopeer.HashPublic(cl.Public) != gopeer.HashPublic(cl.ThrowClient),
+			Address:     cl.Address,
+			Hashname:    hash,
+			Public:      gopeer.StringPublic(cl.Public),
+			ThrowClient: gopeer.HashPublic(cl.ThrowClient),
+			Certificate: string(cl.Certificate),
 		})
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+
+// Delete client from user data.
+func accountConnectsDELETE(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		State string `json:"state"`
+	}
+
+	var (
+		read = new(userdata)
+		user = new(models.User)
+		token string
+	)
+	switch {
+	case isTokenAuthError(w, r, &token): return
+	case isLifeTokenError(w, r, token): return
+	case isDecodeError(w, r, read): return
+	case isGetUserError(w, r, user, read): return
+	}
+
+	err := db.DeleteClient(user, read.Hashname)
+	if err != nil {
+		data.State = "Can't delete client"
+		json.NewEncoder(w).Encode(data)
+		return
 	}
 
 	json.NewEncoder(w).Encode(data)

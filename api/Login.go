@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/number571/gopeer"
+	"github.com/number571/hiddenlake/db"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"net/http"
@@ -43,8 +44,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	settings.Tokens[hash] = token
 
 	client := settings.Listener.NewClient(user.Keys.Private)
-	client.Sharing.Perm = true
-	client.Sharing.Path = settings.PATH_ARCHIVE
+
+	client.SetFriends(user.UsedF2F, db.GetAllFriends(user)...)
+	client.SetSharing(true, settings.PATH_ARCHIVE)
 
 	data.Token = token
 	data.Hashname = hash

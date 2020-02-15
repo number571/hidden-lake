@@ -7,12 +7,12 @@ type Config struct {
 type Host struct {
 	Http Http `json:"http"`
 	Tcp  Tcp  `json:"tcp"`
+	Tls  Tls  `json:"tls"`
 }
 
 type Http struct {
 	Ipv4 string `json:"ipv4"`
 	Port string `json:"port"`
-	Tls  Tls    `json:"tls"`
 }
 
 type Tls struct {

@@ -32,7 +32,7 @@ func NetworkChat(w http.ResponseWriter, r *http.Request) {
 	case "DELETE":
 		networkDELETE(w, r)
 	default:
-		data.State = "Method should be GET or POST"
+		data.State = "Method should be GET, POST or DELETE"
 		json.NewEncoder(w).Encode(data)
 	}
 }
@@ -93,11 +93,12 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	message := strings.Replace(read.Message, "\n", " ", -1)
-	dest := gopeer.NewDestination(&gopeer.Destination{
+	dest := &gopeer.Destination{
         Address: client.Connections[read.Hashname].Address,
-        Public: client.Connections[read.Hashname].Public,
-        Receiver: client.Connections[read.Hashname].PublicRecv,
-    })
+        Certificate: client.Connections[read.Hashname].Certificate,
+        Public: client.Connections[read.Hashname].ThrowClient,
+        Receiver: client.Connections[read.Hashname].Public,
+    }
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,

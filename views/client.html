@@ -2,18 +2,25 @@
 <div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='client'">
     <h2 class="text-center">Client</h2><br>
     {{ template "message_part" }}
-    <div class="form-group">
-        <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
-    </div>
     <div class="form-group row">
+        <div class="col-md-6">
+            <button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
+        </div>
+        <div class="col-md-6">
+            <button v-if="conndata.connected" @click="disconnect(conndata.hashname), conndata.connected=false" type="button" class="btn btn-danger w-100">Disconnect</button>
+            <div v-else class="w-100">
+                <button v-if="conndata.hidden" @click="hiddenconnect(conndata.throwclient, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+                <button v-else @click="connect(conndata.address, conndata.certificate, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
+            </div>
+        </div>
+    </div>
+    <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
+        <div class="col-md-6">
+            <button @click="savecertificate()" type="button" class="btn btn-success w-100">Copy certificate</button>
+        </div>
         <div class="col-md-6" v-if="conndata.hashname">
             <router-link :to="{name: 'clientarchive', params: {id: conndata.hashname}}" exact>
                 <button type="button" @click="archivelist(conndata.hashname)" class="btn btn-secondary w-100">Archive</button>
-            </router-link>
-        </div>
-        <div class="col-md-6" v-if="conndata.hashname">
-            <router-link :to="{name: 'clientconnects', params: {id: conndata.hashname}}" exact>
-                <button type="button" @click="hiddenconnects(conndata.hashname)" class="btn btn-secondary w-100">Connections</button>
             </router-link>
         </div>
     </div>
@@ -22,22 +29,21 @@ Connected: "${conndata.connected}";
 Address: "${conndata.address}";
 Hashname: "${conndata.hashname}";
 Connection hidden: "${conndata.hidden}";
-Throw node: "${conndata.thrownode}";
+Throw node: "${conndata.throwclient}";
+
 Public Key: 
-<p ref="publickey">${conndata.public_key}</p></pre>
+<p ref="publickey">${conndata.public_key}</p>
+Certificate:
+<p ref="certificate">${conndata.certificate}</p></pre>
     <br>
     <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
         <div class="col-md-6">
-            <button v-if="conndata.connected" @click="disconnect(conndata.hashname), conndata.connected=false" type="button" class="btn btn-danger w-100">Disconnect</button>
-            <div v-else class="w-100">
-                <button v-if="conndata.hidden" @click="hiddenconnect(conndata.thrownode, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
-                <button v-else @click="connect(conndata.address, conndata.public_key), conndata.connected=true" type="button" class="btn btn-success w-100">Connect</button>
-            </div>
-            
+            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
+            <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
         <div class="col-md-6">
-            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
-            <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
+            <button v-if="switcher!='delete_client'" @click="nulldata(), setswitch('delete_client')" type="button" class="btn btn-danger w-100">Delete Client</button>
+            <button v-else @click="setswitch('delete_client')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
     </div>
 
@@ -49,7 +55,19 @@ Public Key:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delchat()">Delete Chat</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delchat(conndata.hashname)">Delete Chat</button>
+        </form>
+    </div>
+
+    <div v-if="conndata.hashname!=authdata.hashname&&switcher=='delete_client'" class="text-center">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group">
+                <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delclient(conndata.hashname)">Delete Client</button>
         </form>
     </div>
 </div>

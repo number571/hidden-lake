@@ -79,6 +79,12 @@ func isGetUserError(w http.ResponseWriter, r *http.Request, user *models.User, r
 		json.NewEncoder(w).Encode(data)
 		return true
 	}
+	us = db.GetState(us)
+	if us == nil {
+		data.State = "Get user state error"
+		json.NewEncoder(w).Encode(data)
+		return true
+	}
 	*user = *us
 	return false
 }

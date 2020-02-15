@@ -5,8 +5,9 @@ import (
 )
 
 type Client struct {
-	Hashname   string
-	Address    string
-	Public     *rsa.PublicKey
-	PublicRecv *rsa.PublicKey
+	Hashname    string
+	Address     string
+	Public      *rsa.PublicKey
+	ThrowClient *rsa.PublicKey
+	Certificate string
 }

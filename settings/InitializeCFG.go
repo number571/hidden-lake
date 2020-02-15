@@ -1,18 +1,11 @@
 package settings
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/json"
-	"encoding/pem"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/utils"
-	"math/big"
 	"os"
-	"time"
 )
 
 func InitializeCFG(cfgname string) {
@@ -31,64 +24,23 @@ func InitializeCFG(cfgname string) {
 	}
 	os.Mkdir(PATH_TLS, 0777)
 	os.Mkdir(PATH_ARCHIVE, 0777)
-	if !utils.FileIsExist(CFG.Host.Http.Tls.Crt) && !utils.FileIsExist(CFG.Host.Http.Tls.Key) {
-		generateCertificate(2048, CFG)
+	if !utils.FileIsExist(CFG.Host.Tls.Crt) && !utils.FileIsExist(CFG.Host.Tls.Key) {
+		key, cert := gopeer.GenerateCertificate(gopeer.Get("SERVER_NAME").(string), 2048)
+		utils.WriteFile(CFG.Host.Tls.Crt, cert)
+		utils.WriteFile(CFG.Host.Tls.Key, key)
 	}
-}
-
-func generateCertificate(bits int, cfg *models.Config) error {
-	ca := &x509.Certificate{
-		SerialNumber: big.NewInt(int64(gopeer.GenerateRandomIntegers(1)[0])),
-		Subject: pkix.Name{
-			Organization:  []string{"HIDDEN_LAKE"},
-			Country:       []string{"NEW_COUNTRY"},
-			Province:      []string{"NEW_PROVINCE"},
-			Locality:      []string{"NEW_CITY"},
-			StreetAddress: []string{"NEW_ADDRESS"},
-			PostalCode:    []string{"NEW_POSTAL_CODE"},
-		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(10, 0, 0),
-		IsCA:                  true,
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
-		BasicConstraintsValid: true,
-	}
-
-	priv, _ := rsa.GenerateKey(rand.Reader, bits)
-	pub := &priv.PublicKey
-	ca_b, err := x509.CreateCertificate(rand.Reader, ca, ca, pub, priv)
-	if err != nil {
-		return err
-	}
-
-	certOut, err := os.Create(cfg.Host.Http.Tls.Crt)
-	if err != nil {
-		return err
-	}
-	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: ca_b})
-	certOut.Close()
-
-	keyOut, err := os.Create(cfg.Host.Http.Tls.Key)
-	if err != nil {
-		return err
-	}
-	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
-	keyOut.Close()
-
-	return nil
 }
 
 func newConfig() *models.Config {
 	return &models.Config{
 		Host: models.Host{
+			Tls: models.Tls{
+				Crt: PATH_TLS + "cert.crt",
+				Key: PATH_TLS + "cert.key",
+			},
 			Http: models.Http{
 				Ipv4: "localhost",
 				Port: ":7545",
-				Tls: models.Tls{
-					Crt: PATH_TLS + "cert.crt",
-					Key: PATH_TLS + "cert.key",
-				},
 			},
 			Tcp: models.Tcp{
 				Ipv4: "localhost",
