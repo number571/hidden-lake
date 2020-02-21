@@ -104,12 +104,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	case isNotInConnectionsError(w, r, client, hashname): return
 	}
 
-	dest := &gopeer.Destination{
-        Address: client.Connections[hashname].Address,
-        Certificate: client.Connections[hashname].Certificate,
-        Public: client.Connections[hashname].ThrowClient,
-        Receiver: client.Connections[hashname].Public,
-    }
+	dest := client.Destination(hashname)
 
 	if filehash == "" {
 		_, err := client.SendTo(dest, &gopeer.Package{
@@ -125,7 +120,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		}
 
 		select {
-		case <-client.Connections[hashname].IsAction:
+		case <-client.Connections[hashname].Chans.Action:
 			// pass
 		case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
 			data.State = "Files not loaded"
@@ -153,7 +148,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	}
 
 	select {
-	case <-client.Connections[hashname].IsAction:
+	case <-client.Connections[hashname].Chans.Action:
 		// pass
 	case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
 		data.State = "Files not loaded"
@@ -495,12 +490,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 
 	user := settings.Users[token]
-	dest := &gopeer.Destination{
-        Address: client.Connections[hashname].Address,
-        Certificate: client.Connections[hashname].Certificate,
-        Public: client.Connections[hashname].ThrowClient,
-        Receiver: client.Connections[hashname].Public,
-    }
+	dest := client.Destination(hashname)
 
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
@@ -518,7 +508,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 
 	select {
-	case <-client.Connections[hashname].IsAction:
+	case <-client.Connections[hashname].Chans.Action:
 		// pass
 	case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
 		data.State = "File not loaded"
@@ -618,13 +608,8 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 	case isNotInConnectionsError(w, r, client, read.Hashname): return
 	}
 
-	dest := &gopeer.Destination{
-        Address: client.Connections[read.Hashname].Address,
-        Certificate: client.Connections[read.Hashname].Certificate,
-        Public: client.Connections[read.Hashname].ThrowClient,
-        Receiver: client.Connections[read.Hashname].Public,
-    }
-
+	dest := client.Destination(read.Hashname) 
+	
 	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{

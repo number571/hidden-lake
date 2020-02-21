@@ -93,13 +93,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	message := strings.Replace(read.Message, "\n", " ", -1)
-	dest := &gopeer.Destination{
-        Address: client.Connections[read.Hashname].Address,
-        Certificate: client.Connections[read.Hashname].Certificate,
-        Public: client.Connections[read.Hashname].ThrowClient,
-        Receiver: client.Connections[read.Hashname].Public,
-    }
-	_, err := client.SendTo(dest, &gopeer.Package{
+	_, err := client.SendTo(client.Destination(read.Hashname), &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
 			Option: settings.OPTION_GET,

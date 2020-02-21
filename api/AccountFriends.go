@@ -48,9 +48,10 @@ func accountFriendsGET(w http.ResponseWriter, r *http.Request) {
 	case isGetClientError(w, r, client, token): return
 	}
 
-	user := settings.Users[token]
-	data.StateF2F = user.UsedF2F
-	data.Friends = client.GetFriends()
+	data.StateF2F = client.F2F.Perm
+	for hash := range client.F2F.Friends {
+		data.Friends = append(data.Friends, hash)
+	}
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -72,10 +73,11 @@ func accountFriendsPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := settings.Users[token]
-	f2f := !user.UsedF2F
+	client = settings.Listener.Clients[user.Hashname]
+	currentF2F := !client.F2F.Perm
 	
 	err := db.SetState(user, &models.State{
-		UsedF2F: f2f,
+		UsedF2F: currentF2F,
 	})
 	if err != nil {
 		data.State = "Can't set state"
@@ -83,12 +85,8 @@ func accountFriendsPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client = settings.Listener.Clients[user.Hashname]
-
-	user.UsedF2F  = f2f
-	client.SetFriends(user.UsedF2F, client.GetFriends()...)
-
-	data.StateF2F = user.UsedF2F
+	client.F2F.Perm = currentF2F
+	data.StateF2F = client.F2F.Perm
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -134,8 +132,7 @@ func accountFriendsPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client = settings.Listener.Clients[user.Hashname]
-
-	client.AppendFriends(read.Hashname)
+	client.F2F.Friends[read.Hashname] = true
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -169,7 +166,6 @@ func accountFriendsDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client = settings.Listener.Clients[user.Hashname]
-
-	client.DeleteFriends(read.Hashname)
+	delete(client.F2F.Friends, read.Hashname)
 	json.NewEncoder(w).Encode(data)
 }

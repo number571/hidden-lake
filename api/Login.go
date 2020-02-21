@@ -44,9 +44,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	settings.Tokens[hash] = token
 
 	client := settings.Listener.NewClient(user.Keys.Private)
+	friends := db.GetAllFriends(user)
 
-	client.SetFriends(user.UsedF2F, db.GetAllFriends(user)...)
-	client.SetSharing(true, settings.PATH_ARCHIVE)
+	client.F2F.Perm = user.UsedF2F
+	for _, hash := range friends {
+		client.F2F.Friends[hash] = true
+	}
+
+	client.Sharing.Perm = true
+	client.Sharing.Path = settings.PATH_ARCHIVE
 
 	data.Token = token
 	data.Hashname = hash
