@@ -43,22 +43,17 @@
 > Configuration file is created when the application starts.
 ```json
 {
-	"init": {
-		"salt": "randsalt"
+	"tls": {
+		"crt": "tls/cert.crt",
+		"key": "tls/cert.key"
 	},
-	"host": {
-		"tls": {
-			"crt": "tls/cert.crt",
-			"key": "tls/cert.key"
-		},
-		"http": {
-			"ipv4": "localhost",
-			"port": ":7545",
-		},
-		"tcp": {
-			"ipv4": "localhost",
-			"port": ":8080"
-		}
+	"http": {
+		"ipv4": "localhost",
+		"port": ":7545",
+	},
+	"tcp": {
+		"ipv4": "localhost",
+		"port": ":8080"
 	}
 }
 ```
@@ -70,9 +65,12 @@
 > Database file is created when the application starts.
 ```sql
 /* Authorization user; */
-/* Hashpasw = hash(hash(username+password)); */
+/* Username = hash(username); */
+/* Hashpasw = hash(hash(password+salt)); */
 CREATE TABLE IF NOT EXISTS User (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Username VARCHAR(44) UNIQUE,
+	Salt VARCHAR(16),
 	Hashpasw VARCHAR(44) UNIQUE,
 	PrivateKey VARCHAR(4096) UNIQUE
 );
@@ -84,6 +82,8 @@ CREATE TABLE IF NOT EXISTS Client (
 	Hashname VARCHAR(44),
 	Address VARCHAR(64),
 	PublicKey VARCHAR(2048),
+	ThrowClient VARCHAR(1024),
+	Certificate VARCHAR(1024),
 	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 /* User chat; */
