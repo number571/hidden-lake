@@ -114,7 +114,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 		Companion: read.Hashname,
 		Messages: []models.Message{
 			models.Message{
-				Name: client.Hashname,
+				Name: client.Hashname(),
 				Text: message,
 				Time: time,
 			},
@@ -138,7 +138,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 			From string `json:"from"`
 			To   string `json:"to"`
 		}{
-			From: client.Hashname,
+			From: client.Hashname(),
 			To:   read.Hashname,
 		},
 		Text: message,

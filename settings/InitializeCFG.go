@@ -24,28 +24,26 @@ func InitializeCFG(cfgname string) {
 	}
 	os.Mkdir(PATH_TLS, 0777)
 	os.Mkdir(PATH_ARCHIVE, 0777)
-	if !utils.FileIsExist(CFG.Host.Tls.Crt) && !utils.FileIsExist(CFG.Host.Tls.Key) {
+	if !utils.FileIsExist(CFG.Tls.Crt) && !utils.FileIsExist(CFG.Tls.Key) {
 		key, cert := gopeer.GenerateCertificate(gopeer.Get("SERVER_NAME").(string), 2048)
-		utils.WriteFile(CFG.Host.Tls.Crt, cert)
-		utils.WriteFile(CFG.Host.Tls.Key, key)
+		utils.WriteFile(CFG.Tls.Crt, cert)
+		utils.WriteFile(CFG.Tls.Key, key)
 	}
 }
 
 func newConfig() *models.Config {
 	return &models.Config{
-		Host: models.Host{
-			Tls: models.Tls{
-				Crt: PATH_TLS + "cert.crt",
-				Key: PATH_TLS + "cert.key",
-			},
-			Http: models.Http{
-				Ipv4: "localhost",
-				Port: ":7545",
-			},
-			Tcp: models.Tcp{
-				Ipv4: "localhost",
-				Port: ":8080",
-			},
+		Tls: models.Tls{
+			Crt: PATH_TLS + "cert.crt",
+			Key: PATH_TLS + "cert.key",
+		},
+		Http: models.Http{
+			Ipv4: "localhost",
+			Port: ":7545",
+		},
+		Tcp: models.Tcp{
+			Ipv4: "localhost",
+			Port: ":8080",
 		},
 	}
 }

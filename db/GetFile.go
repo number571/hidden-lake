@@ -12,7 +12,7 @@ func GetFile(user *models.User, filehash string) *models.File {
 		path string
 		size uint64
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

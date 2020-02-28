@@ -111,13 +111,13 @@ func accountFriendsPATCH(w http.ResponseWriter, r *http.Request) {
 	case isGetClientError(w, r, client, token): return
 	}
 
-	if len(read.Hashname) != len(client.Hashname) {
+	if len(read.Hashname) != len(client.Hashname()) {
 		data.State = "Hashname length /= len(hash(public_key))"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	if read.Hashname == client.Hashname {
+	if read.Hashname == client.Hashname() {
 		data.State = "Can't set friend hashname of current user"
 		json.NewEncoder(w).Encode(data)
 		return

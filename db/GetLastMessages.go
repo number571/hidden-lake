@@ -11,7 +11,7 @@ func GetLastMessages(user *models.User) []models.LastMessage {
 		msg  models.LastMessage
 		msgs []models.LastMessage
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

@@ -21,12 +21,15 @@ func InitializeDB(dbname string) {
 		panic("can't open database")
 	}
 
-	// Hashpasw = sha256(sha256(username+password))
+	// Username = sha256(username)
+	// Hashpasw = sha256(sha256(password+salt))
 	// Hashname = sha256(pubkey)
 	// Hash = sha256(file)
 	_, err = DB.Exec(`
 CREATE TABLE IF NOT EXISTS User (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Username VARCHAR(44) UNIQUE,
+	Salt VARCHAR(16),
 	Hashpasw VARCHAR(44) UNIQUE,
 	PrivateKey VARCHAR(4096) UNIQUE
 );

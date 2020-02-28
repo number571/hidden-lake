@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/api"
 	"github.com/number571/hiddenlake/db"
@@ -22,7 +23,7 @@ func init() {
 	gopeer.Set(gopeer.SettingsType{
 		"SERVER_NAME": "HIDDEN-LAKE",
 		"NETWORK": "[HIDDEN-LAKE]",
-		"VERSION": "[1.0.3s]",
+		"VERSION": "[1.0.4s]",
 		"HMACKEY": "9163571392708145",
 	})
 	settings.InitializeDB(settings.DB_NAME)
@@ -54,8 +55,8 @@ func main() {
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
-	handleServerTCP(&settings.CFG.Host.Tcp, &settings.CFG.Host.Tls)
-	handleServerHTTP(&settings.CFG.Host.Http, &settings.CFG.Host.Tls, mux)
+	handleServerTCP(&settings.CFG.Tcp, &settings.CFG.Tls)
+	handleServerHTTP(&settings.CFG.Http, &settings.CFG.Tls, mux)
 }
 
 func handleServerTCP(model *models.Tcp, tmodel *models.Tls) {
@@ -150,9 +151,30 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		WS   string
 		HTTP string
 		HOST string
+		UPDATE []update
 	}{
 		WS:   "wss://",
 		HTTP: "https://",
-		HOST: settings.CFG.Host.Http.Ipv4 + settings.CFG.Host.Http.Port,
+		HOST: settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
+		UPDATE: readUpdates(utils.ReadFile(settings.UPD_NAME)),
 	})
+}
+
+type update struct {
+	Version string   `json:"version"`
+	Updates []string `json:"updates"`
+}
+func readUpdates(data string) []update{
+	var updates []update
+	err := json.Unmarshal([]byte(data), &updates)
+	if err != nil {
+		panic("read updates error")
+	}
+	return updates
+}
+
+// For debug.
+func printJSON(data interface{}) {
+	jsonData, _ := json.MarshalIndent(data, "", "\t")
+	fmt.Println(string(jsonData))
 }

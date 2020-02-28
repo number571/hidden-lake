@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized network. Version 1.0.3s.
+> Decentralized network. Version 1.0.4s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
@@ -43,6 +43,9 @@
 > Configuration file is created when the application starts.
 ```json
 {
+	"init": {
+		"salt": "randsalt"
+	},
 	"host": {
 		"tls": {
 			"crt": "tls/cert.crt",

@@ -6,7 +6,7 @@ import (
 )
 
 func InClients(user *models.User, hashname string) bool {
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return false
 	}

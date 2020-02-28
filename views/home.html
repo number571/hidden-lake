@@ -15,81 +15,26 @@
     <h2 class="text-center">Updates</h2><br>
     {{ template "message_part" }}
     <div class="accordion " id="accordionExample">
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
-                        <h5>Versions 1.0.3s</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Added friend-to-friend functions</li>
-                        <li>Updated to gopeer v1.1.1 (information duplication vulnerability fixed)</li>
-                    </ul>
+        {{ range $i, $e := . }}
+            <div class="card bg-dark">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse{{$i}}" aria-expanded="false" aria-controls="collapse{{$i}}">
+                            <h5>Version {{ $e.Version }}</h5>
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapse{{$i}}" class="collapse {{ if eq $i 0 }} show {{ end }}" aria-labelledby="heading8" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <ul class="lead text-light">
+                            {{ range $e.Updates }}
+                                <li>{{ . }};</li>
+                            {{ end }}
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
-                        <h5>Version 1.0.2s</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Added hidden connections</li>
-                        <li>Added redirect transfer packages;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
-                        <h5>Version 1.0.1s</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Added ability to transfer files;</li>
-                        <li>Added function to view archives of other users;</li>
-                        <li>Added functions to download and upload files from nodes;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-dark">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link text-info" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="true" aria-controls="collapse8">
-                        <h5>Version 1.0.0s</h5>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse8" class="collapse show" aria-labelledby="heading8" data-parent="#accordionExample">
-                <div class="card-body">
-                    <ul class="lead text-light">
-                        <li>Full remake;</li>
-                        <li>Based on framework gopeer;</li>
-                        <li>GUI is now based on single page;</li>
-                        <li>Requests to client throw API over HTTP/S, WS/S;</li>
-                        <li>Requests to network throw Packages over TCP;</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {{ end }}
     </div>
 </div>
 {{ end }}

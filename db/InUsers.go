@@ -1,7 +1,7 @@
 package db
 
-func InUsers(hashpasw string) bool {
-	id := GetUserId(hashpasw)
+func InUsers(username string) bool {
+	id := GetUserId(username)
 	if id == -1 {
 		return false
 	}

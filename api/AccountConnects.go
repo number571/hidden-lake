@@ -53,7 +53,7 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, cl := range clients {
-		if cl.Hashname == client.Hashname {
+		if cl.Hashname == client.Hashname() {
 			continue
 		}
 
@@ -91,18 +91,18 @@ func accountConnectsPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for hash, cl := range client.Connections {
-		if hash == client.Hashname {
+		if hash == client.Hashname() {
 			continue
 		}
 
 		data.Connects = append(data.Connects, models.Connect{
 			Connected:   client.InConnections(hash),
-			Hidden:      gopeer.HashPublic(cl.Public) != gopeer.HashPublic(cl.ThrowClient),
-			Address:     cl.Address,
+			Hidden:      gopeer.HashPublic(cl.Public()) != gopeer.HashPublic(cl.Throw()),
+			Address:     cl.Address(),
 			Hashname:    hash,
-			Public:      gopeer.StringPublic(cl.Public),
-			ThrowClient: gopeer.HashPublic(cl.ThrowClient),
-			Certificate: string(cl.Certificate),
+			Public:      gopeer.StringPublic(cl.Public()),
+			ThrowClient: gopeer.HashPublic(cl.Throw()),
+			Certificate: string(cl.Certificate()),
 		})
 	}
 

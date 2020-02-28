@@ -6,6 +6,7 @@ import (
 )
 
 type User struct {
+	Username string 
 	Hashname string // hash(pubkey)
 	UsedF2F  bool
 	Auth     Auth
@@ -20,8 +21,9 @@ type Temp struct {
 }
 
 type Auth struct {
-	Hashpasw string // hash(hash(username+password))
-	Pasw     []byte // hash(username+password)
+	Hashpasw string // hash(hash(password+salt))
+	Pasw     []byte // hash(password+salt)
+	Salt     string // base64(random_bytes(8))
 }
 
 type Keys struct {

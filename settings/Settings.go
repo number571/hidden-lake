@@ -19,9 +19,11 @@ const (
 	PATH_TLS     = "tls/"
 	PATH_VIEWS   = "views/"
 	PATH_STATIC  = "static/"
+	PATH_INPUT   = "inputd/"
 	PATH_ARCHIVE = PATH_STATIC + "archive/"
-	DB_NAME      = "database.db"
-	CFG_NAME     = "config.cfg"
+	DB_NAME      = PATH_INPUT + "database.db"
+	CFG_NAME     = PATH_INPUT + "config.json"
+	UPD_NAME     = PATH_INPUT + "updates.json"
 )
 
 // Tools | Archive

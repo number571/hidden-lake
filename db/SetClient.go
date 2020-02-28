@@ -16,7 +16,7 @@ func SetClient(user *models.User, client *models.Client) error {
 		return errors.New("hashname is not derived from the public key")
 	}
 
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return errors.New("User id undefined")
 	}

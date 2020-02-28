@@ -7,26 +7,33 @@ import (
 	"github.com/number571/hiddenlake/utils"
 )
 
-func GetUser(pasw []byte) *models.User {
-	hashpasw := gopeer.Base64Encode(gopeer.HashSum(pasw))
-	if !InUsers(hashpasw) {
+func GetUser(username, password string) *models.User {
+	name := gopeer.Base64Encode(gopeer.HashSum([]byte(username)))
+	if !InUsers(name) {
 		return nil
 	}
 	var (
-		key string
+		salt, hpasw, key string
 		err error
 	)
-	row := settings.DB.QueryRow("SELECT PrivateKey FROM User WHERE Hashpasw=$1", hashpasw)
-	err = row.Scan(&key)
+	row := settings.DB.QueryRow("SELECT Salt, Hashpasw, PrivateKey FROM User WHERE Username=$1", name)
+	err = row.Scan(&salt, &hpasw, &key)
 	if err != nil {
+		return nil
+	}
+	pasw := gopeer.HashSum([]byte(password + salt))
+	hashpasw := gopeer.Base64Encode(gopeer.HashSum(pasw))
+	if hashpasw != hpasw {
 		return nil
 	}
 	priv := gopeer.ParsePrivate(string(gopeer.DecryptAES(pasw, gopeer.Base64Decode(key))))
 	return &models.User{
+		Username: name,
 		Hashname: gopeer.HashPublic(&priv.PublicKey),
 		Auth: models.Auth{
 			Hashpasw: hashpasw,
 			Pasw:     pasw,
+			Salt:     salt,
 		},
 		Keys: models.Keys{
 			Private: priv,

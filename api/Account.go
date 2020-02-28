@@ -49,10 +49,10 @@ func accountGET(w http.ResponseWriter, r *http.Request) {
 	case isGetClientError(w, r, client, token): return
 	}
 
-	data.Address = client.Address
-	data.Hashname = client.Hashname
-	data.PublicKey = gopeer.StringPublic(client.Keys.Public)
-	data.Certificate = string(settings.Listener.Certificate)
+	data.Address = client.Address()
+	data.Hashname = client.Hashname()
+	data.PublicKey = gopeer.StringPublic(client.Public())
+	data.Certificate = string(settings.Listener.Certificate())
 
 	json.NewEncoder(w).Encode(data)
 }

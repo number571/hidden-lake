@@ -202,10 +202,10 @@ func clientPATCH(w http.ResponseWriter, r *http.Request) {
 	hash := gopeer.HashPublic(public)
 	err = db.SetClient(user, &models.Client{
 		Hashname:    hash,
-		Address:     client.Connections[hash].Address,
+		Address:     client.Connections[hash].Address(),
 		Public:      public,
-		ThrowClient: client.Connections[hash].ThrowClient,
-		Certificate: string(client.Connections[hash].Certificate),
+		ThrowClient: client.Connections[hash].Throw(),
+		Certificate: string(client.Connections[hash].Certificate()),
 	})
 	if err != nil {
 		data.State = "Set client error"
@@ -405,9 +405,9 @@ func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string)
 	}
 
 	dest := &gopeer.Destination{
-        Address:     client.Connections[hashname].Address,
-        Certificate: client.Connections[hashname].Certificate,
-        Public:      client.Connections[hashname].Public,
+        Address:     client.Connections[hashname].Address(),
+        Certificate: client.Connections[hashname].Certificate(),
+        Public:      client.Connections[hashname].Public(),
         Receiver:    public,
     }
 
@@ -421,10 +421,10 @@ func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string)
 	hash := gopeer.HashPublic(public)
 	err = db.SetClient(user, &models.Client{
 		Hashname: hash,
-		Certificate: string(client.Connections[hashname].Certificate),
-		Address: client.Connections[hashname].Address,
+		Certificate: string(client.Connections[hashname].Certificate()),
+		Address: client.Connections[hashname].Address(),
 		Public: public,
-		ThrowClient: client.Connections[hashname].Public,
+		ThrowClient: client.Connections[hashname].Public(),
 	})
 	if err != nil {
 		data.State = "Set client error"
@@ -630,7 +630,7 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 		Companion: read.Hashname,
 		Messages: []models.Message{
 			models.Message{
-				Name: client.Hashname,
+				Name: client.Hashname(),
 				Text: message,
 				Time: utils.CurrentTime(),
 			},

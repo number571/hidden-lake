@@ -28,8 +28,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	case isDecodeError(w, r, read): return
 	}
 
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	user := newUser(pasw, read.PrivateKey)
+	user := newUser(read.Username, read.Password, read.PrivateKey)
 	if user == nil {
 		data.State = "Error decode private key"
 		json.NewEncoder(w).Encode(data)
@@ -59,7 +58,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	err = db.SetClient(user, &models.Client{
 		Hashname: user.Hashname,
-		Address:  settings.CFG.Host.Tcp.Ipv4 + settings.CFG.Host.Tcp.Port,
+		Address:  settings.CFG.Tcp.Ipv4 + settings.CFG.Tcp.Port,
 		Public:   user.Keys.Public,
 	})
 	if err != nil {
@@ -71,7 +70,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func newUser(pasw []byte, private string) *models.User {
+func newUser(username, password, private string) *models.User {
 	var key *rsa.PrivateKey
 	if private == "" {
 		key = gopeer.GeneratePrivate(2048)
@@ -81,11 +80,15 @@ func newUser(pasw []byte, private string) *models.User {
 			return nil
 		}
 	}
+	salt := gopeer.Base64Encode(gopeer.GenerateRandomBytes(8))
+	pasw := gopeer.HashSum([]byte(password + salt))
 	return &models.User{
 		Hashname: gopeer.HashPublic(&key.PublicKey),
+		Username: gopeer.Base64Encode(gopeer.HashSum([]byte(username))),
 		Auth: models.Auth{
 			Hashpasw: gopeer.Base64Encode(gopeer.HashSum(pasw)),
 			Pasw:     pasw,
+			Salt:     salt,
 		},
 		Keys: models.Keys{
 			Private: key,

@@ -16,7 +16,7 @@ func Actions(client *gopeer.Client, pack *gopeer.Package) {
 
 func getArchive(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
-		token = settings.Tokens[client.Hashname]
+		token = settings.Tokens[client.Hashname()]
 		user  = settings.Users[token]
 	)
 	if pack.Body.Data == "" {
@@ -31,7 +31,7 @@ func getArchive(client *gopeer.Client, pack *gopeer.Package) (set string) {
 
 func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 	var (
-		token = settings.Tokens[client.Hashname]
+		token = settings.Tokens[client.Hashname()]
 		user  = settings.Users[token]
 	)
 	gopeer.UnpackJSON([]byte(pack.Body.Data), &user.Temp.FileList)
@@ -40,7 +40,7 @@ func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 
 func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
-		token    = settings.Tokens[client.Hashname]
+		token    = settings.Tokens[client.Hashname()]
 		hash     = pack.From.Sender.Hashname
 		user     = settings.Users[token]
 		time     = utils.CurrentTime()
@@ -50,9 +50,9 @@ func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		db.SetClient(user, &models.Client{
 			Hashname: hash,
 			Address:  pack.From.Address,
-			Public:   client.Connections[hash].Public,
-			ThrowClient: client.Connections[hash].ThrowClient,
-			Certificate: string(client.Connections[hash].Certificate),
+			Public:   client.Connections[hash].Public(),
+			ThrowClient: client.Connections[hash].Throw(),
+			Certificate: string(client.Connections[hash].Certificate()),
 		})
 	}
 

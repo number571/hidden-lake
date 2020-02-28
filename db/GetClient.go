@@ -13,7 +13,7 @@ func GetClient(user *models.User, hashname string) *models.Client {
 		throwclient string 
 		certificate string
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

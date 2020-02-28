@@ -9,7 +9,7 @@ func GetState(user *models.User) *models.User {
 	var (
 		f2f bool
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

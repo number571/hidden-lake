@@ -10,7 +10,7 @@ func GetLastChat(comp string, user *models.User) *models.Chat {
 		msg  models.Message
 		chat = new(models.Chat)
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

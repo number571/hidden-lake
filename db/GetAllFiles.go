@@ -13,7 +13,7 @@ func GetAllFiles(user *models.User) []models.File {
 		name  string
 		size  uint64
 	)
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}

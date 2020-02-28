@@ -72,8 +72,7 @@ func isGetUserError(w http.ResponseWriter, r *http.Request, user *models.User, r
 	var data struct {
 		State string `json:"state"`
 	}
-	pasw := gopeer.HashSum([]byte(read.Username + read.Password))
-	us := db.GetUser(pasw)
+	us := db.GetUser(read.Username, read.Password)
 	if us == nil {
 		data.State = "User undefined"
 		json.NewEncoder(w).Encode(data)

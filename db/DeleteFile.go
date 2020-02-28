@@ -13,7 +13,7 @@ func DeleteFile(user *models.User, filehash string) error {
 		return errors.New("File undefined")
 	}
 
-	id := GetUserId(user.Auth.Hashpasw)
+	id := GetUserId(user.Username)
 	if id < 0 {
 		return errors.New("User id undefined")
 	}
