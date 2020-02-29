@@ -16,16 +16,16 @@
         <div class="col-md-6">
             <button @click="savecertificate()" type="button" class="btn btn-success w-100">Copy certificate</button>
         </div>
-        <div class="col-md-6" v-if="authdata.hashname">
+        <div class="col-md-6">
             <router-link to="/account/archive" exact>
-                <button type="button" @click="archivelist(authdata.hashname)" class="btn btn-secondary w-100">Archive</button>
+                <button type="button" @click="archivelist('')" class="btn btn-secondary w-100">Archive</button>
             </router-link>
         </div>
     </div>
     <pre class="text-white lead">
 Address: "${conndata.address}".
 Username: "${authdata.username}".
-Hashname: "${authdata.hashname}".
+Hashname: "${conndata.hashname}".
 
 Public Key: 
 <p ref="publickey">${conndata.public_key}</p>

@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
+    <div class="form-group row">
         <div class="col-md-6">
             <button @click="savecertificate()" type="button" class="btn btn-success w-100">Copy certificate</button>
         </div>
@@ -36,7 +36,7 @@ Public Key:
 Certificate:
 <p ref="certificate">${conndata.certificate}</p></pre>
     <br>
-    <div v-if="conndata.hashname!=authdata.hashname" class="form-group row">
+    <div class="form-group row">
         <div class="col-md-6">
             <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
             <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Action</button>
@@ -47,7 +47,7 @@ Certificate:
         </div>
     </div>
 
-    <div v-if="conndata.hashname!=authdata.hashname&&switcher=='delete_chat'" class="text-center">
+    <div v-if="switcher=='delete_chat'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
                 <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
@@ -59,7 +59,7 @@ Certificate:
         </form>
     </div>
 
-    <div v-if="conndata.hashname!=authdata.hashname&&switcher=='delete_client'" class="text-center">
+    <div v-if="switcher=='delete_client'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
                 <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">

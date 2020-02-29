@@ -82,7 +82,6 @@ const app = new Vue({
         authdata: {
             token: null,
             username: null,
-            hashname: null,
         },
         conndata: {
             connected: null,
@@ -133,7 +132,6 @@ const app = new Vue({
 
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
-            this.authdata.hashname = localStorage.getItem("hashname");
 
             this.nulldata();
 
@@ -370,7 +368,7 @@ const app = new Vue({
         },
         async archivelist(hashname) {
             this.nullfile();
-            if (hashname == this.authdata.hashname) {
+            if (hashname == '') {
                 let res = await f(`account/archive/`, "GET", null, this.authdata.token);
                 if (res.state) {
                     this.message.curr = res.state;
@@ -391,7 +389,7 @@ const app = new Vue({
         },
         async archivefile(hashname, filehash) {
             this.nullfile();
-            if (hashname == this.authdata.hashname) {
+            if (hashname == '') {
                 let res = await f(`account/archive/${filehash}`, "GET", null, this.authdata.token);
                 if (res.state) {
                     this.message.curr = res.state;
@@ -445,7 +443,7 @@ const app = new Vue({
             this.message.wait = "Delete success";
             this.message.desc = "success";
 
-            this.archivelist(this.authdata.hashname);
+            this.archivelist('');
             this.opened = RoutesData[routes.archive].name;
             this.$router.push(RoutesData[routes.archive]);
         },
@@ -464,7 +462,7 @@ const app = new Vue({
             }
             this.message.curr = `Upload success; Hash: ${res.filehash}`;
             this.message.desc = "success";
-            this.archivelist(this.authdata.hashname);
+            this.archivelist('');
             this.opened = RoutesData[routes.archive].name;
             this.$router.push(RoutesData[routes.archive]);
         },
@@ -577,7 +575,6 @@ const app = new Vue({
         nullauth() {
             this.authdata.token = null;
             this.authdata.username = null;
-            this.authdata.hashname = null;
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             localStorage.removeItem("hashname");
@@ -624,14 +621,13 @@ const app = new Vue({
         if (token) {
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
-            this.authdata.hashname = localStorage.getItem("hashname");
         }
         switch (this.$route.name) {
             case RoutesData[routes.settings].name: this.currconnects(); break;
             case RoutesData[routes.friends].name: this.getfriends(); break;
             case RoutesData[routes.account].name: this.account(); break;
-            case RoutesData[routes.archive].name: this.archivelist(this.authdata.hashname); break;
-            case RoutesData[routes.archivefile].name: this.archivefile(this.authdata.hashname, this.$route.params.id); break;
+            case RoutesData[routes.archive].name: this.archivelist(''); break;
+            case RoutesData[routes.archivefile].name: this.archivefile('', this.$route.params.id); break;
             case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
             case RoutesData[routes.chatnull].name: this.chat("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;

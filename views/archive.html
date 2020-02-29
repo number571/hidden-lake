@@ -52,7 +52,7 @@
                     </div>
                     <div class="col-md-7">
                         <router-link :to="{name: 'archivefile', params: { id: file.hash }}">
-                            <button type="button" class="btn btn-secondary divtext w-100" @click="archivefile(authdata.hashname, file.hash)">"${file.name}"</button>
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="archivefile('', file.hash)">"${file.name}"</button>
                         </router-link>
                     </div>
                     <div class="col-md-3">

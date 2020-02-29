@@ -1,0 +1,14 @@
+{
+	"http": {
+		"ipv4": "localhost",
+		"port": ":7545"
+	},
+	"tcp": {
+		"ipv4": "localhost",
+		"port": ":8080"
+	},
+	"tls": {
+		"crt": "tls/cert.crt",
+		"key": "tls/cert.key"
+	}
+}
