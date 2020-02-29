@@ -5,7 +5,7 @@
 ### Characteristics:
 1. F2F network. End to end encryption;
 2. Supported hidden connections;
-3. Symmetric algorithm: AES256-CBC;
+3. Symmetric algorithm: AES256-[CBC,OFB];
 4. Asymmetric algorithm: RSA3072-OAEP;
 5. Hash function: HMAC(SHA256);
 
@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS File (
 	Name VARCHAR(128),
 	Path VARCHAR(44),
 	Size INTEGER,
+	Encr BOOLEAN,
 	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 /* Connection list for F2F network */
