@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Client (
 	Address VARCHAR(64),
 	PublicKey VARCHAR(1024),
 	ThrowClient VARCHAR(1024),
-	Certificate VARCHAR(1024),
+	Certificate VARCHAR(2048),
 	FOREIGN KEY (IdUser) REFERENCES User (Id)
 );
 CREATE TABLE IF NOT EXISTS Chat (

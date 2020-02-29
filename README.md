@@ -6,7 +6,7 @@
 1. F2F network. End to end encryption;
 2. Supported hidden connections;
 3. Symmetric algorithm: AES256-CBC;
-4. Asymmetric algorithm: RSA2048-OAEP;
+4. Asymmetric algorithm: RSA3072-OAEP;
 5. Hash function: HMAC(SHA256);
 
 ### Home page:
@@ -81,9 +81,9 @@ CREATE TABLE IF NOT EXISTS Client (
 	IdUser INTEGER,
 	Hashname VARCHAR(44),
 	Address VARCHAR(64),
-	PublicKey VARCHAR(2048),
+	PublicKey VARCHAR(1024),
 	ThrowClient VARCHAR(1024),
-	Certificate VARCHAR(1024),
+	Certificate VARCHAR(2048),
 	FOREIGN KEY (IdUser)  REFERENCES User (Id)
 );
 /* User chat; */
