@@ -12,13 +12,14 @@ func GetAllFiles(user *models.User) []models.File {
 		hash  string
 		name  string
 		size  uint64
+		encr  bool
 	)
 	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}
 	rows, err := settings.DB.Query(
-		"SELECT Hash, Name, Size FROM File WHERE IdUser=$1",
+		"SELECT Hash, Name, Size, Encr FROM File WHERE IdUser=$1",
 		id,
 	)
 	if err != nil {
@@ -26,7 +27,7 @@ func GetAllFiles(user *models.User) []models.File {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err = rows.Scan(&hash, &name, &size)
+		err = rows.Scan(&hash, &name, &size, &encr)
 		if err != nil {
 			break
 		}
@@ -34,6 +35,7 @@ func GetAllFiles(user *models.User) []models.File {
 			Hash: hash,
 			Name: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(name))),
 			Size: size,
+			Encr: encr,
 		})
 	}
 	return files

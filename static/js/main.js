@@ -99,6 +99,7 @@ const app = new Vue({
             hash: null,
             path: null,
             size: null,
+            encr: false,
         },
         netdata: {
             message: null,
@@ -115,6 +116,7 @@ const app = new Vue({
             curr: null,
             desc: null,
         },
+        checked: false,
         opened: null,
     },
     methods: {
@@ -400,6 +402,7 @@ const app = new Vue({
                 this.filedata.hash = res.files[0].hash;
                 this.filedata.path = res.files[0].path;
                 this.filedata.size = res.files[0].size;
+                this.filedata.encr = res.files[0].encr;
                 return;
             }
             let res = await f(`network/client/${hashname}/archive/${filehash}`, "GET", null, this.authdata.token);
@@ -413,6 +416,7 @@ const app = new Vue({
             this.filedata.hash = res.files[0].hash;
             this.filedata.path = res.files[0].path;
             this.filedata.size = res.files[0].size;
+            this.filedata.encr = res.files[0].encr;
         },
         async installfile(hashname, filehash) {
             this.message.curr = "Please wait a few seconds";
@@ -450,6 +454,7 @@ const app = new Vue({
             this.message.desc = "warning";
             const formData = new FormData();
             const fileField = document.querySelector('#uploadfile');
+            formData.append("encryptmode", this.checked);
             formData.append("uploadfile", fileField.files[0]);
             let res = await f(`account/archive/`, "PUT", formData, this.authdata.token);
             if (res.state) {
@@ -582,6 +587,7 @@ const app = new Vue({
             this.filedata.hash = null;
             this.filedata.path = null;
             this.filedata.size = null;
+            this.filedata.encr = false;
             this.filelist = [];
         },
         nullconn() {
@@ -603,6 +609,7 @@ const app = new Vue({
         },
         nullcurr(page) {
             this.switcher = null;
+            this.checked = false;
             this.message.curr = null;
             if (page == RoutesData[routes.login].name || page == RoutesData[routes.signup].name) {
                 this.nulldata();

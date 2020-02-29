@@ -11,17 +11,18 @@ func GetFile(user *models.User, filehash string) *models.File {
 		name string
 		path string
 		size uint64
+		encr bool
 	)
 	id := GetUserId(user.Username)
 	if id < 0 {
 		return nil
 	}
 	row := settings.DB.QueryRow(
-		"SELECT Name, Path, Size FROM File WHERE IdUser=$1 AND Hash=$2",
+		"SELECT Name, Path, Size, Encr FROM File WHERE IdUser=$1 AND Hash=$2",
 		id,
 		filehash,
 	)
-	err := row.Scan(&name, &path, &size)
+	err := row.Scan(&name, &path, &size, &encr)
 	if err != nil {
 		return nil
 	}
@@ -30,5 +31,6 @@ func GetFile(user *models.User, filehash string) *models.File {
 		Name: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(name))),
 		Path: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(path))),
 		Size: size,
+		Encr: encr,
 	}
 }

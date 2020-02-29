@@ -20,7 +20,15 @@ func getArchive(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		user  = settings.Users[token]
 	)
 	if pack.Body.Data == "" {
-		return string(gopeer.PackJSON(db.GetAllFiles(user)))
+		var result []models.File
+		files := db.GetAllFiles(user)
+		for _, file := range files {
+			if file.Encr {
+				continue
+			}
+			result = append(result, file)
+		}
+		return string(gopeer.PackJSON(result))
 	}
 	file := db.GetFile(user, pack.Body.Data)
 	if file == nil {

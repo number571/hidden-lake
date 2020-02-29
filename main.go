@@ -119,8 +119,15 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var resname = file.Path
+	if file.Encr {
+		resname = utils.RandomString(16)
+		gopeer.FileDecryptAES(user.Auth.Pasw, settings.PATH_ARCHIVE+file.Path, settings.PATH_ARCHIVE+resname)
+		defer os.Remove(settings.PATH_ARCHIVE+resname)
+	}
+
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", file.Name))
-	http.ServeFile(w, r, settings.PATH_ARCHIVE+file.Path)
+	http.ServeFile(w, r, settings.PATH_ARCHIVE+resname)
 }
 
 func indexPage(w http.ResponseWriter, r *http.Request) {

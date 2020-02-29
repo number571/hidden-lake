@@ -5,4 +5,5 @@ type File struct {
 	Hash string `json:"hash"`
 	Path string `json:"path"`
 	Size uint64 `json:"size"`
+	Encr bool   `json:"encr"`
 }

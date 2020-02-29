@@ -9,7 +9,9 @@ import (
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"github.com/number571/hiddenlake/utils"
+	"mime/multipart"
 	"net/http"
+	"strconv"
 	"os"
 	"strings"
 )
@@ -83,6 +85,14 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseMultipartForm(settings.PACKAGE_SIZE)
 
+	encmode := r.FormValue("encryptmode")
+	isEncryptMode, err := strconv.ParseBool(encmode)
+	if err != nil {
+		data.State = "Error read checkbox value"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
 	input, handler, err := r.FormFile("uploadfile")
 	if err != nil {
 		data.State = "Error read upload file"
@@ -96,39 +106,14 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tempname := utils.RandomString(16)
-	output, err := os.OpenFile(
-		settings.PATH_ARCHIVE+tempname,
-		os.O_WRONLY|os.O_CREATE,
-		0666,
-	)
 	if err != nil {
 		data.State = "Error push file to archive"
 		json.NewEncoder(w).Encode(data)
 		return
 	}
 
-	var (
-		size   = uint64(0)
-		hash   = make([]byte, 32)
-		buffer = make([]byte, settings.BUFFER_SIZE)
-	)
-
-	for {
-		length, err := input.Read(buffer)
-		if err != nil {
-			break
-		}
-		size += uint64(length)
-		hash = gopeer.HashSum(bytes.Join(
-			[][]byte{hash, buffer[:length]},
-			[]byte{},
-		))
-		output.Write(buffer[:length])
-	}
-
-	output.Close()
-	input.Close()
+	tempname := utils.RandomString(16)
+	size, hash := readFileInfo(tempname, input)
 
 	user := settings.Users[token]
 	filehash := hex.EncodeToString(hash)
@@ -150,20 +135,60 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 		[]byte{},
 	)))
 
-	os.Rename(
-		settings.PATH_ARCHIVE+tempname,
-		settings.PATH_ARCHIVE+pathhash,
-	)
+	if isEncryptMode {
+		gopeer.FileEncryptAES(user.Auth.Pasw, settings.PATH_ARCHIVE+tempname, settings.PATH_ARCHIVE+pathhash)
+		os.Remove(settings.PATH_ARCHIVE+tempname)
+	} else {
+		os.Rename(
+			settings.PATH_ARCHIVE+tempname,
+			settings.PATH_ARCHIVE+pathhash,
+		)
+	}
 
 	db.SetFile(user, &models.File{
 		Name: handler.Filename,
 		Hash: filehash,
 		Path: pathhash,
 		Size: size,
+		Encr: isEncryptMode,
 	})
 
 	data.Filehash = filehash
 	json.NewEncoder(w).Encode(data)
+}
+
+func readFileInfo(outputf string, input multipart.File) (uint64, []byte) {
+	var (
+		size   = uint64(0)
+		hash   = make([]byte, 32)
+		buffer = make([]byte, settings.BUFFER_SIZE)
+	)
+
+	output, err := os.OpenFile(
+		settings.PATH_ARCHIVE+outputf,
+		os.O_WRONLY|os.O_CREATE,
+		0666,
+	)
+	if err != nil {
+		return 0, nil
+	}
+
+	for {
+		length, err := input.Read(buffer)
+		if err != nil {
+			break
+		}
+		size += uint64(length)
+		hash = gopeer.HashSum(bytes.Join(
+			[][]byte{hash, buffer[:length]},
+			[]byte{},
+		))
+		output.Write(buffer[:length])
+	}
+
+	input.Close()
+	output.Close()
+	return size, hash
 }
 
 // Delete file.

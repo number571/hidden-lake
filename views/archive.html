@@ -19,7 +19,15 @@
             <div class="form-group btn btn-default w-100 bg-secondary">
                 <input id="uploadfile" type="file" name="name" class="text-light w-100">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="uploadfile()">Upload</button>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <button v-if="checked" @click="checked=false" type="button" class="btn btn-success w-100">Personal access</button>
+                    <button v-else  @click="checked=true" type="button" class="btn btn-danger w-100">Personal access</button>
+                </div>
+                <div class="col-md-9">
+                    <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="uploadfile()">Upload</button>
+                </div>
+            </div>
         </form>
     </div>
     <div v-if="switcher=='download'" class="text-center form-group">
@@ -38,7 +46,11 @@
         <ul class="list-unstyled chat-1 scrollbar-light-blue">
             <li v-for="file in filelist">
                 <div class="h-25 form-group row">
-                    <div class="col-md-9">
+                    <div class="col-md-2">
+                        <button v-if="file.encr" type="button" class="btn btn-info divtext w-100" disabled>Closed</button>
+                        <button v-else type="button" class="btn btn-info divtext w-100" disabled>Open</button>
+                    </div>
+                    <div class="col-md-7">
                         <router-link :to="{name: 'archivefile', params: { id: file.hash }}">
                             <button type="button" class="btn btn-secondary divtext w-100" @click="archivefile(authdata.hashname, file.hash)">"${file.name}"</button>
                         </router-link>
