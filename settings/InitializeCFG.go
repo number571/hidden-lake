@@ -25,7 +25,7 @@ func InitializeCFG(cfgname string) {
 	os.Mkdir(PATH_TLS, 0777)
 	os.Mkdir(PATH_ARCHIVE, 0777)
 	if !utils.FileIsExist(CFG.Tls.Crt) && !utils.FileIsExist(CFG.Tls.Key) {
-		key, cert := gopeer.GenerateCertificate(gopeer.Get("SERVER_NAME").(string), 2048)
+		key, cert := gopeer.GenerateCertificate(gopeer.Get("SERVER_NAME").(string), gopeer.Get("KEY_SIZE").(uint16))
 		utils.WriteFile(CFG.Tls.Crt, cert)
 		utils.WriteFile(CFG.Tls.Key, key)
 	}

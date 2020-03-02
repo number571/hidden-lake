@@ -73,7 +73,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func newUser(username, password, private string) *models.User {
 	var key *rsa.PrivateKey
 	if private == "" {
-		key = gopeer.GeneratePrivate(3072)
+		key = gopeer.GeneratePrivate(gopeer.Get("KEY_SIZE").(uint16))
 	} else {
 		key = gopeer.ParsePrivate(private)
 		if key == nil {

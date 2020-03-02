@@ -25,6 +25,7 @@ func init() {
 		"NETWORK": "[HIDDEN-LAKE]",
 		"VERSION": "[1.0.4s]",
 		"HMACKEY": "9163571392708145",
+		"KEY_SIZE": uint64(3 << 10),
 	})
 	settings.InitializeDB(settings.DB_NAME)
 	settings.InitializeCFG(settings.CFG_NAME)
