@@ -63,7 +63,7 @@ func main() {
 func handleServerTCP(model *models.Tcp, tmodel *models.Tls) {
 	address := model.Ipv4 + model.Port
 	if address == "" {
-		address = settings.IS_CLIENT
+		address = gopeer.Get("IS_CLIENT").(string)
 	}
 	settings.Listener = gopeer.NewListener(address)
 	settings.Listener.Open(&gopeer.Certificate{

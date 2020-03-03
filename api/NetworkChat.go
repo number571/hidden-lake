@@ -96,7 +96,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 	_, err := client.SendTo(client.Destination(read.Hashname), &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: message,

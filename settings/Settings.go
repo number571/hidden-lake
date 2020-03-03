@@ -32,20 +32,11 @@ const (
 const (
 	TITLE_MESSAGE  = "[TITLE-MESSAGE]"
 	TITLE_ARCHIVE  = "[TITLE-ARCHIVE]"
-	TITLE_CONNLIST = "[TITLE-CONNLIST]"
-)
-
-var (
-	WAITING_TIME = gopeer.Get("WAITING_TIME").(uint8)
-	OPTION_GET   = gopeer.Get("OPTION_GET").(string)
-	IS_CLIENT    = gopeer.Get("IS_CLIENT").(string)
 )
 
 const (
-	// len(base64(sha256(x))) = 44
-	LEN_BASE64_SHA256 = 44
-	PACKAGE_SIZE      = 16 << 20 // 16MiB
-	BUFFER_SIZE       = 1 << 10  // 1KiB
+	FILE_PART_SIZE    = 8 << 20 // 8MiB
+	BUFFER_SIZE       = 2 << 20 // 1MiB
 	CHECK_DURING      = 12 * time.Hour
 	LIFETIME_TOKEN    = 24 * time.Hour
 )

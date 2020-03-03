@@ -110,7 +110,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		_, err := client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
 				Title:  settings.TITLE_ARCHIVE,
-				Option: settings.OPTION_GET,
+				Option: gopeer.Get("OPTION_GET").(string),
 			},
 		})
 		if err != nil {
@@ -122,7 +122,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		select {
 		case <-client.Connections[hashname].Chans.Action:
 			// pass
-		case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
+		case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 			data.State = "Files not loaded"
 			json.NewEncoder(w).Encode(data)
 			return
@@ -135,7 +135,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_ARCHIVE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: filehash,
@@ -150,7 +150,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	select {
 	case <-client.Connections[hashname].Chans.Action:
 		// pass
-	case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
+	case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 		data.State = "Files not loaded"
 		json.NewEncoder(w).Encode(data)
 		return
@@ -217,7 +217,7 @@ func clientPATCH(w http.ResponseWriter, r *http.Request) {
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: message,
@@ -343,7 +343,7 @@ func clientPOST(w http.ResponseWriter, r *http.Request) {
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: message,
@@ -436,7 +436,7 @@ func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string)
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: message,
@@ -495,7 +495,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_ARCHIVE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: read.Filehash,
@@ -510,7 +510,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	select {
 	case <-client.Connections[hashname].Chans.Action:
 		// pass
-	case <-time.After(time.Duration(settings.WAITING_TIME) * time.Second):
+	case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 		data.State = "File not loaded"
 		json.NewEncoder(w).Encode(data)
 		return
@@ -614,7 +614,7 @@ func clientDELETE(w http.ResponseWriter, r *http.Request) {
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
-			Option: settings.OPTION_GET,
+			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: message,
