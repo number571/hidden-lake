@@ -13,9 +13,9 @@ func DeleteChat(user *models.User, hashname string) error {
 		return errors.New("User id undefined")
 	}
 	_, err := settings.DB.Exec(
-		"DELETE FROM Chat WHERE IdUser=$1 AND Companion=$2",
+		"DELETE FROM Chat WHERE IdUser=$1 AND IdClient=$2",
 		id,
-		hashname,
+		GetClientId(id, hashname),
 	)
 	if err != nil {
 		panic("exec 'deleteuser.chat' failed")

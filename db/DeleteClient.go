@@ -15,9 +15,9 @@ func DeleteClient(user *models.User, hashname string) error {
 		return errors.New("Can't delete user from function delete client")
 	}
 	_, err := settings.DB.Exec(
-		"DELETE FROM Chat WHERE IdUser=$1 AND Companion=$2",
+		"DELETE FROM Chat WHERE IdUser=$1 AND IdClient=$2", 
 		id,
-		hashname,
+		GetClientId(id, hashname),
 	)
 	if err != nil {
 		panic("exec 'deleteclient.chat' failed")

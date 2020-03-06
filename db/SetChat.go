@@ -15,9 +15,9 @@ func SetChat(user *models.User, chat *models.Chat) error {
 	for index := range chat.Messages {
 		encryptMessage(user, &chat.Messages[index])
 		_, err := settings.DB.Exec(
-			"INSERT INTO Chat (IdUser, Companion, Name, Message, LastTime) VALUES ($1, $2, $3, $4, $5)",
+			"INSERT INTO Chat (IdUser, IdClient, Name, Message, LastTime) VALUES ($1, $2, $3, $4, $5)",
 			id,
-			chat.Companion,
+			GetClientId(id, chat.Companion),
 			chat.Messages[index].Name,
 			chat.Messages[index].Text,
 			chat.Messages[index].Time,

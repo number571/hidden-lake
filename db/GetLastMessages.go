@@ -16,9 +16,9 @@ func GetLastMessages(user *models.User) []models.LastMessage {
 		return nil
 	}
 	rows, err := settings.DB.Query(`
-SELECT Companion, Name, Message, LastTime FROM (
+SELECT IdClient, Name, Message, LastTime FROM (
     SELECT * FROM Chat WHERE IdUser=$1 ORDER BY Id DESC
-) GROUP BY Companion ORDER BY Id DESC
+) GROUP BY IdClient ORDER BY Id DESC
 `,
 		id,
 	)
@@ -26,9 +26,10 @@ SELECT Companion, Name, Message, LastTime FROM (
 		panic("query 'getlastmessages' failed")
 	}
 	defer rows.Close()
+	var idClient int
 	for rows.Next() {
 		err = rows.Scan(
-			&msg.Companion,
+			&idClient,
 			&msg.Message.Name,
 			&msg.Message.Text,
 			&msg.Message.Time,
@@ -36,6 +37,7 @@ SELECT Companion, Name, Message, LastTime FROM (
 		if err != nil {
 			break
 		}
+		msg.Companion = GetClientHashname(idClient)
 		decryptMessage(user, &msg.Message)
 		msgs = append(msgs, msg)
 	}

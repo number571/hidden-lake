@@ -15,7 +15,7 @@ func InClients(user *models.User, hashname string) bool {
 		err    error
 	)
 	row := settings.DB.QueryRow(
-		"SELECT Public FROM User WHERE IdUser=$1 AND Hashname=$2",
+		"SELECT PublicKey FROM Client WHERE IdUser=$1 AND Hashname=$2",
 		id,
 		hashname,
 	)
