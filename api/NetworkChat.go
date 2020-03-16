@@ -26,11 +26,11 @@ func NetworkChat(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		networkGET(w, r)
+		networkChatGET(w, r)
 	case "POST":
-		networkPOST(w, r)
+		networkChatPOST(w, r)
 	case "DELETE":
-		networkDELETE(w, r)
+		networkChatDELETE(w, r)
 	default:
 		data.State = "Method should be GET, POST or DELETE"
 		json.NewEncoder(w).Encode(data)
@@ -38,7 +38,7 @@ func NetworkChat(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get chat.
-func networkGET(w http.ResponseWriter, r *http.Request) {
+func networkChatGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State   string  `json:"state"`
 		NetData netdata `json:"netdata"`
@@ -70,7 +70,7 @@ func networkGET(w http.ResponseWriter, r *http.Request) {
 }
 
 // Send message.
-func networkPOST(w http.ResponseWriter, r *http.Request) {
+func networkChatPOST(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
@@ -93,6 +93,11 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	message := strings.Replace(read.Message, "\n", " ", -1)
+	if len(message) >= settings.MESSAGE_SIZE {
+		data.State = "Message length >= maximum size"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
 	_, err := client.SendTo(client.Destination(read.Hashname), &gopeer.Package{
 		Head: gopeer.Head{
 			Title:  settings.TITLE_MESSAGE,
@@ -152,7 +157,7 @@ func networkPOST(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete chat.
-func networkDELETE(w http.ResponseWriter, r *http.Request) {
+func networkChatDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}

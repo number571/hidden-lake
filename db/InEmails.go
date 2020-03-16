@@ -5,21 +5,21 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func InClients(user *models.User, hashname string) bool {
+func InEmails(user *models.User, hash string) bool {
+	var (
+		lasttime string
+		err    error
+	)
 	id := GetUserId(user.Username)
 	if id < 0 {
 		return false
 	}
-	var (
-		address string
-		err    error
-	)
 	row := settings.DB.QueryRow(
-		"SELECT Address FROM Client WHERE IdUser=$1 AND Hashname=$2",
+		"SELECT LastTime FROM Email WHERE IdUser=$1 AND Hash=$2",
 		id,
-		hashname,
+		hash,
 	)
-	err = row.Scan(&address)
+	err = row.Scan(&lasttime)
 	if err != nil {
 		return false
 	}

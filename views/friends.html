@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Hashname" v-model="conndata.hashname">
                 </div>
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="addfriend(conndata.hashname)">Append friend</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="addfriend(conndata.hashname), nullconn()">Append friend</button>
             </form>
         </div>
 

@@ -23,13 +23,14 @@ func init() {
 	gopeer.Set(gopeer.SettingsType{
 		"SERVER_NAME": "HIDDEN-LAKE",
 		"NETWORK": "[HIDDEN-LAKE]",
-		"VERSION": "[1.0.4s]",
+		"VERSION": "[1.0.5s]",
 		"HMACKEY": "9163571392708145",
 		"KEY_SIZE": uint64(3 << 10),
 	})
 	settings.InitializeDB(settings.DB_NAME)
 	settings.InitializeCFG(settings.CFG_NAME)
 	go settings.ClearUnusedTokens()
+	go settings.ClearTempEmails()
 }
 
 func main() {
@@ -53,6 +54,7 @@ func main() {
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, PATCH, DELETE
 	//             "/api/network/client/:id/archive/"            // GET, POST
 	//             "/api/network/client/:id/connects"            // POST
+	mux.HandleFunc("/api/network/email/", api.NetworkEmail)      // GET, POST, DELETE
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -146,6 +148,8 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"clientarchive.html",
 		settings.PATH_VIEWS+"clientarchivefile.html",
 		settings.PATH_VIEWS+"clients.html",
+		settings.PATH_VIEWS+"email.html",
+		settings.PATH_VIEWS+"emailnull.html",
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",
 		settings.PATH_VIEWS+"friends.html",

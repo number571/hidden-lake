@@ -80,13 +80,19 @@ func newUser(username, password, private string) *models.User {
 			return nil
 		}
 	}
-	salt := gopeer.Base64Encode(gopeer.GenerateRandomBytes(8))
+	salt := gopeer.Base64Encode(gopeer.GenerateRandomBytes(16))
 	pasw := gopeer.HashSum([]byte(password + salt))
+
+	hashpasw := gopeer.HashSum(pasw)
+	for i := 1; i < (1 << 20); i++ {
+		hashpasw = gopeer.HashSum(hashpasw)
+	}
+
 	return &models.User{
 		Hashname: gopeer.HashPublic(&key.PublicKey),
 		Username: gopeer.Base64Encode(gopeer.HashSum([]byte(username))),
 		Auth: models.Auth{
-			Hashpasw: gopeer.Base64Encode(gopeer.HashSum(pasw)),
+			Hashpasw: gopeer.Base64Encode(hashpasw),
 			Pasw:     pasw,
 			Salt:     salt,
 		},

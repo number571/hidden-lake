@@ -22,8 +22,12 @@ func GetUser(username, password string) *models.User {
 		return nil
 	}
 	pasw := gopeer.HashSum([]byte(password + salt))
-	hashpasw := gopeer.Base64Encode(gopeer.HashSum(pasw))
-	if hashpasw != hpasw {
+	hashpasw := gopeer.HashSum(pasw)
+	for i := 1; i < (1 << 20); i++ {
+		hashpasw = gopeer.HashSum(hashpasw)
+	}
+	base64hashpasw := gopeer.Base64Encode(hashpasw)
+	if base64hashpasw != hpasw {
 		return nil
 	}
 	priv := gopeer.ParsePrivate(string(gopeer.DecryptAES(pasw, gopeer.Base64Decode(key))))
@@ -31,7 +35,7 @@ func GetUser(username, password string) *models.User {
 		Username: name,
 		Hashname: gopeer.HashPublic(&priv.PublicKey),
 		Auth: models.Auth{
-			Hashpasw: hashpasw,
+			Hashpasw: base64hashpasw,
 			Pasw:     pasw,
 			Salt:     salt,
 		},

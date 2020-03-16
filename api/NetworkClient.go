@@ -26,13 +26,13 @@ func NetworkClient(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		clientGET(w, r)
+		networkClientGET(w, r)
 	case "POST":
-		clientPOST(w, r)
+		networkClientPOST(w, r)
 	case "PATCH":
-		clientPATCH(w, r)
+		networkClientPATCH(w, r)
 	case "DELETE":
-		clientDELETE(w, r)
+		networkClientDELETE(w, r)
 	default:
 		data.State = "Method should be GET, POST, PATCH or DELETE"
 		json.NewEncoder(w).Encode(data)
@@ -40,7 +40,7 @@ func NetworkClient(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get client public information.
-func clientGET(w http.ResponseWriter, r *http.Request) {
+func networkClientGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State     string `json:"state"`
 		Info models.Connect `json:"info"`
@@ -160,7 +160,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 }
 
 // Find hidden connection and connect.
-func clientPATCH(w http.ResponseWriter, r *http.Request) {
+func networkClientPATCH(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
@@ -249,7 +249,7 @@ func clientPATCH(w http.ResponseWriter, r *http.Request) {
 }
 
 // Connect to another client.
-func clientPOST(w http.ResponseWriter, r *http.Request) {
+func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
@@ -532,8 +532,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	pathhash := hex.EncodeToString(gopeer.HashSum(bytes.Join(
 		[][]byte{
 			hash,
-			gopeer.HashSum(gopeer.GenerateRandomBytes(16)),
-			gopeer.Base64Decode(user.Hashname),
+			gopeer.GenerateRandomBytes(16),
 		},
 		[]byte{},
 	)))
@@ -587,7 +586,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 }
 
 // Disconnect from client.
-func clientDELETE(w http.ResponseWriter, r *http.Request) {
+func networkClientDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}

@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized network. Version 1.0.4s.
+> Decentralized network. Version 1.0.5s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
@@ -70,9 +70,29 @@
 CREATE TABLE IF NOT EXISTS User (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Username VARCHAR(44) UNIQUE,
-	Salt VARCHAR(16),
+	Salt VARCHAR(32),
 	Hashpasw VARCHAR(44) UNIQUE,
 	PrivateKey VARCHAR(4096) UNIQUE
+);
+/* User emails; */
+/* Hash = hash(sender+receiver+message+salt); */
+CREATE TABLE IF NOT EXISTS Email (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Incoming BOOLEAN,
+	Temporary BOOLEAN,
+	LastTime VARCHAR(128),
+	SenderHash VARCHAR(44),
+	Sender VARCHAR(1024),
+	Receiver VARCHAR(44),
+	Session VARCHAR(128) NULL,
+	Message VARCHAR(2048),
+	Salt VARCHAR(32),
+	Hash VARCHAR(44),
+	Sign VARCHAR(512),
+	Nonce INTEGER,
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );
 /* User connections; */
 /* Hashname = hash(public_key); */
@@ -84,6 +104,7 @@ CREATE TABLE IF NOT EXISTS Client (
 	PublicKey VARCHAR(1024),
 	ThrowClient VARCHAR(1024),
 	Certificate VARCHAR(3072),
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );
 /* User chat; */
@@ -94,19 +115,23 @@ CREATE TABLE IF NOT EXISTS Chat (
 	Name VARCHAR(44),
 	Message VARCHAR(1024),
 	LastTime VARCHAR(128),
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE,
+	FOREIGN KEY (IdClient) REFERENCES Client (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdClient) REFERENCES Client (Id) ON DELETE CASCADE
 );
 /* File information; */
 /* Hash = hash(file); */
+/* PathName = hash(hash(file)+random(16)); */
 CREATE TABLE IF NOT EXISTS File (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdUser INTEGER,
 	Hash VARCHAR(44),
 	Name VARCHAR(128),
-	Path VARCHAR(44),
+	PathName VARCHAR(44),
 	Size INTEGER,
 	Encr BOOLEAN,
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );
 /* Connection list for F2F network */
@@ -114,6 +139,7 @@ CREATE TABLE IF NOT EXISTS Friends (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdUser INTEGER,
 	Hashname VARCHAR(44),
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );
 /* User saved state */
@@ -121,6 +147,7 @@ CREATE TABLE IF NOT EXISTS State (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdUser INTEGER,
 	UsedF2F BOOLEAN,
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );
 ```

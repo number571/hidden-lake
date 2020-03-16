@@ -1,5 +1,12 @@
 [
 	{
+		"version": "1.0.5s",
+		"updates": [
+			"Added the ability to send and receive emails",
+			"Entropy of 20 bits is added to passwords"
+		]
+	},
+	{
 		"version": "1.0.4s",
 		"updates": [
 			"Added salt for generate new password with login information",

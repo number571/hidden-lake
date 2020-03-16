@@ -13,7 +13,7 @@ func SetFile(user *models.User, file *models.File) error {
 		return errors.New("User id undefined")
 	}
 	_, err := settings.DB.Exec(
-		"INSERT INTO File (IdUser, Hash, Name, Path, Size, Encr) VALUES ($1, $2, $3, $4, $5, $6)",
+		"INSERT INTO File (IdUser, Hash, Name, PathName, Size, Encr) VALUES ($1, $2, $3, $4, $5, $6)",
 		id,
 		file.Hash,
 		gopeer.Base64Encode(

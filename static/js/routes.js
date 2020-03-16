@@ -49,76 +49,90 @@ export const RoutesData = [
 		},
 	},
 	{ // 7
-		path: "/network/chat", 
-		name: "chatnull",
-		meta: {
-			title: "Chat",
-		},
-	},
-	{ // 8
 		path: "/network/", 
 		name: "network",
 		meta: {
 			title: "Network",
 		},
 	},
-	{ // 9
+	{ // 8
 		path: "/network/chat/:id", 
 		name: "chat",
 		meta: {
 			title: "Chat",
 		},
 	},
+	{ // 9
+		path: "/network/chat", 
+		name: "chatnull",
+		meta: {
+			title: "Chat",
+		},
+	},
 	{ // 10
+		path: "/network/email/:id", 
+		name: "email",
+		meta: {
+			title: "Email",
+		},
+	},
+	{ // 11
+		path: "/network/email", 
+		name: "emailnull",
+		meta: {
+			title: "Email",
+		},
+	},
+	{ // 12
 		path: "/network/settings", 
 		name: "settings",
 		meta: {
 			title: "Settings",
 		},
 	},
-	{ // 11
+	{ // 13
 		path: "/network/clients", 
 		name: "clients",
 		meta: {
 			title: "Clients",
 		},
 	},
-	{ // 12
+	{ // 14
 		path: "/network/client/:id", 
 		name: "client",
 		meta: {
 			title: "Client",
 		},
 	},
-	{ // 13
+	{ // 15
 		path: "/network/client/archive/:id", 
 		name: "clientarchive",
 		meta: {
 			title: "Client Archive",
 		},
 	},
-	{ // 14
+	{ // 16
 		path: "/network/client/:id0/archive/:id1", 
 		name: "clientarchivefile",
 		meta: {
 			title: "Client Archive File",
 		},
 	},
-	{ // 16
+	{ // 17
 		path: "/account/friends", 
 		name: "friends",
 		meta: {
 			title: "Friends",
 		},
 	},
-	{ // 16
+	{ // 18
 		path: "/hdvwhuhjj", 
 		name: "hdvwhuhjj",
 		meta: {
 			title: "Hdvwhu Hjj",
 		},
 	},
-	{ // 17
+	{ // 19
 		path: "*", 
 		name: "notfound",
 		meta: {

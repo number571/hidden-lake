@@ -9,17 +9,19 @@ const routes = {
     account: 4,
     archive: 5,
     archivefile: 6,
-    chatnull: 7,
-    network: 8,
-    chat: 9,
-    settings: 10,
-    clients: 11,
-    client: 12,
-    clientarchive: 13,
-    clientarchivefile: 14,
-    friends: 15,
-    hdvwhuhjj: 16,
-    notfound: 17,
+    network: 7,
+    chat: 8,
+    chatnull: 9,
+    email: 10,
+    emailnull: 11,
+    settings: 12,
+    clients: 13,
+    client: 14,
+    clientarchive: 15,
+    clientarchivefile: 16,
+    friends: 17,
+    hdvwhuhjj: 18,
+    notfound: 19,
 };
 
 const f = async(url, method = "GET", data = null, token = null) => {
@@ -91,6 +93,7 @@ const app = new Vue({
             hashname: null,
             public_key: null,
             certificate: null,
+            message: null,
         },
         filelist: [],
         filedata: {
@@ -99,6 +102,33 @@ const app = new Vue({
             path: null,
             size: null,
             encr: false,
+        },
+        emaillist: [],
+        emaildata: {
+            info: {
+                incoming: null,
+                time: null,
+            },
+            email: {
+                head: {
+                    sender: {
+                        public_key: null,
+                        hashname: null,
+                    },
+                    receiver: null,
+                    session: null,
+                },
+                body: {
+                    data: null,
+                    desc: {
+                        rand: null,
+                        hash: null,
+                        sign: null,
+                        nonce: null,
+                        difficulty: null,
+                    },
+                },
+            },
         },
         netdata: {
             message: null,
@@ -225,6 +255,62 @@ const app = new Vue({
                 return;
             }
             this.userdata.connects = res.connects;
+        },
+        async email(hash) {
+            let res = await f(`network/email/${hash}`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            switch(hash) {
+                case "": case "null": case "undefined":
+                    this.emaillist = res.emails;
+                    break;
+                default:
+                    this.emaildata = res.email;
+                    break;
+            }
+        },
+        async emailupdate() {
+            let res = await f(`network/email/`, "PATCH", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            setTimeout(() => {
+                this.message.curr = "Update success";
+                this.message.desc = "success";
+                this.email("null");
+            }, 3000);
+        },
+        async emailsend(public_key, message) {
+            let obj = {
+                public_key: public_key,
+                message: message,
+            };
+            let res = await f(`network/email/`, "POST", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Send success";
+            this.message.desc = "success";
+        },
+        async emaildel(hash) {
+            let res = await f(`network/email/`, "DELETE", {emailhash: hash}, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.wait = "Delete success";
+            this.message.desc = "success";
+            this.opened = RoutesData[routes.emailnull].name;
+            this.$router.push(RoutesData[routes.emailnull]);
+            this.email("null");
         },
         async chat(name) {
             let res = await f(`network/chat/${name}`, "GET", null, this.authdata.token);
@@ -579,6 +665,35 @@ const app = new Vue({
             localStorage.removeItem("username");
             localStorage.removeItem("hashname");
         },
+        nullemail() {
+            this.emaillist = [];
+            this.emaildata = {
+                info: {
+                    incoming: null,
+                    time: null,
+                },
+                email: {
+                    head: {
+                        sender: {
+                            public_key: null,
+                            hashname: null,
+                        },
+                        receiver: null,
+                        session: null,
+                    },
+                    body: {
+                        data: null,
+                        desc: {
+                            rand: null,
+                            hash: null,
+                            sign: null,
+                            nonce: null,
+                            difficulty: null,
+                        },
+                    },
+                },
+            };
+        },
         nullfile() {
             this.filedata.name = null;
             this.filedata.hash = null;
@@ -595,6 +710,7 @@ const app = new Vue({
             this.conndata.address = null;
             this.conndata.public_key = null;
             this.conndata.certificate = null;
+            this.conndata.message = null;
         },
         nulldata() {
             this.userdata.username = null;
@@ -630,6 +746,8 @@ const app = new Vue({
             case RoutesData[routes.archivefile].name: this.archivefile('', this.$route.params.id); break;
             case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
             case RoutesData[routes.chatnull].name: this.chat("null"); break;
+            case RoutesData[routes.email].name: this.email(this.$route.params.id); break;
+            case RoutesData[routes.emailnull].name: this.email("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;
             case RoutesData[routes.clients].name: this.allconnects(); break;
             case RoutesData[routes.clientarchive].name: this.archivelist(this.$route.params.id); break;

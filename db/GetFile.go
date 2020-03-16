@@ -18,7 +18,7 @@ func GetFile(user *models.User, filehash string) *models.File {
 		return nil
 	}
 	row := settings.DB.QueryRow(
-		"SELECT Name, Path, Size, Encr FROM File WHERE IdUser=$1 AND Hash=$2",
+		"SELECT Name, PathName, Size, Encr FROM File WHERE IdUser=$1 AND Hash=$2",
 		id,
 		filehash,
 	)

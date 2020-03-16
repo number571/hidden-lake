@@ -1,0 +1,29 @@
+{{ define "email_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='email'">
+    <h2 class="text-center">Email</h2><br>
+    {{ template "message_part" }}
+    <div class="form-group row">
+    	<div class="col-md-6">
+    		<button @click="savepublic()" type="button" class="btn btn-success w-100">Copy public key</button>
+    	</div>
+        <div class="col-md-6">
+    		<button @click="emaildel(emaildata.email.body.desc.hash)" type="button" class="btn btn-danger w-100">Delete email</button>
+    	</div>
+    </div>
+    <pre class="text-white lead">
+${emaildata.info.incoming ? 'Incoming' : 'Outgoing'};
+--------------------------------------------------------------
+Sender: "${emaildata.email.head.sender.hashname}";
+Receiver: "${emaildata.email.head.receiver}";
+--------------------------------------------------------------
+Message: "${emaildata.email.body.data}";
+--------------------------------------------------------------
+Time: "${emaildata.info.time}";
+Rand: "${emaildata.email.body.desc.rand}";
+Hash: "${emaildata.email.body.desc.hash}";
+Nonce: "${emaildata.email.body.desc.nonce}";
+Difficulty: "${emaildata.email.body.desc.difficulty}";
+--------------------------------------------------------------
+Public Key: 
+<p ref="publickey">${emaildata.email.head.sender.public_key}</p></div>
+{{ end }}

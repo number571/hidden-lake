@@ -26,17 +26,18 @@ const (
 	UPD_NAME     = PATH_INPUT + "updates.json"
 )
 
-// Tools | Archive
-// Tools: check and sign messages
-// Archive: files
 const (
+	TITLE_EMAIL    = "[TITLE-EMAIL]"
 	TITLE_MESSAGE  = "[TITLE-MESSAGE]"
 	TITLE_ARCHIVE  = "[TITLE-ARCHIVE]"
 )
 
 const (
+	EMAIL_SIZE        = 4 << 10 // 4KiB
+	MESSAGE_SIZE      = 2 << 10 // 2KiB
 	FILE_PART_SIZE    = 8 << 20 // 8MiB
 	BUFFER_SIZE       = 2 << 20 // 1MiB
 	CHECK_DURING      = 12 * time.Hour
-	LIFETIME_TOKEN    = 24 * time.Hour
+	LIFETIME          = 24 * time.Hour
+	DIFFICULTY        = 20
 )

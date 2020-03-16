@@ -93,6 +93,12 @@
                     <!-- NETWORK / CHAT PAGE -->
                     {{ template "chat_page" }}
 
+                    <!-- NETWORK / EMAIL PAGE -->
+                    {{ template "emailnull_page" }}
+
+                    <!-- NETWORK / EMAIL / FILE PAGE -->
+                    {{ template "email_page" }}
+
                     <!-- NETWORK / SETTINGS PAGE -->
                     {{ template "settings_page" }}
 
@@ -121,7 +127,7 @@
         <footer class="navbar fixed-bottom py-3 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-secondary">Remake by #571</p>
-                <p class="navbar-nav ml-auto text-secondary">Version 1.0.4s</p>
+                <p class="navbar-nav ml-auto text-secondary">Version 1.0.5s</p>
             </div>
         </footer>
         <router-view></router-view>
