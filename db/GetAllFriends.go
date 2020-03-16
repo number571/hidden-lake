@@ -15,7 +15,7 @@ func GetAllFriends(user *models.User) []string {
 		return nil
 	}
 	rows, err := settings.DB.Query(
-		"SELECT Hashname FROM Friends WHERE IdUser=$1",
+		"SELECT Hashname FROM Friend WHERE IdUser=$1",
 		id,
 	)
 	if err != nil {

@@ -12,7 +12,7 @@ func DeleteFriend(user *models.User, hashname string) error {
 		return errors.New("User id undefined")
 	}
 
-	_, err := settings.DB.Exec("DELETE FROM Friends WHERE IdUser=$1 AND Hashname=$2",
+	_, err := settings.DB.Exec("DELETE FROM Friend WHERE IdUser=$1 AND Hashname=$2",
 		id,
 		hashname,
 	)

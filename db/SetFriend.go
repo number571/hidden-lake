@@ -13,7 +13,7 @@ func SetFriend(user *models.User, hashname string) error {
 	}
 
 	_, err := settings.DB.Exec(
-		"DELETE FROM Friends WHERE IdUser=$1 AND Hashname=$2",
+		"DELETE FROM Friend WHERE IdUser=$1 AND Hashname=$2",
 		id,
 		hashname,
 	)
@@ -22,7 +22,7 @@ func SetFriend(user *models.User, hashname string) error {
 	}
 
 	_, err = settings.DB.Exec(
-		"INSERT INTO Friends (IdUser, Hashname) VALUES ($1, $2)",
+		"INSERT INTO Friend (IdUser, Hashname) VALUES ($1, $2)",
 		id,
 		hashname,
 	)
