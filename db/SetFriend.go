@@ -12,16 +12,12 @@ func SetFriend(user *models.User, hashname string) error {
 		return errors.New("User id undefined")
 	}
 
-	_, err := settings.DB.Exec(
-		"DELETE FROM Friend WHERE IdUser=$1 AND Hashname=$2",
-		id,
-		hashname,
-	)
-	if err != nil {
-		panic("exec 'setfriend.delete' failed")
+	idFriend := GetFriendId(id, hashname)
+	if idFriend >= 0 {
+		return errors.New("Friend already exist")
 	}
 
-	_, err = settings.DB.Exec(
+	_, err := settings.DB.Exec(
 		"INSERT INTO Friend (IdUser, Hashname) VALUES ($1, $2)",
 		id,
 		hashname,
