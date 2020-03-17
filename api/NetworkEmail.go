@@ -163,6 +163,24 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		email = handle.NewEmail(client, public, read.Message)
 	)
 
+	if client.Hashname() == hash {
+		email.Body.Data = read.Message
+		err := db.SetEmail(user, models.IsPermEmail, &models.Email{
+			Info: models.EmailInfo{
+				Incoming: false,
+				Time: utils.CurrentTime(),
+			},
+			Email: *email,
+		})
+		if err != nil {
+			data.State = "Set email error"
+			json.NewEncoder(w).Encode(data)
+			return
+		}
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
 	if client.InConnections(hash) {
 		dest := client.Destination(hash)
 		_, err := client.SendTo(dest, &gopeer.Package{

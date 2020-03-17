@@ -129,6 +129,9 @@ func getEmail(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		return string(gopeer.PackJSON(emails))
 	}
 	// Check email's valid.
+	if email.Head.Receiver == email.Head.Sender.Hashname {
+		return
+	}
 	if email.Body.Desc.Difficulty != settings.DIFFICULTY {
 		return
 	}
