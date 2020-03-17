@@ -32,8 +32,7 @@ Connection hidden: "${conndata.hidden}";
 Throw node: "${conndata.throwclient}";
 
 Public Key: 
-<p ref="publickey">${conndata.public_key}</p>
-Certificate:
+<p ref="publickey">${conndata.public_key}</p>Certificate:
 <p ref="certificate">${conndata.certificate}</p></pre>
     <br>
     <div class="form-group row">
@@ -55,7 +54,7 @@ Certificate:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delchat(conndata.hashname)">Delete Chat</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delchat(conndata.hashname, userdata.username, userdata.password)">Delete Chat</button>
         </form>
     </div>
 
@@ -67,7 +66,7 @@ Certificate:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delclient(conndata.hashname)">Delete Client</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delclient(conndata.hashname, userdata.username, userdata.password)">Delete Client</button>
         </form>
     </div>
 </div>

@@ -14,10 +14,10 @@
     <div v-if="switcher=='emailsend'" class="text-center form-group">
         <form id="feedbackForm" class="text-center">
             <div class="form-group w-100">
-                <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key"></textarea>
+                <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key" @keyup.enter="emailsend(conndata.public_key, conndata.message)"></textarea>
             </div>
             <div class="form-group w-100">
-                <textarea class="form-control bg-dark text-light" placeholder="Type your message here..." v-model="conndata.message"></textarea>
+                <textarea class="form-control bg-dark text-light" placeholder="Type your message here..." v-model="conndata.message" @keyup.enter="emailsend(conndata.public_key, conndata.message)"></textarea>
             </div>
             <div class="form-group">
                 <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="emailsend(conndata.public_key, conndata.message)" class="btn btn-success w-100">Send email</button>

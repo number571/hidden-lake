@@ -30,7 +30,7 @@
                 <button v-if="switcher" @click="setswitch('turn'), userdata.private_key=null" type="button" class="btn btn-danger w-100">Don't upload private key</button>
             </div>
             <div class="form-group">
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="signup()">Create account</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="signup(userdata.username, userdata.password, userdata.password_repeat, userdata.private_key)">Create account</button>
             </div>
         </form>
     </div>

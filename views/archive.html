@@ -25,7 +25,7 @@
                     <button v-else  @click="checked=true" type="button" class="btn btn-danger w-100">Personal access</button>
                 </div>
                 <div class="col-md-9">
-                    <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="uploadfile()">Upload</button>
+                    <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="uploadfile(checked)">Upload</button>
                 </div>
             </div>
         </form>

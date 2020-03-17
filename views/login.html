@@ -15,7 +15,7 @@
                         <div class="form-group">
                             <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
                         </div>
-                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="login()">Enter to account</button>
+                        <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="login(userdata.username, userdata.password)">Enter to account</button>
                     </form>
                 </div>
             </div>

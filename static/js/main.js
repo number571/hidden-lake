@@ -149,16 +149,19 @@ const app = new Vue({
         opened: null,
     },
     methods: {
-        async login() {
-            let res = await f("login", "POST", this.userdata);
+        async login(username, password) {
+            let obj = {
+                username: username, 
+                password: password,
+            };
+            let res = await f("login", "POST", obj);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
                 return;
             }
             localStorage.setItem("token", res.token);
-            localStorage.setItem("username", this.userdata.username);
-            localStorage.setItem("hashname", res.hashname);
+            localStorage.setItem("username", username);
 
             this.authdata.token = localStorage.getItem("token");
             this.authdata.username = localStorage.getItem("username");
@@ -171,21 +174,27 @@ const app = new Vue({
             this.opened = RoutesData[routes.home].name;
             this.$router.push(RoutesData[routes.home]);
         },
-        async signup() {
-            if (this.userdata.password !== this.userdata.password_repeat) {
+        async signup(username, password, password_repeat, private_key) {
+            if (password !== password_repeat) {
                 this.message.curr = "Passwords not equal";
                 this.message.desc = "danger";
                 return;
             }
             if (
-                this.userdata.username.length < 6 || this.userdata.password.length < 6 ||
-                this.userdata.username.length > 64 || this.userdata.password.length > 128
+                username.length < 6 || password.length < 6 ||
+                username.length > 128 || password.length > 1024
             ) {
-                this.message.curr = "Username needs [6-64] ch and password needs [6-128] ch";
+                this.message.curr = "Username needs [6-128] ch and password needs [6-1024] ch";
                 this.message.desc = "danger";
                 return;
             }
-            let res = await f("signup", "POST", this.userdata);
+            let obj = {
+                username: username,
+                password: password,
+                password_repeat: password_repeat,
+                private_key: private_key,
+            };
+            let res = await f("signup", "POST", obj);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -216,8 +225,12 @@ const app = new Vue({
             this.conndata.public_key = res.public_key;
             this.conndata.certificate = res.certificate;
         },
-        async viewkey() {
-            let res = await f("account", "POST", this.userdata, this.authdata.token);
+        async viewkey(username, password) {
+            let obj = {
+                username: username,
+                password: password,
+            };
+            let res = await f("account", "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -225,8 +238,12 @@ const app = new Vue({
             }
             this.userdata.private_key = res.private_key;
         },
-        async deluser() {
-            let res = await f("account", "DELETE", this.userdata, this.authdata.token);
+        async deluser(username, password) {
+            let obj = {
+                username: username,
+                password: password,
+            };
+            let res = await f("account", "DELETE", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -279,11 +296,9 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
-            setTimeout(() => {
-                this.message.curr = "Update success";
-                this.message.desc = "success";
-                this.email("null");
-            }, 3000);
+            this.message.curr = "Update success";
+            this.message.desc = "success";
+            this.email("null");
         },
         async emailsend(public_key, message) {
             let obj = {
@@ -306,11 +321,16 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
-            this.message.wait = "Delete success";
-            this.message.desc = "success";
-            this.opened = RoutesData[routes.emailnull].name;
-            this.$router.push(RoutesData[routes.emailnull]);
             this.email("null");
+            if (this.opened === RoutesData[routes.emailnull].name) {
+                this.message.curr = "Delete success";
+                this.message.desc = "success";
+            } else {
+                this.message.wait = "Delete success";
+                this.message.desc = "success";
+                this.opened = RoutesData[routes.emailnull].name;
+                this.$router.push(RoutesData[routes.emailnull]);
+            }
         },
         async chat(name) {
             let res = await f(`network/chat/${name}`, "GET", null, this.authdata.token);
@@ -354,11 +374,12 @@ const app = new Vue({
                 // console.debug("closed");
             }
         },
-        async sendmsg() {
+        async sendmsg(companion, message) {
             let obj = {
-                hashname: this.netdata.chat.companion,
-                message: this.netdata.message,
+                hashname: companion,
+                message: message,
             };
+
             let res = await f("network/chat/", "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
@@ -368,11 +389,11 @@ const app = new Vue({
             this.netdata.message = null;
             this.message.curr = null;
         },
-        async delchat(hashname) {
+        async delchat(hashname, username, password) {
             let obj = {
                 hashname: hashname,
-                username: this.userdata.username,
-                password: this.userdata.password,
+                username: username,
+                password: password,
             };
             let res = await f("network/chat/", "DELETE", obj, this.authdata.token);
             if (res.state) {
@@ -390,11 +411,11 @@ const app = new Vue({
             this.opened = RoutesData[routes.network].name;
             this.$router.push(RoutesData[routes.network]);
         },
-        async delclient(hashname) {
+        async delclient(hashname, username, password) {
             let obj = {
                 hashname: hashname,
-                username: this.userdata.username,
-                password: this.userdata.password,
+                username: username,
+                password: password,
             };
             let res = await f("account/connects", "DELETE", obj, this.authdata.token);
             if (res.state) {
@@ -533,12 +554,12 @@ const app = new Vue({
             this.opened = RoutesData[routes.archive].name;
             this.$router.push(RoutesData[routes.archive]);
         },
-        async uploadfile() {
+        async uploadfile(checked) {
             this.message.curr = "Please wait a few seconds";
             this.message.desc = "warning";
             const formData = new FormData();
             const fileField = document.querySelector('#uploadfile');
-            formData.append("encryptmode", this.checked);
+            formData.append("encryptmode", checked);
             formData.append("uploadfile", fileField.files[0]);
             let res = await f(`account/archive/`, "PUT", formData, this.authdata.token);
             if (res.state) {
@@ -617,12 +638,6 @@ const app = new Vue({
             this.message.curr = `Turn ${res.statef2f ? "ON" : "OFF"} success`;
             this.message.desc = "success";
         },
-        async keycheck(e) {
-            if (e.keyCode == 13) { // Enter
-                this.sendmsg();
-                this.netdata.message = "";
-            }
-        },
         selectText(element) {
             var range;
             if (document.selection) {
@@ -663,7 +678,6 @@ const app = new Vue({
             this.authdata.username = null;
             localStorage.removeItem("token");
             localStorage.removeItem("username");
-            localStorage.removeItem("hashname");
         },
         nullemail() {
             this.emaillist = [];
