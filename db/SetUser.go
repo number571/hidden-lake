@@ -8,7 +8,7 @@ import (
 )
 
 func SetUser(user *models.User) error {
-	if InUsers(user.Username) {
+	if GetUserId(user.Username) >= 0 {
 		return errors.New("User already exist")
 	}
 	_, err := settings.DB.Exec(

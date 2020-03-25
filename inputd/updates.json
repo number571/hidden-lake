@@ -3,6 +3,7 @@
 		"version": "1.0.5s",
 		"updates": [
 			"Added the ability to send and receive emails",
+			"Added automatic connection check",
 			"Entropy of 20 bits is added to passwords"
 		]
 	},

@@ -33,12 +33,11 @@ func SetEmail(user *models.User, option models.EmailSaveOption, email *models.Em
 		)
 	}
 	_, err := settings.DB.Exec(
-		"INSERT INTO Email (IdUser, Incoming, Temporary, LastTime, SenderHash, Sender, Receiver, Session, Message, Salt, Hash, Sign, Nonce) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)",
+		"INSERT INTO Email (IdUser, Incoming, Temporary, LastTime, SenderPub, Receiver, Session, Message, Salt, Hash, Sign, Nonce) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
 		id,
 		email.Info.Incoming,
 		option,
 		email.Info.Time,
-		email.Email.Head.Sender.Hashname,
 		email.Email.Head.Sender.Public,
 		email.Email.Head.Receiver,
 		session,

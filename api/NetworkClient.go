@@ -262,11 +262,11 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.Contains(hashname, "/connects") {
-		hashname = strings.Split(hashname, "/connects")[0]
-		clientConnectsPOST(w, r, hashname)
-		return
-	}
+	// if strings.Contains(hashname, "/connects") {
+	// 	hashname = strings.Split(hashname, "/connects")[0]
+	// 	clientConnectsPOST(w, r, hashname)
+	// 	return
+	// }
 
 	var read struct {
 		Address     string `json:"address"`
@@ -375,97 +375,97 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 }
 
 // Hidden connect throw node.
-func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string) {
-	var data struct {
-		State string `json:"state"`
-	}
+// func clientConnectsPOST(w http.ResponseWriter, r *http.Request, hashname string) {
+// 	var data struct {
+// 		State string `json:"state"`
+// 	}
 
-	var read struct {
-		PublicKey string `json:"public_key"`
-	}
+// 	var read struct {
+// 		PublicKey string `json:"public_key"`
+// 	}
 
-	var (
-		token string
-		client = new(gopeer.Client)
-	)
-	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
-	case isNotInConnectionsError(w, r, client, hashname): return
-	}
+// 	var (
+// 		token string
+// 		client = new(gopeer.Client)
+// 	)
+// 	switch {
+// 	case isTokenAuthError(w, r, &token): return
+// 	case isLifeTokenError(w, r, token): return
+// 	case isDecodeError(w, r, &read): return
+// 	case isGetClientError(w, r, client, token): return
+// 	case isNotInConnectionsError(w, r, client, hashname): return
+// 	}
 
-	user := settings.Users[token]
-	public := gopeer.ParsePublic(read.PublicKey)
-	if public == nil {
-		data.State = "Error decode public key"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+// 	user := settings.Users[token]
+// 	public := gopeer.ParsePublic(read.PublicKey)
+// 	if public == nil {
+// 		data.State = "Error decode public key"
+// 		json.NewEncoder(w).Encode(data)
+// 		return
+// 	}
 
-	dest := &gopeer.Destination{
-        Address:     client.Connections[hashname].Address(),
-        Certificate: client.Connections[hashname].Certificate(),
-        Public:      client.Connections[hashname].Public(),
-        Receiver:    public,
-    }
+// 	dest := &gopeer.Destination{
+//         Address:     client.Connections[hashname].Address(),
+//         Certificate: client.Connections[hashname].Certificate(),
+//         Public:      client.Connections[hashname].Public(),
+//         Receiver:    public,
+//     }
 
-    err := client.Connect(dest)
-	if err != nil {
-		data.State = "Connect error"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+//     err := client.Connect(dest)
+// 	if err != nil {
+// 		data.State = "Connect error"
+// 		json.NewEncoder(w).Encode(data)
+// 		return
+// 	}
 
-	hash := gopeer.HashPublic(public)
-	err = db.SetClient(user, &models.Client{
-		Hashname: hash,
-		Certificate: string(client.Connections[hashname].Certificate()),
-		Address: client.Connections[hashname].Address(),
-		Public: public,
-		ThrowClient: client.Connections[hashname].Public(),
-	})
-	if err != nil {
-		data.State = "Set client error"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+// 	hash := gopeer.HashPublic(public)
+// 	err = db.SetClient(user, &models.Client{
+// 		Hashname: hash,
+// 		Certificate: string(client.Connections[hashname].Certificate()),
+// 		Address: client.Connections[hashname].Address(),
+// 		Public: public,
+// 		ThrowClient: client.Connections[hashname].Public(),
+// 	})
+// 	if err != nil {
+// 		data.State = "Set client error"
+// 		json.NewEncoder(w).Encode(data)
+// 		return
+// 	}
 
-	message := "connection created"
-	_, err = client.SendTo(dest, &gopeer.Package{
-		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
-			Option: gopeer.Get("OPTION_GET").(string),
-		},
-		Body: gopeer.Body{
-			Data: message,
-		},
-	})
-	if err != nil {
-		data.State = "User can't receive message"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+// 	message := "connection created"
+// 	_, err = client.SendTo(dest, &gopeer.Package{
+// 		Head: gopeer.Head{
+// 			Title:  settings.TITLE_MESSAGE,
+// 			Option: gopeer.Get("OPTION_GET").(string),
+// 		},
+// 		Body: gopeer.Body{
+// 			Data: message,
+// 		},
+// 	})
+// 	if err != nil {
+// 		data.State = "User can't receive message"
+// 		json.NewEncoder(w).Encode(data)
+// 		return
+// 	}
 
-	err = db.SetChat(user, &models.Chat{
-		Companion: hash,
-		Messages: []models.Message{
-			models.Message{
-				Name: hash,
-				Text: message,
-				Time: utils.CurrentTime(),
-			},
-		},
-	})
-	if err != nil {
-		data.State = "Set chat error"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
+// 	err = db.SetChat(user, &models.Chat{
+// 		Companion: hash,
+// 		Messages: []models.Message{
+// 			models.Message{
+// 				Name: hash,
+// 				Text: message,
+// 				Time: utils.CurrentTime(),
+// 			},
+// 		},
+// 	})
+// 	if err != nil {
+// 		data.State = "Set chat error"
+// 		json.NewEncoder(w).Encode(data)
+// 		return
+// 	}
 
-	json.NewEncoder(w).Encode(data)
-}
+// 	json.NewEncoder(w).Encode(data)
+// }
 
 // Install file from another node.
 func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) {

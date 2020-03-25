@@ -75,15 +75,14 @@ CREATE TABLE IF NOT EXISTS User (
 	PrivateKey VARCHAR(4096) UNIQUE
 );
 /* User emails; */
-/* Hash = hash(sender+receiver+message+salt); */
+/* Hash = hash(hash(sender_pub)+receiver+message+salt); */
 CREATE TABLE IF NOT EXISTS Email (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdUser INTEGER,
 	Incoming BOOLEAN,
 	Temporary BOOLEAN,
 	LastTime VARCHAR(128),
-	SenderHash VARCHAR(44),
-	Sender VARCHAR(1024),
+	SenderPub VARCHAR(1024),
 	Receiver VARCHAR(44),
 	Session VARCHAR(128) NULL,
 	Message VARCHAR(2048),

@@ -9,7 +9,7 @@ import (
 
 func GetUser(username, password string) *models.User {
 	name := gopeer.Base64Encode(gopeer.HashSum([]byte(username)))
-	if !InUsers(name) {
+	if GetUserId(name) < 0 {
 		return nil
 	}
 	var (

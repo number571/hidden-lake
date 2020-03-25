@@ -43,7 +43,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	user_len := len(read.Password)
 	pasw_len := len(read.Password)
-	if user_len < 6 || user_len > 128 || pasw_len < 6 || pasw_len > 1024 {
+	if user_len < 6 || user_len > 128 || pasw_len < 8 || pasw_len > 1024 {
 		data.State = "Length username or password does not match"
 		json.NewEncoder(w).Encode(data)
 		return

@@ -4,9 +4,9 @@ import (
 	"time"
 )
 
-func ClearUnusedTokens() {
+func ClearUnusedTokens(checkTime time.Duration) {
 	for {
-		time.Sleep(CHECK_DURING)
+		time.Sleep(checkTime)
 		for token := range Users {
 			CheckLifetimeToken(token)
 		}

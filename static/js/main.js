@@ -181,10 +181,10 @@ const app = new Vue({
                 return;
             }
             if (
-                username.length < 6 || password.length < 6 ||
+                username.length < 6 || password.length < 8 ||
                 username.length > 128 || password.length > 1024
             ) {
-                this.message.curr = "Username needs [6-128] ch and password needs [6-1024] ch";
+                this.message.curr = "Username needs [6-128] ch and password needs [8-1024] ch";
                 this.message.desc = "danger";
                 return;
             }
@@ -584,17 +584,17 @@ const app = new Vue({
             this.message.curr = "Connection success";
             this.message.desc = "success";
         },
-        async hiddenconnect(hashname, public_key) {
-            let res = await f(`network/client/${hashname}/connects`, "POST", {public_key: public_key}, this.authdata.token);
-            if (res.state) {
-                this.message.curr = res.state;
-                this.message.desc = "danger";
-                return;
-            }
-            this.currconnects();
-            this.message.curr = "Connection success";
-            this.message.desc = "success";
-        },
+        // async hiddenconnect(hashname, public_key) {
+        //     let res = await f(`network/client/${hashname}/connects`, "POST", {public_key: public_key}, this.authdata.token);
+        //     if (res.state) {
+        //         this.message.curr = res.state;
+        //         this.message.desc = "danger";
+        //         return;
+        //     }
+        //     this.currconnects();
+        //     this.message.curr = "Connection success";
+        //     this.message.desc = "success";
+        // },
         async getfriends() {
             let res = await f(`account/friends`, "GET", null, this.authdata.token);
             if (res.state) {

@@ -2,8 +2,8 @@ package main
 
 import (
 	"crypto/tls"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/api"
 	"github.com/number571/hiddenlake/db"
@@ -22,15 +22,16 @@ import (
 func init() {
 	gopeer.Set(gopeer.SettingsType{
 		"SERVER_NAME": "HIDDEN-LAKE",
-		"NETWORK": "[HIDDEN-LAKE]",
-		"VERSION": "[1.0.5s]",
-		"HMACKEY": "9163571392708145",
-		"KEY_SIZE": uint64(3 << 10),
+		"NETWORK":     "[HIDDEN-LAKE]",
+		"VERSION":     "[1.0.5s]",
+		"HMACKEY":     "9163571392708145",
+		"KEY_SIZE":    uint64(3 << 10),
 	})
 	settings.InitializeDB(settings.DB_NAME)
 	settings.InitializeCFG(settings.CFG_NAME)
-	go settings.ClearUnusedTokens()
-	go settings.ClearTempEmails()
+	go settings.ClearConnections(settings.CHECK_TIME)
+	go settings.ClearUnusedTokens(settings.CHECK_TIME)
+	go settings.ClearTempEmails(settings.CHECK_TIME)
 }
 
 func main() {
@@ -53,8 +54,7 @@ func main() {
 	mux.HandleFunc("/api/network/chat/", api.NetworkChat)        // GET, POST, DELETE
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, PATCH, DELETE
 	//             "/api/network/client/:id/archive/"            // GET, POST
-	//             "/api/network/client/:id/connects"            // POST
-	mux.HandleFunc("/api/network/email/", api.NetworkEmail)      // GET, POST, DELETE
+	mux.HandleFunc("/api/network/email/", api.NetworkEmail)      // GET, POST, PATCH, DELETE
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -69,15 +69,15 @@ func handleServerTCP(model *models.Tcp, tmodel *models.Tls) {
 	}
 	settings.Listener = gopeer.NewListener(address)
 	settings.Listener.Open(&gopeer.Certificate{
-        Cert: []byte(utils.ReadFile(tmodel.Crt)),
-        Key:  []byte(utils.ReadFile(tmodel.Key)),
-    }).Run(handle.Actions)
+		Cert: []byte(utils.ReadFile(tmodel.Crt)),
+		Key:  []byte(utils.ReadFile(tmodel.Key)),
+	}).Run(handle.Actions)
 }
 
 func handleServerHTTP(model *models.Http, tmodel *models.Tls, mux *http.ServeMux) {
 	srv := &http.Server{
-		Addr:    model.Ipv4 + model.Port,
-		Handler: mux,
+		Addr:         model.Ipv4 + model.Port,
+		Handler:      mux,
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
 	srv.ListenAndServeTLS(tmodel.Crt, tmodel.Key)
@@ -160,14 +160,14 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		panic("can't load hmtl files")
 	}
 	t.Execute(w, struct {
-		WS   string
-		HTTP string
-		HOST string
+		WS     string
+		HTTP   string
+		HOST   string
 		UPDATE []update
 	}{
-		WS:   "wss://",
-		HTTP: "https://",
-		HOST: settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
+		WS:     "wss://",
+		HTTP:   "https://",
+		HOST:   settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
 		UPDATE: readUpdates(utils.ReadFile(settings.UPD_NAME)),
 	})
 }
@@ -176,7 +176,8 @@ type update struct {
 	Version string   `json:"version"`
 	Updates []string `json:"updates"`
 }
-func readUpdates(data string) []update{
+
+func readUpdates(data string) []update {
 	var updates []update
 	err := json.Unmarshal([]byte(data), &updates)
 	if err != nil {

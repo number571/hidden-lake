@@ -5,9 +5,9 @@ import (
 	"github.com/number571/hiddenlake/utils"
 )
 
-func ClearTempEmails() {
+func ClearTempEmails(checkTime time.Duration) {
 	for {
-		time.Sleep(CHECK_DURING)
+		time.Sleep(checkTime)
 		checkLifetimeEmails()
 	}
 }
