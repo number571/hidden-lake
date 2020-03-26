@@ -56,6 +56,9 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 		return nil, errors.New("error read session key")
 	}
 	message := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data)))
+	if len(message) >= settings.EMAIL_SIZE {
+		return nil, errors.New("email size exceeded")
+	}
 	random := gopeer.Base64Decode(email.Body.Desc.Rand)
 	hash := gopeer.HashSum(bytes.Join(
 		[][]byte{
