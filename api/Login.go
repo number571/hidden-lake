@@ -33,7 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	case isGetUserError(w, r, user, read): return
 	}
 
-	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(20))
+	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(32))
 	hash := user.Hashname
 
 	if token, ok := settings.Tokens[hash]; ok {

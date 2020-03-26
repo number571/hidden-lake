@@ -106,12 +106,6 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err != nil {
-		data.State = "Error push file to archive"
-		json.NewEncoder(w).Encode(data)
-		return
-	}
-
 	tempname := utils.RandomString(16)
 	size, hash := readFileInfo(tempname, input)
 
