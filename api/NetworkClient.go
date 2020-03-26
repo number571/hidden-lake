@@ -52,7 +52,7 @@ func networkClientGET(w http.ResponseWriter, r *http.Request) {
 
 	read.Hashname = strings.Replace(r.URL.Path, "/api/network/client/", "", 1)
 	hashname := strings.Split(read.Hashname, "/archive/")[0]
-	hashname  = strings.Split(hashname, "/connects")[0]
+	// hashname  = strings.Split(hashname, "/connects")[0]
 
 	var (
 		token string
