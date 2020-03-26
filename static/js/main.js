@@ -119,7 +119,10 @@ const app = new Vue({
                     session: null,
                 },
                 body: {
-                    data: null,
+                    data: {
+                        head: null,
+                        body: null,
+                    },
                     desc: {
                         rand: null,
                         hash: null,
@@ -300,9 +303,10 @@ const app = new Vue({
             this.message.desc = "success";
             this.email("null");
         },
-        async emailsend(public_key, message) {
+        async emailsend(public_key, title, message) {
             let obj = {
                 public_key: public_key,
+                title: title,
                 message: message,
             };
             let res = await f(`network/email/`, "POST", obj, this.authdata.token);
@@ -584,17 +588,6 @@ const app = new Vue({
             this.message.curr = "Connection success";
             this.message.desc = "success";
         },
-        // async hiddenconnect(hashname, public_key) {
-        //     let res = await f(`network/client/${hashname}/connects`, "POST", {public_key: public_key}, this.authdata.token);
-        //     if (res.state) {
-        //         this.message.curr = res.state;
-        //         this.message.desc = "danger";
-        //         return;
-        //     }
-        //     this.currconnects();
-        //     this.message.curr = "Connection success";
-        //     this.message.desc = "success";
-        // },
         async getfriends() {
             let res = await f(`account/friends`, "GET", null, this.authdata.token);
             if (res.state) {
@@ -696,7 +689,10 @@ const app = new Vue({
                         session: null,
                     },
                     body: {
-                        data: null,
+                        data: {
+                            head: null,
+                            body: null,
+                        },
                         desc: {
                             rand: null,
                             hash: null,

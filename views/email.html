@@ -11,19 +11,17 @@
     	</div>
     </div>
     <pre class="text-white lead">
-${emaildata.info.incoming ? 'Incoming' : 'Outgoing'};
+--------------------------------------------------------------
+State: "${emaildata.info.incoming ? 'Incoming' : 'Outgoing'}";
+Title: "${emaildata.email.body.data.head}";
 --------------------------------------------------------------
 Sender: "${emaildata.email.head.sender.hashname}";
 Receiver: "${emaildata.email.head.receiver}";
 --------------------------------------------------------------
-Message: ${emaildata.email.body.data}
+Message: ${emaildata.email.body.data.body}
 --------------------------------------------------------------
 Time: "${emaildata.info.time}";
-Rand: "${emaildata.email.body.desc.rand}";
 Hash: "${emaildata.email.body.desc.hash}";
-Sign: "${emaildata.email.body.desc.sign}";
-Nonce: "${emaildata.email.body.desc.nonce}";
-Difficulty: "${emaildata.email.body.desc.difficulty}";
 --------------------------------------------------------------
 Public Key: 
 <p ref="publickey">${emaildata.email.head.sender.public_key}</p></div>

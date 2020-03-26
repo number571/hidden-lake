@@ -16,24 +16,40 @@ func SetEmail(user *models.User, option models.EmailSaveOption, email *models.Em
 		return errors.New("Email already exist")
 	}
 	var (
-		message string
 		session string
+		title   string
+		message string
+		random  string
 	)
 	switch option {
 	case models.IsTempEmail:
 		session = email.Email.Head.Session
-		message = email.Email.Body.Data
+		title   = email.Email.Body.Data.Head
+		message = email.Email.Body.Data.Body
+		random  = email.Email.Body.Desc.Rand
 	case models.IsPermEmail:
 		session = ""
+		title = gopeer.Base64Encode(
+			gopeer.EncryptAES(
+				user.Auth.Pasw,
+				[]byte(email.Email.Body.Data.Head),
+			),
+		)
 		message = gopeer.Base64Encode(
 			gopeer.EncryptAES(
 				user.Auth.Pasw,
-				[]byte(email.Email.Body.Data),
+				[]byte(email.Email.Body.Data.Body),
+			),
+		)
+		random = gopeer.Base64Encode(
+			gopeer.EncryptAES(
+				user.Auth.Pasw,
+				[]byte(email.Email.Body.Desc.Rand),
 			),
 		)
 	}
 	_, err := settings.DB.Exec(
-		"INSERT INTO Email (IdUser, Incoming, Temporary, LastTime, SenderPub, Receiver, Session, Message, Salt, Hash, Sign, Nonce) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
+		"INSERT INTO Email (IdUser, Incoming, Temporary, LastTime, SenderPub, Receiver, Session, Title, Message, Salt, Hash, Sign, Nonce) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)",
 		id,
 		email.Info.Incoming,
 		option,
@@ -41,8 +57,9 @@ func SetEmail(user *models.User, option models.EmailSaveOption, email *models.Em
 		email.Email.Head.Sender.Public,
 		email.Email.Head.Receiver,
 		session,
+		title,
 		message,
-		email.Email.Body.Desc.Rand,
+		random,
 		email.Email.Body.Desc.Hash,
 		email.Email.Body.Desc.Sign,
 		email.Email.Body.Desc.Nonce,

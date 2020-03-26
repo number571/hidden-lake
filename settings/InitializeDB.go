@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS Email (
 	SenderPub VARCHAR(1024),
 	Receiver VARCHAR(44),
 	Session VARCHAR(128) NULL,
+	Title VARCHAR(128),
 	Message VARCHAR(2048),
 	Salt VARCHAR(32),
 	Hash VARCHAR(44),

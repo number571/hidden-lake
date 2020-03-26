@@ -12,6 +12,7 @@ func GetEmail(user *models.User, hash string) *models.Email {
 		lasttime  string
 		senderpub string
 		receiver  string
+		title     string
 		message   string
 		salt      string
 		sign      string
@@ -22,11 +23,11 @@ func GetEmail(user *models.User, hash string) *models.Email {
 		return nil
 	}
 	row := settings.DB.QueryRow(
-		"SELECT Incoming, LastTime, SenderPub, Receiver, Message, Salt, Sign, Nonce FROM Email WHERE IdUser=$1 AND Hash=$2 AND Temporary=0",
+		"SELECT Incoming, LastTime, SenderPub, Receiver, Title, Message, Salt, Sign, Nonce FROM Email WHERE IdUser=$1 AND Hash=$2 AND Temporary=0",
 		id,
 		hash,
 	)
-	err := row.Scan(&incoming, &lasttime, &senderpub, &receiver, &message, &salt, &sign, &nonce)
+	err := row.Scan(&incoming, &lasttime, &senderpub, &receiver, &title, &message, &salt, &sign, &nonce)
 	if err != nil {
 		return nil
 	}
@@ -44,9 +45,12 @@ func GetEmail(user *models.User, hash string) *models.Email {
 				Receiver: receiver,
 			},
 			Body: models.EmailBody{
-				Data: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(message))),
+				Data: models.EmailData{
+					Head: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(title))),
+					Body: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(message))),
+				},
 				Desc: models.EmailDesc{
-					Rand:       salt,
+					Rand:       string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(salt))),
 					Hash:       hash,
 					Sign:       sign,
 					Nonce:      nonce,

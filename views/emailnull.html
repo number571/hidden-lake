@@ -13,14 +13,20 @@
     </div>
     <div v-if="switcher=='emailsend'" class="text-center form-group">
         <form id="feedbackForm" class="text-center">
-            <div class="form-group w-100">
-                <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key" @keyup.enter="emailsend(conndata.public_key, conndata.message)"></textarea>
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <textarea class="form-control bg-dark text-light" placeholder="PEM Public Key Format" v-model="conndata.public_key" @keyup.enter="emailsend(conndata.public_key, conndata.address, conndata.message)"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <textarea class="form-control bg-dark text-light" placeholder="Title" v-model="conndata.address" @keyup.enter="emailsend(conndata.public_key, conndata.address, conndata.message)"></textarea>
+                </div>
             </div>
+            
             <div class="form-group w-100">
-                <textarea class="form-control bg-dark text-light" placeholder="Type your message here..." v-model="conndata.message" @keyup.enter="emailsend(conndata.public_key, conndata.message)"></textarea>
+                <textarea class="form-control bg-dark text-light" placeholder="Type your message here..." v-model="conndata.message" @keyup.enter="emailsend(conndata.public_key, conndata.address, conndata.message)"></textarea>
             </div>
             <div class="form-group">
-                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="emailsend(conndata.public_key, conndata.message)" class="btn btn-success w-100">Send email</button>
+                <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="emailsend(conndata.public_key, conndata.address, conndata.message)" class="btn btn-success w-100">Send email</button>
             </div>
         </form>
     </div>
@@ -34,7 +40,7 @@
                         </div>
                     <div class="col-md-7">
                         <router-link :to="{name: 'email', params: { id: em.email.body.desc.hash }}">
-                            <button type="button" class="btn btn-secondary divtext w-100" @click="email(em.email.body.desc.hash)">${em.email.body.desc.hash}</button>
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="email(em.email.body.desc.hash)">${em.email.body.data.head}</button>
                         </router-link>
                     </div>
                     <div class="col-md-3">

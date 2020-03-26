@@ -11,7 +11,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func NewEmail(client *gopeer.Client, public *rsa.PublicKey, message string) *models.EmailType {
+func NewEmail(client *gopeer.Client, public *rsa.PublicKey, title, message string) (*models.EmailType, string) {
 	var (
 		publicst = gopeer.StringPublic(client.Public())
 		hashname = gopeer.HashPublic(gopeer.ParsePublic(publicst))
@@ -22,6 +22,7 @@ func NewEmail(client *gopeer.Client, public *rsa.PublicKey, message string) *mod
 			[][]byte{
 				[]byte(hashname),
 				[]byte(receiver),
+				[]byte(title),
 				[]byte(message),
 				random,
 			},
@@ -38,16 +39,19 @@ func NewEmail(client *gopeer.Client, public *rsa.PublicKey, message string) *mod
 			Session: gopeer.Base64Encode(gopeer.EncryptRSA(public, session)),
 		},
 		Body: models.EmailBody{
-			Data: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(message))),
+			Data: models.EmailData{
+				Head: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(title))),
+				Body: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(message))),
+			},
 			Desc: models.EmailDesc{
-				Rand: gopeer.Base64Encode(random),
+				Rand: gopeer.Base64Encode(gopeer.EncryptAES(session, random)),
 				Hash: gopeer.Base64Encode(hash),
 				Sign: gopeer.Base64Encode(gopeer.Sign(client.Private(), hash)),
 				Nonce: gopeer.ProofOfWork(hash, settings.DIFFICULTY),
 				Difficulty: settings.DIFFICULTY,
 			},
 		},
-	}
+	}, gopeer.Base64Encode(random)
 }
 
 func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, error) {
@@ -55,15 +59,17 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 	if session == nil {
 		return nil, errors.New("error read session key")
 	}
-	message := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data)))
+	title := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Head)))
+	message := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Body)))
 	if len(message) >= settings.EMAIL_SIZE {
 		return nil, errors.New("email size exceeded")
 	}
-	random := gopeer.Base64Decode(email.Body.Desc.Rand)
+	random := gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Desc.Rand))
 	hash := gopeer.HashSum(bytes.Join(
 		[][]byte{
 			[]byte(email.Head.Sender.Hashname),
 			[]byte(email.Head.Receiver),
+			[]byte(title),
 			[]byte(message),
 			random,
 		},
@@ -100,9 +106,12 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 				Session: email.Head.Session,
 			},
 			Body: models.EmailBody{
-				Data: message,
+				Data: models.EmailData{
+					Head: title,
+					Body: message,
+				},
 				Desc: models.EmailDesc{
-					Rand: email.Body.Desc.Rand,
+					Rand: gopeer.Base64Encode(random),
 					Hash: email.Body.Desc.Hash,
 					Sign: email.Body.Desc.Sign,
 					Nonce: email.Body.Desc.Nonce,

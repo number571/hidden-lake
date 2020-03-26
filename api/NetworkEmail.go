@@ -136,6 +136,7 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 
 	var read struct {
 		PublicKey string `json:"public_key"`
+		Title     string `json:"title"`
 		Message   string `json:"message"`
 	}
 
@@ -157,14 +158,34 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if read.Title == "" {
+		data.State = "Title is null"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	if len(read.Title) > 128 {
+		data.State = "Length title should be <= 128"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	if read.Message == "" {
+		data.State = "Message is null"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
 	var (
 		user  = settings.Users[token]
 		hash  = gopeer.HashPublic(public)
-		email = handle.NewEmail(client, public, read.Message)
+		email, rand = handle.NewEmail(client, public, read.Title, read.Message)
 	)
 
 	if client.Hashname() == hash {
-		email.Body.Data = read.Message
+		email.Body.Data.Head = read.Title
+		email.Body.Data.Body = read.Message
+		email.Body.Desc.Rand = rand
 		err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
 				Incoming: false,
@@ -197,7 +218,9 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(data)
 			return
 		} 
-		email.Body.Data = read.Message
+		email.Body.Data.Head = read.Title
+		email.Body.Data.Body = read.Message
+		email.Body.Desc.Rand = rand
 		err = db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
 				Incoming: false,
@@ -228,7 +251,9 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	email.Body.Data = read.Message
+	email.Body.Data.Head = read.Title
+	email.Body.Data.Body = read.Message
+	email.Body.Desc.Rand = rand
 	err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 		Info: models.EmailInfo{
 			Incoming: false,

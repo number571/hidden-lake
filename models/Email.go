@@ -33,8 +33,13 @@ type EmailSender struct {
 }
 
 type EmailBody struct {
-	Data string    `json:"data"` // encrypt[session](data)
+	Data EmailData `json:"data"` // encrypt[session](data)
 	Desc EmailDesc `json:"desc"`
+}
+
+type EmailData struct {
+	Head string `json:"head"`
+	Body string `json:"body"`
 }
 
 type EmailDesc struct {
