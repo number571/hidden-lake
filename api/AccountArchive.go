@@ -123,8 +123,7 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 	pathhash := hex.EncodeToString(gopeer.HashSum(bytes.Join(
 		[][]byte{
 			hash,
-			gopeer.HashSum(gopeer.GenerateRandomBytes(16)),
-			gopeer.Base64Decode(user.Hashname),
+			gopeer.GenerateRandomBytes(16),
 		},
 		[]byte{},
 	)))
