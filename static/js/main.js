@@ -315,6 +315,7 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
+            this.email("null");
             this.message.curr = "Send success";
             this.message.desc = "success";
         },

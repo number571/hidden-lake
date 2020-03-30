@@ -37,11 +37,11 @@ Public Key:
     <br>
     <div class="form-group row">
         <div class="col-md-6">
-            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Delete Chat</button>
+            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-secondary w-100">Delete Chat</button>
             <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
         <div class="col-md-6">
-            <button v-if="switcher!='delete_client'" @click="nulldata(), setswitch('delete_client')" type="button" class="btn btn-danger w-100">Delete Client</button>
+            <button v-if="switcher!='delete_client'" @click="nulldata(), setswitch('delete_client')" type="button" class="btn btn-secondary w-100">Delete Client</button>
             <button v-else @click="setswitch('delete_client')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
     </div>
@@ -54,7 +54,7 @@ Public Key:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delchat(conndata.hashname, userdata.username, userdata.password)">Delete Chat</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delchat(conndata.hashname, userdata.username, userdata.password)">Delete Chat</button>
         </form>
     </div>
 
@@ -66,7 +66,7 @@ Public Key:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-secondary w-100" @click="delclient(conndata.hashname, userdata.username, userdata.password)">Delete Client</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delclient(conndata.hashname, userdata.username, userdata.password)">Delete Client</button>
         </form>
     </div>
 </div>
