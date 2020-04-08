@@ -18,12 +18,18 @@ type User struct {
 type Temp struct {
 	FileList []File
 	ConnList []Connect
+	ChatMap  ChatMap
+}
+
+type ChatMap struct {
+	Owner  map[string]bool // list of users in own chat
+	Member map[string]bool // list of global chats by founders hashnames
 }
 
 type Auth struct {
 	Hashpasw string // hash(hash(password+salt))
 	Pasw     []byte // hash(password+salt)
-	Salt     string // base64(random_bytes(8))
+	Salt     string // base64(random_bytes(16))
 }
 
 type Keys struct {
@@ -32,6 +38,13 @@ type Keys struct {
 }
 
 type Session struct {
+	Option ChatOption
 	Socket *websocket.Conn
 	Time   string
 }
+
+type ChatOption uint8
+const (
+	PRIVATE_OPTION ChatOption = 1
+	GROUP_OPTION   ChatOption = 2
+)

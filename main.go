@@ -19,11 +19,16 @@ import (
 	"strings"
 )
 
+var (
+	UPDATES = readUpdates(utils.ReadFile(settings.UPD_NAME))
+	VERSION = UPDATES[0].Version
+)
+
 func init() {
 	gopeer.Set(gopeer.SettingsType{
 		"SERVER_NAME": "HIDDEN-LAKE",
 		"NETWORK":     "[HIDDEN-LAKE]",
-		"VERSION":     "[1.0.5s]",
+		"VERSION":     "[" + VERSION + "]",
 		"HMACKEY":     "9163571392708145",
 		"KEY_SIZE":    uint64(3 << 10),
 	})
@@ -44,17 +49,18 @@ func main() {
 	mux.HandleFunc("/", indexPage)                  // GET
 	mux.HandleFunc("/static/archive/", archivePage) // GET
 
-	mux.HandleFunc("/api/login", api.Login)                      // POST
-	mux.HandleFunc("/api/logout", api.Logout)                    // POST
-	mux.HandleFunc("/api/signup", api.Signup)                    // POST
-	mux.HandleFunc("/api/account", api.Account)                  // GET, POST, DELETE
-	mux.HandleFunc("/api/account/friends", api.AccountFriends)   // GET, POST, PATCH, DELETE
-	mux.HandleFunc("/api/account/connects", api.AccountConnects) // GET, PATCH, DELETE
-	mux.HandleFunc("/api/account/archive/", api.AccountArchive)  // GET, PUT, DELETE
-	mux.HandleFunc("/api/network/chat/", api.NetworkChat)        // GET, POST, DELETE
-	mux.HandleFunc("/api/network/client/", api.NetworkClient)    // GET, POST, PATCH, DELETE
-	//             "/api/network/client/:id/archive/"            // GET, POST
-	mux.HandleFunc("/api/network/email/", api.NetworkEmail)      // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/login", api.Login)                            // POST
+	mux.HandleFunc("/api/logout", api.Logout)                          // POST
+	mux.HandleFunc("/api/signup", api.Signup)                          // POST
+	mux.HandleFunc("/api/account", api.Account)                        // GET, POST, DELETE
+	mux.HandleFunc("/api/account/friends", api.AccountFriends)         // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/account/connects", api.AccountConnects)       // GET, PATCH, DELETE
+	mux.HandleFunc("/api/account/archive/", api.AccountArchive)        // GET, PUT, DELETE
+	mux.HandleFunc("/api/network/chat/", api.NetworkChat)              // GET, POST, DELETE
+	mux.HandleFunc("/api/network/chat/global/", api.NetworkChatGlobal) // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/network/client/", api.NetworkClient)          // GET, POST, PATCH, DELETE
+	//             "/api/network/client/:id/archive/"                  // GET, POST
+	mux.HandleFunc("/api/network/email/", api.NetworkEmail)            // GET, POST, PATCH, DELETE
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -153,6 +159,8 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		settings.PATH_VIEWS+"archive.html",
 		settings.PATH_VIEWS+"archivefile.html",
 		settings.PATH_VIEWS+"friends.html",
+		settings.PATH_VIEWS+"globalchat.html",
+		settings.PATH_VIEWS+"globalchatlist.html",
 		settings.PATH_VIEWS+"notfound.html",
 		settings.PATH_VIEWS+"message_part.html",
 	)
@@ -160,15 +168,17 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		panic("can't load hmtl files")
 	}
 	t.Execute(w, struct {
-		WS     string
-		HTTP   string
-		HOST   string
-		UPDATE []update
+		WS      string
+		HTTP    string
+		HOST    string
+		VERSION string 
+		UPDATES []update
 	}{
 		WS:     "wss://",
 		HTTP:   "https://",
 		HOST:   settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
-		UPDATE: readUpdates(utils.ReadFile(settings.UPD_NAME)),
+		VERSION: VERSION,
+		UPDATES: UPDATES,
 	})
 }
 

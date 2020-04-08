@@ -64,7 +64,7 @@
             <div class="row">
                 <div class="text-light col-lg-12 mx-auto">
                     <!-- HOME PAGE -->
-                    {{ template "home_page" .UPDATE }}
+                    {{ template "home_page" .UPDATES }}
 
                     <!-- ABOUT PAGE -->
                     {{ template "about_page" }}
@@ -114,6 +114,12 @@
                     <!-- NETWORK / CLIENT / ARCHIVE / FILE PAGE -->
                     {{ template "clientarchivefile_page" }}
 
+                    <!-- NETWORK / GLOBAL CHAT / CLIENT -->
+                    {{ template "globalchat_page" }}
+
+                    <!-- NETWORK / GLOBAL CHAT -->
+                    {{ template "globalchatlist_page" }}
+
                     <!-- HDVWHUHJJ PAGE -->
                     {{ template "hdvwhuhjj_page" }}
 
@@ -127,7 +133,7 @@
         <footer class="navbar fixed-bottom py-3 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-secondary">Remake by #571</p>
-                <p class="navbar-nav ml-auto text-secondary">Version 1.0.5s</p>
+                <p class="navbar-nav ml-auto text-secondary">Version {{ .VERSION }}</p>
             </div>
         </footer>
         <router-view></router-view>

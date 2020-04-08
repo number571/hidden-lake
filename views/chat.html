@@ -7,7 +7,7 @@
                 Connections
             </button>
             <ul class="bg-dark dropdown-menu scrollable-menu" role="menu">
-                <li v-for="dialog in netdata.list">
+                <li v-for="dialog in netdata.list" v-if="dialog.message">
                     <a href="#" @click="chat(dialog.companion)" class="d-flex justify-content-between">
                         <router-link :to="{name: 'chat', params: { id: dialog.companion }}">
                             <div class="col-10 hideOverflow">
@@ -60,7 +60,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>

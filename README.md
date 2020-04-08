@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized network. Version 1.0.5s.
+> Decentralized private network. Version 1.0.6s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
@@ -12,6 +12,14 @@
 ### Home page:
 <img src="/images/HiddenLake1.png" alt="HomePage"/>
 
+### Abilities:
+1. Private / Group chats;
+2. Emails;
+3. File sharing / storage;
+
+### Chat room page:
+<img src="/images/HiddenLake14.png" alt="ChatRoomPage"/>
+
 ### Used libraries/frameworks:
 1. gopeer: [github.com/number571/gopeer](https://github.com/number571/gopeer);
 2. vuejs: [github.com/vuejs/vue](https://github.com/vuejs/vue);
@@ -20,8 +28,8 @@
 5. jquery: [github.com/jquery/jquery](https://github.com/jquery/jquery);
 6. popper: [github.com/popperjs/popper-core](https://github.com/popperjs/popper-core);
 
-### Chat room page:
-<img src="/images/HiddenLake8.png" alt="ChatRoomPage"/>
+### Account page:
+<img src="/images/HiddenLake4.png" alt="AccountPage"/>
 
 ### Modules:
 1. Network (kernel): 
@@ -36,30 +44,30 @@
 * single page application;
 * native application routing;
 
-### Account page:
-<img src="/images/HiddenLake4.png" alt="AccountPage"/>
+### Email page:
+<img src="/images/HiddenLake16.png" alt="EmailPage"/>
 
 ### Default configuration (config.cfg): 
 > Configuration file is created when the application starts.
 ```json
 {
+	"http": {
+		"ipv4": "localhost",
+		"port": ":7545"
+	},
+	"tcp": {
+		"ipv4": "",
+		"port": ""
+	},
 	"tls": {
 		"crt": "tls/cert.crt",
 		"key": "tls/cert.key"
-	},
-	"http": {
-		"ipv4": "localhost",
-		"port": ":7545",
-	},
-	"tcp": {
-		"ipv4": "localhost",
-		"port": ":8080"
 	}
 }
 ```
 
-### Settings page:
-<img src="/images/HiddenLake5.png" alt="SettingsPage"/>
+### Archive page:
+<img src="/images/HiddenLake6.png" alt="ArchivePage"/>
 
 ### SQL Tables (database.db):
 > Database file is created when the application starts.
@@ -118,6 +126,17 @@ CREATE TABLE IF NOT EXISTS Chat (
 	FOREIGN KEY (IdClient) REFERENCES Client (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdClient) REFERENCES Client (Id) ON DELETE CASCADE
 );
+/* User global chat; */
+CREATE TABLE IF NOT EXISTS GlobalChat (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdUser INTEGER,
+	Founder VARCHAR(44),
+	Name VARCHAR(44),
+	Message VARCHAR(1024),
+	LastTime VARCHAR(128),
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
+	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
+);
 /* File information; */
 /* Hash = hash(file); */
 /* PathName = hash(hash(file)+random(16)); */
@@ -150,5 +169,5 @@ CREATE TABLE IF NOT EXISTS State (
 );
 ```
 
-### Archive page:
-<img src="/images/HiddenLake6.png" alt="ArchivePage"/>
+### Network page:
+<img src="/images/HiddenLake9.png" alt="NetworkPage"/>

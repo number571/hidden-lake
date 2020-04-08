@@ -48,8 +48,8 @@ func GetTempEmails(user *models.User, hashname string) []models.EmailType {
 			},
 			Body: models.EmailBody{
 				Data: models.EmailData{
-					Head: title,
-					Body: message,
+					Title: title,
+					Message: message,
 				},
 				Desc: models.EmailDesc{
 					Rand:       salt,

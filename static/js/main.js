@@ -7,21 +7,23 @@ const routes = {
     login: 2,
     signup: 3,
     account: 4,
-    archive: 5,
-    archivefile: 6,
-    network: 7,
-    chat: 8,
-    chatnull: 9,
-    email: 10,
-    emailnull: 11,
-    settings: 12,
-    clients: 13,
-    client: 14,
-    clientarchive: 15,
-    clientarchivefile: 16,
-    friends: 17,
-    hdvwhuhjj: 18,
-    notfound: 19,
+    friends: 5,
+    archive: 6,
+    archivefile: 7,
+    network: 8,
+    settings: 9,
+    clients: 10,
+    globalchatlist: 11,
+    globalchat: 12,
+    chatnull: 13,
+    chat: 14,
+    emailnull: 15,
+    email: 16,
+    client: 17,
+    clientarchive: 18,
+    clientarchivefile: 19,
+    hdvwhuhjj: 20,
+    notfound: 21,
 };
 
 const f = async(url, method = "GET", data = null, token = null) => {
@@ -86,6 +88,7 @@ const app = new Vue({
             username: null,
         },
         conndata: {
+            in_chat: null,
             connected: null,
             hidden: null,
             throwclient: null,
@@ -120,8 +123,8 @@ const app = new Vue({
                 },
                 body: {
                     data: {
-                        head: null,
-                        body: null,
+                        title: null,
+                        message: null,
                     },
                     desc: {
                         rand: null,
@@ -351,7 +354,10 @@ const app = new Vue({
             }
             this.socket = new WebSocket(`${ws}${host}/ws/network`);
             this.socket.onopen = () => {
-                this.socket.send(JSON.stringify({token: this.authdata.token}));
+                this.socket.send(JSON.stringify({
+                    token: this.authdata.token, 
+                    option: "private",
+                }));
             }
             this.socket.onmessage = (e) => {
                 let obj = JSON.parse(e.data);
@@ -384,7 +390,6 @@ const app = new Vue({
                 hashname: companion,
                 message: message,
             };
-
             let res = await f("network/chat/", "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
@@ -416,6 +421,109 @@ const app = new Vue({
             this.opened = RoutesData[routes.network].name;
             this.$router.push(RoutesData[routes.network]);
         },
+        async globalchat(hashname) {
+            let res = await f(`network/chat/global/${hashname}`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            this.netdata.list = res.list;
+            switch (hashname) {
+                case "": case "null": case "undefined":
+                    return
+            }
+            this.netdata.chat = res.chat;
+            if (this.socket != null) {
+                this.socket.close(1000, "new socket");
+            }
+            this.socket = new WebSocket(`${ws}${host}/ws/network`);
+            this.socket.onopen = () => {
+                this.socket.send(JSON.stringify({
+                    token: this.authdata.token, 
+                    option: "group",
+                }));
+            }
+            this.socket.onmessage = (e) => {
+                let obj = JSON.parse(e.data);
+                if (obj.comp.to != hashname) {
+                    return;
+                }
+                this.netdata.chat.messages.push({
+                    name: obj.comp.from,
+                    text: obj.text,
+                    time: obj.time,
+                });
+            }
+            this.socket.onerror = (e) => {
+                // console.debug(e);
+            }
+            this.socket.onclose = (e) => {
+                // console.debug("closed");
+            }
+        },
+        async exitglobalchat(hashname) {
+            let obj = {
+                hashname: hashname,
+                option: 'exit',
+            };
+            let res = await f(`network/chat/global/${hashname}`, "PATCH", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Exit from chat success";
+            this.message.desc = "success";
+        },
+        async joinglobalchat(hashname) {
+            let obj = {
+                hashname: hashname,
+                option: 'join',
+            };
+            let res = await f(`network/chat/global/${hashname}`, "PATCH", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.curr = "Join to chat success";
+            this.message.desc = "success";
+        },
+        async sendglobalchat(founder, message) {
+            let obj = {
+                hashname: founder,
+                message: message,
+            };
+            let res = await f(`network/chat/global/`, "POST", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.netdata.message = null;
+            this.message.curr = null;
+        },
+        async delglobalchat(hashname, username, password, option) {
+            let obj = {
+                hashname: hashname,
+                username: username,
+                password: password,
+                password_repeat: option,
+            };
+            let res = await f("network/chat/global/", "DELETE", obj, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "danger";
+                return;
+            }
+            this.message.wait = "Delete chat success";
+            this.message.desc = "success";
+
+            this.globalchat("null");
+            this.opened = RoutesData[routes.globalchatlist].name;
+            this.$router.push(RoutesData[routes.globalchatlist]);
+        },
         async delclient(hashname, username, password) {
             let obj = {
                 hashname: hashname,
@@ -441,6 +549,7 @@ const app = new Vue({
                 this.message.desc = "warning";
                 return;
             }
+            this.conndata.in_chat = res.info.in_chat;
             this.conndata.connected = res.info.connected;
             this.conndata.hidden = res.info.hidden;
             this.conndata.throwclient = res.info.throwclient;
@@ -546,7 +655,12 @@ const app = new Vue({
             return;
         },
         async deletefile(filehash) {
-            let res = await f(`account/archive/`, "DELETE", {filehash: filehash}, this.authdata.token);
+            let obj = {
+                hashname: filehash,
+                username: username,
+                password: password,
+            };
+            let res = await f(`account/archive/`, "DELETE", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -691,8 +805,8 @@ const app = new Vue({
                     },
                     body: {
                         data: {
-                            head: null,
-                            body: null,
+                            title: null,
+                            message: null,
                         },
                         desc: {
                             rand: null,
@@ -714,6 +828,7 @@ const app = new Vue({
             this.filelist = [];
         },
         nullconn() {
+            this.conndata.in_chat = null;
             this.conndata.connected = null;
             this.conndata.hidden = null;
             this.conndata.throwclient = null;
@@ -735,8 +850,11 @@ const app = new Vue({
             this.switcher = null;
             this.checked = false;
             this.message.curr = null;
-            if (page == RoutesData[routes.login].name || page == RoutesData[routes.signup].name) {
-                this.nulldata();
+            switch (page) {
+                case RoutesData[routes.login].name:
+                case RoutesData[routes.signup].name:
+                    this.nulldata();
+                    break;
             }
         },
         setswitch(name) {
@@ -757,6 +875,8 @@ const app = new Vue({
             case RoutesData[routes.archivefile].name: this.archivefile('', this.$route.params.id); break;
             case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
             case RoutesData[routes.chatnull].name: this.chat("null"); break;
+            case RoutesData[routes.globalchat].name: this.globalchat(this.$route.params.id); break;
+            case RoutesData[routes.globalchatlist].name: this.globalchat("null"); break;
             case RoutesData[routes.email].name: this.email(this.$route.params.id); break;
             case RoutesData[routes.emailnull].name: this.email("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;
@@ -767,11 +887,14 @@ const app = new Vue({
         this.opened = this.$route.name;
     },
     updated() {
-        if (this.opened == RoutesData[routes.chat].name) {
-            this.$nextTick(() => {
-                var bottomChat = this.$refs.bottomChat;
-                bottomChat.scrollTop = bottomChat.scrollHeight;
-            });
+        switch (this.opened) {
+            case RoutesData[routes.chat].name: 
+            case RoutesData[routes.globalchat].name:
+                this.$nextTick(() => {
+                    var bottomChat = this.$refs.bottomChat;
+                    bottomChat.scrollTop = bottomChat.scrollHeight;
+                });
+                break;
         }
     },
     watch: {

@@ -54,6 +54,7 @@ func networkClientGET(w http.ResponseWriter, r *http.Request) {
 	hashname := strings.Split(read.Hashname, "/archive/")[0]
 
 	var (
+		ok bool
 		token string
 		client = new(gopeer.Client)
 	)
@@ -77,9 +78,16 @@ func networkClientGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if read.Hashname == user.Hashname {
+		ok = true 
+	} else {
+		_, ok = user.Temp.ChatMap.Member[read.Hashname]
+	}
+
 	data.Info = models.Connect{
 		Hidden: gopeer.HashPublic(clientData.Public) != gopeer.HashPublic(clientData.ThrowClient),
 		Connected:   client.InConnections(hashname),
+		InChat:      ok,
 		Address:     clientData.Address,
 		Hashname:    hashname,
 		Public:      gopeer.StringPublic(clientData.Public),
@@ -215,7 +223,7 @@ func networkClientPATCH(w http.ResponseWriter, r *http.Request) {
 	message := "connection created"
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
+			Title:  settings.TITLE_LOCALCHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
@@ -335,7 +343,7 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 	message := "connection created"
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
+			Title:  settings.TITLE_LOCALCHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
@@ -512,7 +520,7 @@ func networkClientDELETE(w http.ResponseWriter, r *http.Request) {
 	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
+			Title:  settings.TITLE_LOCALCHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{

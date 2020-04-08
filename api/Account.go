@@ -98,6 +98,7 @@ func accountDELETE(w http.ResponseWriter, r *http.Request) {
 	case isLifeTokenError(w, r, token): return
 	case isDecodeError(w, r, read): return
 	case isGetUserError(w, r, user, read): return
+	case isCheckUserError(w, r, user, token): return
 	}
 
 	err := db.DeleteUser(user)

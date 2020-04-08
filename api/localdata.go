@@ -78,13 +78,27 @@ func isGetUserError(w http.ResponseWriter, r *http.Request, user *models.User, r
 		json.NewEncoder(w).Encode(data)
 		return true
 	}
-	us = db.GetState(us)
-	if us == nil {
+	state := db.GetState(us)
+	if state == nil {
 		data.State = "Get user state error"
 		json.NewEncoder(w).Encode(data)
 		return true
 	}
+	us.UsedF2F = state.UsedF2F
 	*user = *us
+	return false
+}
+
+func isCheckUserError(w http.ResponseWriter, r *http.Request, user *models.User, token string) bool {
+	var data struct {
+		State string `json:"state"`
+	}
+	getUser := settings.Users[token]
+	if getUser.Hashname != user.Hashname {
+		data.State = "User undefined"
+		json.NewEncoder(w).Encode(data)
+		return true
+	}
 	return false
 }
 

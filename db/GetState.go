@@ -5,7 +5,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func GetState(user *models.User) *models.User {
+func GetState(user *models.User) *models.State {
 	var (
 		f2f bool
 	)
@@ -21,6 +21,7 @@ func GetState(user *models.User) *models.User {
 	if err != nil {
 		return nil
 	}
-	user.UsedF2F = f2f
-	return user
+	return &models.State{
+		UsedF2F: f2f,
+	}
 }

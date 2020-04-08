@@ -13,12 +13,12 @@
     <pre class="text-white lead">
 --------------------------------------------------------------
 State: "${emaildata.info.incoming ? 'Incoming' : 'Outgoing'}";
-Title: "${emaildata.email.body.data.head}";
+Title: "${emaildata.email.body.data.title}";
 --------------------------------------------------------------
 Sender: "${emaildata.email.head.sender.hashname}";
 Receiver: "${emaildata.email.head.receiver}";
 --------------------------------------------------------------
-Message: ${emaildata.email.body.data.body}
+Message: ${emaildata.email.body.data.message}
 --------------------------------------------------------------
 Time: "${emaildata.info.time}";
 Hash: "${emaildata.email.body.desc.hash}";

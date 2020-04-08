@@ -13,7 +13,6 @@
                 <button v-else type="button" class="btn btn-danger w-100" @click="turnf2f()">F2F</button>
             </div>
         </div>
-
         <div v-if="switcher=='appendfriend'" class="text-center form-group">
             <form id="feedbackForm" class="text-center">
                 <div class="form-group">
@@ -22,7 +21,6 @@
                 <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="addfriend(conndata.hashname), nullconn()">Append friend</button>
             </form>
         </div>
-
         <div class="mx-auto w-100">
             <ul class="list-unstyled chat-1 scrollbar-light-blue">
                 <li v-for="hashname in userdata.connects">

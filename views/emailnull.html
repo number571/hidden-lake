@@ -21,7 +21,6 @@
                     <textarea class="form-control bg-dark text-light" placeholder="Title" v-model="conndata.address" @keyup.enter="emailsend(conndata.public_key, conndata.address, conndata.message)"></textarea>
                 </div>
             </div>
-            
             <div class="form-group w-100">
                 <textarea class="form-control bg-dark text-light" placeholder="Type your message here..." v-model="conndata.message" @keyup.enter="emailsend(conndata.public_key, conndata.address, conndata.message)"></textarea>
             </div>
@@ -40,7 +39,7 @@
                         </div>
                     <div class="col-md-7">
                         <router-link :to="{name: 'email', params: { id: em.email.body.desc.hash }}">
-                            <button type="button" class="btn btn-secondary divtext w-100" @click="email(em.email.body.desc.hash)">${em.email.body.data.head}</button>
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="email(em.email.body.desc.hash)">${em.email.body.data.title}</button>
                         </router-link>
                     </div>
                     <div class="col-md-3">

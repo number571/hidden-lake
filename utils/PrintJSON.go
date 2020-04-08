@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-func PrintJson(data interface{}) {
+func PrintJSON(data interface{}) {
 	jsonData, _ := json.MarshalIndent(data, "", "\t")
 	println(string(jsonData))
 }

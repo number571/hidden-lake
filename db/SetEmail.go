@@ -24,21 +24,21 @@ func SetEmail(user *models.User, option models.EmailSaveOption, email *models.Em
 	switch option {
 	case models.IsTempEmail:
 		session = email.Email.Head.Session
-		title   = email.Email.Body.Data.Head
-		message = email.Email.Body.Data.Body
+		title   = email.Email.Body.Data.Title
+		message = email.Email.Body.Data.Message
 		random  = email.Email.Body.Desc.Rand
 	case models.IsPermEmail:
 		session = ""
 		title = gopeer.Base64Encode(
 			gopeer.EncryptAES(
 				user.Auth.Pasw,
-				[]byte(email.Email.Body.Data.Head),
+				[]byte(email.Email.Body.Data.Title),
 			),
 		)
 		message = gopeer.Base64Encode(
 			gopeer.EncryptAES(
 				user.Auth.Pasw,
-				[]byte(email.Email.Body.Data.Body),
+				[]byte(email.Email.Body.Data.Message),
 			),
 		)
 		random = gopeer.Base64Encode(

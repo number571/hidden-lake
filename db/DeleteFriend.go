@@ -11,7 +11,6 @@ func DeleteFriend(user *models.User, hashname string) error {
 	if id < 0 {
 		return errors.New("User id undefined")
 	}
-
 	_, err := settings.DB.Exec("DELETE FROM Friend WHERE IdUser=$1 AND Hashname=$2",
 		id,
 		hashname,
@@ -19,6 +18,5 @@ func DeleteFriend(user *models.User, hashname string) error {
 	if err != nil {
 		panic("exec 'deletefile' failed")
 	}
-
 	return nil
 }

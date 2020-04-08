@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
+	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"net/http"
@@ -54,6 +55,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	client.Sharing.Perm = true
 	client.Sharing.Path = settings.PATH_ARCHIVE
 
+	chat := db.GetGlobalChat(user, user.Hashname)
+	if chat != nil && chat.Messages == nil {
+		db.SetGlobalChat(user, &models.Chat{
+			Companion: user.Hashname,
+			Messages: []models.Message{
+				models.Message{
+					Name: user.Hashname,
+					Text: "init message",
+					Time: utils.CurrentTime(),
+				},
+			},
+		})
+	}
+	
 	data.Token = token
 	data.Hashname = hash
 	json.NewEncoder(w).Encode(data)

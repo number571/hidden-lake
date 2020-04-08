@@ -5,7 +5,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func GetChat(user *models.User, hashname string) *models.Chat {
+func GetGlobalChat(user *models.User, hashname string) *models.Chat {
 	var (
 		err  error
 		msg  models.Message
@@ -15,17 +15,13 @@ func GetChat(user *models.User, hashname string) *models.Chat {
 	if id < 0 {
 		return nil
 	}
-	clientid := GetClientId(id, hashname)
-	if clientid < 0 {
-		return nil
-	}
 	rows, err := settings.DB.Query(
-		"SELECT Name, Message, LastTime FROM Chat WHERE IdUser=$1 AND IdClient=$2",
+		"SELECT Name, Message, LastTime FROM GlobalChat WHERE IdUser=$1 AND Founder=$2",
 		id,
-		clientid,
+		hashname,
 	)
 	if err != nil {
-		panic("query 'getchat' failed")
+		panic("query 'getglobalchat' failed")
 	}
 	defer rows.Close()
 	chat.Companion = hashname

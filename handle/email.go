@@ -40,8 +40,8 @@ func NewEmail(client *gopeer.Client, public *rsa.PublicKey, title, message strin
 		},
 		Body: models.EmailBody{
 			Data: models.EmailData{
-				Head: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(title))),
-				Body: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(message))),
+				Title: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(title))),
+				Message: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(message))),
 			},
 			Desc: models.EmailDesc{
 				Rand: gopeer.Base64Encode(gopeer.EncryptAES(session, random)),
@@ -59,11 +59,11 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 	if session == nil {
 		return nil, errors.New("error read session key")
 	}
-	title := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Head)))
+	title := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Title)))
 	if len(title) > 128 {
 		return nil, errors.New("email.title size exceeded")
 	}
-	message := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Body)))
+	message := string(gopeer.DecryptAES(session, gopeer.Base64Decode(email.Body.Data.Message)))
 	if len(message) >= settings.EMAIL_SIZE {
 		return nil, errors.New("email.message size exceeded")
 	}
@@ -110,8 +110,8 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 			},
 			Body: models.EmailBody{
 				Data: models.EmailData{
-					Head: title,
-					Body: message,
+					Title: title,
+					Message: message,
 				},
 				Desc: models.EmailDesc{
 					Rand: gopeer.Base64Encode(random),

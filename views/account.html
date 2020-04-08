@@ -46,7 +46,6 @@ Public Key:
             <button v-else @click="setswitch('delete_user')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
     </div>
-
     <div v-if="switcher=='private_key' && !userdata.private_key" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
@@ -58,7 +57,6 @@ Public Key:
             <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="viewkey(userdata.username, userdata.password)">View private key</button>
         </form>
     </div>
-
     <div v-if="switcher=='delete_user'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
@@ -70,7 +68,6 @@ Public Key:
             <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="deluser(userdata.username, userdata.password)">Delete user</button>
         </form>
     </div>
-
     <div v-if="userdata.private_key">
         <pre class="text-white lead">
 Private Key:

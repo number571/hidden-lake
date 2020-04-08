@@ -38,8 +38,8 @@ type EmailBody struct {
 }
 
 type EmailData struct {
-	Head string `json:"head"`
-	Body string `json:"body"`
+	Title   string `json:"title"`
+	Message string `json:"message"`
 }
 
 type EmailDesc struct {

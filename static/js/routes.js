@@ -35,104 +35,118 @@ export const RoutesData = [
 		},
 	},
 	{ // 5
-		path: "/account/archive", 
-		name: "archive",
-		meta: {
-			title: "Archive",
-		},
-	},
-	{ // 6
-		path: "/account/archive/:id", 
-		name: "archivefile",
-		meta: {
-			title: "Archive File",
-		},
-	},
-	{ // 7
-		path: "/network/", 
-		name: "network",
-		meta: {
-			title: "Network",
-		},
-	},
-	{ // 8
-		path: "/network/chat/:id", 
-		name: "chat",
-		meta: {
-			title: "Chat",
-		},
-	},
-	{ // 9
-		path: "/network/chat", 
-		name: "chatnull",
-		meta: {
-			title: "Chat",
-		},
-	},
-	{ // 10
-		path: "/network/email/:id", 
-		name: "email",
-		meta: {
-			title: "Email",
-		},
-	},
-	{ // 11
-		path: "/network/email", 
-		name: "emailnull",
-		meta: {
-			title: "Email",
-		},
-	},
-	{ // 12
-		path: "/network/settings", 
-		name: "settings",
-		meta: {
-			title: "Settings",
-		},
-	},
-	{ // 13
-		path: "/network/clients", 
-		name: "clients",
-		meta: {
-			title: "Clients",
-		},
-	},
-	{ // 14
-		path: "/network/client/:id", 
-		name: "client",
-		meta: {
-			title: "Client",
-		},
-	},
-	{ // 15
-		path: "/network/client/archive/:id", 
-		name: "clientarchive",
-		meta: {
-			title: "Client Archive",
-		},
-	},
-	{ // 16
-		path: "/network/client/:id0/archive/:id1", 
-		name: "clientarchivefile",
-		meta: {
-			title: "Client Archive File",
-		},
-	},
-	{ // 17
 		path: "/account/friends", 
 		name: "friends",
 		meta: {
 			title: "Friends",
 		},
 	},
+	{ // 6
+		path: "/account/archive", 
+		name: "archive",
+		meta: {
+			title: "Archive",
+		},
+	},
+	{ // 7
+		path: "/account/archive/:id", 
+		name: "archivefile",
+		meta: {
+			title: "Archive File",
+		},
+	},
+	{ // 8
+		path: "/network/", 
+		name: "network",
+		meta: {
+			title: "Network",
+		},
+	},
+	{ // 9
+		path: "/network/settings", 
+		name: "settings",
+		meta: {
+			title: "Settings",
+		},
+	},
+	{ // 10
+		path: "/network/clients", 
+		name: "clients",
+		meta: {
+			title: "Clients",
+		},
+	},
+	{ // 11
+		path: "/network/chat/global", 
+		name: "globalchatlist",
+		meta: {
+			title: "List of Global Chat",
+		},
+	},
+	{ // 12
+		path: "/network/chat/global/:id", 
+		name: "globalchat",
+		meta: {
+			title: "Global Chat",
+		},
+	},
+	{ // 13
+		path: "/network/chat", 
+		name: "chatnull",
+		meta: {
+			title: "Chat",
+		},
+	},
+	{ // 14
+		path: "/network/chat/:id", 
+		name: "chat",
+		meta: {
+			title: "Chat",
+		},
+	},
+	{ // 15
+		path: "/network/email", 
+		name: "emailnull",
+		meta: {
+			title: "Email",
+		},
+	},
+	{ // 16
+		path: "/network/email/:id", 
+		name: "email",
+		meta: {
+			title: "Email",
+		},
+	},
+	{ // 17
+		path: "/network/client/:id", 
+		name: "client",
+		meta: {
+			title: "Client",
+		},
+	},
 	{ // 18
+		path: "/network/client/:id/archive", 
+		name: "clientarchive",
+		meta: {
+			title: "Client Archive",
+		},
+	},
+	{ // 19
+		path: "/network/client/:id0/archive/:id1", 
+		name: "clientarchivefile",
+		meta: {
+			title: "Client Archive File",
+		},
+	},
+	{ // 20
 		path: "/hdvwhuhjj", 
 		name: "hdvwhuhjj",
 		meta: {
 			title: "Hdvwhu Hjj",
 		},
 	},
-	{ // 19
+	{ // 21
 		path: "*", 
 		name: "notfound",
 		meta: {

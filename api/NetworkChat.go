@@ -98,9 +98,10 @@ func networkChatPOST(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	}
-	_, err := client.SendTo(client.Destination(read.Hashname), &gopeer.Package{
+	dest := client.Destination(read.Hashname)
+	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_MESSAGE,
+			Title:  settings.TITLE_LOCALCHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
@@ -149,7 +150,7 @@ func networkChatPOST(w http.ResponseWriter, r *http.Request) {
 		Text: message,
 		Time: time,
 	}
-	if user.Session.Socket != nil {
+	if user.Session.Socket != nil && user.Session.Option == models.PRIVATE_OPTION {
 		websocket.JSON.Send(user.Session.Socket, wsdata)
 	}
 
@@ -172,11 +173,12 @@ func networkChatDELETE(w http.ResponseWriter, r *http.Request) {
 	case isLifeTokenError(w, r, token): return
 	case isDecodeError(w, r, read): return
 	case isGetUserError(w, r, user, read): return
+	case isCheckUserError(w, r, user, token): return
 	}
 
-	err := db.DeleteChat(user, read.Hashname)
+	err := db.ClearChat(user, read.Hashname)
 	if err != nil {
-		data.State = "Can't delete chat"
+		data.State = "Can't clear chat"
 		json.NewEncoder(w).Encode(data)
 		return
 	}

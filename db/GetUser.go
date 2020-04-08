@@ -21,11 +21,12 @@ func GetUser(username, password string) *models.User {
 	if err != nil {
 		return nil
 	}
-	pasw := gopeer.HashSum([]byte(password + salt))
-	hashpasw := gopeer.HashSum(pasw)
+	hashpasw := gopeer.HashSum([]byte(password + salt))
 	for i := 1; i < (1 << 20); i++ {
 		hashpasw = gopeer.HashSum(hashpasw)
 	}
+	pasw := hashpasw
+	hashpasw = gopeer.HashSum(pasw)
 	base64hashpasw := gopeer.Base64Encode(hashpasw)
 	if base64hashpasw != hpasw {
 		return nil
@@ -42,6 +43,12 @@ func GetUser(username, password string) *models.User {
 		Keys: models.Keys{
 			Private: priv,
 			Public:  &priv.PublicKey,
+		},
+		Temp: models.Temp{
+			ChatMap: models.ChatMap{
+				Owner:  make(map[string]bool),
+				Member: make(map[string]bool),
+			},
 		},
 		Session: models.Session{
 			Time: utils.CurrentTime(),

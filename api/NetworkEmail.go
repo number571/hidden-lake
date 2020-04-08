@@ -183,8 +183,8 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if client.Hashname() == hash {
-		email.Body.Data.Head = read.Title
-		email.Body.Data.Body = read.Message
+		email.Body.Data.Title = read.Title
+		email.Body.Data.Message = read.Message
 		email.Body.Desc.Rand = rand
 		err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
@@ -218,8 +218,8 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(data)
 			return
 		} 
-		email.Body.Data.Head = read.Title
-		email.Body.Data.Body = read.Message
+		email.Body.Data.Title = read.Title
+		email.Body.Data.Message = read.Message
 		email.Body.Desc.Rand = rand
 		err = db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
@@ -251,8 +251,8 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	email.Body.Data.Head = read.Title
-	email.Body.Data.Body = read.Message
+	email.Body.Data.Title = read.Title
+	email.Body.Data.Message = read.Message
 	email.Body.Desc.Rand = rand
 	err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 		Info: models.EmailInfo{

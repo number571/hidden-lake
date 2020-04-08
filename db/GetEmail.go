@@ -46,8 +46,8 @@ func GetEmail(user *models.User, hash string) *models.Email {
 			},
 			Body: models.EmailBody{
 				Data: models.EmailData{
-					Head: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(title))),
-					Body: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(message))),
+					Title: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(title))),
+					Message: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(message))),
 				},
 				Desc: models.EmailDesc{
 					Rand:       string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(salt))),

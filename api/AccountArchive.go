@@ -190,19 +190,20 @@ func accountArchiveDELETE(w http.ResponseWriter, r *http.Request) {
 		State string `json:"state"`
 	}
 	
-	var read struct {
-		Filehash string `json:"filehash"`
-	}
-
-	var token string
+	var (
+		token string
+		read = new(userdata)
+		user = new(models.User)
+	)
 	switch {
 	case isTokenAuthError(w, r, &token): return
 	case isLifeTokenError(w, r, token): return
 	case isDecodeError(w, r, &read): return
+	case isGetUserError(w, r, user, read): return
+	case isCheckUserError(w, r, user, token): return
 	}
 
-	user := settings.Users[token]
-	err := db.DeleteFile(user, read.Filehash)
+	err := db.DeleteFile(user, read.Hashname)
 	if err != nil {
 		data.State = "File already deleted"
 		json.NewEncoder(w).Encode(data)

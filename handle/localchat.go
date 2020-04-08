@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
+func getLocalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
 		token    = settings.Tokens[client.Hashname()]
 		hash     = pack.From.Sender.Hashname
@@ -62,13 +62,13 @@ func getMessage(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		Time: time,
 	}
 
-	if user.Session.Socket != nil {
+	if user.Session.Socket != nil && user.Session.Option == models.PRIVATE_OPTION {
 		websocket.JSON.Send(user.Session.Socket, wsdata)
 	}
 
 	return set
 }
 
-func setMessage(client *gopeer.Client, pack *gopeer.Package) {
+func setLocalchat(client *gopeer.Client, pack *gopeer.Package) {
 	// pass
 }

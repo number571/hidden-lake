@@ -18,17 +18,21 @@
         <div class="col-md-6">
             <button @click="savecertificate()" type="button" class="btn btn-success w-100">Copy certificate</button>
         </div>
-        <div class="col-md-6" v-if="conndata.hashname">
-            <router-link :to="{name: 'clientarchive', params: {id: conndata.hashname}}" exact>
-                <button type="button" @click="archivelist(conndata.hashname)" class="btn btn-secondary w-100">Archive</button>
-            </router-link>
+        <div class="col-md-6">
+            <button v-if="conndata.in_chat" @click="exitglobalchat(conndata.hashname), conndata.in_chat=false" type="button" class="btn btn-danger w-100">Exit from chat</button>
+            <button v-else @click="joinglobalchat(conndata.hashname), conndata.in_chat=true" type="button" class="btn btn-success w-100">Join to chat</button>
         </div>
+    </div>
+    <div class="form-group" v-if="conndata.hashname">
+        <router-link :to="{name: 'clientarchive', params: {id: conndata.hashname}}" exact>
+            <button type="button" @click="archivelist(conndata.hashname)" class="btn btn-secondary w-100">Archive</button>
+        </router-link>
     </div>
     <pre class="text-white lead">
 Connected: "${conndata.connected}";
+Hidden connection: "${conndata.hidden}";
 Address: "${conndata.address}";
 Hashname: "${conndata.hashname}";
-Connection hidden: "${conndata.hidden}";
 Throw node: "${conndata.throwclient}";
 
 Public Key: 
@@ -37,15 +41,14 @@ Public Key:
     <br>
     <div class="form-group row">
         <div class="col-md-6">
-            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-secondary w-100">Delete Chat</button>
+            <button v-if="switcher!='delete_chat'" @click="nulldata(), setswitch('delete_chat')" type="button" class="btn btn-secondary w-100">Clear chat</button>
             <button v-else @click="setswitch('delete_chat')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
         <div class="col-md-6">
-            <button v-if="switcher!='delete_client'" @click="nulldata(), setswitch('delete_client')" type="button" class="btn btn-secondary w-100">Delete Client</button>
+            <button v-if="switcher!='delete_client'" @click="nulldata(), setswitch('delete_client')" type="button" class="btn btn-secondary w-100">Delete client</button>
             <button v-else @click="setswitch('delete_client')" type="button" class="btn btn-danger w-100">Action</button>
         </div>
     </div>
-
     <div v-if="switcher=='delete_chat'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
@@ -54,10 +57,9 @@ Public Key:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delchat(conndata.hashname, userdata.username, userdata.password)">Delete Chat</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delchat(conndata.hashname, userdata.username, userdata.password)">Clear chat</button>
         </form>
     </div>
-
     <div v-if="switcher=='delete_client'" class="text-center">
         <form id="feedbackForm" class="text-center">
             <div class="form-group">
@@ -66,7 +68,7 @@ Public Key:
             <div class="form-group">
                 <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
             </div>
-            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delclient(conndata.hashname, userdata.username, userdata.password)">Delete Client</button>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delclient(conndata.hashname, userdata.username, userdata.password)">Delete client</button>
         </form>
     </div>
 </div>

@@ -1,5 +1,16 @@
 [
 	{
+		"version": "1.0.6s",
+		"updates": [
+			"Added the global (group) chats",
+			"Fix check client's id in package db",
+			"Fix added entropy password",
+			"Updated images in the HL project directory",
+			"Now the default application mode is F2F",
+			"Turn on client option (TCP field is empty)"
+		]
+	},
+	{
 		"version": "1.0.5s",
 		"updates": [
 			"Added the ability to send and receive emails",
@@ -11,7 +22,7 @@
 		"version": "1.0.4s",
 		"updates": [
 			"Added salt for generate new password with login information",
-			"Updated to gopeer v1.1.2 (fix file transfer, packet size limit)"
+			"Updated to gopeer v1.1.2 (fix file transfer, package size limit)"
 		]
 	},
 	{
@@ -44,6 +55,12 @@
 			"GUI is now based on single page",
 			"Requests to client throw API over HTTP/S, WS/S",
 			"Requests to network throw Packages over TCP"
+		]
+	},
+	{
+		"version": "0.1.0 - 0.7.0",
+		"updates": [
+			"Experimental versions"
 		]
 	}
 ]

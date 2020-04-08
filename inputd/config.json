@@ -4,8 +4,8 @@
 		"port": ":7545"
 	},
 	"tcp": {
-		"ipv4": "localhost",
-		"port": ":8080"
+		"ipv4": "",
+		"port": ""
 	},
 	"tls": {
 		"crt": "tls/cert.crt",
