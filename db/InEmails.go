@@ -8,7 +8,7 @@ import (
 func InEmails(user *models.User, hash string) bool {
 	var (
 		lasttime string
-		err    error
+		err      error
 	)
 	id := GetUserId(user.Username)
 	if id < 0 {

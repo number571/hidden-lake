@@ -1,8 +1,8 @@
 package settings
 
 import (
-	"time"
 	"github.com/number571/hiddenlake/utils"
+	"time"
 )
 
 func ClearTempEmails(checkTime time.Duration) {
@@ -14,7 +14,7 @@ func ClearTempEmails(checkTime time.Duration) {
 
 func checkLifetimeEmails() {
 	var (
-		id uint64
+		id       uint64
 		lasttime string
 		currTime = utils.ParseTime(utils.CurrentTime())
 	)

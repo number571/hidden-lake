@@ -1,14 +1,14 @@
 package api
 
 import (
-	"strings"
-	"net/http"
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
+	"net/http"
+	"strings"
 )
 
 type userdata struct {
@@ -35,7 +35,7 @@ func isDecodeError(w http.ResponseWriter, r *http.Request, read interface{}) boo
 	if err != nil {
 		data.State = "Error decode json format"
 		json.NewEncoder(w).Encode(data)
-		return true 
+		return true
 	}
 	return false
 }
@@ -49,7 +49,7 @@ func isTokenAuthError(w http.ResponseWriter, r *http.Request, token *string) boo
 	if _, ok := settings.Users[*token]; !ok {
 		data.State = "Tokened user undefined"
 		json.NewEncoder(w).Encode(data)
-		return true 
+		return true
 	}
 	return false
 }

@@ -1,10 +1,10 @@
 package ws
 
 import (
-	"strings"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"golang.org/x/net/websocket"
+	"strings"
 )
 
 func Network(ws *websocket.Conn) {

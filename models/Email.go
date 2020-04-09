@@ -1,6 +1,7 @@
 package models
 
 type EmailSaveOption bool
+
 const (
 	IsTempEmail EmailSaveOption = true
 	IsPermEmail EmailSaveOption = false
@@ -12,8 +13,8 @@ type Email struct {
 }
 
 type EmailInfo struct {
-	Incoming  bool   `json:"incoming"`
-	Time      string `json:"time"`
+	Incoming bool   `json:"incoming"`
+	Time     string `json:"time"`
 }
 
 type EmailType struct {
@@ -22,9 +23,9 @@ type EmailType struct {
 }
 
 type EmailHead struct {
-	Sender     EmailSender `json:"sender"`
-	Receiver   string      `json:"receiver"`   // hash(public receiver)
-	Session    string      `json:"session"`    // encrypt[public receiver](session)
+	Sender   EmailSender `json:"sender"`
+	Receiver string      `json:"receiver"` // hash(public receiver)
+	Session  string      `json:"session"`  // encrypt[public receiver](session)
 }
 
 type EmailSender struct {

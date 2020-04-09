@@ -35,11 +35,11 @@ const (
 )
 
 const (
-	EMAIL_SIZE        = 2 << 10 // 2KiB
-	MESSAGE_SIZE      = 1 << 10 // 1KiB
-	FILE_PART_SIZE    = 8 << 20 // 8MiB
-	BUFFER_SIZE       = 2 << 20 // 2MiB
-	CHECK_TIME        = 12 * time.Hour
-	LIFETIME          = 24 * time.Hour
-	DIFFICULTY        = 20
+	EMAIL_SIZE     = 2 << 10 // 2KiB
+	MESSAGE_SIZE   = 1 << 10 // 1KiB
+	FILE_PART_SIZE = 8 << 20 // 8MiB
+	BUFFER_SIZE    = 2 << 20 // 2MiB
+	CHECK_TIME     = 12 * time.Hour
+	LIFETIME       = 24 * time.Hour
+	DIFFICULTY     = 20
 )

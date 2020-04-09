@@ -2,13 +2,13 @@ package handle
 
 import (
 	"bytes"
-	"errors"
 	"crypto/rsa"
+	"errors"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 )
 
 func NewEmail(client *gopeer.Client, public *rsa.PublicKey, title, message string) (*models.EmailType, string) {
@@ -32,22 +32,22 @@ func NewEmail(client *gopeer.Client, public *rsa.PublicKey, title, message strin
 	return &models.EmailType{
 		Head: models.EmailHead{
 			Sender: models.EmailSender{
-				Public: publicst,
+				Public:   publicst,
 				Hashname: hashname,
 			},
 			Receiver: receiver,
-			Session: gopeer.Base64Encode(gopeer.EncryptRSA(public, session)),
+			Session:  gopeer.Base64Encode(gopeer.EncryptRSA(public, session)),
 		},
 		Body: models.EmailBody{
 			Data: models.EmailData{
-				Title: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(title))),
+				Title:   gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(title))),
 				Message: gopeer.Base64Encode(gopeer.EncryptAES(session, []byte(message))),
 			},
 			Desc: models.EmailDesc{
-				Rand: gopeer.Base64Encode(gopeer.EncryptAES(session, random)),
-				Hash: gopeer.Base64Encode(hash),
-				Sign: gopeer.Base64Encode(gopeer.Sign(client.Private(), hash)),
-				Nonce: gopeer.ProofOfWork(hash, settings.DIFFICULTY),
+				Rand:       gopeer.Base64Encode(gopeer.EncryptAES(session, random)),
+				Hash:       gopeer.Base64Encode(hash),
+				Sign:       gopeer.Base64Encode(gopeer.Sign(client.Private(), hash)),
+				Nonce:      gopeer.ProofOfWork(hash, settings.DIFFICULTY),
 				Difficulty: settings.DIFFICULTY,
 			},
 		},
@@ -100,24 +100,24 @@ func ReadEmail(client *gopeer.Client, email *models.EmailType) (*models.Email, e
 	return &models.Email{
 		Info: models.EmailInfo{
 			Incoming: true,
-			Time: utils.CurrentTime(),
+			Time:     utils.CurrentTime(),
 		},
 		Email: models.EmailType{
 			Head: models.EmailHead{
-				Sender: email.Head.Sender,
+				Sender:   email.Head.Sender,
 				Receiver: email.Head.Receiver,
-				Session: email.Head.Session,
+				Session:  email.Head.Session,
 			},
 			Body: models.EmailBody{
 				Data: models.EmailData{
-					Title: title,
+					Title:   title,
 					Message: message,
 				},
 				Desc: models.EmailDesc{
-					Rand: gopeer.Base64Encode(random),
-					Hash: email.Body.Desc.Hash,
-					Sign: email.Body.Desc.Sign,
-					Nonce: email.Body.Desc.Nonce,
+					Rand:       gopeer.Base64Encode(random),
+					Hash:       email.Body.Desc.Hash,
+					Sign:       email.Body.Desc.Sign,
+					Nonce:      email.Body.Desc.Nonce,
 					Difficulty: email.Body.Desc.Difficulty,
 				},
 			},
@@ -178,7 +178,7 @@ func getEmail(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		dest := client.Destination(email.Head.Receiver)
 		client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title: settings.TITLE_EMAIL,
+				Title:  settings.TITLE_EMAIL,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
@@ -192,7 +192,7 @@ func getEmail(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		db.SetEmail(user, models.IsTempEmail, &models.Email{
 			Info: models.EmailInfo{
 				Incoming: true,
-				Time: utils.CurrentTime(),
+				Time:     utils.CurrentTime(),
 			},
 			Email: *email,
 		})
@@ -203,8 +203,8 @@ func getEmail(client *gopeer.Client, pack *gopeer.Package) (set string) {
 func setEmail(client *gopeer.Client, pack *gopeer.Package) {
 	var (
 		emails []models.EmailType
-		token = settings.Tokens[client.Hashname()]
-		user  = settings.Users[token]
+		token  = settings.Tokens[client.Hashname()]
+		user   = settings.Users[token]
 	)
 	gopeer.UnpackJSON([]byte(pack.Body.Data), &emails)
 	if emails == nil {

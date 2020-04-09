@@ -7,8 +7,8 @@ import (
 
 func GetAllFriends(user *models.User) []string {
 	var (
-		friends     []string
-		hashname    string
+		friends  []string
+		hashname string
 	)
 	id := GetUserId(user.Username)
 	if id < 0 {

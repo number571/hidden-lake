@@ -1,9 +1,9 @@
 package models
 
 type Config struct {
-	Http Http   `json:"http"`
-	Tcp  Tcp    `json:"tcp"`
-	Tls  Tls    `json:"tls"`
+	Http Http `json:"http"`
+	Tcp  Tcp  `json:"tcp"`
+	Tls  Tls  `json:"tls"`
 }
 
 type Http struct {

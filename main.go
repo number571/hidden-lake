@@ -60,7 +60,7 @@ func main() {
 	mux.HandleFunc("/api/network/chat/global/", api.NetworkChatGlobal) // GET, POST, PATCH, DELETE
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)          // GET, POST, PATCH, DELETE
 	//             "/api/network/client/:id/archive/"                  // GET, POST
-	mux.HandleFunc("/api/network/email/", api.NetworkEmail)            // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/network/email/", api.NetworkEmail) // GET, POST, PATCH, DELETE
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -132,7 +132,7 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
 	if file.Encr {
 		resname = utils.RandomString(16)
 		gopeer.FileDecryptAES(user.Auth.Pasw, settings.PATH_ARCHIVE+file.Path, settings.PATH_ARCHIVE+resname)
-		defer os.Remove(settings.PATH_ARCHIVE+resname)
+		defer os.Remove(settings.PATH_ARCHIVE + resname)
 	}
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", file.Name))
@@ -171,12 +171,12 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		WS      string
 		HTTP    string
 		HOST    string
-		VERSION string 
+		VERSION string
 		UPDATES []update
 	}{
-		WS:     "wss://",
-		HTTP:   "https://",
-		HOST:   settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
+		WS:      "wss://",
+		HTTP:    "https://",
+		HOST:    settings.CFG.Http.Ipv4 + settings.CFG.Http.Port,
 		VERSION: VERSION,
 		UPDATES: UPDATES,
 	})

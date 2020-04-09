@@ -7,8 +7,8 @@ import (
 
 func GetGlobalChatFounders(user *models.User) []string {
 	var (
-		founders  []string
-		founder   string
+		founders []string
+		founder  string
 	)
 	id := GetUserId(user.Username)
 	if id < 0 {

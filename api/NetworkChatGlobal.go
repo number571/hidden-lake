@@ -1,22 +1,22 @@
 package api
 
 import (
-	"time"
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/handle"
+	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
 	"github.com/number571/hiddenlake/utils"
 	"golang.org/x/net/websocket"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type chatlist struct {
-	Hashname string `json:"hashname"`
-	Connected bool  `json:"connected"`
+	Hashname  string `json:"hashname"`
+	Connected bool   `json:"connected"`
 }
 
 func NetworkChatGlobal(w http.ResponseWriter, r *http.Request) {
@@ -42,9 +42,9 @@ func NetworkChatGlobal(w http.ResponseWriter, r *http.Request) {
 
 func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State   string       `json:"state"`
-		List    []chatlist   `json:"list"`
-		Chat    *models.Chat `json:"chat"`
+		State string       `json:"state"`
+		List  []chatlist   `json:"list"`
+		Chat  *models.Chat `json:"chat"`
 	}
 
 	var read struct {
@@ -55,13 +55,16 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
-		ok bool
+		token  string
+		ok     bool
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -76,7 +79,7 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 				_, ok = user.Temp.ChatMap.Member[hash]
 			}
 			data.List = append(data.List, chatlist{
-				Hashname: hash,
+				Hashname:  hash,
 				Connected: ok,
 			})
 		}
@@ -95,14 +98,14 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 			dest := client.Destination(read.Hashname)
 			client.SendTo(dest, &gopeer.Package{
 				Head: gopeer.Head{
-					Title: settings.TITLE_GLOBALCHAT,
+					Title:  settings.TITLE_GLOBALCHAT,
 					Option: gopeer.Get("OPTION_GET").(string),
 				},
 				Body: gopeer.Body{
 					Data: string(gopeer.PackJSON(models.GlobalChat{
 						Head: models.GlobalChatHead{
 							Founder: read.Hashname,
-							Option: settings.TITLE_LOCALCHAT,
+							Option:  settings.TITLE_LOCALCHAT,
 						},
 					})),
 				},
@@ -135,13 +138,17 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
+		token  string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -162,7 +169,7 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 			dest := client.Destination(hash)
 			client.SendTo(dest, &gopeer.Package{
 				Head: gopeer.Head{
-					Title: settings.TITLE_GLOBALCHAT,
+					Title:  settings.TITLE_GLOBALCHAT,
 					Option: gopeer.Get("OPTION_GET").(string),
 				},
 				Body: gopeer.Body{
@@ -172,7 +179,8 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		switch {
-			case isNotInConnectionsError(w, r, client, read.Hashname): return
+		case isNotInConnectionsError(w, r, client, read.Hashname):
+			return
 		}
 		dest := client.Destination(read.Hashname)
 		_, err := client.SendTo(dest, &gopeer.Package{
@@ -245,14 +253,18 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
-		err   error
+		token  string
+		err    error
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -274,9 +286,9 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 			}
 			dest := &gopeer.Destination{
 				Address:     clientData.Address,
-	        	Certificate: []byte(clientData.Certificate),
-	        	Public:      clientData.ThrowClient,
-	        	Receiver:    clientData.Public,
+				Certificate: []byte(clientData.Certificate),
+				Public:      clientData.ThrowClient,
+				Receiver:    clientData.Public,
 			}
 			err = client.Connect(dest)
 			if err != nil {
@@ -295,7 +307,7 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 				Data: string(gopeer.PackJSON(models.GlobalChat{
 					Head: models.GlobalChatHead{
 						Founder: read.Hashname,
-						Option: gopeer.Get("OPTION_GET").(string),
+						Option:  gopeer.Get("OPTION_GET").(string),
 					},
 				})),
 			},
@@ -305,7 +317,7 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(data)
 			return
 		}
-		user.Temp.ChatMap.Member[read.Hashname] = true 
+		user.Temp.ChatMap.Member[read.Hashname] = true
 		err = db.SetGlobalChat(user, &models.Chat{
 			Companion: read.Hashname,
 			Messages: []models.Message{
@@ -324,7 +336,8 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 	case "exit":
 		delete(user.Temp.ChatMap.Member, read.Hashname)
 		switch {
-		case isNotInConnectionsError(w, r, client, read.Hashname): return
+		case isNotInConnectionsError(w, r, client, read.Hashname):
+			return
 		}
 		dest := client.Destination(read.Hashname)
 		_, err = client.SendTo(dest, &gopeer.Package{
@@ -336,7 +349,7 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 				Data: string(gopeer.PackJSON(models.GlobalChat{
 					Head: models.GlobalChatHead{
 						Founder: read.Hashname,
-						Option: gopeer.Get("OPTION_SET").(string),
+						Option:  gopeer.Get("OPTION_SET").(string),
 					},
 				})),
 			},
@@ -375,16 +388,21 @@ func networkChatGlobalDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 		token string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
-	case isCheckUserError(w, r, user, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
+	case isCheckUserError(w, r, user, token):
+		return
 	}
 
 	switch strings.ToLower(read.PasswordRepeat) {
@@ -407,6 +425,6 @@ func networkChatGlobalDELETE(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	}
-	
+
 	json.NewEncoder(w).Encode(data)
 }

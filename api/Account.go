@@ -40,13 +40,16 @@ func accountGET(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
+		token  string
 	)
 
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	data.Address = client.Address()
@@ -65,16 +68,20 @@ func accountPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 		token string
 	)
 
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
 	}
 
 	data.PrivateKey = gopeer.StringPrivate(settings.Users[token].Keys.Private)
@@ -88,17 +95,22 @@ func accountDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 		token string
 	)
 
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
-	case isCheckUserError(w, r, user, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
+	case isCheckUserError(w, r, user, token):
+		return
 	}
 
 	err := db.DeleteUser(user)

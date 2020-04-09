@@ -1,15 +1,15 @@
 package api
 
 import (
-	"strings"
-	"net/http"
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/utils"
-	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/handle"
+	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
+	"net/http"
+	"strings"
 )
 
 func NetworkEmail(w http.ResponseWriter, r *http.Request) {
@@ -49,14 +49,16 @@ func networkEmailGET(w http.ResponseWriter, r *http.Request) {
 
 func oneEmailGET(w http.ResponseWriter, r *http.Request, hash string) {
 	var data struct {
-		State   string       `json:"state"`
-		Email   models.Email `json:"email"`
+		State string       `json:"state"`
+		Email models.Email `json:"email"`
 	}
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -73,19 +75,21 @@ func oneEmailGET(w http.ResponseWriter, r *http.Request, hash string) {
 
 func allEmailsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State   string         `json:"state"`
-		Emails  []models.Email `json:"emails"`
+		State  string         `json:"state"`
+		Emails []models.Email `json:"emails"`
 	}
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
 	}
 
 	user := settings.Users[token]
 	data.Emails = db.GetAllEmails(user)
-	
+
 	json.NewEncoder(w).Encode(data)
 }
 
@@ -96,25 +100,28 @@ func networkEmailPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	packReq := &gopeer.Package{
 		Head: gopeer.Head{
-			Title: settings.TITLE_EMAIL,
+			Title:  settings.TITLE_EMAIL,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
 			Data: string(gopeer.PackJSON(&models.EmailType{
 				Head: models.EmailHead{
 					Receiver: client.Hashname(),
-					Session: gopeer.Get("OPTION_GET").(string),
+					Session:  gopeer.Get("OPTION_GET").(string),
 				},
 			})),
 		},
@@ -141,14 +148,18 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	public := gopeer.ParsePublic(read.PublicKey)
@@ -177,8 +188,8 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		user  = settings.Users[token]
-		hash  = gopeer.HashPublic(public)
+		user        = settings.Users[token]
+		hash        = gopeer.HashPublic(public)
 		email, rand = handle.NewEmail(client, public, read.Title, read.Message)
 	)
 
@@ -189,7 +200,7 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
 				Incoming: false,
-				Time: utils.CurrentTime(),
+				Time:     utils.CurrentTime(),
 			},
 			Email: *email,
 		})
@@ -206,7 +217,7 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		dest := client.Destination(hash)
 		_, err := client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title: settings.TITLE_EMAIL,
+				Title:  settings.TITLE_EMAIL,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
@@ -217,14 +228,14 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 			data.State = "User can't receive email"
 			json.NewEncoder(w).Encode(data)
 			return
-		} 
+		}
 		email.Body.Data.Title = read.Title
 		email.Body.Data.Message = read.Message
 		email.Body.Desc.Rand = rand
 		err = db.SetEmail(user, models.IsPermEmail, &models.Email{
 			Info: models.EmailInfo{
 				Incoming: false,
-				Time: utils.CurrentTime(),
+				Time:     utils.CurrentTime(),
 			},
 			Email: *email,
 		})
@@ -242,7 +253,7 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 		dest := client.Destination(hash)
 		client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title: settings.TITLE_EMAIL,
+				Title:  settings.TITLE_EMAIL,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
@@ -257,7 +268,7 @@ func networkEmailPOST(w http.ResponseWriter, r *http.Request) {
 	err := db.SetEmail(user, models.IsPermEmail, &models.Email{
 		Info: models.EmailInfo{
 			Incoming: false,
-			Time: utils.CurrentTime(),
+			Time:     utils.CurrentTime(),
 		},
 		Email: *email,
 	})
@@ -275,16 +286,19 @@ func networkEmailDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
-	
+
 	var read struct {
 		Emailhash string `json:"emailhash"`
 	}
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
 	}
 
 	user := settings.Users[token]

@@ -12,7 +12,7 @@ func GetAllClients(user *models.User) []models.Client {
 		hashname    string
 		address     string
 		public      string
-		throwclient string 
+		throwclient string
 		certificate string
 	)
 	id := GetUserId(user.Username)

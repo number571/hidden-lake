@@ -33,19 +33,22 @@ func AccountFriends(w http.ResponseWriter, r *http.Request) {
 // List of friends.
 func accountFriendsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State    string    `json:"state"`
-		StateF2F bool      `json:"statef2f"`
-		Friends  []string  `json:"friends"`
+		State    string   `json:"state"`
+		StateF2F bool     `json:"statef2f"`
+		Friends  []string `json:"friends"`
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	data.StateF2F = client.F2F.Perm
@@ -63,19 +66,22 @@ func accountFriendsPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
 	client = settings.Listener.Clients[user.Hashname]
 	currentF2F := !client.F2F.Perm
-	
+
 	err := db.SetState(user, &models.State{
 		UsedF2F: currentF2F,
 	})
@@ -101,14 +107,18 @@ func accountFriendsPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	if len(read.Hashname) != len(client.Hashname()) {
@@ -147,14 +157,18 @@ func accountFriendsDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]

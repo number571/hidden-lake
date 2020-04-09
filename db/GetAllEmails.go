@@ -52,7 +52,7 @@ func GetAllEmails(user *models.User) []models.Email {
 				},
 				Body: models.EmailBody{
 					Data: models.EmailData{
-						Title: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(title))),
+						Title:   string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(title))),
 						Message: string(gopeer.DecryptAES(user.Auth.Pasw, gopeer.Base64Decode(message))),
 					},
 					Desc: models.EmailDesc{

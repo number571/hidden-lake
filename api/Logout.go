@@ -20,7 +20,8 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
+	case isTokenAuthError(w, r, &token):
+		return
 	}
 
 	deleteUserAuth(settings.Users[token])

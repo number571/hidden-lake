@@ -48,7 +48,7 @@ func GetTempEmails(user *models.User, hashname string) []models.EmailType {
 			},
 			Body: models.EmailBody{
 				Data: models.EmailData{
-					Title: title,
+					Title:   title,
 					Message: message,
 				},
 				Desc: models.EmailDesc{

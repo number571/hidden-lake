@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Username string 
+	Username string
 	Hashname string // hash(pubkey)
 	UsedF2F  bool
 	Auth     Auth
@@ -44,6 +44,7 @@ type Session struct {
 }
 
 type ChatOption uint8
+
 const (
 	PRIVATE_OPTION ChatOption = 1
 	GROUP_OPTION   ChatOption = 2

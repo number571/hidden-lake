@@ -14,7 +14,7 @@ func GetUser(username, password string) *models.User {
 	}
 	var (
 		salt, hpasw, key string
-		err error
+		err              error
 	)
 	row := settings.DB.QueryRow("SELECT Salt, Hashpasw, PrivateKey FROM User WHERE Username=$1", name)
 	err = row.Scan(&salt, &hpasw, &key)

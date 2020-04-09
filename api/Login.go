@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 	"net/http"
 )
 
@@ -30,8 +30,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	switch {
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
 	}
 
 	token := gopeer.Base64Encode(gopeer.GenerateRandomBytes(32))
@@ -68,7 +70,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			},
 		})
 	}
-	
+
 	data.Token = token
 	data.Hashname = hash
 	json.NewEncoder(w).Encode(data)

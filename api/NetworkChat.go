@@ -52,8 +52,10 @@ func networkChatGET(w http.ResponseWriter, r *http.Request) {
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -82,14 +84,19 @@ func networkChatPOST(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
+		token  string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
-	case isNotInConnectionsError(w, r, client, read.Hashname): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
+	case isNotInConnectionsError(w, r, client, read.Hashname):
+		return
 	}
 
 	message := strings.Replace(read.Message, "\n", " ", -1)
@@ -164,16 +171,21 @@ func networkChatDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 		token string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
-	case isCheckUserError(w, r, user, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
+	case isCheckUserError(w, r, user, token):
+		return
 	}
 
 	err := db.ClearChat(user, read.Hashname)

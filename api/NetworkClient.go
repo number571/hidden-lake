@@ -1,12 +1,11 @@
 package api
 
 import (
-	"time"
 	"bytes"
 	"crypto/x509"
-	"encoding/pem"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
 	"github.com/number571/hiddenlake/models"
@@ -15,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 func NetworkClient(w http.ResponseWriter, r *http.Request) {
@@ -42,8 +42,8 @@ func NetworkClient(w http.ResponseWriter, r *http.Request) {
 // Get client public information.
 func networkClientGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State     string `json:"state"`
-		Info models.Connect `json:"info"`
+		State string         `json:"state"`
+		Info  models.Connect `json:"info"`
 	}
 
 	var read struct {
@@ -54,14 +54,17 @@ func networkClientGET(w http.ResponseWriter, r *http.Request) {
 	hashname := strings.Split(read.Hashname, "/archive/")[0]
 
 	var (
-		ok bool
-		token string
+		ok     bool
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -79,13 +82,13 @@ func networkClientGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if read.Hashname == user.Hashname {
-		ok = true 
+		ok = true
 	} else {
 		_, ok = user.Temp.ChatMap.Member[read.Hashname]
 	}
 
 	data.Info = models.Connect{
-		Hidden: gopeer.HashPublic(clientData.Public) != gopeer.HashPublic(clientData.ThrowClient),
+		Hidden:      gopeer.HashPublic(clientData.Public) != gopeer.HashPublic(clientData.ThrowClient),
 		Connected:   client.InConnections(hashname),
 		InChat:      ok,
 		Address:     clientData.Address,
@@ -108,7 +111,8 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	filehash := splited[1]
 
 	switch {
-	case isNotInConnectionsError(w, r, client, hashname): return
+	case isNotInConnectionsError(w, r, client, hashname):
+		return
 	}
 
 	dest := client.Destination(hashname)
@@ -177,14 +181,18 @@ func networkClientPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -196,8 +204,8 @@ func networkClientPATCH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dest := &gopeer.Destination{
-        Receiver: public,
-    }
+		Receiver: public,
+	}
 
 	err := client.Connect(dest)
 	if err != nil {
@@ -276,14 +284,18 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -315,10 +327,10 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dest := &gopeer.Destination{
-        Address:     read.Address,
-        Certificate: []byte(read.Certificate),
-        Public:      public,
-    }
+		Address:     read.Address,
+		Certificate: []byte(read.Certificate),
+		Public:      public,
+	}
 
 	err = client.Connect(dest)
 	if err != nil {
@@ -387,14 +399,19 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 
 	var (
 		client = new(gopeer.Client)
-		token string
+		token  string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
-	case isNotInConnectionsError(w, r, client, hashname): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
+	case isNotInConnectionsError(w, r, client, hashname):
+		return
 	}
 
 	user := settings.Users[token]
@@ -505,18 +522,23 @@ func networkClientDELETE(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		client = new(gopeer.Client)
-		token string
+		token  string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetClientError(w, r, client, token): return
-	case isNotInConnectionsError(w, r, client, read.Hashname): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetClientError(w, r, client, token):
+		return
+	case isNotInConnectionsError(w, r, client, read.Hashname):
+		return
 	}
 
-	dest := client.Destination(read.Hashname) 
-	
+	dest := client.Destination(read.Hashname)
+
 	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{

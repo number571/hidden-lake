@@ -12,7 +12,7 @@ func InClients(user *models.User, hashname string) bool {
 	}
 	var (
 		address string
-		err    error
+		err     error
 	)
 	row := settings.DB.QueryRow(
 		"SELECT Address FROM Client WHERE IdUser=$1 AND Hashname=$2",

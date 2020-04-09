@@ -2,7 +2,7 @@ package models
 
 type GlobalChat struct {
 	Head GlobalChatHead `json:"head"`
-	Body GlobalChatBody `json:"body"` 
+	Body GlobalChatBody `json:"body"`
 }
 
 type GlobalChatHead struct {
@@ -22,7 +22,7 @@ type GlobalChatSender struct {
 }
 
 type GlobalChatDesc struct {
-	Rand       string `json:"rand"`
-	Hash       string `json:"hash"`
-	Sign       string `json:"sign"`
+	Rand string `json:"rand"`
+	Hash string `json:"hash"`
+	Sign string `json:"sign"`
 }

@@ -11,17 +11,17 @@ import (
 
 func getLocalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
-		token    = settings.Tokens[client.Hashname()]
-		hash     = pack.From.Sender.Hashname
-		user     = settings.Users[token]
-		time     = utils.CurrentTime()
+		token = settings.Tokens[client.Hashname()]
+		hash  = pack.From.Sender.Hashname
+		user  = settings.Users[token]
+		time  = utils.CurrentTime()
 	)
 
 	if !db.InClients(user, hash) {
 		db.SetClient(user, &models.Client{
-			Hashname: hash,
-			Address:  pack.From.Address,
-			Public:   client.Connections[hash].Public(),
+			Hashname:    hash,
+			Address:     pack.From.Address,
+			Public:      client.Connections[hash].Public(),
 			ThrowClient: client.Connections[hash].Throw(),
 			Certificate: string(client.Connections[hash].Certificate()),
 		})

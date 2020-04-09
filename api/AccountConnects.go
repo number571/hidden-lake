@@ -31,18 +31,21 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 // List of all clients.
 func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State    string    `json:"state"`
+		State    string           `json:"state"`
 		Connects []models.Connect `json:"connects"`
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	clients := db.GetAllClients(settings.Users[token])
@@ -76,18 +79,21 @@ func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 // List of current connections.
 func accountConnectsPATCH(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		State    string   `json:"state"`
+		State    string           `json:"state"`
 		Connects []models.Connect `json:"connects"`
 	}
 
 	var (
-		token string
+		token  string
 		client = new(gopeer.Client)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isGetClientError(w, r, client, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isGetClientError(w, r, client, token):
+		return
 	}
 
 	for hash, cl := range client.Connections {
@@ -116,16 +122,21 @@ func accountConnectsDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 		token string
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, read): return
-	case isGetUserError(w, r, user, read): return
-	case isCheckUserError(w, r, user, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
+	case isCheckUserError(w, r, user, token):
+		return
 	}
 
 	err := db.DeleteClient(user, read.Hashname)

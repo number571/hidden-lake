@@ -25,7 +25,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	var read = new(userdata)
 	switch {
-	case isDecodeError(w, r, read): return
+	case isDecodeError(w, r, read):
+		return
 	}
 
 	user := newUser(read.Username, read.Password, read.PrivateKey)

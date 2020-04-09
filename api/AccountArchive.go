@@ -11,8 +11,8 @@ import (
 	"github.com/number571/hiddenlake/utils"
 	"mime/multipart"
 	"net/http"
-	"strconv"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -50,8 +50,10 @@ func accountArchiveGET(w http.ResponseWriter, r *http.Request) {
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
 	}
 
 	user := settings.Users[token]
@@ -79,8 +81,10 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 
 	var token string
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
 	}
 
 	r.ParseMultipartForm(settings.FILE_PART_SIZE)
@@ -130,7 +134,7 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 
 	if isEncryptMode {
 		gopeer.FileEncryptAES(user.Auth.Pasw, settings.PATH_ARCHIVE+tempname, settings.PATH_ARCHIVE+pathhash)
-		os.Remove(settings.PATH_ARCHIVE+tempname)
+		os.Remove(settings.PATH_ARCHIVE + tempname)
 	} else {
 		os.Rename(
 			settings.PATH_ARCHIVE+tempname,
@@ -189,18 +193,23 @@ func accountArchiveDELETE(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State string `json:"state"`
 	}
-	
+
 	var (
 		token string
-		read = new(userdata)
-		user = new(models.User)
+		read  = new(userdata)
+		user  = new(models.User)
 	)
 	switch {
-	case isTokenAuthError(w, r, &token): return
-	case isLifeTokenError(w, r, token): return
-	case isDecodeError(w, r, &read): return
-	case isGetUserError(w, r, user, read): return
-	case isCheckUserError(w, r, user, token): return
+	case isTokenAuthError(w, r, &token):
+		return
+	case isLifeTokenError(w, r, token):
+		return
+	case isDecodeError(w, r, &read):
+		return
+	case isGetUserError(w, r, user, read):
+		return
+	case isCheckUserError(w, r, user, token):
+		return
 	}
 
 	err := db.DeleteFile(user, read.Hashname)

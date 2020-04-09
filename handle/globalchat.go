@@ -1,13 +1,13 @@
 package handle
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/db"
-	"github.com/number571/hiddenlake/utils"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 	"golang.org/x/net/websocket"
 )
 
@@ -28,10 +28,10 @@ func NewGlobalChatMessage(client *gopeer.Client, founder, message string) *model
 	return &models.GlobalChat{
 		Head: models.GlobalChatHead{
 			Founder: founder,
-			Option: settings.TITLE_GLOBALCHAT,
+			Option:  settings.TITLE_GLOBALCHAT,
 			Sender: models.GlobalChatSender{
 				Hashname: hashname,
-				Public: gopeer.StringPublic(client.Public()),
+				Public:   gopeer.StringPublic(client.Public()),
 			},
 		},
 		Body: models.GlobalChatBody{
@@ -48,8 +48,8 @@ func NewGlobalChatMessage(client *gopeer.Client, founder, message string) *model
 func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
 		glbcht = new(models.GlobalChat)
-		token = settings.Tokens[client.Hashname()]
-		user  = settings.Users[token]
+		token  = settings.Tokens[client.Hashname()]
+		user   = settings.Users[token]
 	)
 	gopeer.UnpackJSON([]byte(pack.Body.Data), glbcht)
 	if glbcht == nil {
@@ -63,7 +63,7 @@ func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		}
 		user.Temp.ChatMap.Owner[pack.From.Sender.Hashname] = true
 		redirectAndStore(user, client, "join to chat", pack.From.Sender.Hashname)
-		return 
+		return
 	// del client from chat
 	case gopeer.Get("OPTION_SET").(string):
 		if _, ok := user.Temp.ChatMap.Owner[pack.From.Sender.Hashname]; !ok {
@@ -96,8 +96,8 @@ func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	if hashname != glbcht.Head.Sender.Hashname {
 		return
 	}
-	random   := gopeer.Base64Decode(glbcht.Body.Desc.Rand)
-	hash     := gopeer.HashSum(bytes.Join(
+	random := gopeer.Base64Decode(glbcht.Body.Desc.Rand)
+	hash := gopeer.HashSum(bytes.Join(
 		[][]byte{
 			[]byte(hashname),
 			[]byte(glbcht.Head.Founder),
@@ -118,7 +118,7 @@ func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 			return
 		}
 		if _, ok := user.Temp.ChatMap.Owner[hashname]; !ok {
-			return 
+			return
 		}
 		for hash := range user.Temp.ChatMap.Owner {
 			if hash == hashname {
@@ -131,7 +131,7 @@ func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 			dest := client.Destination(hash)
 			client.SendTo(dest, &gopeer.Package{
 				Head: gopeer.Head{
-					Title: settings.TITLE_GLOBALCHAT,
+					Title:  settings.TITLE_GLOBALCHAT,
 					Option: gopeer.Get("OPTION_GET").(string),
 				},
 				Body: gopeer.Body{
@@ -214,8 +214,8 @@ func getGlobalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 
 func redirectAndStore(user *models.User, client *gopeer.Client, message, sender string) {
 	glbcht := NewGlobalChatMessage(
-		client, 
-		client.Hashname(), 
+		client,
+		client.Hashname(),
 		fmt.Sprintf("%s %s", sender, message),
 	)
 	for hash := range user.Temp.ChatMap.Owner {
@@ -226,7 +226,7 @@ func redirectAndStore(user *models.User, client *gopeer.Client, message, sender 
 		dest := client.Destination(hash)
 		client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title: settings.TITLE_GLOBALCHAT,
+				Title:  settings.TITLE_GLOBALCHAT,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
@@ -269,7 +269,7 @@ func redirectAndStore(user *models.User, client *gopeer.Client, message, sender 
 
 func setGlobalchat(client *gopeer.Client, pack *gopeer.Package) {
 	var (
-		list []string
+		list  []string
 		token = settings.Tokens[client.Hashname()]
 		user  = settings.Users[token]
 	)
