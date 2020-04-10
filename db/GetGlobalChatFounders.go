@@ -21,6 +21,7 @@ func GetGlobalChatFounders(user *models.User) []string {
 	if err != nil {
 		panic("query 'getglobalchatfounders' failed")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&founder)
 		if err != nil {

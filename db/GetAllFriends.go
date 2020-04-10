@@ -21,6 +21,7 @@ func GetAllFriends(user *models.User) []string {
 	if err != nil {
 		panic("query 'getallclients' failed")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&hashname)
 		if err != nil {

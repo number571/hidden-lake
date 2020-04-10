@@ -26,6 +26,7 @@ func GetAllClients(user *models.User) []models.Client {
 	if err != nil {
 		panic("query 'getallclients' failed")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&hashname, &address, &public, &throwclient, &certificate)
 		if err != nil {
