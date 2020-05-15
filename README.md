@@ -1,6 +1,6 @@
 # HiddenLake
 
-> Decentralized private network. Version 1.0.6s.
+> Decentralized private network. Version 1.0.7s.
 
 ### Characteristics:
 1. F2F network. End to end encryption;
@@ -164,6 +164,8 @@ CREATE TABLE IF NOT EXISTS State (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdUser INTEGER,
 	UsedF2F BOOLEAN,
+	UsedFSH BOOLEAN,
+	UsedGCH BOOLEAN,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON UPDATE CASCADE,
 	FOREIGN KEY (IdUser) REFERENCES User (Id) ON DELETE CASCADE
 );

@@ -26,10 +26,9 @@ var (
 
 func init() {
 	gopeer.Set(gopeer.SettingsType{
-		"SERVER_NAME": "HIDDEN-LAKE",
-		"NETWORK":     "[HIDDEN-LAKE]",
-		"VERSION":     "[" + VERSION + "]",
-		"HMACKEY":     "9163571392708145",
+		"NETWORK":     "HIDDEN-LAKE",
+		"VERSION":     "v" + VERSION,
+		"HMAC_KEY":    "9163571392708145",
 		"KEY_SIZE":    uint64(3 << 10),
 	})
 	settings.InitializeDB(settings.DB_NAME)
@@ -53,14 +52,15 @@ func main() {
 	mux.HandleFunc("/api/logout", api.Logout)                          // POST
 	mux.HandleFunc("/api/signup", api.Signup)                          // POST
 	mux.HandleFunc("/api/account", api.Account)                        // GET, POST, DELETE
-	mux.HandleFunc("/api/account/friends", api.AccountFriends)         // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/account/friends", api.AccountFriends)         // GET, POST, DELETE
 	mux.HandleFunc("/api/account/connects", api.AccountConnects)       // GET, PATCH, DELETE
+	mux.HandleFunc("/api/account/state/", api.AccountState)            // GET, PATCH
 	mux.HandleFunc("/api/account/archive/", api.AccountArchive)        // GET, PUT, DELETE
 	mux.HandleFunc("/api/network/chat/", api.NetworkChat)              // GET, POST, DELETE
-	mux.HandleFunc("/api/network/chat/global/", api.NetworkChatGlobal) // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/network/chat/group/", api.NetworkChatGroup)   // GET, POST, PATCH, DELETE
 	mux.HandleFunc("/api/network/client/", api.NetworkClient)          // GET, POST, PATCH, DELETE
 	//             "/api/network/client/:id/archive/"                  // GET, POST
-	mux.HandleFunc("/api/network/email/", api.NetworkEmail) // GET, POST, PATCH, DELETE
+	mux.HandleFunc("/api/network/email/", api.NetworkEmail)            // GET, POST, PATCH, DELETE
 
 	mux.Handle("/ws/network", websocket.Handler(ws.Network))
 
@@ -142,27 +142,27 @@ func archivePage(w http.ResponseWriter, r *http.Request) {
 func indexPage(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		settings.PATH_VIEWS+"index.html",
-		settings.PATH_VIEWS+"home.html",
+		settings.PATH_VIEWS+"home.html", 
 		settings.PATH_VIEWS+"about.html",
-		settings.PATH_VIEWS+"login.html",
-		settings.PATH_VIEWS+"signup.html",
-		settings.PATH_VIEWS+"account.html",
-		settings.PATH_VIEWS+"network.html",
-		settings.PATH_VIEWS+"chat.html",
+		settings.PATH_VIEWS+"login.html", 
+		settings.PATH_VIEWS+"signup.html", 
+		settings.PATH_VIEWS+"account.html", 
+		settings.PATH_VIEWS+"network.html", 
+		settings.PATH_VIEWS+"chat.html", 
+		settings.PATH_VIEWS+"connects.html", 
+		settings.PATH_VIEWS+"client.html", 
+		settings.PATH_VIEWS+"clientarchive.html", 
+		settings.PATH_VIEWS+"clientarchivefile.html", 
+		settings.PATH_VIEWS+"clients.html", 
+		settings.PATH_VIEWS+"email.html", 
+		settings.PATH_VIEWS+"emailnull.html", 
+		settings.PATH_VIEWS+"archive.html", 
+		settings.PATH_VIEWS+"archivefile.html", 
 		settings.PATH_VIEWS+"settings.html",
-		settings.PATH_VIEWS+"client.html",
-		settings.PATH_VIEWS+"clientarchive.html",
-		settings.PATH_VIEWS+"clientarchivefile.html",
-		settings.PATH_VIEWS+"clients.html",
-		settings.PATH_VIEWS+"email.html",
-		settings.PATH_VIEWS+"emailnull.html",
-		settings.PATH_VIEWS+"archive.html",
-		settings.PATH_VIEWS+"archivefile.html",
-		settings.PATH_VIEWS+"friends.html",
-		settings.PATH_VIEWS+"globalchat.html",
-		settings.PATH_VIEWS+"globalchatlist.html",
-		settings.PATH_VIEWS+"notfound.html",
-		settings.PATH_VIEWS+"message_part.html",
+		settings.PATH_VIEWS+"globalchat.html", 
+		settings.PATH_VIEWS+"globalchatlist.html", 
+		settings.PATH_VIEWS+"notfound.html", 
+		settings.PATH_VIEWS+"message_part.html", 
 	)
 	if err != nil {
 		panic("can't load hmtl files")

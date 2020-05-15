@@ -12,6 +12,9 @@ func getArchive(client *gopeer.Client, pack *gopeer.Package) (set string) {
 		token = settings.Tokens[client.Hashname()]
 		user  = settings.Users[token]
 	)
+	if !user.State.UsedFSH {
+		return ""
+	}
 	if pack.Body.Data == "" {
 		var result []models.File
 		files := db.GetAllFiles(user)
@@ -36,5 +39,5 @@ func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 		user  = settings.Users[token]
 	)
 	gopeer.UnpackJSON([]byte(pack.Body.Data), &user.Temp.FileList)
-	client.Connections[pack.From.Sender.Hashname].Chans.Action <- true
+	client.Connections[pack.From.Sender.Hashname].Action <- true
 }

@@ -25,6 +25,8 @@ func SetUser(user *models.User) error {
 	)
 	SetState(user, &models.State{
 		UsedF2F: true,
+		UsedFSH: false,
+		UsedGCH: false,
 	})
 	if err != nil {
 		panic("exec 'setuser' failed")

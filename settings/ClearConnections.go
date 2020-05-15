@@ -23,10 +23,12 @@ func sendTestPackages() {
 				},
 			})
 			select {
-			case <-client.Connections[hash].Chans.Action:
+			case <-client.Connections[hash].Action:
 				// pass
 			case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
-				delete(client.Connections, hash)
+				client.Action(func() {
+					delete(client.Connections, hash)
+				})
 			}
 		}
 	}

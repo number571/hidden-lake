@@ -7,6 +7,7 @@ import (
 	"github.com/number571/hiddenlake/db"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
+	"github.com/number571/hiddenlake/utils"
 	"net/http"
 )
 
@@ -64,6 +65,22 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		data.State = "Set client error"
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err = db.SetGroupChat(user, &models.Chat{
+		Companion: user.Hashname,
+		Messages: []models.Message{
+			models.Message{
+				Name: user.Hashname,
+				Text: "init message",
+				Time: utils.CurrentTime(),
+			},
+		},
+	})
+	if err != nil {
+		data.State = "Set group chat error"
 		json.NewEncoder(w).Encode(data)
 		return
 	}

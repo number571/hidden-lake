@@ -131,7 +131,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 		}
 
 		select {
-		case <-client.Connections[hashname].Chans.Action:
+		case <-client.Connections[hashname].Action:
 			// pass
 		case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 			data.State = "Files not loaded"
@@ -159,7 +159,7 @@ func clientArchiveGET(w http.ResponseWriter, r *http.Request, user *models.User,
 	}
 
 	select {
-	case <-client.Connections[hashname].Chans.Action:
+	case <-client.Connections[hashname].Action:
 		// pass
 	case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 		data.State = "File not loaded"
@@ -231,7 +231,7 @@ func networkClientPATCH(w http.ResponseWriter, r *http.Request) {
 	message := "connection created"
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_LOCALCHAT,
+			Title:  settings.TITLE_PRIVATECHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
@@ -355,7 +355,7 @@ func networkClientPOST(w http.ResponseWriter, r *http.Request) {
 	message := "connection created"
 	_, err = client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_LOCALCHAT,
+			Title:  settings.TITLE_PRIVATECHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{
@@ -433,7 +433,7 @@ func clientArchivePOST(w http.ResponseWriter, r *http.Request, hashname string) 
 	}
 
 	select {
-	case <-client.Connections[hashname].Chans.Action:
+	case <-client.Connections[hashname].Action:
 		// pass
 	case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
 		data.State = "File not loaded"
@@ -542,7 +542,7 @@ func networkClientDELETE(w http.ResponseWriter, r *http.Request) {
 	message := "connection closed"
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_LOCALCHAT,
+			Title:  settings.TITLE_PRIVATECHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{

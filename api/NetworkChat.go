@@ -108,7 +108,7 @@ func networkChatPOST(w http.ResponseWriter, r *http.Request) {
 	dest := client.Destination(read.Hashname)
 	_, err := client.SendTo(dest, &gopeer.Package{
 		Head: gopeer.Head{
-			Title:  settings.TITLE_LOCALCHAT,
+			Title:  settings.TITLE_PRIVATECHAT,
 			Option: gopeer.Get("OPTION_GET").(string),
 		},
 		Body: gopeer.Body{

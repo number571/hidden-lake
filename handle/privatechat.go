@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func getLocalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
+func getPrivatechat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	var (
 		token = settings.Tokens[client.Hashname()]
 		hash  = pack.From.Sender.Hashname
@@ -69,6 +69,6 @@ func getLocalchat(client *gopeer.Client, pack *gopeer.Package) (set string) {
 	return set
 }
 
-func setLocalchat(client *gopeer.Client, pack *gopeer.Package) {
+func setPrivatechat(client *gopeer.Client, pack *gopeer.Package) {
 	// pass
 }

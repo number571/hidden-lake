@@ -1,5 +1,13 @@
 [
 	{
+		"version": "1.0.7s",
+		"updates": [
+			"Updated to gopeer v1.1.4 (fix redirects, race condition)",
+			"Change local storage to session storage (JS)",
+			"Enable / disable group chat and file sharing"
+		]
+	},
+	{
 		"version": "1.0.6s",
 		"updates": [
 			"Added the global (group) chats",
@@ -58,7 +66,7 @@
 		]
 	},
 	{
-		"version": "0.1.0 - 0.7.0",
+		"version": "0.1.0t - 0.7.0t",
 		"updates": [
 			"Experimental versions"
 		]

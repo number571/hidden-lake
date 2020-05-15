@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"sync"
 	"database/sql"
 	"github.com/number571/gopeer"
 	"github.com/number571/hiddenlake/models"
@@ -9,6 +10,7 @@ import (
 
 var (
 	Listener *gopeer.Listener
+	Mutex    = new(sync.Mutex)
 	Tokens   = make(map[string]string)
 	Users    = make(map[string]*models.User)
 	CFG      *models.Config
@@ -27,11 +29,11 @@ const (
 )
 
 const (
-	TITLE_TESTCONN   = "[TITLE-TESTCONN]"
-	TITLE_EMAIL      = "[TITLE-EMAIL]"
-	TITLE_ARCHIVE    = "[TITLE-ARCHIVE]"
-	TITLE_LOCALCHAT  = "[TITLE-LOCALCHAT]"
-	TITLE_GLOBALCHAT = "[TITLE-GLOBALCHAT]"
+	TITLE_TESTCONN    = "[TITLE-TESTCONN]"
+	TITLE_EMAIL       = "[TITLE-EMAIL]"
+	TITLE_ARCHIVE     = "[TITLE-ARCHIVE]"
+	TITLE_PRIVATECHAT = "[TITLE-PRIVATECHAT]"
+	TITLE_GROUPCHAT   = "[TITLE-GROUPCHAT]"
 )
 
 const (
@@ -42,4 +44,5 @@ const (
 	CHECK_TIME     = 12 * time.Hour
 	LIFETIME       = 24 * time.Hour
 	DIFFICULTY     = 20
+	PAGINATION     = 10
 )

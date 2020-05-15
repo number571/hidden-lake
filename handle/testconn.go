@@ -9,5 +9,5 @@ func getTestconn(client *gopeer.Client, pack *gopeer.Package) (set string) {
 }
 
 func setTestconn(client *gopeer.Client, pack *gopeer.Package) {
-	client.Connections[pack.From.Sender.Hashname].Chans.Action <- true
+	client.Connections[pack.From.Sender.Hashname].Action <- true
 }

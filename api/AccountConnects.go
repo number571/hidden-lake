@@ -28,7 +28,7 @@ func AccountConnects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// List of all clients.
+// List of direct clients.
 func accountConnectsGET(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		State    string           `json:"state"`

@@ -7,14 +7,14 @@ const routes = {
     login: 2,
     signup: 3,
     account: 4,
-    friends: 5,
+    settings: 5,
     archive: 6,
     archivefile: 7,
     network: 8,
-    settings: 9,
+    connects: 9,
     clients: 10,
-    globalchatlist: 11,
-    globalchat: 12,
+    groupchatlist: 11,
+    groupchat: 12,
     chatnull: 13,
     chat: 14,
     emailnull: 15,
@@ -36,7 +36,6 @@ const f = async(url, method = "GET", data = null, token = null) => {
             "Authorization": `Bearer ${token}`,
         },
     };
-
     switch(method) {
         case "PUT":
             delete options.headers["Content-Type"];
@@ -46,7 +45,6 @@ const f = async(url, method = "GET", data = null, token = null) => {
             options.body = JSON.stringify(data);
             break;
     }
-
     const res = await fetch(fullurl, options);
     return await res.json();
 };
@@ -78,7 +76,11 @@ const app = new Vue({
             username: null,
             hashname: null,
             password: null,
-            statef2f: null,
+            state: {
+                f2f: null,
+                fsh: null,
+                gch: null,
+            },
             password_repeat: null,
             private_key: null,
             connects: [],
@@ -166,17 +168,13 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("username", username);
-
-            this.authdata.token = localStorage.getItem("token");
-            this.authdata.username = localStorage.getItem("username");
-
+            sessionStorage.setItem("token", res.token);
+            sessionStorage.setItem("username", username);
+            this.authdata.token = sessionStorage.getItem("token");
+            this.authdata.username = sessionStorage.getItem("username");
             this.nulldata();
-
             this.message.wait = "Login success";
             this.message.desc = "success";
-
             this.opened = RoutesData[routes.home].name;
             this.$router.push(RoutesData[routes.home]);
         },
@@ -411,18 +409,12 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
-
-            this.netdata.list.splice(this.netdata.list.indexOf(this.conndata.hashname), 1);
-            this.netdata.chat.companion = null;
-            this.netdata.chat.messages = [];
-
-            this.message.wait = "Delete chat success";
+            this.message.curr = "Clear chat success";
             this.message.desc = "success";
-            this.opened = RoutesData[routes.network].name;
-            this.$router.push(RoutesData[routes.network]);
+            this.chat(hashname);
         },
-        async globalchat(hashname) {
-            let res = await f(`network/chat/global/${hashname}`, "GET", null, this.authdata.token);
+        async groupchat(hashname) {
+            let res = await f(`network/chat/group/${hashname}`, "GET", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "warning";
@@ -462,12 +454,12 @@ const app = new Vue({
                 // console.debug("closed");
             }
         },
-        async exitglobalchat(hashname) {
+        async exitgroupchat(hashname) {
             let obj = {
                 hashname: hashname,
                 option: 'exit',
             };
-            let res = await f(`network/chat/global/${hashname}`, "PATCH", obj, this.authdata.token);
+            let res = await f(`network/chat/group/${hashname}`, "PATCH", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -476,12 +468,12 @@ const app = new Vue({
             this.message.curr = "Exit from chat success";
             this.message.desc = "success";
         },
-        async joinglobalchat(hashname) {
+        async joingroupchat(hashname) {
             let obj = {
                 hashname: hashname,
                 option: 'join',
             };
-            let res = await f(`network/chat/global/${hashname}`, "PATCH", obj, this.authdata.token);
+            let res = await f(`network/chat/group/${hashname}`, "PATCH", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -490,12 +482,12 @@ const app = new Vue({
             this.message.curr = "Join to chat success";
             this.message.desc = "success";
         },
-        async sendglobalchat(founder, message) {
+        async sendgroupchat(founder, message) {
             let obj = {
                 hashname: founder,
                 message: message,
             };
-            let res = await f(`network/chat/global/`, "POST", obj, this.authdata.token);
+            let res = await f(`network/chat/group/`, "POST", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -504,25 +496,32 @@ const app = new Vue({
             this.netdata.message = null;
             this.message.curr = null;
         },
-        async delglobalchat(hashname, username, password, option) {
+        async delgroupchat(hashname, username, password, option) {
             let obj = {
                 hashname: hashname,
                 username: username,
                 password: password,
                 password_repeat: option,
             };
-            let res = await f("network/chat/global/", "DELETE", obj, this.authdata.token);
+            let res = await f("network/chat/group/", "DELETE", obj, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
                 return;
             }
-            this.message.wait = "Delete chat success";
             this.message.desc = "success";
-
-            this.globalchat("null");
-            this.opened = RoutesData[routes.globalchatlist].name;
-            this.$router.push(RoutesData[routes.globalchatlist]);
+            switch(option) {
+                case "clear":
+                    this.message.curr = "Clear chat success";
+                    this.groupchat(hashname);
+                    break;
+                case "delete":
+                    this.message.wait = "Delete chat success";
+                    this.opened = RoutesData[routes.groupchatlist].name;
+                    this.$router.push(RoutesData[routes.groupchatlist]);
+                    this.groupchat("null");
+                    break;
+            }
         },
         async delclient(hashname, username, password) {
             let obj = {
@@ -536,7 +535,6 @@ const app = new Vue({
                 this.message.desc = "danger";
                 return;
             }
-
             this.message.wait = "Delete client success";
             this.message.desc = "success";
             this.opened = RoutesData[routes.network].name;
@@ -710,7 +708,6 @@ const app = new Vue({
                 this.message.desc = "warning";
                 return;
             }
-            this.userdata.statef2f = res.statef2f;
             this.userdata.connects = res.friends;
         },
         async delfriend(hashname) {
@@ -725,7 +722,7 @@ const app = new Vue({
             this.getfriends();
         },
         async addfriend(hashname) {
-            let res = await f(`account/friends`, "PATCH", {hashname: hashname}, this.authdata.token);
+            let res = await f(`account/friends`, "POST", {hashname: hashname}, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
@@ -735,16 +732,67 @@ const app = new Vue({
             this.message.desc = "success";
             this.getfriends();
         },
-        async turnf2f() {
-            let res = await f(`account/friends`, "POST", null, this.authdata.token);
+        async getstate(name) {
+            switch (name) {
+                case "f2f": case "fsh": case "gch":
+                    break;
+                default: 
+                    this.message.curr = "Undefined state";
+                    this.message.desc = "danger";
+                    return;
+            }
+            let res = await f(`account/state/${name}`, "GET", null, this.authdata.token);
+            if (res.state) {
+                this.message.curr = res.state;
+                this.message.desc = "warning";
+                return;
+            }
+            switch (name) {
+                case "f2f":
+                    this.userdata.state.f2f = res.statemode;
+                    break;
+                case "fsh":
+                    this.userdata.state.fsh = res.statemode;
+                    break;
+                case "gch":
+                    this.userdata.state.gch = res.statemode;
+                    break;
+            }
+        },
+        async turnstate(name) {
+            switch (name) {
+                case "f2f": case "fsh": case "gch":
+                    break;
+                default: 
+                    this.message.curr = "Undefined state";
+                    this.message.desc = "danger";
+                    return;
+            }
+            let res = await f(`account/state/${name}`, "PATCH", null, this.authdata.token);
             if (res.state) {
                 this.message.curr = res.state;
                 this.message.desc = "danger";
                 return;
             }
-            this.userdata.statef2f = res.statef2f;
-            this.message.curr = `Turn ${res.statef2f ? "ON" : "OFF"} success`;
+            switch (name) {
+                case "f2f":
+                    this.userdata.state.f2f = res.statemode;
+                    break;
+                case "fsh":
+                    this.userdata.state.fsh = res.statemode;
+                    break;
+                case "gch":
+                    this.userdata.state.gch = res.statemode;
+                    break;
+            }
+            this.message.curr = `Turn ${res.statemode ? "ON" : "OFF"} success`;
             this.message.desc = "success";
+        },
+        async getsettings() {
+            this.getstate('f2f');
+            this.getstate('fsh');
+            this.getstate('gch');
+            this.getfriends();
         },
         selectText(element) {
             var range;
@@ -784,8 +832,8 @@ const app = new Vue({
         nullauth() {
             this.authdata.token = null;
             this.authdata.username = null;
-            localStorage.removeItem("token");
-            localStorage.removeItem("username");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("username");
         },
         nullemail() {
             this.emaillist = [];
@@ -840,11 +888,14 @@ const app = new Vue({
         },
         nulldata() {
             this.userdata.username = null;
+            this.userdata.hashname = null;
             this.userdata.password = null;
             this.userdata.password_repeat = null;
             this.userdata.private_key = null;
             this.userdata.connects = [];
-            this.userdata.statef2f = null;
+            this.userdata.state.f2f = null;
+            this.userdata.state.fsh = null;
+            this.userdata.state.gch = null;
         },
         nullcurr(page) {
             this.switcher = null;
@@ -862,21 +913,21 @@ const app = new Vue({
         },
     },
     mounted() {
-        let token = localStorage.getItem("token");
+        let token = sessionStorage.getItem("token");
         if (token) {
-            this.authdata.token = localStorage.getItem("token");
-            this.authdata.username = localStorage.getItem("username");
+            this.authdata.token = sessionStorage.getItem("token");
+            this.authdata.username = sessionStorage.getItem("username");
         }
         switch (this.$route.name) {
-            case RoutesData[routes.settings].name: this.currconnects(); break;
-            case RoutesData[routes.friends].name: this.getfriends(); break;
+            case RoutesData[routes.connects].name: this.currconnects(); break;
+            case RoutesData[routes.settings].name: this.getsettings(); break;
             case RoutesData[routes.account].name: this.account(); break;
             case RoutesData[routes.archive].name: this.archivelist(''); break;
             case RoutesData[routes.archivefile].name: this.archivefile('', this.$route.params.id); break;
             case RoutesData[routes.chat].name: this.chat(this.$route.params.id); break;
             case RoutesData[routes.chatnull].name: this.chat("null"); break;
-            case RoutesData[routes.globalchat].name: this.globalchat(this.$route.params.id); break;
-            case RoutesData[routes.globalchatlist].name: this.globalchat("null"); break;
+            case RoutesData[routes.groupchat].name: this.groupchat(this.$route.params.id); break;
+            case RoutesData[routes.groupchatlist].name: this.groupchat("null"); break;
             case RoutesData[routes.email].name: this.email(this.$route.params.id); break;
             case RoutesData[routes.emailnull].name: this.email("null"); break;
             case RoutesData[routes.client].name: this.client(this.$route.params.id); break;
@@ -889,7 +940,7 @@ const app = new Vue({
     updated() {
         switch (this.opened) {
             case RoutesData[routes.chat].name: 
-            case RoutesData[routes.globalchat].name:
+            case RoutesData[routes.groupchat].name:
                 this.$nextTick(() => {
                     var bottomChat = this.$refs.bottomChat;
                     bottomChat.scrollTop = bottomChat.scrollHeight;

@@ -20,6 +20,8 @@ type userdata struct {
 }
 
 func deleteUserAuth(user *models.User) {
+	settings.Mutex.Lock()
+	defer settings.Mutex.Unlock()
 	hash := user.Hashname
 	token := settings.Tokens[hash]
 	delete(settings.Listener.Clients, hash)
@@ -84,7 +86,9 @@ func isGetUserError(w http.ResponseWriter, r *http.Request, user *models.User, r
 		json.NewEncoder(w).Encode(data)
 		return true
 	}
-	us.UsedF2F = state.UsedF2F
+	us.State.UsedF2F = state.UsedF2F
+	us.State.UsedFSH = state.UsedFSH
+	us.State.UsedGCH = state.UsedGCH
 	*user = *us
 	return false
 }

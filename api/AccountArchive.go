@@ -86,7 +86,7 @@ func accountArchivePUT(w http.ResponseWriter, r *http.Request) {
 	case isLifeTokenError(w, r, token):
 		return
 	}
-
+	
 	r.ParseMultipartForm(settings.FILE_PART_SIZE)
 
 	encmode := r.FormValue("encryptmode")

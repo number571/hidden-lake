@@ -5,7 +5,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func GetGlobalChatFounders(user *models.User) []string {
+func GetGroupChatFounders(user *models.User) []string {
 	var (
 		founders []string
 		founder  string
@@ -15,7 +15,7 @@ func GetGlobalChatFounders(user *models.User) []string {
 		return nil
 	}
 	rows, err := settings.DB.Query(
-		"SELECT Founder FROM GlobalChat WHERE IdUser=$1 GROUP BY Founder",
+		"SELECT Founder FROM GlobalChat WHERE IdUser=$1 GROUP BY Founder ORDER BY Id",
 		id,
 	)
 	if err != nil {

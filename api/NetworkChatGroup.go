@@ -19,7 +19,7 @@ type chatlist struct {
 	Connected bool   `json:"connected"`
 }
 
-func NetworkChatGlobal(w http.ResponseWriter, r *http.Request) {
+func NetworkChatGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var data struct {
 		State string `json:"state"`
@@ -51,7 +51,7 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 		Hashname string `json:"hashname"`
 	}
 
-	read.Hashname = strings.Replace(r.URL.Path, "/api/network/chat/global/", "", 1)
+	read.Hashname = strings.Replace(r.URL.Path, "/api/network/chat/group/", "", 1)
 
 	var (
 		client = new(gopeer.Client)
@@ -71,7 +71,7 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 
 	switch read.Hashname {
 	case "", "null", "undefined":
-		list := db.GetGlobalChatFounders(user)
+		list := db.GetGroupChatFounders(user)
 		for _, hash := range list {
 			if hash == user.Hashname {
 				ok = true
@@ -84,7 +84,7 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 	default:
-		data.Chat = db.GetGlobalChat(user, read.Hashname)
+		data.Chat = db.GetGroupChat(user, read.Hashname)
 		if read.Hashname == user.Hashname {
 			data.List = append(data.List, chatlist{
 				Hashname: user.Hashname,
@@ -98,20 +98,20 @@ func networkChatGlobalGET(w http.ResponseWriter, r *http.Request) {
 			dest := client.Destination(read.Hashname)
 			client.SendTo(dest, &gopeer.Package{
 				Head: gopeer.Head{
-					Title:  settings.TITLE_GLOBALCHAT,
+					Title:  settings.TITLE_GROUPCHAT,
 					Option: gopeer.Get("OPTION_GET").(string),
 				},
 				Body: gopeer.Body{
-					Data: string(gopeer.PackJSON(models.GlobalChat{
-						Head: models.GlobalChatHead{
+					Data: string(gopeer.PackJSON(models.GroupChat{
+						Head: models.GroupChatHead{
 							Founder: read.Hashname,
-							Option:  settings.TITLE_LOCALCHAT,
+							Option:  settings.TITLE_TESTCONN,
 						},
 					})),
 				},
 			})
 			select {
-			case <-client.Connections[read.Hashname].Chans.Action:
+			case <-client.Connections[read.Hashname].Action:
 				for _, conn := range user.Temp.ConnList {
 					data.List = append(data.List, chatlist{
 						Hashname: conn.Hashname,
@@ -159,7 +159,7 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	glbcht := handle.NewGlobalChatMessage(client, read.Hashname, message)
+	glbcht := handle.NewGroupChatMessage(client, read.Hashname, message)
 	if read.Hashname == user.Hashname {
 		for hash := range user.Temp.ChatMap.Owner {
 			if !client.InConnections(hash) {
@@ -169,7 +169,7 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 			dest := client.Destination(hash)
 			client.SendTo(dest, &gopeer.Package{
 				Head: gopeer.Head{
-					Title:  settings.TITLE_GLOBALCHAT,
+					Title:  settings.TITLE_GROUPCHAT,
 					Option: gopeer.Get("OPTION_GET").(string),
 				},
 				Body: gopeer.Body{
@@ -185,7 +185,7 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 		dest := client.Destination(read.Hashname)
 		_, err := client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title:  settings.TITLE_GLOBALCHAT,
+				Title:  settings.TITLE_GROUPCHAT,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
@@ -200,7 +200,7 @@ func networkChatGlobalPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	time := utils.CurrentTime()
-	err := db.SetGlobalChat(user, &models.Chat{
+	err := db.SetGroupChat(user, &models.Chat{
 		Companion: read.Hashname,
 		Messages: []models.Message{
 			models.Message{
@@ -274,7 +274,7 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	time := utils.CurrentTime()
+	timestamp := utils.CurrentTime()
 	switch strings.ToLower(read.Option) {
 	case "join":
 		if !client.InConnections(read.Hashname) {
@@ -300,12 +300,12 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 		dest := client.Destination(read.Hashname)
 		_, err = client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title:  settings.TITLE_GLOBALCHAT,
+				Title:  settings.TITLE_GROUPCHAT,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
-				Data: string(gopeer.PackJSON(models.GlobalChat{
-					Head: models.GlobalChatHead{
+				Data: string(gopeer.PackJSON(models.GroupChat{
+					Head: models.GroupChatHead{
 						Founder: read.Hashname,
 						Option:  gopeer.Get("OPTION_GET").(string),
 					},
@@ -317,14 +317,22 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(data)
 			return
 		}
+		select {
+		case <-client.Connections[read.Hashname].Action:
+			// pass
+		case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
+			data.State = "Join to chat failed"
+			json.NewEncoder(w).Encode(data)
+			return
+		}
 		user.Temp.ChatMap.Member[read.Hashname] = true
-		err = db.SetGlobalChat(user, &models.Chat{
+		err = db.SetGroupChat(user, &models.Chat{
 			Companion: read.Hashname,
 			Messages: []models.Message{
 				models.Message{
 					Name: client.Hashname(),
 					Text: "join to chat",
-					Time: time,
+					Time: timestamp,
 				},
 			},
 		})
@@ -342,12 +350,12 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 		dest := client.Destination(read.Hashname)
 		_, err = client.SendTo(dest, &gopeer.Package{
 			Head: gopeer.Head{
-				Title:  settings.TITLE_GLOBALCHAT,
+				Title:  settings.TITLE_GROUPCHAT,
 				Option: gopeer.Get("OPTION_GET").(string),
 			},
 			Body: gopeer.Body{
-				Data: string(gopeer.PackJSON(models.GlobalChat{
-					Head: models.GlobalChatHead{
+				Data: string(gopeer.PackJSON(models.GroupChat{
+					Head: models.GroupChatHead{
 						Founder: read.Hashname,
 						Option:  gopeer.Get("OPTION_SET").(string),
 					},
@@ -359,13 +367,21 @@ func networkChatGlobalPATCH(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(data)
 			return
 		}
-		err = db.SetGlobalChat(user, &models.Chat{
+		select {
+		case <-client.Connections[read.Hashname].Action:
+			// pass
+		case <-time.After(time.Duration(gopeer.Get("WAITING_TIME").(uint8)) * time.Second):
+			data.State = "Exit from chat failed"
+			json.NewEncoder(w).Encode(data)
+			return
+		}
+		err = db.SetGroupChat(user, &models.Chat{
 			Companion: read.Hashname,
 			Messages: []models.Message{
 				models.Message{
 					Name: client.Hashname(),
 					Text: "exit from chat",
-					Time: time,
+					Time: timestamp,
 				},
 			},
 		})
@@ -407,14 +423,14 @@ func networkChatGlobalDELETE(w http.ResponseWriter, r *http.Request) {
 
 	switch strings.ToLower(read.PasswordRepeat) {
 	case "clear":
-		err := db.ClearGlobalChat(user, read.Hashname)
+		err := db.ClearGroupChat(user, read.Hashname)
 		if err != nil {
 			data.State = "Clear chat error"
 			json.NewEncoder(w).Encode(data)
 			return
 		}
 	case "delete":
-		err := db.DeleteGlobalChat(settings.Users[token], read.Hashname)
+		err := db.DeleteGroupChat(settings.Users[token], read.Hashname)
 		if err != nil {
 			data.State = "Delete chat error"
 			json.NewEncoder(w).Encode(data)

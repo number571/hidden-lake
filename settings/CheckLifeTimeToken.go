@@ -6,6 +6,8 @@ import (
 )
 
 func CheckLifetimeToken(token string) error {
+	Mutex.Lock()
+	defer Mutex.Unlock()
 	user := Users[token]
 	tokenTime := utils.ParseTime(user.Session.Time)
 	currTime := utils.ParseTime(utils.CurrentTime())

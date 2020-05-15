@@ -67,7 +67,7 @@
                     {{ template "home_page" .UPDATES }}
 
                     <!-- ABOUT PAGE -->
-                    {{ template "about_page" }}
+                    {{ template "about_page" .VERSION }}
 
                     <!-- LOGIN PAGE -->
                     {{ template "login_page" }}
@@ -81,8 +81,8 @@
                     <!-- ACCOUNT / ARCHIVE PAGE -->
                     {{ template "archive_page" }}
 
-                    <!-- ACCOUNT / FRIENDS PAGE -->
-                    {{ template "friends_page" }}
+                    <!-- ACCOUNT / SETTINGS PAGE -->
+                    {{ template "settings_page" }}
 
                     <!-- ACCOUNT / ARCHIVE / FILE PAGE -->
                     {{ template "archivefile_page" }}
@@ -99,8 +99,8 @@
                     <!-- NETWORK / EMAIL / FILE PAGE -->
                     {{ template "email_page" }}
 
-                    <!-- NETWORK / SETTINGS PAGE -->
-                    {{ template "settings_page" }}
+                    <!-- NETWORK / CONNECTS PAGE -->
+                    {{ template "connects_page" }}
 
                     <!-- NETWORK / CLIENTS PAGE -->
                     {{ template "clients_page" }}
@@ -114,11 +114,11 @@
                     <!-- NETWORK / CLIENT / ARCHIVE / FILE PAGE -->
                     {{ template "clientarchivefile_page" }}
 
-                    <!-- NETWORK / GLOBAL CHAT / CLIENT -->
-                    {{ template "globalchat_page" }}
+                    <!-- NETWORK / GROUP CHAT / CLIENT -->
+                    {{ template "groupchat_page" }}
 
-                    <!-- NETWORK / GLOBAL CHAT -->
-                    {{ template "globalchatlist_page" }}
+                    <!-- NETWORK / GROUP CHAT -->
+                    {{ template "groupchatlist_page" }}
 
                     <!-- HDVWHUHJJ PAGE -->
                     {{ template "hdvwhuhjj_page" }}
@@ -129,13 +129,13 @@
             </div>
         </div>
 
-        <br><br><br>
-        <footer class="navbar fixed-bottom py-3 bg-dark">
+        <!-- <br><br><br>
+        <footer class="navbar fixed-bottom py-2 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-secondary">Remake by #571</p>
-                <p class="navbar-nav ml-auto text-secondary">Version {{ .VERSION }}</p>
+                <p class="navbar-nav ml-auto text-secondary">v{{ .VERSION }}</p>
             </div>
-        </footer>
+        </footer> -->
         <router-view></router-view>
     </main>
 </body>

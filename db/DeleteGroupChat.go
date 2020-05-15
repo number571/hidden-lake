@@ -4,10 +4,9 @@ import (
 	"errors"
 	"github.com/number571/hiddenlake/models"
 	"github.com/number571/hiddenlake/settings"
-	"github.com/number571/hiddenlake/utils"
 )
 
-func ClearGlobalChat(user *models.User, hashname string) error {
+func DeleteGroupChat(user *models.User, hashname string) error {
 	id := GetUserId(user.Username)
 	if id < 0 {
 		return errors.New("User id undefined")
@@ -21,17 +20,8 @@ func ClearGlobalChat(user *models.User, hashname string) error {
 		hashname,
 	)
 	if err != nil {
-		panic("exec 'clearglobalchat' failed")
+		panic("exec 'deleteglobalchat' failed")
 	}
-	SetGlobalChat(user, &models.Chat{
-		Companion: hashname,
-		Messages: []models.Message{
-			models.Message{
-				Name: hashname,
-				Text: "chat is cleared",
-				Time: utils.CurrentTime(),
-			},
-		},
-	})
+	delete(user.Temp.ChatMap.Member, hashname)
 	return nil
 }

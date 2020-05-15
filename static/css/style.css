@@ -1,5 +1,8 @@
-.hideOverflow
-{
+.inline {
+    display: inline;
+}
+
+.hideOverflow {
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;

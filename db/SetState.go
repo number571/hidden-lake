@@ -11,12 +11,13 @@ func SetState(user *models.User, state *models.State) error {
 	if id < 0 {
 		return errors.New("User id undefined")
 	}
-
 	idState := GetStateId(id)
 	if idState >= 0 {
 		_, err := settings.DB.Exec(
-			"UPDATE State SET UsedF2F=$1 WHERE IdUser=$2",
+			"UPDATE State SET UsedF2F=$1, UsedFSH=$2, UsedGCH=$3 WHERE IdUser=$4",
 			state.UsedF2F,
+			state.UsedFSH,
+			state.UsedGCH,
 			id,
 		)
 		if err != nil {
@@ -24,15 +25,15 @@ func SetState(user *models.User, state *models.State) error {
 		}
 		return nil
 	}
-
 	_, err := settings.DB.Exec(
-		"INSERT INTO State (IdUser, UsedF2F) VALUES ($1, $2)",
+		"INSERT INTO State (IdUser, UsedF2F, UsedFSH, UsedGCH) VALUES ($1, $2, $3, $4)",
 		id,
 		state.UsedF2F,
+		state.UsedFSH,
+		state.UsedGCH,
 	)
 	if err != nil {
 		panic("exec 'setstate.insert' failed")
 	}
-
 	return nil
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func GetGlobalChat(user *models.User, hashname string) *models.Chat {
+func GetGroupChat(user *models.User, hashname string) *models.Chat {
 	var (
 		err  error
 		msg  models.Message

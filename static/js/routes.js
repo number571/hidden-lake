@@ -35,10 +35,10 @@ export const RoutesData = [
 		},
 	},
 	{ // 5
-		path: "/account/friends", 
-		name: "friends",
+		path: "/account/settings", 
+		name: "settings",
 		meta: {
-			title: "Friends",
+			title: "Settings",
 		},
 	},
 	{ // 6
@@ -63,10 +63,10 @@ export const RoutesData = [
 		},
 	},
 	{ // 9
-		path: "/network/settings", 
-		name: "settings",
+		path: "/network/connects", 
+		name: "connects",
 		meta: {
-			title: "Settings",
+			title: "Connections",
 		},
 	},
 	{ // 10
@@ -77,17 +77,17 @@ export const RoutesData = [
 		},
 	},
 	{ // 11
-		path: "/network/chat/global", 
-		name: "globalchatlist",
+		path: "/network/chat/group", 
+		name: "groupchatlist",
 		meta: {
-			title: "List of Global Chat",
+			title: "List of Group Chat",
 		},
 	},
 	{ // 12
-		path: "/network/chat/global/:id", 
-		name: "globalchat",
+		path: "/network/chat/group/:id", 
+		name: "groupchat",
 		meta: {
-			title: "Global Chat",
+			title: "Group Chat",
 		},
 	},
 	{ // 13

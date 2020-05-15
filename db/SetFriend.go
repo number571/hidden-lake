@@ -11,12 +11,10 @@ func SetFriend(user *models.User, hashname string) error {
 	if id < 0 {
 		return errors.New("User id undefined")
 	}
-
 	idFriend := GetFriendId(id, hashname)
 	if idFriend >= 0 {
 		return errors.New("Friend already exist")
 	}
-
 	_, err := settings.DB.Exec(
 		"INSERT INTO Friend (IdUser, Hashname) VALUES ($1, $2)",
 		id,
@@ -25,6 +23,5 @@ func SetFriend(user *models.User, hashname string) error {
 	if err != nil {
 		panic("exec 'setfriend' failed")
 	}
-
 	return nil
 }

@@ -25,7 +25,7 @@ func InitializeCFG(cfgname string) {
 	os.Mkdir(PATH_TLS, 0777)
 	os.Mkdir(PATH_ARCHIVE, 0777)
 	if !utils.FileIsExist(CFG.Tls.Crt) && !utils.FileIsExist(CFG.Tls.Key) {
-		key, cert := gopeer.GenerateCertificate(gopeer.Get("SERVER_NAME").(string), gopeer.Get("KEY_SIZE").(uint16))
+		key, cert := gopeer.GenerateCertificate(gopeer.Get("NETWORK").(string), gopeer.Get("KEY_SIZE").(uint16))
 		utils.WriteFile(CFG.Tls.Crt, cert)
 		utils.WriteFile(CFG.Tls.Key, key)
 	}
@@ -42,8 +42,8 @@ func newConfig() *models.Config {
 			Port: ":7545",
 		},
 		Tcp: models.Tcp{
-			Ipv4: "localhost",
-			Port: ":8080",
+			Ipv4: "",
+			Port: "",
 		},
 	}
 }

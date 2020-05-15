@@ -46,14 +46,14 @@
                                 </li>
                             </ul> 
                         </div>
-                        <div class="row h-25">
+                        <div class="row">
                             <div class="h-100 col-md-12 my-auto">
                                 <div class="h-75 white">
                                     <div class="h-100 form-group basic-textarea">
-                                        <textarea id="chat-textarea" class="h-75 form-control bg-dark pl-2 my-0 text-white" id="exampleFormControlTextarea2" v-model="netdata.message" rows="3" placeholder="Type your message here..." @keyup.enter="sendmsg(netdata.chat.companion, netdata.message)"></textarea>
+                                        <textarea id="chat-textarea" class="h-75 form-control bg-dark pl-2 my-0 text-white" id="exampleFormControlTextarea2" v-model="netdata.message" rows="1" placeholder="Type your message here..." @keyup.enter="sendmsg(netdata.chat.companion, netdata.message)"></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="h-25 form-group">
                                     <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" @click="sendmsg(netdata.chat.companion, netdata.message)" class="h-100 btn bg-success text-white w-100 btn-outline-pink btn-rounded btn-sm waves-effect waves-dark float-right">Send message</button>
                                 </div>
                             </div>
@@ -62,6 +62,22 @@
                 </div>
             </div>
         </div>
+    </div>
+    <br>
+    <div class="form-group">
+        <button v-if="switcher!='clear_chat'" @click="nulldata(), setswitch('clear_chat')" type="button" class="btn btn-sm btn-secondary w-100">Clear Chat</button>
+        <button v-else @click="setswitch('clear_chat')" type="button" class="btn btn-sm btn-danger w-100">Action</button>
+    </div>
+    <div v-if="switcher=='clear_chat'" class="text-center">
+        <form id="feedbackForm" class="text-center">
+            <div class="form-group">
+                <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Username" v-model="userdata.username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control bg-dark text-light" name="name" placeholder="Password" v-model="userdata.password">
+            </div>
+            <button v-on:submit.prevent="onSubmit" onclick="javascript:return false;" type="submit" id="feedbackSubmit" class="btn btn-success w-100" @click="delchat(netdata.chat.companion, userdata.username, userdata.password)">Clear Chat</button>
+        </form>
     </div>
 </div>
 {{ end }}

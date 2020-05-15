@@ -6,7 +6,7 @@ import (
 	"github.com/number571/hiddenlake/settings"
 )
 
-func SetGlobalChat(user *models.User, chat *models.Chat) error {
+func SetGroupChat(user *models.User, chat *models.Chat) error {
 	id := GetUserId(user.Username)
 	if id < 0 {
 		return errors.New("User id undefined")

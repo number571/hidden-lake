@@ -1,5 +1,5 @@
-{{ define "globalchatlist_page" }}
-<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='globalchatlist'">
+{{ define "groupchatlist_page" }}
+<div class="col-12 col-md-8 mx-auto my-3" v-if="opened=='groupchatlist'">
     <h2 class="text-center">List of Global Chats</h2><br>
     {{ template "message_part" }}
     <div class="mx-auto w-100">
@@ -7,15 +7,15 @@
             <li v-for="elem in netdata.list">
                 <div class="form-group row">
                     <div class="col-md-9" v-if="elem.hashname">
-                        <router-link :to="{name: 'globalchat', params: { id: elem.hashname }}" class="w-100">
-                            <button type="button" class="btn btn-secondary divtext w-100" @click="globalchat(elem.hashname)">${elem.hashname}</button>
+                        <router-link :to="{name: 'groupchat', params: { id: elem.hashname }}" class="w-100">
+                            <button type="button" class="btn btn-secondary divtext w-100" @click="groupchat(elem.hashname)">${elem.hashname}</button>
                         </router-link>
                     </div>
                     <div class="col-md-3" v-if="elem.connected">
-                        <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="exitglobalchat(elem.hashname), elem.connected=false">Exit</button>
+                        <button type="button" class="btn btn-secondary divtext w-100 bg-danger" @click="exitgroupchat(elem.hashname), elem.connected=false">Exit</button>
                     </div>
                     <div class="col-md-3" v-else>
-                        <button type="button" class="btn btn-secondary divtext w-100 bg-success" @click="joinglobalchat(elem.hashname), elem.connected=true">Join</button>
+                        <button type="button" class="btn btn-secondary divtext w-100 bg-success" @click="joingroupchat(elem.hashname), elem.connected=true">Join</button>
                     </div>
                 </div>
             </li>

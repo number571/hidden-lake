@@ -19,8 +19,8 @@
             <button @click="savecertificate()" type="button" class="btn btn-success w-100">Copy certificate</button>
         </div>
         <div class="col-md-6">
-            <button v-if="conndata.in_chat" @click="exitglobalchat(conndata.hashname), conndata.in_chat=false" type="button" class="btn btn-danger w-100">Exit from chat</button>
-            <button v-else @click="joinglobalchat(conndata.hashname), conndata.in_chat=true" type="button" class="btn btn-success w-100">Join to chat</button>
+            <button v-if="conndata.in_chat" @click="exitgroupchat(conndata.hashname), conndata.in_chat=false" type="button" class="btn btn-danger w-100">Exit from chat</button>
+            <button v-else @click="joingroupchat(conndata.hashname), conndata.in_chat=true" type="button" class="btn btn-success w-100">Join to chat</button>
         </div>
     </div>
     <div class="form-group" v-if="conndata.hashname">
