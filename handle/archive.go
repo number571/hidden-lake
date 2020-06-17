@@ -38,6 +38,7 @@ func setArchive(client *gopeer.Client, pack *gopeer.Package) {
 		token = settings.Tokens[client.Hashname()]
 		user  = settings.Users[token]
 	)
+	user.Temp.FileList = []models.File{}
 	gopeer.UnpackJSON([]byte(pack.Body.Data), &user.Temp.FileList)
 	client.Connections[pack.From.Sender.Hashname].Action <- true
 }

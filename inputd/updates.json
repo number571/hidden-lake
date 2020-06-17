@@ -3,6 +3,7 @@
 		"version": "1.0.7s",
 		"updates": [
 			"Updated to gopeer v1.1.4 (fix redirects, race condition)",
+			"Updated to gopeer v1.1.5 (fix memory leak, disconnect)",
 			"Change local storage to session storage (JS)",
 			"Enable / disable group chat and file sharing"
 		]
