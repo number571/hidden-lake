@@ -1,4 +1,6 @@
-# HiddenLake
+# [DEPRECATED] HiddenLake
+
+> Need rewrite logic for new architecture `go-peer/cmd/hls`
 
 > Decentralized private network. Version 1.0.7s.
 
