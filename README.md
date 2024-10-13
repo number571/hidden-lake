@@ -119,7 +119,7 @@ The above-described paradigm of dividing the interactions of network participant
 <p align="center"><img src="images/hl_layers.jpg" alt="hl_layers.jpg"/></p>
 <p align="center">Figure 3. The layers of the Hidden Lake message.</p>
 
-Since the anonymous Hidden Lake network is formed due to the microservice architecture, some individual services can be used `outside` the HL architecture due to the common `go-peer` protocol. For example, it becomes possible to create messengers with `end-to-end encryption` based on HLT and HLE services, bypassing the anonymizing HLS service (as example [secpy-chat](https://github.com/number571/secpy_chat "Secpy-Chat")).
+Since the anonymous Hidden Lake network is formed due to the microservice architecture, some individual services can be used `outside` the HL architecture due to the common `go-peer` protocol. For example, it becomes possible to create messengers with `end-to-end encryption` based on HLT and HLE services, bypassing the anonymizing HLS service (as example [secpy-chat](https://github.com/number571/secpy-chat "Secpy-Chat")).
 
 > You can find out more about the message levels using the following schemes: 
 > [layer-1](https://github.com/number571/go-peer/blob/master/images/go-peer_layer1_net_message.jpg), 
@@ -135,7 +135,7 @@ On the basis of this characteristic, methods of possible application also begin 
 
 1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/hidden-lake/cmd/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
 2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
-3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy_chat)),
+3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy-chat)),
 4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
 
 ## List of applications
