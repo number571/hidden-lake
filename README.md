@@ -103,9 +103,9 @@ On the basis of this characteristic, methods of possible application also begin 
 
 Basic | Applied | Helpers
 :-----------------------------:|:-----------------------------:|:------------------------------:
-[HL Service](service) | [HL Messenger](applications/messenger) | [HL Traffic](helpers/traffic)
-[HL Composite](composite) | [HL Filesharer](applications/filesharer) | [HL Loader](helpers/loader)
-[HL Adapters](adapters) | [HL Remoter](applications/remoter) | [HL Encryptor](helpers/encryptor)
+[HL Service](cmd/service) | [HL Messenger](cmd/applications/messenger) | [HL Traffic](cmd/helpers/traffic)
+[HL Composite](cmd/composite) | [HL Filesharer](cmd/applications/filesharer) | [HL Loader](cmd/helpers/loader)
+[HL Adapters](cmd/adapters) | [HL Remoter](cmd/applications/remoter) | [HL Encryptor](cmd/helpers/encryptor)
 
 ## Possible launch modes
 
