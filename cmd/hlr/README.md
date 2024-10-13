@@ -42,9 +42,7 @@ The `[@remoter-separator]` label means that the arguments are separated for the 
 Default build and run
 
 ```bash 
-$ cd ./cmd/applications/remoter
-$ make build # create hlr, hlr_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hlr
+$ go run ./cmd/hlr
 
 > [INFO] 2023/06/03 15:30:31 HLR is running...
 > ...

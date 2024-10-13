@@ -34,9 +34,7 @@ Most of the code is a call to API functions from the HLS kernel. Thanks to this 
 Default build and run
 
 ```bash 
-$ cd ./cmd/applications/messenger
-$ make build # create hlm, hlm_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hlm
+$ go run ./cmd/hlm
 
 > [INFO] 2023/06/03 15:30:31 HLM is running...
 > ...
@@ -89,7 +87,7 @@ To see the success of sending and receiving messages, you need to do all the sam
 <p align="center"><img src="images/hlm_logger.png" alt="hlm_logger.png"/></p>
 <p align="center">Figure 3. Log of the three nodes with request/response actions.</p>
 
-> More example images about HLM pages in the [github.com/number571/hidden-lake/internal/applications/messenger/images](https://github.com/number571/hidden-lake/internal/applications/messenger/images "Path to HLM images")
+> More example images about HLM pages in the [cmd/hlm/images](images "Path to HLM images")
 
 ## Pages
 

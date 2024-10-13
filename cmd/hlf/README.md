@@ -38,9 +38,7 @@ File transfer is limited by the bandwidth of HLS itself. If we take into account
 Default build and run
 
 ```bash 
-$ cd ./cmd/applications/filesharer
-$ make build # create hlf, hlf_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hlf
+$ go run ./cmd/hlf
 
 > [INFO] 2023/06/03 15:30:31 HLF is running...
 > ...
@@ -90,4 +88,4 @@ Than open browser on `localhost:8080`. It is a `node1_hlf`. This node is a Alice
 
 To see the another side of communication, you need to do all the same operations, but with `localhost:7070` as `node2_hlf`. This node will be Bob.
 
-> More example images about HLF pages in the [github.com/number571/hidden-lake/internal/applications/filesharer/images](https://github.com/number571/hidden-lake/tree/master/cmd/applications/filesharer/images "Path to HLF images")
+> More example images about HLF pages in the [cmd/hlf/images](images "Path to HLF images")

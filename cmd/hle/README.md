@@ -27,9 +27,7 @@ HLE uses the `pkg/client` and `pkg/network/message` packages. Encrypted messages
 Default build and run
 
 ```bash 
-$ cd ./cmd/helpers/encryptor
-$ make build # create hle, hle_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hle
+$ go run ./cmd/hle
 
 > [INFO] 2023/12/22 11:03:47 HLE is running...
 > ...

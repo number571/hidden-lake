@@ -30,9 +30,7 @@ HLL uses the HLT service interface to download and upload messages. This propert
 Default build and run
 
 ```bash 
-$ cd ./cmd/helpers/loader
-$ make build # create hll, hll_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hll
+$ go run ./cmd/hll
 
 > [INFO] 2023/12/03 02:12:51 HLL is running...
 > ...

@@ -38,9 +38,7 @@ HLT emulates HLS to receive messages. In this scenario, HLT has only the functio
 Default build and run
 
 ```bash 
-$ cd ./cmd/helpers/traffic
-$ make build # create hlt, hlt_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hlt
+$ go run ./cmd/hlt
 
 > [INFO] 2023/06/03 15:39:13 HLT is running...
 > ...

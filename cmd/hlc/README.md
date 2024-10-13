@@ -27,9 +27,7 @@ The application HLC includes the download of all Hidden Lake services, and runs 
 Default build and run
 
 ```bash 
-$ cd ./cmd/composite
-$ make build # create hlc, hlc_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
-$ make run # run ./bin/hlc
+$ cd ./cmd/hlc
 
 > [INFO] 2023/12/03 02:12:51 HLC is running...
 > ...

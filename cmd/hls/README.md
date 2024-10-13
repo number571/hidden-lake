@@ -17,7 +17,7 @@ Network scales easily  |  -  |  -  |  - |
 
 A feature of HLS (compared to many other anonymous networks) is its easy adaptation to a hostile centralized environment. Anonymity can be restored literally from one node in the network, even if it is the only point of failure.
 
-> More information about HLS [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf "HLAN")
+> More information about HLS in the [habr.com/ru/articles/696504/](https://habr.com/ru/articles/696504/ "Habr HLS")
 
 ## Installation
 
