@@ -30,8 +30,8 @@
         <a href="https://github.com/number571/hidden-lake/blob/b27339aa283eb137e680a9ca6a04391e7960510a/Makefile#L107">
         	<img src="test/result/badge_codelines.svg" alt="Code Lines" />
 		</a>
-        <a href="https://img.shields.io/github/languages/code-size/number571/go-peer.svg">
-        	<img src="https://img.shields.io/github/languages/code-size/number571/go-peer.svg" alt="CodeSize" />
+        <a href="https://img.shields.io/github/languages/code-size/number571/hidden-lake.svg">
+        	<img src="https://img.shields.io/github/languages/code-size/number571/hidden-lake.svg" alt="CodeSize" />
 		</a>
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
