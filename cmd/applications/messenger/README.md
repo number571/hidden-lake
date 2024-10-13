@@ -89,7 +89,7 @@ To see the success of sending and receiving messages, you need to do all the sam
 <p align="center"><img src="images/hlm_logger.png" alt="hlm_logger.png"/></p>
 <p align="center">Figure 3. Log of the three nodes with request/response actions.</p>
 
-> More example images about HLM pages in the [github.com/number571/hidden-lake/cmd/applications/messenger/_images](https://github.com/number571/hidden-lake/cmd/applications/messenger/_images "Path to HLM images")
+> More example images about HLM pages in the [github.com/number571/hidden-lake/cmd/applications/messenger/images](https://github.com/number571/hidden-lake/cmd/applications/messenger/images "Path to HLM images")
 
 ## Pages
 

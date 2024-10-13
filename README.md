@@ -63,7 +63,7 @@ The anonymous Hidden Lake network is an `abstract` network. This means that rega
 4. If there is no message for the period T, then an `empty message` without a recipient is sent to the network,
 5. Each participant `tries to decrypt` the message they received from the network.
 
-<p align="center"><img src="service/images/hls_queue.jpg" alt="hls_queue.jpg"/></p>
+<p align="center"><img src="cmd/service/images/hls_queue.jpg" alt="hls_queue.jpg"/></p>
 <p align="center">Figure 1. Queue and message generation in HLS.</p>
 
 According to the interaction of nodes with each other, the Hidden Lake network scheme can be represented in the form of three layers: `network` (N), `friendly` (F), and `application` (A).
