@@ -265,17 +265,6 @@ queue_period_ms: 5000
   </tr>
 </table>
 
-## Possible ways of application
-
-The anonymous Hidden Lake network is similar in the way it is used to client-secure applications such as `RetroShare` or `Bitmessage`. The main difference from the last two applications is the existence of an anonymizing property, which makes HL also related to existing closed anonymous p2p networks of the `I2P` type. However, the Hidden Lake network is not an ordinary composition of two ideas in the face of combining traffic anonymization and client-secure application architecture, because among other things, it is also an `abstract` anonymous network. As a result, HL network, for successful anonymization of traffic, criteria such as the level of centralization, the number of nodes in the network, the location and connection of nodes among themselves become irrelevant.
-
-On the basis of this characteristic, methods of possible application also begin to be built:
-
-1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](cmd/hla) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
-2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
-3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy-chat)),
-4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=number571/hidden-lake&type=Date)](https://star-history.com/#number571/hidden-lake&Date)
