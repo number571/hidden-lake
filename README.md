@@ -23,7 +23,7 @@
         	<img src="https://godoc.org/github.com/number571/go-peer?status.svg" alt="GoDoc" />
 		</a>
         <a href="https://github.com/number571/go-peer">
-        	<img src="https://github.com/number571/go-peer/tree/master/images/go-peer_badge.svg" alt="Go-Peer" />
+        	<img src="https://raw.githubusercontent.com/number571/go-peer/refs/heads/master/images/go-peer_badge.svg" alt="Go-Peer" />
 		</a>
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
@@ -49,7 +49,7 @@ The Hidden Lake is a `friend-to-friend` (F2F) network, which means building trus
 
 ## Coverage map
 
-<p align="center"><img src="_test/result/coverage.svg" alt="coverage.svg"/></p>
+<p align="center"><img src="test/result/coverage.svg" alt="coverage.svg"/></p>
 
 ## How it works
 
