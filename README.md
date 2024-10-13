@@ -25,6 +25,8 @@
         <a href="https://github.com/number571/go-peer">
         	<img src="https://raw.githubusercontent.com/number571/go-peer/refs/heads/master/images/go-peer_badge.svg" alt="Go-Peer" />
 		</a>
+	</p>
+    <p align="center">
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
 		</a>
@@ -34,7 +36,7 @@
         <a href="https://github.com/number571/awesome-anonymity">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Anonymity" />
 		</a>
-	</p>
+    </p>
 	About project
 </h2>
 
