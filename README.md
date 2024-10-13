@@ -68,8 +68,6 @@
 
 The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
-> More information about HL in the [hidden_lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf "HLAN") and here [hidden_lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network_view.pdf "HLANv")
-
 ## Coverage map
 
 <p align="center"><img src="test/result/coverage.svg" alt="coverage.svg"/></p>
@@ -97,7 +95,9 @@ The Hidden Lake anonymous network is based on the (queue-based) `QB-problem`, wh
 5. Each participant tries to decrypt the message they received from the network: `m = Dk(c)`.
 
 <p align="center"><img src="cmd/hls/images/hls_qbp.png" alt="hls_qbp.png"/></p>
-<p align="center">Figure 1. QB-problem</p>
+<p align="center">Figure 1. QB-network with three nodes {A,B,C}</p>
+
+> More information about QB networks in research paper: [Анонимная сеть «Hidden Lake»](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf)
 
 ## Build and run
 
