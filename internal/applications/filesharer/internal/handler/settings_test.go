@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func TestSettingsPage(t *testing.T) {

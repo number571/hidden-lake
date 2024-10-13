@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/chars"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 )
 
 func isText(pBytes []byte) bool {

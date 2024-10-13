@@ -10,7 +10,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters"
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/config"
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/producer/internal/adapted"
-	"github.com/number571/hidden-lake/internal/modules/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 var (

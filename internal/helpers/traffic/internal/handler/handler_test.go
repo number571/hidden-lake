@@ -24,8 +24,8 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/closer"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/closer"
 )
 
 const (

@@ -6,9 +6,9 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/config"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleConfigSettingsAPI(pCfg config.IConfig, pLogger logger.ILogger) http.HandlerFunc {

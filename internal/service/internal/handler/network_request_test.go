@@ -12,11 +12,11 @@ import (
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/types"
 	testutils "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/internal/modules/closer"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/closer"
 )
 
 func TestHandleRequestAPI(t *testing.T) {

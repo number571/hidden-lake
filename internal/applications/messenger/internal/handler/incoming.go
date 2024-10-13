@@ -11,9 +11,9 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	hlm_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	"github.com/number571/hidden-lake/internal/modules/chars"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"

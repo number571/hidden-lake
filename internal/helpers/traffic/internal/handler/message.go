@@ -12,9 +12,9 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleMessageAPI(

@@ -9,7 +9,7 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/web"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func AboutPage(pLogger logger.ILogger, pCfg config.IConfig) http.HandlerFunc {

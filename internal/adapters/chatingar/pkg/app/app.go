@@ -12,8 +12,8 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/config"
 
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
+	"github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 )
 
 var (

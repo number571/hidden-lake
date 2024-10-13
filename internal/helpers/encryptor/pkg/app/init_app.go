@@ -9,8 +9,8 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/flag"
-	"github.com/number571/hidden-lake/internal/modules/initapp"
+	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/privkey"
 )
 
 // initApp work with the raw data = read files, read args
@@ -30,7 +30,7 @@ func InitApp(pArgs []string, pDefaultPath string, pDefaultParallel uint64) (type
 	}
 
 	keyPath := filepath.Join(inputPath, settings.CPathKey)
-	privKey, err := initapp.GetPrivKey(keyPath, cfg.GetSettings().GetKeySizeBits())
+	privKey, err := privkey.GetPrivKey(keyPath, cfg.GetSettings().GetKeySizeBits())
 	if err != nil {
 		return nil, utils.MergeErrors(ErrGetPrivateKey, err)
 	}

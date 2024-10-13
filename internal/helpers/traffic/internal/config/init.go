@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"

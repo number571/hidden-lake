@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 
 	"github.com/number571/go-peer/pkg/types"
 )

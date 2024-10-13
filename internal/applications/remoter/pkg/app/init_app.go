@@ -8,7 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
 func InitApp(pArgs []string, pDefaultPath string) (types.IRunner, error) {

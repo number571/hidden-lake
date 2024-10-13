@@ -1,4 +1,4 @@
-package initapp
+package privkey
 
 import (
 	"os"

@@ -12,7 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/api"
+	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
 const (

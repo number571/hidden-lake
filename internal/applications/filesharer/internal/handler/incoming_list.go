@@ -12,8 +12,8 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"

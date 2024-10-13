@@ -11,11 +11,11 @@ import (
 	"time"
 
 	testutils "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/internal/modules/closer"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/closer"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/anonymity"

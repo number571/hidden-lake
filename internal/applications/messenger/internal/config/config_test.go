@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/number571/hidden-lake/internal/modules/language"
+	"github.com/number571/hidden-lake/internal/utils/language"
 )
 
 const (

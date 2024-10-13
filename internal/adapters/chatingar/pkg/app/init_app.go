@@ -10,7 +10,7 @@ import (
 	consumer_app "github.com/number571/hidden-lake/internal/adapters/chatingar/internal/consumer/pkg/app"
 	producer_app "github.com/number571/hidden-lake/internal/adapters/chatingar/internal/producer/pkg/app"
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
 func InitApp(pArgs []string, pDefaultPath string) (types.IRunner, error) {

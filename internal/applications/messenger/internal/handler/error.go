@@ -9,7 +9,7 @@ import (
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/messenger/web"
 
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 type sError struct {

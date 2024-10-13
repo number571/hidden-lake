@@ -7,8 +7,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/go-peer/pkg/utils"
-	"github.com/number571/hidden-lake/internal/modules/flag"
-	"github.com/number571/hidden-lake/internal/modules/initapp"
+	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/privkey"
 
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -31,7 +31,7 @@ func InitApp(pArgs []string, pDefaultPath string, pDefaultParallel uint64) (type
 	}
 
 	keyPath := filepath.Join(inputPath, pkg_settings.CPathKey)
-	privKey, err := initapp.GetPrivKey(keyPath, cfg.GetSettings().GetKeySizeBits())
+	privKey, err := privkey.GetPrivKey(keyPath, cfg.GetSettings().GetKeySizeBits())
 	if err != nil {
 		return nil, utils.MergeErrors(ErrGetPrivateKey, err)
 	}

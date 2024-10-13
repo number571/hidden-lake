@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/number571/hidden-lake/internal/modules/pprof"
+	"github.com/number571/hidden-lake/internal/utils/pprof"
 )
 
 func (p *sApp) initServicePPROF() {

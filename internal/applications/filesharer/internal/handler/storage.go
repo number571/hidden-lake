@@ -15,8 +15,8 @@ import (
 	hlf_client "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/client"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 type sStorage struct {

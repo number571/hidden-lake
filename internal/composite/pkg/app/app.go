@@ -12,8 +12,8 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/composite/internal/config"
 
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 
 	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
 )

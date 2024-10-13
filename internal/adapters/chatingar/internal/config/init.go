@@ -5,8 +5,8 @@ import (
 
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {

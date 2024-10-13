@@ -8,11 +8,11 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
-	"github.com/number571/hidden-lake/internal/modules/slices"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
 func HandleConfigConnectsAPI(pCtx context.Context, pWrapper config.IWrapper, pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {

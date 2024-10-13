@@ -11,7 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
-	"github.com/number571/hidden-lake/internal/modules/api"
+	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
 func ProduceProcessor(

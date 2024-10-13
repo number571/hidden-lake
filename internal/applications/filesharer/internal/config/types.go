@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/number571/hidden-lake/internal/modules/language"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/language"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 type IWrapper interface {

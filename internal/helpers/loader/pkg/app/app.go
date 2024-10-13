@@ -15,10 +15,10 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/loader/internal/config"
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/loader/pkg/config"
 	hll_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/closer"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
+	"github.com/number571/hidden-lake/internal/utils/closer"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 )
 
 var (

@@ -21,11 +21,11 @@ import (
 
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/config"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/closer"
-	anon_logger "github.com/number571/hidden-lake/internal/modules/logger/anon"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
+	"github.com/number571/hidden-lake/internal/utils/closer"
+	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 )
 
 var (

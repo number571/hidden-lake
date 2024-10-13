@@ -6,7 +6,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func IndexPage(pLogger logger.ILogger, pCfg config.IConfig) http.HandlerFunc {

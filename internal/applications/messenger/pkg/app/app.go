@@ -19,11 +19,11 @@ import (
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/messenger/pkg/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/closer"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	"github.com/number571/hidden-lake/internal/utils/closer"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 )
 
 var (

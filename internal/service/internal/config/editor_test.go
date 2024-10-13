@@ -8,8 +8,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/random"
 	testutils "github.com/number571/go-peer/test/utils"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	"github.com/number571/hidden-lake/internal/modules/slices"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
 var (

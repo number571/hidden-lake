@@ -1,7 +1,7 @@
-package initapp
+package privkey
 
 const (
-	errPrefix = "internal/initapp = "
+	errPrefix = "internal/privkey = "
 )
 
 type SAppError struct {

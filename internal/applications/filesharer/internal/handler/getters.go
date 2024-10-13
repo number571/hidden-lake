@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
-	"github.com/number571/hidden-lake/internal/modules/language"
+	"github.com/number571/hidden-lake/internal/utils/language"
 )
 
 type sTemplate struct {

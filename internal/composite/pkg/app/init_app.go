@@ -8,7 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/composite/internal/config"
 	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 
 	hla_chatingar_app "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/app"
 	hla_chatingar_settings "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"

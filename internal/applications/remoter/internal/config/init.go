@@ -5,7 +5,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {

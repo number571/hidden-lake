@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 )

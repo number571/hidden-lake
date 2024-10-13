@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"

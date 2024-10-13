@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
-	"github.com/number571/hidden-lake/internal/modules/language"
+	"github.com/number571/hidden-lake/internal/utils/language"
 )
 
 func GetConfigSettings(pCfg config.IConfig) SConfigSettings {

@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/internal/modules/language"
+	"github.com/number571/hidden-lake/internal/utils/language"
 )
 
 var (

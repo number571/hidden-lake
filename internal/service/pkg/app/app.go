@@ -16,15 +16,15 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/go-peer/pkg/utils"
-	"github.com/number571/hidden-lake/internal/modules/closer"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
+	"github.com/number571/hidden-lake/internal/utils/closer"
 
-	anon_logger "github.com/number571/hidden-lake/internal/modules/logger/anon"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
-	std_logger "github.com/number571/hidden-lake/internal/modules/logger/std"
-	internal_types "github.com/number571/hidden-lake/internal/modules/types"
 	pkg_config "github.com/number571/hidden-lake/internal/service/pkg/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 )
 
 var (

@@ -11,10 +11,10 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/api"
-	"github.com/number571/hidden-lake/internal/modules/chars"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleIncomingExecHTTP(pCtx context.Context, pConfig config.IConfig, pLogger logger.ILogger) http.HandlerFunc {

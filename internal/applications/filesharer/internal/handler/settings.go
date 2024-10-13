@@ -13,8 +13,8 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
-	"github.com/number571/hidden-lake/internal/modules/language"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/language"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 )

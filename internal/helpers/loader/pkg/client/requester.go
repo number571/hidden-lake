@@ -9,7 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/config"
 	hll_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
-	"github.com/number571/hidden-lake/internal/modules/api"
+	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
 const (

@@ -17,7 +17,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 
 	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
-	internal_anon_logger "github.com/number571/hidden-lake/internal/modules/logger/anon"
+	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
 func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {

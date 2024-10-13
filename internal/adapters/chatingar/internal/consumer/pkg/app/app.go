@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/config"
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/consumer/internal/adapted"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
-	"github.com/number571/hidden-lake/internal/modules/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 var (

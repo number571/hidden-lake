@@ -6,8 +6,8 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {

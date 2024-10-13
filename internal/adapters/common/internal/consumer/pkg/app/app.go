@@ -15,7 +15,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/common/internal/consumer/internal/adapted"
 	"github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
-	"github.com/number571/hidden-lake/internal/modules/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 var (

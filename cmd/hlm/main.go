@@ -13,7 +13,7 @@ import (
 
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app"
-	"github.com/number571/hidden-lake/internal/modules/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
 func main() {

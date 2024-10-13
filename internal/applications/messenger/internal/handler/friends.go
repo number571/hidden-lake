@@ -12,8 +12,8 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/messenger/web"
-	http_logger "github.com/number571/hidden-lake/internal/modules/logger/http"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 type sFriends struct {

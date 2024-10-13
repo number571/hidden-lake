@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/random"
-	"github.com/number571/hidden-lake/internal/modules/language"
-	logger "github.com/number571/hidden-lake/internal/modules/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/language"
+	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 const (
