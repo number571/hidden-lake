@@ -12,7 +12,8 @@ _TEST_PPROF_PATH=./test/pprof
 
 _CHECK_ERROR=if [ $$? != 0 ]; then exit 1; fi
 _GO_TEST_LIST=\
-	go list ./...
+	go list ./... | \
+	grep -vsE '/examples/' 
 
 .PHONY: default \
 	build clean \
