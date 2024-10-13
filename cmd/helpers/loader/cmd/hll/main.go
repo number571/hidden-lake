@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	gopeer "github.com/number571/go-peer"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/cmd/helpers/loader/pkg/app"
 	"github.com/number571/hidden-lake/internal/flag"
 )
@@ -18,7 +18,7 @@ func main() {
 	args := os.Args[1:]
 
 	if flag.GetBoolFlagValue(args, "version") {
-		fmt.Println(gopeer.CVersion)
+		fmt.Println(hiddenlake.CVersion)
 		return
 	}
 
