@@ -48,6 +48,8 @@
         <a href="https://img.shields.io/github/downloads/number571/hidden-lake/total.svg">
         	<img src="https://img.shields.io/github/downloads/number571/hidden-lake/total.svg" alt="Downloads" />
 		</a>
+    </p>
+    <p align="center">
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
 		</a>
