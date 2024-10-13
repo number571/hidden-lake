@@ -328,3 +328,13 @@ queue_period_ms: 5000
     </td>
   </tr>
 </table>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=number571/hidden-lake&type=Date)](https://star-history.com/#number571/hidden-lake&Date)
+
+## License
+
+Licensed under the MIT License. See [LICENSE](LICENSE) for the full license text.
+
+**[⬆ back to top](#releases)**
