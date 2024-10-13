@@ -7,8 +7,8 @@ init:
 	pkill -15 --version
 build: 
 	# MAKEFILE BUILD
-	make build -C $(CMDPATH)/helpers/traffic
-	make build -C $(CMDPATH)/helpers/loader
+	go build -o $(BINPATH)/hlt $(CMDPATH)/hlt
+	go build -o $(BINPATH)/hll $(CMDPATH)/hll
 	# COPY HLT
 	cp -r $(BINPATH)/hlt ./service_hlt_1/prog_hlt_1
 	cp -r $(BINPATH)/hlt ./service_hlt_2/prog_hlt_2

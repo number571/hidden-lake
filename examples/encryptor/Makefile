@@ -7,7 +7,7 @@ init:
 	pkill -15 --version
 build: 
 	# MAKEFILE BUILD
-	make build -C $(CMDPATH)/helpers/encryptor
+	go build -o $(BINPATH)/hle $(CMDPATH)/hle
 	# COPY HLE
 	cp -r $(BINPATH)/hle ./service_hle/prog_hle
 run: 
