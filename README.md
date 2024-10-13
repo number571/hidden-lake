@@ -102,7 +102,7 @@ The anonymous Hidden Lake network is an `abstract` network. This means that rega
 4. If there is no message for the period T, then an `empty message` without a recipient is sent to the network,
 5. Each participant `tries to decrypt` the message they received from the network.
 
-<p align="center"><img src="cmd/service/images/hls_queue.jpg" alt="hls_queue.jpg"/></p>
+<p align="center"><img src="cmd/hls/images/hls_queue.jpg" alt="hls_queue.jpg"/></p>
 <p align="center">Figure 1. Queue and message generation in HLS.</p>
 
 According to the interaction of nodes with each other, the Hidden Lake network scheme can be represented in the form of three layers: `network` (N), `friendly` (F), and `application` (A).
@@ -133,7 +133,7 @@ The anonymous Hidden Lake network is similar in the way it is used to client-sec
 
 On the basis of this characteristic, methods of possible application also begin to be built:
 
-1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/hidden-lake/cmd/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
+1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/hidden-lake/internal/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
 2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
 3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy-chat)),
 4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
@@ -142,9 +142,9 @@ On the basis of this characteristic, methods of possible application also begin 
 
 Basic | Applied | Helpers
 :-----------------------------:|:-----------------------------:|:------------------------------:
-[HL Service](cmd/service) | [HL Messenger](cmd/applications/messenger) | [HL Traffic](cmd/helpers/traffic)
-[HL Composite](cmd/composite) | [HL Filesharer](cmd/applications/filesharer) | [HL Loader](cmd/helpers/loader)
-[HL Adapters](cmd/adapters) | [HL Remoter](cmd/applications/remoter) | [HL Encryptor](cmd/helpers/encryptor)
+[HL Service](cmd/hls) | [HL Messenger](cmd/hlm) | [HL Traffic](cmd/hlt)
+[HL Composite](cmd/hlc) | [HL Filesharer](cmd/hlf) | [HL Loader](cmd/hll)
+[HL Adapters](cmd/hla) | [HL Remoter](cmd/hlr) | [HL Encryptor](cmd/hle)
 
 ## Possible launch modes
 
@@ -172,7 +172,7 @@ Launching an anonymous network is primarily the launch of an anonymizing HLS ser
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/service/cmd/hls@<tag-name>
+$ go install github.com/number571/hidden-lake/cmd/hls@<tag-name>
 $ hls
 ```
 

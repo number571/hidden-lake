@@ -12,8 +12,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hlt_client "github.com/number571/hidden-lake/cmd/helpers/traffic/pkg/client"
-	hls_settings "github.com/number571/hidden-lake/cmd/service/pkg/settings"
+	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 const (

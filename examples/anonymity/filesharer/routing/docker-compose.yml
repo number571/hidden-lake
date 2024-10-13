@@ -3,7 +3,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/routing/node1_hlf
     ports:
@@ -14,7 +14,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/routing/node2_hlf
     ports:
@@ -24,7 +24,7 @@ services:
   middle_hlt_1:
     build:
       context: ./../../../../
-      dockerfile: cmd/helpers/traffic/Dockerfile
+      dockerfile: cmd/hlt/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/routing/middle_hlt_1
     networks:
@@ -32,7 +32,7 @@ services:
   middle_hlt_2:
     build:
       context: ./../../../../
-      dockerfile: cmd/helpers/traffic/Dockerfile
+      dockerfile: cmd/hlt/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/routing/middle_hlt_2
     networks:
@@ -40,7 +40,7 @@ services:
   middle_hlt_3:
     build:
       context: ./../../../../
-      dockerfile: cmd/helpers/traffic/Dockerfile
+      dockerfile: cmd/hlt/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/routing/middle_hlt_3
     networks:

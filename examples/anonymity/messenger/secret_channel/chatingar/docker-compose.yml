@@ -3,7 +3,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/secret_channel/chatingar/node1_hlm
     ports:
@@ -13,7 +13,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/secret_channel/chatingar/node2_hlm
     ports:

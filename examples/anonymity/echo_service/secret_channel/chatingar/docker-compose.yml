@@ -9,7 +9,7 @@ services:
   recv_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/echo_service/secret_channel/chatingar/recv_hlc
     networks:
@@ -18,7 +18,7 @@ services:
   send_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/echo_service/secret_channel/chatingar/send_hlc
     ports:

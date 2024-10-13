@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	hlr_settings "github.com/number571/hidden-lake/cmd/applications/remoter/pkg/settings"
+	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 )
 
 const (

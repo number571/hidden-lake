@@ -3,7 +3,7 @@ services:
   recv_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/remoter/simple/recv_hlc
     networks:
@@ -11,7 +11,7 @@ services:
   send_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/service/Dockerfile
+      dockerfile: cmd/hls/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/remoter/simple/send_hls
     ports:

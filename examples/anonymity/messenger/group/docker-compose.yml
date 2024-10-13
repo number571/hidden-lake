@@ -3,7 +3,7 @@ services:
   middle_hlt:
     build:
       context: ./../../../../
-      dockerfile: cmd/helpers/traffic/Dockerfile
+      dockerfile: cmd/hlt/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/group/middle_hlt
     networks:
@@ -11,7 +11,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/group/node1_hlm
     ports:
@@ -21,7 +21,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/group/node2_hlm
     ports:
@@ -32,7 +32,7 @@ services:
   node3_hlc:
     build:
       context: ./../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/group/node3_hlm
     ports:

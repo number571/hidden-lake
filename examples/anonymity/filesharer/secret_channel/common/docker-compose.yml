@@ -3,7 +3,7 @@ services:
   service:
     build:
       context: ./../../../../../
-      dockerfile: cmd/adapters/common/cmd/service/Dockerfile
+      dockerfile: cmd/hla/common/service/Dockerfile
     environment:
       - SERVICE_ADDR=:6060
       - LOG_ENABLED=false
@@ -12,7 +12,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/secret_channel/common/node1_hlf
     ports:
@@ -23,7 +23,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/secret_channel/common/node2_hlf
     ports:

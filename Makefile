@@ -13,6 +13,7 @@ _TEST_PPROF_PATH=./test/pprof
 _CHECK_ERROR=if [ $$? != 0 ]; then exit 1; fi
 _GO_TEST_LIST=\
 	go list ./... | \
+	grep -vsE '/cmd/' | \
 	grep -vsE '/examples/' 
 
 .PHONY: default \
@@ -26,17 +27,9 @@ _GO_TEST_LIST=\
 
 default: lint-run test-run
 build:
-	make -C ./cmd/service build
-	make -C ./cmd/composite build
-	make -C ./cmd/applications build
-	make -C ./cmd/helpers build
-	make -C ./cmd/adapters build
+	make -C ./cmd build
 clean:
-	make -C ./cmd/service clean
-	make -C ./cmd/composite clean
-	make -C ./cmd/applications clean
-	make -C ./cmd/helpers clean
-	make -C ./cmd/adapters clean
+	make -C ./cmd clean
 
 go-fmt-vet:
 	go fmt ./...

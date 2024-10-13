@@ -3,7 +3,7 @@ services:
   service:
     build:
       context: ./../../../../../
-      dockerfile: cmd/adapters/common/cmd/service/Dockerfile
+      dockerfile: cmd/hla/common/service/Dockerfile
     environment:
       - SERVICE_ADDR=:6060
       - LOG_ENABLED=false
@@ -12,7 +12,7 @@ services:
   recv_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/remoter/secret_channel/common/recv_hlc
     networks:
@@ -20,7 +20,7 @@ services:
   send_hlc:
     build:
       context: ./../../../../../
-      dockerfile: cmd/composite/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/remoter/secret_channel/common/send_hlc
     ports:
