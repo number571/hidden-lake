@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "cmd/applications/filesharer/internal/config = "
+	errPrefix = "internal/applications/filesharer/internal/config = "
 )
 
 type SConfigError struct {

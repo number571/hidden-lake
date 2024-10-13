@@ -1,7 +1,7 @@
 package app
 
 const (
-	errPrefix = "cmd/adapters/chatingar/pkg/app = "
+	errPrefix = "internal/adapters/chatingar/pkg/app = "
 )
 
 type SAppError struct {

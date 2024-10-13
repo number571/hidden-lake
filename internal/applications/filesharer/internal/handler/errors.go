@@ -1,7 +1,7 @@
 package handler
 
 const (
-	errPrefix = "cmd/applications/filesharer/internal/handler = "
+	errPrefix = "internal/applications/filesharer/internal/handler = "
 )
 
 type SHandlerError struct {

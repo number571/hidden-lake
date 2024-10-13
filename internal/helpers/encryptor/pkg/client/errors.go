@@ -1,7 +1,7 @@
 package client
 
 const (
-	errPrefix = "cmd/helpers/encryptor/pkg/client = "
+	errPrefix = "internal/helpers/encryptor/pkg/client = "
 )
 
 type SClientError struct {

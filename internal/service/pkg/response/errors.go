@@ -1,7 +1,7 @@
 package response
 
 const (
-	errPrefix = "cmd/service/pkg/response = "
+	errPrefix = "internal/service/pkg/response = "
 )
 
 type SResponseError struct {

@@ -1,7 +1,7 @@
 package client
 
 const (
-	errPrefix = "cmd/applications/remoter/pkg/client = "
+	errPrefix = "internal/applications/remoter/pkg/client = "
 )
 
 type SClientError struct {

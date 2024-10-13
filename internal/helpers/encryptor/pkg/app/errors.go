@@ -1,7 +1,7 @@
 package app
 
 const (
-	errPrefix = "cmd/helpers/encryptor/pkg/app = "
+	errPrefix = "internal/helpers/encryptor/pkg/app = "
 )
 
 type SAppError struct {

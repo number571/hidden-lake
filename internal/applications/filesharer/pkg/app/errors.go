@@ -1,7 +1,7 @@
 package app
 
 const (
-	errPrefix = "cmd/applications/filesharer/pkg/app = "
+	errPrefix = "internal/applications/filesharer/pkg/app = "
 )
 
 type SAppError struct {

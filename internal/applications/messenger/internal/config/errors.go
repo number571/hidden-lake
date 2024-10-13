@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "cmd/applications/messenger/internal/config = "
+	errPrefix = "internal/applications/messenger/internal/config = "
 )
 
 type SConfigError struct {

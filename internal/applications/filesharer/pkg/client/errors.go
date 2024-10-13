@@ -3,7 +3,7 @@ package client
 import "errors"
 
 const (
-	errPrefix = "cmd/applications/filesharer/pkg/client = "
+	errPrefix = "internal/applications/filesharer/pkg/client = "
 )
 
 type SClientError struct {

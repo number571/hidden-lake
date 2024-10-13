@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "cmd/applications/remoter/internal/config = "
+	errPrefix = "internal/applications/remoter/internal/config = "
 )
 
 type SConfigError struct {
