@@ -88,7 +88,7 @@ Basic | Applied | Helpers
 
 ## How it works
 
-The anonymous Hidden Lake network is an `abstract` network. This means that regardless of the system in which it is located and regardless of the number of nodes, as well as their location, the HL network remains anonymous. This property is achieved due to a theoretically provable `queue-based` problem. Its algorithm can be described as follows.
+The Hidden Lake anonymous network is based on the (queue-based) `QB-problem`, which can be described by the following list of actions:
 
 1. Each message `m` is encrypted with the recipient's key `k`: `c = Ek(m)`,
 2. Message `c` is sent during period `= T` to all network participants,
@@ -97,7 +97,7 @@ The anonymous Hidden Lake network is an `abstract` network. This means that rega
 5. Each participant tries to decrypt the message they received from the network: `m = Dk(c)`.
 
 <p align="center"><img src="cmd/hls/images/hls_qbp.png" alt="hls_qbp.png"/></p>
-<p align="center">Figure 1. Queue and message generation in HLS.</p>
+<p align="center">Figure 1. QB-problem</p>
 
 ## Build and run
 
@@ -129,6 +129,9 @@ $ wget https://github.com/number571/hidden-lake/blob/master/configs/8Jkl93Mdk93m
 # where 8Jkl93Mdk93md1bz is a network key
 $ hls
 ```
+
+<p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
+<p align="center">Figure 2. Example of request to echo-service</p>
 
 > There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/prod_test), [anon_messenger](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/messenger/prod_test), [anon_filesharer](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/filesharer/prod_test).
 
