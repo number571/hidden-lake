@@ -53,7 +53,7 @@ The `Hidden Lake` is an anonymous network built on a `micro-service` architectur
 
 The Hidden Lake is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
-> More information about HL in the [hidden-lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_anonymous_network.pdf "HLAN") and here [hidden-lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_anonymous_network_view.pdf "HLANv")
+> More information about HL in the [hidden_lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf "HLAN") and here [hidden_lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network_view.pdf "HLANv")
 
 ## Coverage map
 
