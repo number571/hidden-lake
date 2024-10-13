@@ -1,0 +1,22 @@
+name: build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Applications installing...
+      run: sudo apt-get update && sudo apt-get install -y wget gcc make git
+    - name: Golang installing v1.16...
+      run: wget https://dl.google.com/go/go1.16.linux-amd64.tar.gz && sudo tar -C /opt -xzf go1.16.linux-amd64.tar.gz
+    - name: Hidden-Lake downloading...
+      run: git clone --depth=1 https://github.com/number571/hidden-lake.git
+    - name: Hidden-Lake deps installing...
+      run: export PATH=$PATH:$(go env GOPATH)/bin && make install-deps -C hidden-lake
+    - name: Hidden-Lake lint/test running...
+      run: export PATH=$PATH:$(go env GOPATH)/bin && make -C hidden-lake

@@ -1,3 +1,2 @@
-inputd/*.db
-tls/*
-static/archive/*
+!configs/*
+!configs/prod/*/*
