@@ -1,9 +1,8 @@
-module github.com/number571/hiddenlake
+module github.com/number571/hidden-lake
 
-go 1.13
+go 1.16
 
 require (
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible
-	github.com/number571/gopeer v1.1.5
-	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
+	github.com/number571/go-peer v1.6.21
+	golang.org/x/net v0.30.0
 )
