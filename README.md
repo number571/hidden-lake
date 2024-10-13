@@ -66,9 +66,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](https://github.com/number571/hidden-lake/blob/master/CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services.
-
-The Hidden Lake is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 > More information about HL in the [hidden_lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf "HLAN") and here [hidden_lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network_view.pdf "HLANv")
 
@@ -80,52 +78,6 @@ The Hidden Lake is a `friend-to-friend` (F2F) network, which means building trus
 
 All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux`, `darwin`} OS as pattern = `appname_arch_os`. In total, one application is compiled into six versions. The entire list of releases can be found here: [github.com/number571/hidden-lake/releases](https://github.com/number571/hidden-lake/releases "releases"). 
 
-## How it works
-
-The anonymous Hidden Lake network is an `abstract` network. This means that regardless of the system in which it is located and regardless of the number of nodes, as well as their location, the HL network remains anonymous. This property is achieved due to a theoretically provable `queue-based` problem. Its algorithm can be described as follows.
-
-1. Each message is `encrypted` with the recipient's key,
-2. The message is sent during the period `= T` to all network participants,
-3. Period T of one participant regardless of periods `T1, T2, ..., Tn` of other participants,
-4. If there is no message for the period T, then an `empty message` without a recipient is sent to the network,
-5. Each participant `tries to decrypt` the message they received from the network.
-
-<p align="center"><img src="cmd/hls/images/hls_queue.jpg" alt="hls_queue.jpg"/></p>
-<p align="center">Figure 1. Queue and message generation in HLS.</p>
-
-According to the interaction of nodes with each other, the Hidden Lake network scheme can be represented in the form of three layers: `network` (N), `friendly` (F), and `application` (A).
-
-1. The network layer ensures the `transfer of raw bytes` from one node to another. HLS and HLT services interact at this level. HLT is an auxiliary service that is used to relay messages from HLS. The HLT can be replaced by an HLS node.
-2. The friendly layer (also known as anonymizing) performs the function of `anonymizing traffic` by setting up a list of friends and queue control on the side of the HLS service. Cryptographic routing based on public keys works at this level.
-3. The application layer boils down to using the final `logic of the application` itself to transmit and receive messages. One of the main tasks of this level is to control data security, provided that intermediate (group) HLS nodes exist/are used.
-
-<p align="center"><img src="images/hl_scheme.jpg" alt="hl_scheme.jpg"/></p>
-<p align="center">Figure 2. The scheme of the anonymous Hidden Lake network.</p>
-
-The above-described paradigm of dividing the interactions of network participants into levels can also be displayed through the prism of `message layers`. Unlike the method of separation according to the interaction of nodes with each other, in which there were three levels, there are four levels at the level of consideration of the message structure. This is due to the fact that the second and third levels are interconnected through an HLS service that performs the role of anonymization and message transportation.
-
-<p align="center"><img src="images/hl_layers.jpg" alt="hl_layers.jpg"/></p>
-<p align="center">Figure 3. The layers of the Hidden Lake message.</p>
-
-Since the anonymous Hidden Lake network is formed due to the microservice architecture, some individual services can be used `outside` the HL architecture due to the common `go-peer` protocol. For example, it becomes possible to create messengers with `end-to-end encryption` based on HLT and HLE services, bypassing the anonymizing HLS service (as example [secpy-chat](https://github.com/number571/secpy-chat "Secpy-Chat")).
-
-> You can find out more about the message levels using the following schemes: 
-> [layer-1](https://github.com/number571/go-peer/blob/master/images/go-peer_layer1_net_message.jpg), 
-> [layer-2](https://github.com/number571/go-peer/blob/master/images/go-peer_layer2_message.jpg), 
-> [layer-3](images/hl_layer3_request.jpg), 
-> All schemes can be found in the [hidden-lake_message_layers.svg](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_message_layers.svg) file.
-
-## Possible ways of application
-
-The anonymous Hidden Lake network is similar in the way it is used to client-secure applications such as `RetroShare` or `Bitmessage`. The main difference from the last two applications is the existence of an anonymizing property, which makes HL also related to existing closed anonymous p2p networks of the `I2P` type. However, the Hidden Lake network is not an ordinary composition of two ideas in the face of combining traffic anonymization and client-secure application architecture, because among other things, it is also an `abstract` anonymous network. As a result, HL network, for successful anonymization of traffic, criteria such as the level of centralization, the number of nodes in the network, the location and connection of nodes among themselves become irrelevant.
-
-On the basis of this characteristic, methods of possible application also begin to be built:
-
-1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](cmd/hla) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
-2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
-3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy-chat)),
-4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
-
 ## List of applications
 
 Basic | Applied | Helpers
@@ -134,24 +86,18 @@ Basic | Applied | Helpers
 [HL Composite](cmd/hlc) | [HL Filesharer](cmd/hlf) | [HL Loader](cmd/hll)
 [HL Adapters](cmd/hla) | [HL Remoter](cmd/hlr) | [HL Encryptor](cmd/hle)
 
-## Possible launch modes
+## How it works
 
-The anonymous Hidden Lake network has different launch modes depending on the environment in which it is located.
+The anonymous Hidden Lake network is an `abstract` network. This means that regardless of the system in which it is located and regardless of the number of nodes, as well as their location, the HL network remains anonymous. This property is achieved due to a theoretically provable `queue-based` problem. Its algorithm can be described as follows.
 
-1. Classic direct communication. In this communication mode, the nodes are connected to each other directly. This method is convenient only if at least one of the nodes has a public IP address that goes beyond NAT. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/simple).
+1. Each message `m` is encrypted with the recipient's key `k`: `c = Ek(m)`,
+2. Message `c` is sent during period `= T` to all network participants,
+3. The period `T` of one participant is independent of the periods `T1, T2, ..., Tn` of other participants,
+4. If there is no message for the period `T`, then a false message `v` is sent to the network without a recipient (with a random key `r`): `c = Er(v)`,   
+5. Each participant tries to decrypt the message they received from the network: `m = Dk(c)`.
 
-<p align="center"><img src="images/launch_mode_1.jpg" alt="launch_mode_1.jpg"/></p>
-<p align="center">Figure 4. The direct communication launch mode.</p>
-
-2. Communication via a relayer. In this startup mode, nodes are connected to each other using separate relay nodes. In this concept, relayers become TURN servers that redirect traffic to all connected nodes, including other relayers. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/routing).
-
-<p align="center"><img src="images/launch_mode_2.jpg" alt="launch_mode_2.jpg"/></p>
-<p align="center">Figure 5. The relayer communication launch mode.</p>
-
-3. Communication through a secret communication channel. In this mode, communication begins to adapt to a communication platform other than the primary Hidden Lake network. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/secret_channel).
-
-<p align="center"><img src="images/launch_mode_3.jpg" alt="launch_mode_3.jpg"/></p>
-<p align="center">Figure 6. The secret channel communication launch mode.</p>
+<p align="center"><img src="cmd/hls/images/hls_qbp.png" alt="hls_qbp.png"/></p>
+<p align="center">Figure 1. Queue and message generation in HLS.</p>
 
 ## Build and run
 
@@ -160,18 +106,16 @@ Launching an anonymous network is primarily the launch of an anonymizing HLS ser
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls@<tag-name>
+$ go install github.com/number571/hidden-lake/cmd/hls@latest
 $ hls
 ```
 
 ### 2. Running from release version
 
-When starting from the release version, you must specify the processor architecture and platform used. Available architectures: `amd64`, `arm64`. Available platforms: `windows`, `darwin`, `linux`.
-
 ```bash
-$ wget https://github.com/number571/hidden-lake/releases/download/<tag-name>/hls_<arch-name>_<platform-name>
-$ chmod +x hls_<arch-name>_<platform-name>
-$ ./hls_<arch-name>_<platform-name>
+$ wget https://github.com/number571/hidden-lake/releases/latest/download/hls_amd64_linux
+$ chmod +x hls_amd64_linux
+$ ./hls_amd64_linux
 ```
 
 ## Production
@@ -181,7 +125,8 @@ $ ./hls_<arch-name>_<platform-name>
 The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes.
 
 ```bash
-$ wget https://raw.githubusercontent.com/number571/hidden-lake/<tag-name>/cmd/configs/<network-key>/hls.yml
+$ wget https://github.com/number571/hidden-lake/blob/master/configs/8Jkl93Mdk93md1bz/hls.yml
+# where 8Jkl93Mdk93md1bz is a network key
 $ hls
 ```
 
@@ -189,7 +134,7 @@ $ hls
 
 ### Settings
 
-The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [configs](https://github.com/number571/hidden-lake/configs) directory.
+The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [configs](https://github.com/number571/hidden-lake/tree/master/configs) directory.
 
 ```yaml
 # default settings
@@ -316,6 +261,17 @@ queue_period_ms: 5000
     </td>
   </tr>
 </table>
+
+## Possible ways of application
+
+The anonymous Hidden Lake network is similar in the way it is used to client-secure applications such as `RetroShare` or `Bitmessage`. The main difference from the last two applications is the existence of an anonymizing property, which makes HL also related to existing closed anonymous p2p networks of the `I2P` type. However, the Hidden Lake network is not an ordinary composition of two ideas in the face of combining traffic anonymization and client-secure application architecture, because among other things, it is also an `abstract` anonymous network. As a result, HL network, for successful anonymization of traffic, criteria such as the level of centralization, the number of nodes in the network, the location and connection of nodes among themselves become irrelevant.
+
+On the basis of this characteristic, methods of possible application also begin to be built:
+
+1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](cmd/hla) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
+2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
+3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy-chat)),
+4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
 
 ## Star History
 
