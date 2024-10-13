@@ -64,7 +64,7 @@
 </h2>
 
 > [!IMPORTANT]
-> The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](https://github.com/number571/go-peer/blob/master/CHANGELOG.md) file.
+> The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](https://github.com/number571/hidden-lake/blob/master/CHANGELOG.md) file.
 
 The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services.
 
@@ -119,7 +119,7 @@ The above-described paradigm of dividing the interactions of network participant
 <p align="center"><img src="images/hl_layers.jpg" alt="hl_layers.jpg"/></p>
 <p align="center">Figure 3. The layers of the Hidden Lake message.</p>
 
-Since the anonymous Hidden Lake network is formed due to the microservice architecture, some individual services can be used `outside` the HL architecture due to the common `go-peer` protocol. For example, it becomes possible to create messengers with `end-to-end encryption` based on HLT and HLE services, bypassing the anonymizing HLS service (as example [secpy-chat](https://github.com/number571/go-peer/tree/master/cmd/secpy_chat "Secpy-Chat")).
+Since the anonymous Hidden Lake network is formed due to the microservice architecture, some individual services can be used `outside` the HL architecture due to the common `go-peer` protocol. For example, it becomes possible to create messengers with `end-to-end encryption` based on HLT and HLE services, bypassing the anonymizing HLS service (as example [secpy-chat](https://github.com/number571/secpy_chat "Secpy-Chat")).
 
 > You can find out more about the message levels using the following schemes: 
 > [layer-1](https://github.com/number571/go-peer/blob/master/images/go-peer_layer1_net_message.jpg), 
@@ -133,9 +133,9 @@ The anonymous Hidden Lake network is similar in the way it is used to client-sec
 
 On the basis of this characteristic, methods of possible application also begin to be built:
 
-1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/go-peer/tree/master/cmd/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
+1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/hidden-lake/cmd/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
 2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
-3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/go-peer/tree/master/cmd/secpy_chat)),
+3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/secpy_chat)),
 4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
 
 ## List of applications
@@ -150,24 +150,24 @@ Basic | Applied | Helpers
 
 The anonymous Hidden Lake network has different launch modes depending on the environment in which it is located.
 
-1. Classic direct communication. In this communication mode, the nodes are connected to each other directly. This method is convenient only if at least one of the nodes has a public IP address that goes beyond NAT. [Example](https://github.com/number571/go-peer/tree/master/examples/anonymity/echo_service/simple).
+1. Classic direct communication. In this communication mode, the nodes are connected to each other directly. This method is convenient only if at least one of the nodes has a public IP address that goes beyond NAT. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/simple).
 
 <p align="center"><img src="images/launch_mode_1.jpg" alt="launch_mode_1.jpg"/></p>
 <p align="center">Figure 4. The direct communication launch mode.</p>
 
-2. Communication via a relayer. In this startup mode, nodes are connected to each other using separate relay nodes. In this concept, relayers become TURN servers that redirect traffic to all connected nodes, including other relayers. [Example](https://github.com/number571/go-peer/tree/master/examples/anonymity/echo_service/routing).
+2. Communication via a relayer. In this startup mode, nodes are connected to each other using separate relay nodes. In this concept, relayers become TURN servers that redirect traffic to all connected nodes, including other relayers. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/routing).
 
 <p align="center"><img src="images/launch_mode_2.jpg" alt="launch_mode_2.jpg"/></p>
 <p align="center">Figure 5. The relayer communication launch mode.</p>
 
-3. Communication through a secret communication channel. In this mode, communication begins to adapt to a communication platform other than the primary Hidden Lake network. [Example](https://github.com/number571/go-peer/tree/master/examples/anonymity/echo_service/secret_channel).
+3. Communication through a secret communication channel. In this mode, communication begins to adapt to a communication platform other than the primary Hidden Lake network. [Example](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/secret_channel).
 
 <p align="center"><img src="images/launch_mode_3.jpg" alt="launch_mode_3.jpg"/></p>
 <p align="center">Figure 6. The secret channel communication launch mode.</p>
 
 ## Build and run
 
-Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. It is recommended to run applications with the available release version, [tag](https://github.com/number571/go-peer/tags).
+Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. It is recommended to run applications with the available release version, [tag](https://github.com/number571/hidden-lake/tags).
 
 ### 1. Running from source code
 
@@ -193,11 +193,11 @@ $ ./hls_<arch-name>_<platform-name>
 The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes.
 
 ```bash
-$ wget https://raw.githubusercontent.com/number571/go-peer/<tag-name>/cmd/configs/prod/<network-key>/hls.yml
+$ wget https://raw.githubusercontent.com/number571/hidden-lake/<tag-name>/cmd/configs/<network-key>/hls.yml
 $ hls
 ```
 
-> There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](https://github.com/number571/go-peer/tree/master/examples/anonymity/echo_service/prod_test), [anon_messenger](https://github.com/number571/go-peer/tree/master/examples/anonymity/messenger/prod_test), [anon_filesharer](https://github.com/number571/go-peer/tree/master/examples/anonymity/filesharer/prod_test).
+> There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/prod_test), [anon_messenger](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/messenger/prod_test), [anon_filesharer](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/filesharer/prod_test).
 
 ### Settings
 
