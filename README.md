@@ -97,7 +97,7 @@ The Hidden Lake anonymous network is based on the (queue-based) `QB-problem`, wh
 <p align="center"><img src="cmd/hls/images/hls_qbp.png" alt="hls_qbp.png"/></p>
 <p align="center">Figure 1. QB-network with three nodes {A,B,C}</p>
 
-> More information about QB networks in research paper: [Анонимная сеть «Hidden Lake»](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf)
+> More information about QB networks in research paper: [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf)
 
 ## Build and run
 
