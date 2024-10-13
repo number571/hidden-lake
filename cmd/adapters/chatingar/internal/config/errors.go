@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "cmd/hidden_lake/adapters/chatingar/internal/config = "
+	errPrefix = "cmd/adapters/chatingar/internal/config = "
 )
 
 type SConfigError struct {

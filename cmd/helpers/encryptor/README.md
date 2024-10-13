@@ -9,7 +9,7 @@ The `Hidden Lake Encryptor` is a small service of the Hidden Lake network applic
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/helpers/encryptor/cmd/hle@latest
+$ go install github.com/number571/hidden-lake/cmd/helpers/encryptor/cmd/hle@latest
 ```
 
 ## How it works
@@ -27,7 +27,7 @@ HLE uses the `pkg/client` and `pkg/network/message` packages. Encrypted messages
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/helpers/encryptor
+$ cd ./cmd/helpers/encryptor
 $ make build # create hle, hle_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hle
 

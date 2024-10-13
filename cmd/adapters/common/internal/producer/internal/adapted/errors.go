@@ -1,7 +1,7 @@
 package adapted
 
 const (
-	errPrefix = "cmd/hidden_lake/adapters/common/internal/producer/internal/adapted = "
+	errPrefix = "cmd/adapters/common/internal/producer/internal/adapted = "
 )
 
 type SAdaptedError struct {

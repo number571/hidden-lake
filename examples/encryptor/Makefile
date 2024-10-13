@@ -7,7 +7,7 @@ init:
 	pkill -15 --version
 build: 
 	# MAKEFILE BUILD
-	make build -C $(CMDPATH)/hidden_lake/helpers/encryptor
+	make build -C $(CMDPATH)/helpers/encryptor
 	# COPY HLE
 	cp -r $(BINPATH)/hle ./service_hle/prog_hle
 run: 

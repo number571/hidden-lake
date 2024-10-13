@@ -16,7 +16,7 @@ WantedBy=multi-user.target
 
 cd /root && \
     rm -f hlr_amd64_linux && \
-    wget https://github.com/number571/go-peer/releases/latest/download/hlr_amd64_linux && \
+    wget https://github.com/number571/hidden-lake/releases/latest/download/hlr_amd64_linux && \
     chmod +x hlr_amd64_linux
 
 systemctl daemon-reload

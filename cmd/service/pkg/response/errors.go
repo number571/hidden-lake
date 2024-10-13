@@ -1,7 +1,7 @@
 package response
 
 const (
-	errPrefix = "cmd/hidden_lake/service/pkg/response = "
+	errPrefix = "cmd/service/pkg/response = "
 )
 
 type SResponseError struct {

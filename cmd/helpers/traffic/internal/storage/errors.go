@@ -1,7 +1,7 @@
 package storage
 
 const (
-	errPrefix = "cmd/hidden_lake/helpers/traffic/internal/storage = "
+	errPrefix = "cmd/helpers/traffic/internal/storage = "
 )
 
 type SStorageError struct {

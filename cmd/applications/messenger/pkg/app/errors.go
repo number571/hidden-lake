@@ -1,7 +1,7 @@
 package app
 
 const (
-	errPrefix = "cmd/hidden_lake/applications/messenger/pkg/app = "
+	errPrefix = "cmd/applications/messenger/pkg/app = "
 )
 
 type SAppError struct {

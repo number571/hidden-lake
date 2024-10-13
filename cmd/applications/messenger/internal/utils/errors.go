@@ -1,7 +1,7 @@
 package utils
 
 const (
-	errPrefix = "cmd/hidden_lake/applications/messenger/internal/utils = "
+	errPrefix = "cmd/applications/messenger/internal/utils = "
 )
 
 type SUtilsError struct {

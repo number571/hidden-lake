@@ -1,7 +1,7 @@
 package handler
 
 const (
-	errPrefix = "cmd/hidden_lake/applications/messenger/internal/handler = "
+	errPrefix = "cmd/applications/messenger/internal/handler = "
 )
 
 type SHandlerError struct {

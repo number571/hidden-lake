@@ -1,7 +1,7 @@
 package handler
 
 const (
-	errPrefix = "cmd/hidden_lake/helpers/traffic/internal/handler = "
+	errPrefix = "cmd/helpers/traffic/internal/handler = "
 )
 
 type SHandlerError struct {

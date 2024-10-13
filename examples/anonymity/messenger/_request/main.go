@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 
-	hlm_settings "github.com/number571/go-peer/cmd/hidden_lake/applications/messenger/pkg/settings"
+	hlm_settings "github.com/number571/hidden-lake/cmd/applications/messenger/pkg/settings"
 )
 
 const (

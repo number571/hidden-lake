@@ -14,7 +14,7 @@ The `Hidden Lake Remoter` this is a service that provides the ability to make re
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/applications/remoter/cmd/hlr@latest
+$ go install github.com/number571/hidden-lake/cmd/applications/remoter/cmd/hlr@latest
 ```
 
 ## How it works
@@ -42,7 +42,7 @@ The `[@remoter-separator]` label means that the arguments are separated for the 
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/applications/remoter
+$ cd ./cmd/applications/remoter
 $ make build # create hlr, hlr_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hlr
 

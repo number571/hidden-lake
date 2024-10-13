@@ -9,7 +9,7 @@ The `Hidden Lake Composite` combines several HL type's services into one applica
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/composite/cmd/hlc@latest
+$ go install github.com/number571/hidden-lake/cmd/composite/cmd/hlc@latest
 ```
 
 ## How it works
@@ -27,7 +27,7 @@ The application HLC includes the download of all Hidden Lake services, and runs 
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/composite
+$ cd ./cmd/composite
 $ make build # create hlc, hlc_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hlc
 

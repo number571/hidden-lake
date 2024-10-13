@@ -7,13 +7,13 @@ import (
 	"os"
 	"time"
 
-	hlt_client "github.com/number571/go-peer/cmd/hidden_lake/helpers/traffic/pkg/client"
-	hls_settings "github.com/number571/go-peer/cmd/hidden_lake/service/pkg/settings"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
+	hlt_client "github.com/number571/hidden-lake/cmd/helpers/traffic/pkg/client"
+	hls_settings "github.com/number571/hidden-lake/cmd/service/pkg/settings"
 )
 
 const (

@@ -1,7 +1,7 @@
 package database
 
 const (
-	errPrefix = "cmd/hidden_lake/applications/messenger/internal/database = "
+	errPrefix = "cmd/applications/messenger/internal/database = "
 )
 
 type SDatabaseError struct {

@@ -22,7 +22,7 @@ A feature of HLS (compared to many other anonymous networks) is its easy adaptat
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/service/cmd/hls@latest
+$ go install github.com/number571/hidden-lake/cmd/service/cmd/hls@latest
 ```
 
 ## How it works
@@ -70,7 +70,7 @@ As shown in the figure above, HLS acts as an anonymizer and handlers of incoming
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/service
+$ cd ./cmd/service
 $ make build # create hls, hls_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hls
 

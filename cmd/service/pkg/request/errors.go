@@ -1,7 +1,7 @@
 package request
 
 const (
-	errPrefix = "cmd/hidden_lake/service/pkg/request = "
+	errPrefix = "cmd/service/pkg/request = "
 )
 
 type SRequestError struct {

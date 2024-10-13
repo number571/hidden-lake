@@ -1,7 +1,7 @@
 package stream
 
 const (
-	errPrefix = "cmd/hidden_lake/applications/filesharer/internal/stream = "
+	errPrefix = "cmd/applications/filesharer/internal/stream = "
 )
 
 type SStreamError struct {

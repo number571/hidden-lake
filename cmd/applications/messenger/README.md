@@ -13,7 +13,7 @@ HLM is an application that implements a graphical user interface (GUI) on a brow
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/applications/messenger/cmd/hlm@latest
+$ go install github.com/number571/hidden-lake/cmd/applications/messenger/cmd/hlm@latest
 ```
 
 ## How it works
@@ -34,7 +34,7 @@ Most of the code is a call to API functions from the HLS kernel. Thanks to this 
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/applications/messenger
+$ cd ./cmd/applications/messenger
 $ make build # create hlm, hlm_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hlm
 
@@ -89,7 +89,7 @@ To see the success of sending and receiving messages, you need to do all the sam
 <p align="center"><img src="images/hlm_logger.png" alt="hlm_logger.png"/></p>
 <p align="center">Figure 3. Log of the three nodes with request/response actions.</p>
 
-> More example images about HLM pages in the [github.com/number571/go-peer/cmd/hidden_lake/applications/messenger/_images](https://github.com/number571/go-peer/cmd/hidden_lake/applications/messenger/_images "Path to HLM images")
+> More example images about HLM pages in the [github.com/number571/hidden-lake/cmd/applications/messenger/_images](https://github.com/number571/hidden-lake/cmd/applications/messenger/_images "Path to HLM images")
 
 ## Pages
 

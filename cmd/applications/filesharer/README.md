@@ -13,7 +13,7 @@ HLF is an application that implements a graphical user interface (GUI) on a brow
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/applications/filesharer/cmd/hlf@latest
+$ go install github.com/number571/hidden-lake/cmd/applications/filesharer/cmd/hlf@latest
 ```
 
 ## How it works
@@ -38,7 +38,7 @@ File transfer is limited by the bandwidth of HLS itself. If we take into account
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/applications/filesharer
+$ cd ./cmd/applications/filesharer
 $ make build # create hlf, hlf_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hlf
 
@@ -90,4 +90,4 @@ Than open browser on `localhost:8080`. It is a `node1_hlf`. This node is a Alice
 
 To see the another side of communication, you need to do all the same operations, but with `localhost:7070` as `node2_hlf`. This node will be Bob.
 
-> More example images about HLF pages in the [github.com/number571/go-peer/cmd/hidden_lake/applications/filesharer/_images](https://github.com/number571/go-peer/tree/master/cmd/hidden_lake/applications/filesharer/_images "Path to HLF images")
+> More example images about HLF pages in the [github.com/number571/hidden-lake/cmd/applications/filesharer/_images](https://github.com/number571/go-peer/tree/master/cmd/applications/filesharer/_images "Path to HLF images")

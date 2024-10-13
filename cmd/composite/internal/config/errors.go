@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "cmd/hidden_lake/composite/internal/config = "
+	errPrefix = "cmd/composite/internal/config = "
 )
 
 type SConfigError struct {

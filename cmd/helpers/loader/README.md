@@ -9,7 +9,7 @@ The `Hidden Lake Loader` is a small service of the Hidden Lake network applicati
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/helpers/loader/cmd/hll@latest
+$ go install github.com/number571/hidden-lake/cmd/helpers/loader/cmd/hll@latest
 ```
 
 ## How it works
@@ -30,7 +30,7 @@ HLL uses the HLT service interface to download and upload messages. This propert
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/helpers/loader
+$ cd ./cmd/helpers/loader
 $ make build # create hll, hll_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hll
 

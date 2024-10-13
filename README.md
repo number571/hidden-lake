@@ -16,10 +16,10 @@
         <a href="https://github.com/number571/go-peer/blob/master/LICENSE">
         	<img src="https://img.shields.io/github/license/number571/go-peer.svg" alt="License" />
 		</a>
-		<a href="https://github.com/number571/go-peer/blob/d06ff1b7d35ceb8fa779acda2e1335896b0afdb1/cmd/hidden_lake/Makefile#L50">
+		<a href="https://github.com/number571/go-peer/blob/d06ff1b7d35ceb8fa779acda2e1335896b0afdb1/cmd/Makefile#L50">
         	<img src="test/result/badge_coverage.svg" alt="Coverage" />
 		</a>
-        <a href="https://pkg.go.dev/github.com/number571/go-peer/cmd/hidden_lake?status.svg">
+        <a href="https://pkg.go.dev/github.com/number571/hidden-lake/cmd/hidden-lake?status.svg">
         	<img src="https://godoc.org/github.com/number571/go-peer?status.svg" alt="GoDoc" />
 		</a>
         <a href="https://github.com/number571/go-peer">
@@ -45,7 +45,7 @@ The `Hidden Lake` is an anonymous network built on a `micro-service` architectur
 
 The Hidden Lake is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
-> More information about HL in the [hidden_lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network.pdf "HLAN") and here [hidden_lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_anonymous_network_view.pdf "HLANv")
+> More information about HL in the [hidden-lake_anonymous_network.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_anonymous_network.pdf "HLAN") and here [hidden-lake_anonymous_network_view.pdf](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_anonymous_network_view.pdf "HLANv")
 
 ## Coverage map
 
@@ -84,7 +84,7 @@ Since the anonymous Hidden Lake network is formed due to the microservice archit
 > [layer-1](https://github.com/number571/go-peer/blob/master/images/go-peer_layer1_net_message.jpg), 
 > [layer-2](https://github.com/number571/go-peer/blob/master/images/go-peer_layer2_message.jpg), 
 > [layer-3](images/hl_layer3_request.jpg), 
-> All schemes can be found in the [hidden_lake_message_layers.svg](https://github.com/number571/go-peer/blob/master/docs/hidden_lake_message_layers.svg) file.
+> All schemes can be found in the [hidden-lake_message_layers.svg](https://github.com/number571/go-peer/blob/master/docs/hidden-lake_message_layers.svg) file.
 
 ## Possible ways of application
 
@@ -92,7 +92,7 @@ The anonymous Hidden Lake network is similar in the way it is used to client-sec
 
 On the basis of this characteristic, methods of possible application also begin to be built:
 
-1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/go-peer/tree/master/cmd/hidden_lake/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
+1. Due to the property of abstracting from network communications, the anonymous Hidden Lake network can be `integrated` into any other network (including a centralized one) where group communication is possible. In such a case, the HL software implementation provides for the essence of [adapters](https://github.com/number571/go-peer/tree/master/cmd/adapters) that must be able to adapt to a specific execution environment, hiding and obscuring the generated parasitic traffic,
 2. Due to the `theoretically provable anonymity` and independence of nodes among themselves in choosing the period of packet generation, the network can be used in military affairs, ensuring not only the confidentiality of transmitted data, but also the confidentiality of metadata in the face of the activity of actions,
 3. The Hidden Lake network can be used as a `communication platform` for applications that are heterogeneous in nature. This is made possible by the `GP/12` protocol, which does not define any application use. As a result, you can create your own applications at several levels: either at the go-peer library level or at the HL services level ([example](https://github.com/number571/go-peer/tree/master/cmd/secpy_chat)),
 4. Due to problems with scaling at the level of the `QB-problem` itself, the network is difficult to deploy in a global space, which nevertheless does not indicate a local field of action. Hidden Lake can protect `local networks` in a more efficient way due to the existence of small groups of participants that do not vary greatly in number. This may be a relevant solution in the context of the existence of critical areas of a local organization.
@@ -131,7 +131,7 @@ Launching an anonymous network is primarily the launch of an anonymizing HLS ser
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/service/cmd/hls@<tag-name>
+$ go install github.com/number571/hidden-lake/cmd/service/cmd/hls@<tag-name>
 $ hls
 ```
 
@@ -140,7 +140,7 @@ $ hls
 When starting from the release version, you must specify the processor architecture and platform used. Available architectures: `amd64`, `arm64`. Available platforms: `windows`, `darwin`, `linux`.
 
 ```bash
-$ wget https://github.com/number571/go-peer/releases/download/<tag-name>/hls_<arch-name>_<platform-name>
+$ wget https://github.com/number571/hidden-lake/releases/download/<tag-name>/hls_<arch-name>_<platform-name>
 $ chmod +x hls_<arch-name>_<platform-name>
 $ ./hls_<arch-name>_<platform-name>
 ```
@@ -152,7 +152,7 @@ $ ./hls_<arch-name>_<platform-name>
 The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes.
 
 ```bash
-$ wget https://raw.githubusercontent.com/number571/go-peer/<tag-name>/cmd/hidden_lake/configs/prod/1/hls.yml
+$ wget https://raw.githubusercontent.com/number571/go-peer/<tag-name>/cmd/configs/prod/<network-key>/hls.yml
 $ hls
 ```
 
@@ -160,7 +160,7 @@ $ hls
 
 ### Settings
 
-The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS and HLT services in the [prod/1](https://github.com/number571/go-peer/blob/master/cmd/hidden_lake/configs/prod/1), [prod/2](https://github.com/number571/go-peer/blob/master/cmd/hidden_lake/configs/prod/2), [prod/3](https://github.com/number571/go-peer/blob/master/cmd/hidden_lake/configs/prod/3), [prod/4](https://github.com/number571/go-peer/blob/master/cmd/hidden_lake/configs/prod/4) directories.
+The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [configs](https://github.com/number571/hidden-lake/configs) directory.
 
 ```yaml
 # default settings

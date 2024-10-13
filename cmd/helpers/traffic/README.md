@@ -11,7 +11,7 @@ The `Hidden Lake Traffic` is an application that saves traffic passed through HL
 ## Installation
 
 ```bash
-$ go install github.com/number571/go-peer/cmd/hidden_lake/helpers/traffic/cmd/hlt@latest
+$ go install github.com/number571/hidden-lake/cmd/helpers/traffic/cmd/hlt@latest
 ```
 
 ## How it works
@@ -38,7 +38,7 @@ HLT emulates HLS to receive messages. In this scenario, HLT has only the functio
 Default build and run
 
 ```bash 
-$ cd ./cmd/hidden_lake/helpers/traffic
+$ cd ./cmd/helpers/traffic
 $ make build # create hlt, hlt_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hlt
 
