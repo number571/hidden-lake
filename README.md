@@ -16,6 +16,9 @@
         <a href="https://github.com/number571/go-peer/blob/master/LICENSE">
         	<img src="https://img.shields.io/github/license/number571/go-peer.svg" alt="License" />
 		</a>
+        <a href="https://github.com/number571/hidden-lake/actions">
+        	<img src="https://github.com/number571/hidden-lake/actions/workflows/build.yml/badge.svg" alt="Build" />
+		</a>
 		<a href="https://github.com/number571/go-peer/blob/d06ff1b7d35ceb8fa779acda2e1335896b0afdb1/cmd/Makefile#L50">
         	<img src="test/result/badge_coverage.svg" alt="Coverage" />
 		</a>
@@ -27,11 +30,23 @@
 		</a>
 	</p>
     <p align="center">
+        <a href="https://goreportcard.com/report/github.com/number571/hidden-lake">
+        	<img src="https://goreportcard.com/badge/github.com/number571/hidden-lake" alt="GoReportCard" />
+		</a>
+        <a href="https://github.com/number571/hidden-lake/pulse">
+        	<img src="https://img.shields.io/github/commit-activity/m/number571/hidden-lake" alt="Activity" />
+		</a>
+		<a href="https://github.com/number571/hidden-lake/commits/master">
+        	<img src="https://img.shields.io/github/last-commit/number571/hidden-lake.svg" alt="Commits" />
+		</a>
         <a href="https://github.com/number571/hidden-lake/blob/b27339aa283eb137e680a9ca6a04391e7960510a/Makefile#L107">
         	<img src="test/result/badge_codelines.svg" alt="Code Lines" />
 		</a>
         <a href="https://img.shields.io/github/languages/code-size/number571/hidden-lake.svg">
         	<img src="https://img.shields.io/github/languages/code-size/number571/hidden-lake.svg" alt="CodeSize" />
+		</a>
+        <a href="https://img.shields.io/github/downloads/number571/hidden-lake/total.svg">
+        	<img src="https://img.shields.io/github/downloads/number571/hidden-lake/total.svg" alt="Downloads" />
 		</a>
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
