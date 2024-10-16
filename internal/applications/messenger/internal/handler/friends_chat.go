@@ -94,21 +94,25 @@ func FriendsChatPage(
 				return
 			}
 
-			if err := sendMessage(pCtx, pHlsClient, aliasName, msgBytes); err != nil {
-				ErrorPage(pLogger, pCfg, "send_message", "push message to network")(pW, pR)
-				return
-			}
-
-			dbMsg := database.NewMessage(false, msgBytes)
-			if err := pDB.Push(rel, dbMsg); err != nil {
-				ErrorPage(pLogger, pCfg, "push_message", "add message to database")(pW, pR)
-				return
+			if msgBytes == nil {
+				if err := pingMessage(pCtx, pHlsClient, aliasName); err != nil {
+					ErrorPage(pLogger, pCfg, "ping_message", "ping failed")(pW, pR)
+					return
+				}
+			} else {
+				if err := pushMessage(pCtx, pHlsClient, aliasName, msgBytes); err != nil {
+					ErrorPage(pLogger, pCfg, "send_message", "push message to network")(pW, pR)
+					return
+				}
+				dbMsg := database.NewMessage(false, msgBytes)
+				if err := pDB.Push(rel, dbMsg); err != nil {
+					ErrorPage(pLogger, pCfg, "push_message", "add message to database")(pW, pR)
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogRedirect))
-			http.Redirect(pW, pR,
-				"/friends/chat?alias_name="+aliasName,
-				http.StatusSeeOther)
+			http.Redirect(pW, pR, "/friends/chat?alias_name="+aliasName, http.StatusSeeOther)
 			return
 		}
 
@@ -164,6 +168,9 @@ func FriendsChatPage(
 func getMessageBytes(pR *http.Request) ([]byte, error) {
 	switch pR.FormValue("method") {
 	case http.MethodPost:
+		if pR.FormValue("ping") != "" {
+			return nil, nil
+		}
 		strMsg := strings.TrimSpace(pR.FormValue("input_message"))
 		if strMsg == "" {
 			return nil, ErrMessageNull
@@ -203,7 +210,19 @@ func getUploadFile(pR *http.Request) (string, []byte, error) {
 	return handler.Filename, fileBytes, nil
 }
 
-func sendMessage(
+func pingMessage(
+	pCtx context.Context,
+	pClient hls_client.IClient,
+	pAliasName string,
+) error {
+	hlmClient := hlm_client.NewClient(
+		hlm_client.NewBuilder(),
+		hlm_client.NewRequester(pClient),
+	)
+	return hlmClient.PingMessage(pCtx, pAliasName)
+}
+
+func pushMessage(
 	pCtx context.Context,
 	pClient hls_client.IClient,
 	pAliasName string,

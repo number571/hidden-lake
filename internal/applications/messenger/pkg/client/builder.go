@@ -18,6 +18,14 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
+func (p *sBuilder) PingMessage() hls_request.IRequest {
+	return hls_request.NewRequest(
+		http.MethodGet,
+		hlm_settings.CServiceFullName,
+		hlm_settings.CPingPath,
+	)
+}
+
 func (p *sBuilder) PushMessage(pBody []byte) hls_request.IRequest {
 	return hls_request.NewRequest(
 		http.MethodPost,

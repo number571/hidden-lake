@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- Update `cmd/hlm`: add ping message
+
 <!-- ... -->
 
 ## v1.6.21

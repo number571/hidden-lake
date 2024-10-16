@@ -18,6 +18,10 @@ func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
 	}
 }
 
+func (p *sClient) PingMessage(pCtx context.Context, pAliasName string) error {
+	return p.fRequester.PingMessage(pCtx, pAliasName, p.fBuilder.PingMessage())
+}
+
 func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody []byte) error {
 	return p.fRequester.PushMessage(pCtx, pAliasName, p.fBuilder.PushMessage(pBody))
 }

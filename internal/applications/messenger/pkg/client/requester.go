@@ -22,6 +22,13 @@ func NewRequester(pHLSClient hls_client.IClient) IRequester {
 	}
 }
 
+func (p *sRequester) PingMessage(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
+	if _, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest); err != nil {
+		return utils.MergeErrors(ErrPingMessage, err)
+	}
+	return nil
+}
+
 func (p *sRequester) PushMessage(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
 	if err := p.fHLSClient.BroadcastRequest(pCtx, pAliasName, pRequest); err != nil {
 		return utils.MergeErrors(ErrPushMessage, err)

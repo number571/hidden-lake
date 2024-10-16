@@ -12,6 +12,7 @@ const (
 
 const (
 	CStaticPath = "/static/"
+	CPingPath   = "/ping"
 	CPushPath   = "/push"
 )
 
