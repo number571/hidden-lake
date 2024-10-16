@@ -2,12 +2,12 @@
 
 ## Material
 
-1. Research paper: [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf)
-2. Presentation: [hidden_lake_anonymous_network_view.pdf](docs/hidden_lake_anonymous_network_view.pdf)
+1. Research paper: [hidden_lake_anonymous_network.pdf](hidden_lake_anonymous_network.pdf)
+2. Presentation: [hidden_lake_anonymous_network_view.pdf](hidden_lake_anonymous_network_view.pdf)
 3. Video: [// Пишем сервис с нуля в анонимной сети «Hidden Lake» //](https://www.youtube.com/watch?v=ztdtOTZqxy0)
 4. Video: [Теоретически доказуемая анонимность. DC, EI и QB сети. Настройка Hidden Lake | number571](https://www.youtube.com/watch?v=o2J6ewvBKmg)
 
-There are also English-translated versions for research papers ([hidden_lake_anonymous_network_eng.pdf](docs/hidden_lake_anonymous_network_eng.pdf)) and presentations ([hidden_lake_anonymous_network_view_eng.pdf](docs/hidden_lake_anonymous_network_view_eng.pdf)). These translations are machine-made, so some meanings may be distorted!
+There are also English-translated versions for research papers ([hidden_lake_anonymous_network_eng.pdf](hidden_lake_anonymous_network_eng.pdf)) and presentations ([hidden_lake_anonymous_network_view_eng.pdf](hidden_lake_anonymous_network_view_eng.pdf)). These translations are machine-made, so some meanings may be distorted!
 
 ## HL ports
 
