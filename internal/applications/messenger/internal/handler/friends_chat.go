@@ -34,11 +34,11 @@ type sChatAddress struct {
 	FPubKeyHash string
 }
 
-type sChatMessages struct {
+type sFriendsChat struct {
 	*sTemplate
+	FPingState int
 	FAddress   sChatAddress
 	FMessages  []sChatMessage
-	FPingState int
 }
 
 func FriendsChatPage(
@@ -131,26 +131,24 @@ func FriendsChatPage(
 			return
 		}
 
-		res := &sChatMessages{
-			sTemplate: getTemplate(pCfg),
+		res := &sFriendsChat{
+			sTemplate:  getTemplate(pCfg),
+			FPingState: pingState,
 			FAddress: sChatAddress{
 				FAliasName:  aliasName,
 				FPublicKey:  recvPubKey.ToString(),
 				FPubKeyHash: recvPubKey.GetHasher().ToString(),
 			},
-			FMessages:  make([]sChatMessage, 0, len(msgs)),
-			FPingState: pingState,
-		}
-
-		for _, msg := range msgs {
-			res.FMessages = append(res.FMessages, sChatMessage{
-				FIsIncoming: msg.IsIncoming(),
-				SMessage: getMessage(
-					false,
-					msg.GetMessage(),
-					msg.GetTimestamp(),
-				),
-			})
+			FMessages: func() []sChatMessage {
+				resMsgs := make([]sChatMessage, 0, len(msgs))
+				for _, msg := range msgs {
+					resMsgs = append(resMsgs, sChatMessage{
+						FIsIncoming: msg.IsIncoming(),
+						SMessage:    getMessage(false, msg.GetMessage(), msg.GetTimestamp()),
+					})
+				}
+				return resMsgs
+			}(),
 		}
 
 		t, err := template.ParseFS(
