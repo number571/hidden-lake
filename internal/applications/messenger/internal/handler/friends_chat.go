@@ -36,8 +36,9 @@ type sChatAddress struct {
 
 type sChatMessages struct {
 	*sTemplate
-	FAddress  sChatAddress
-	FMessages []sChatMessage
+	FAddress   sChatAddress
+	FMessages  []sChatMessage
+	FPingState int
 }
 
 func FriendsChatPage(
@@ -84,6 +85,7 @@ func FriendsChatPage(
 			return
 		}
 
+		pingState := 0
 		rel := database.NewRelation(myPubKey, recvPubKey)
 
 		switch pR.FormValue("method") {
@@ -94,12 +96,7 @@ func FriendsChatPage(
 				return
 			}
 
-			if msgBytes == nil {
-				if err := pingMessage(pCtx, pHlsClient, aliasName); err != nil {
-					ErrorPage(pLogger, pCfg, "ping_message", "ping failed")(pW, pR)
-					return
-				}
-			} else {
+			if msgBytes != nil {
 				if err := pushMessage(pCtx, pHlsClient, aliasName, msgBytes); err != nil {
 					ErrorPage(pLogger, pCfg, "send_message", "push message to network")(pW, pR)
 					return
@@ -109,11 +106,15 @@ func FriendsChatPage(
 					ErrorPage(pLogger, pCfg, "push_message", "add message to database")(pW, pR)
 					return
 				}
+				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogRedirect))
+				http.Redirect(pW, pR, "/friends/chat?alias_name="+aliasName, http.StatusSeeOther)
+				return
 			}
 
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogRedirect))
-			http.Redirect(pW, pR, "/friends/chat?alias_name="+aliasName, http.StatusSeeOther)
-			return
+			pingState = 1
+			if err := pingMessage(pCtx, pHlsClient, aliasName); err != nil {
+				pingState = -1
+			}
 		}
 
 		start := uint64(0)
@@ -137,7 +138,8 @@ func FriendsChatPage(
 				FPublicKey:  recvPubKey.ToString(),
 				FPubKeyHash: recvPubKey.GetHasher().ToString(),
 			},
-			FMessages: make([]sChatMessage, 0, len(msgs)),
+			FMessages:  make([]sChatMessage, 0, len(msgs)),
+			FPingState: pingState,
 		}
 
 		for _, msg := range msgs {

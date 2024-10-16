@@ -38,11 +38,6 @@ Babilejo
     Ŝlosilo
     {{end}}
 </button>
-
-<!-- <form method="POST">
-    <input hidden name="method" value="PATCH">
-    <input type="submit" name="submit" value="📶" class="btn btn-info">
-</form> -->
 {{end}}
 
 {{define "main"}}
@@ -204,8 +199,17 @@ Babilejo
     <input type="text" autocomplete="off" class="form-control form-control-lg bg-dark text-white m-1"
         name="input_message" placeholder="Type message ..." id="input_message">
     <input type="submit" style="width:5em;" name="push" value="🗨" class="btn btn-info m-1">
-    <input type="submit" style="width:5em;" name="ping" value="📶" class="btn btn-info m-1">
     <button type="button" style="width:5em;" class="btn btn-info m-1"
         onclick="location.href='/friends/upload?alias_name={{.FAddress.FAliasName}}';">📂</button>
+        <input type="submit" style="width:5em;" name="ping" value="📶" 
+        class="btn 
+        {{if (eq .FPingState 0)}}
+        btn-info
+        {{else if (eq .FPingState -1)}}
+        btn-danger
+        {{else if (eq .FPingState 1)}}
+        btn-success
+        {{end}} 
+        m-1">
 </form>
 {{end}}
