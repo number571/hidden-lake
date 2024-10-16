@@ -1,7 +1,25 @@
 # Docs
 
+## Material
+
+### 1. Papers
+
+1. [Hidden Lake (RUS)](docs/hidden_lake_anonymous_network.pdf "HL_RUS")
+2. [Hidden Lake (ENG)](docs/hidden_lake_anonymous_network_eng.pdf "HL_ENG")
+
+### 2. Presentations
+
+1. [Hidden Lake view (RUS)](docs/hidden_lake_anonymous_network_view.pdf "HL_view_RUS")
+2. [Hidden Lake view (ENG)](docs/hidden_lake_anonymous_network_view_eng.pdf "HL_view_ENG")
+
+### 3. Videos
+
+1. [DC/EI/QB networks & HLM](https://www.youtube.com/watch?v=o2J6ewvBKmg)
+2. [Service in the Hidden Lake](https://www.youtube.com/watch?v=ztdtOTZqxy0)
+
 ## HL ports
 
+```
 1. HLS = 957x
 2. HLT = 958x
 3. HLM = 959x
@@ -9,6 +27,7 @@
 5. HLE = 955x
 6. HLF = 954x
 7. HLR = 953x
+```
 
 ## Code style
 
