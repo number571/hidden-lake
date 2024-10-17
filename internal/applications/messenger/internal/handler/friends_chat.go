@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
@@ -138,7 +137,7 @@ func FriendsChatPage(
 			FAddress: sChatAddress{
 				FAliasName:  aliasName,
 				FPublicKey:  recvPubKey.ToString(),
-				FPubKeyHash: hashing.NewHasher([]byte(recvPubKey.ToString())).ToString(),
+				FPubKeyHash: recvPubKey.GetHasher().ToString(),
 			},
 			FMessages: func() []sChatMessage {
 				resMsgs := make([]sChatMessage, 0, len(msgs))

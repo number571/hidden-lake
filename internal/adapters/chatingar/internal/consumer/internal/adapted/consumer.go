@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/utils"
@@ -118,7 +117,7 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 		if err != nil {
 			continue
 		}
-		if ok := p.rememberMessage(msg); !ok {
+		if ok := p.fCacheSetter.Set(msg.GetHash(), []byte{}); !ok {
 			continue
 		}
 		p.fMessages <- msg
@@ -172,9 +171,4 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 	}
 
 	return uint64(result), nil
-}
-
-func (p *sAdaptedConsumer) rememberMessage(pMsg net_message.IMessage) bool {
-	hash := hashing.NewHasher(pMsg.GetHash()).ToBytes()
-	return p.fCacheSetter.Set(hash, []byte{})
 }

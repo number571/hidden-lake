@@ -2,8 +2,6 @@ package database
 
 import (
 	"fmt"
-
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 )
 
 const (
@@ -14,16 +12,16 @@ const (
 func getKeySize(pR IRelation) []byte {
 	return []byte(fmt.Sprintf(
 		cKeySizeTemplate,
-		hashing.NewHasher([]byte(pR.IAm().ToString())).ToString(),
-		hashing.NewHasher([]byte(pR.Friend().ToString())).ToString(),
+		pR.IAm().GetHasher().ToString(),
+		pR.Friend().GetHasher().ToString(),
 	))
 }
 
 func getKeyMessageByEnum(pR IRelation, pI uint64) []byte {
 	return []byte(fmt.Sprintf(
 		cKeyMessageByEnumTemplate,
-		hashing.NewHasher([]byte(pR.IAm().ToString())).ToString(),
-		hashing.NewHasher([]byte(pR.Friend().ToString())).ToString(),
+		pR.IAm().GetHasher().ToString(),
+		pR.Friend().GetHasher().ToString(),
 		pI,
 	))
 }

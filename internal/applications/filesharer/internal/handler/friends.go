@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
@@ -59,7 +58,7 @@ func FriendsPage(
 
 			if aliasName == "" {
 				// get hash of public key as alias_name
-				aliasName = hashing.NewHasher([]byte(pubKey.ToString())).ToString()
+				aliasName = pubKey.GetHasher().ToString()
 			}
 
 			if err := pHlsClient.AddFriend(pCtx, aliasName, pubKey); err != nil {

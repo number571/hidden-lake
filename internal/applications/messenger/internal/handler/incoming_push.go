@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
@@ -76,7 +75,7 @@ func HandleIncomingPushHTTP(
 		}
 
 		pBroker.Produce(
-			hashing.NewHasher([]byte(fPubKey.ToString())).ToString(),
+			fPubKey.GetHasher().ToString(),
 			getMessage(
 				true,
 				dbMsg.GetMessage(),
