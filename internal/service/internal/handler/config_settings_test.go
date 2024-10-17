@@ -7,14 +7,14 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleConfigSettingsAPI(t *testing.T) {
 	t.Parallel()
 
-	addr := testutils.TgAddrs[26]
+	addr := testutils.TgAddrs[16]
 	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 2)
 	pathDB := fmt.Sprintf(tcPathDBTemplate, 2)
 

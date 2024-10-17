@@ -38,7 +38,7 @@ func HandleServiceTCP(
 			WithProof(pNetMsg.GetProof()).
 			WithSize(len(pNetMsg.ToBytes()))
 
-		if _, err := message.LoadMessage(pCfg.GetSettings(), pNetMsg.GetPayload().GetBody()); err != nil {
+		if _, err := message.LoadMessage(pCfg.GetSettings().GetMessageSizeBytes(), pNetMsg.GetPayload().GetBody()); err != nil {
 			pLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
 			return utils.MergeErrors(ErrLoadMessage, err)
 		}

@@ -51,8 +51,8 @@ func (p *sApp) initAnonNode() error {
 		return utils.MergeErrors(ErrGetPsdPubKey, err)
 	}
 
-	client := client.NewClient(cfgSettings, p.fPrivKey)
-	if client.GetMessageLimit() <= encoding.CSizeUint64 {
+	client := client.NewClient(p.fPrivKey, cfgSettings.GetMessageSizeBytes())
+	if client.GetPayloadLimit() <= encoding.CSizeUint64 {
 		return utils.MergeErrors(ErrMessageSizeLimit, err)
 	}
 

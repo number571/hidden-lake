@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleNetworkKeyAPI(t *testing.T) {
@@ -17,13 +17,13 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 4)
 	pathDB := fmt.Sprintf(tcPathDBTemplate, 4)
 
-	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[25])
+	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[14])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[25],
+			"http://"+testutils.TgAddrs[14],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

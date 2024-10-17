@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
@@ -21,10 +20,19 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+)
+
+const (
+	tcMessageSize   = (8 << 10)
+	tcWorkSize      = 10
+	tcQueuePeriod   = 5_000
+	tcFetchTimeout  = 30_000
+	tcQueueCapacity = 32
+	tcMaxConnects   = 16
+	tcCapacity      = 1024
 )
 
 var (
@@ -216,20 +224,17 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			queue.NewSettings(&queue.SSettings{
 				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
 					FSettings: net_message.NewSettings(&net_message.SSettings{
-						FWorkSizeBits: testutils.TCWorkSize,
+						FWorkSizeBits: tcWorkSize,
 					}),
 				}),
 				FNetworkMask:      networkMask,
-				FMainPoolCapacity: testutils.TCQueueCapacity,
-				FRandPoolCapacity: testutils.TCQueueCapacity,
+				FMainPoolCapacity: tcQueueCapacity,
+				FRandPoolCapacity: tcQueueCapacity,
 				FQueuePeriod:      500 * time.Millisecond,
 			}),
 			client.NewClient(
-				message.NewSettings(&message.SSettings{
-					FMessageSizeBytes: testutils.TCMessageSize,
-					FEncKeySizeBytes:  asymmetric.CKEncSize,
-				}),
 				tgPrivKey1,
+				tcMessageSize,
 			),
 			asymmetric.NewKEncPrivKey().GetPubKey(),
 		),
@@ -242,20 +247,20 @@ func testNewNetworkNode(addr string) network.INode {
 	return network.NewNode(
 		network.NewSettings(&network.SSettings{
 			FAddress:      addr,
-			FMaxConnects:  testutils.TCMaxConnects,
+			FMaxConnects:  tcMaxConnects,
 			FReadTimeout:  time.Minute,
 			FWriteTimeout: time.Minute,
 			FConnSettings: conn.NewSettings(&conn.SSettings{
 				FMessageSettings: net_message.NewSettings(&net_message.SSettings{
-					FWorkSizeBits: testutils.TCWorkSize,
+					FWorkSizeBits: tcWorkSize,
 				}),
-				FLimitMessageSizeBytes: testutils.TCMessageSize,
+				FLimitMessageSizeBytes: tcMessageSize,
 				FWaitReadTimeout:       time.Hour,
 				FDialTimeout:           time.Minute,
 				FReadTimeout:           time.Minute,
 				FWriteTimeout:          time.Minute,
 			}),
 		}),
-		cache.NewLRUCache(testutils.TCCapacity),
+		cache.NewLRUCache(tcCapacity),
 	)
 }

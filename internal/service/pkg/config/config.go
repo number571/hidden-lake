@@ -8,7 +8,6 @@ import (
 
 func GetConfigSettings(pCfg config.IConfig, pClient client.IClient) SConfigSettings {
 	sett := pCfg.GetSettings()
-	msgLimit := pClient.GetMessageLimit()
 	return SConfigSettings{
 		SConfigSettings: config.SConfigSettings{
 			FMessageSizeBytes:     sett.GetMessageSizeBytes(),
@@ -20,6 +19,6 @@ func GetConfigSettings(pCfg config.IConfig, pClient client.IClient) SConfigSetti
 			FNetworkKey:           sett.GetNetworkKey(),
 		},
 		// encoding.CSizeUint64 = payload64.Head()
-		FLimitMessageSizeBytes: msgLimit - encoding.CSizeUint64,
+		FLimitMessageSizeBytes: pClient.GetPayloadLimit() - encoding.CSizeUint64,
 	}
 }

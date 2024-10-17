@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/helpers/loader/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
@@ -42,12 +42,12 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessagesCapacity: testutils.TCCapacity,
-			FWorkSizeBits:     testutils.TCWorkSize,
+			FMessagesCapacity: 16,
+			FWorkSizeBits:     10,
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
-			FHTTP: testutils.TgAddrs[56],
+			FHTTP: testutils.TgAddrs[23],
 		},
 	})
 	if err != nil {
@@ -70,7 +70,7 @@ func TestApp(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	client := client.NewClient(
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[56],
+			"http://"+testutils.TgAddrs[23],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

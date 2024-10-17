@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
@@ -19,7 +18,6 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
@@ -29,6 +27,13 @@ import (
 )
 
 const (
+	tcMaxConnects    = 16
+	tcCapacity       = 32
+	tcWorkSize       = 10
+	tcNetworkKey     = "_"
+	tcMessageSize    = (8 << 10)
+	tcHead           = uint32(123)
+	tcBody           = "hello, world!"
 	databaseTemplate = "database_test_%s.db"
 )
 
@@ -46,8 +51,8 @@ func TestError(t *testing.T) {
 func testNetworkMessageSettings() net_message.IConstructSettings {
 	return net_message.NewConstructSettings(&net_message.SConstructSettings{
 		FSettings: net_message.NewSettings(&net_message.SSettings{
-			FNetworkKey:   testutils.TCNetworkKey,
-			FWorkSizeBits: testutils.TCWorkSize,
+			FNetworkKey:   tcNetworkKey,
+			FWorkSizeBits: tcWorkSize,
 		}),
 	})
 }
@@ -60,11 +65,11 @@ func testAllRun(addr string) (*http.Server, context.CancelFunc, storage.IMessage
 
 	stg := storage.NewMessageStorage(
 		net_message.NewSettings(&net_message.SSettings{
-			FNetworkKey:   testutils.TCNetworkKey,
-			FWorkSizeBits: testutils.TCWorkSize,
+			FNetworkKey:   tcNetworkKey,
+			FWorkSizeBits: tcWorkSize,
 		}),
 		db,
-		cache.NewLRUCache(testutils.TCCapacity),
+		cache.NewLRUCache(tcCapacity),
 	)
 
 	srv, _, cancel := testRunService(stg, addr, "")
@@ -122,11 +127,11 @@ func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (
 
 	cfg := &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes:     testutils.TCMessageSize,
-			FWorkSizeBits:         testutils.TCWorkSize,
+			FMessageSizeBytes:     tcMessageSize,
+			FWorkSizeBits:         tcWorkSize,
 			FRandMessageSizeBytes: hls_settings.CDefaultRandMessageSizeBytes,
-			FNetworkKey:           testutils.TCNetworkKey,
-			FMessagesCapacity:     testutils.TCCapacity,
+			FNetworkKey:           tcNetworkKey,
+			FMessagesCapacity:     tcCapacity,
 		},
 	}
 
@@ -158,31 +163,25 @@ func testNewClient() client.IClient {
 		asymmetric.NewKEncPrivKey(),
 		asymmetric.NewSignPrivKey(),
 	)
-	return client.NewClient(
-		message.NewSettings(&message.SSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		}),
-		privKey,
-	)
+	return client.NewClient(privKey, tcMessageSize)
 }
 
 func testNewNetworkNode(addr string) network.INode {
 	return network.NewNode(
 		network.NewSettings(&network.SSettings{
 			FAddress:      addr,
-			FMaxConnects:  testutils.TCMaxConnects,
+			FMaxConnects:  tcMaxConnects,
 			FReadTimeout:  time.Minute,
 			FWriteTimeout: time.Minute,
 			FConnSettings: conn.NewSettings(&conn.SSettings{
 				FMessageSettings:       testNetworkMessageSettings().GetSettings(),
-				FLimitMessageSizeBytes: testutils.TCMessageSize,
+				FLimitMessageSizeBytes: tcMessageSize,
 				FWaitReadTimeout:       time.Hour,
 				FDialTimeout:           time.Minute,
 				FReadTimeout:           time.Minute,
 				FWriteTimeout:          time.Minute,
 			}),
 		}),
-		cache.NewLRUCache(testutils.TCCapacity),
+		cache.NewLRUCache(tcCapacity),
 	)
 }

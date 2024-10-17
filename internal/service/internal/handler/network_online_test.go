@@ -10,11 +10,11 @@ import (
 
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/types"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleOnlineAPI(t *testing.T) {
@@ -111,10 +111,10 @@ func testOnlinePushNode(cfgPath, dbPath string) (anonymity.INode, context.Cancel
 
 	cfg, err := config.BuildConfig(cfgPath, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FWorkSizeBits:     testutils.TCWorkSize,
-			FQueuePeriodMS:    testutils.TCQueuePeriod,
-			FFetchTimeoutMS:   testutils.TCFetchTimeout,
+			FMessageSizeBytes: tcMessageSize,
+			FWorkSizeBits:     tcWorkSize,
+			FQueuePeriodMS:    tcQueuePeriod,
+			FFetchTimeoutMS:   tcFetchTimeout,
 		},
 	})
 	if err != nil {

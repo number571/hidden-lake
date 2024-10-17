@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/number571/go-peer/pkg/client/message"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -14,9 +13,9 @@ type IConfig interface {
 }
 
 type IConfigSettings interface {
-	message.ISettings
 	net_message.ISettings
 
+	GetMessageSizeBytes() uint64
 	GetRandMessageSizeBytes() uint64
 }
 

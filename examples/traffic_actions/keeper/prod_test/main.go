@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -39,18 +38,13 @@ func main() {
 	ctx := context.Background()
 	randString := random.NewRandom().GetString(16)
 
-	sett := message.NewSettings(&message.SSettings{
-		FMessageSizeBytes: cMsgSize,
-		FEncKeySizeBytes:  asymmetric.CKEncSize,
-	})
-
 	readPrivKey, err := os.ReadFile(cPrivKeyPath)
 	if err != nil {
 		panic(err)
 	}
 
 	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
-	client := client.NewClient(sett, privKey)
+	client := client.NewClient(privKey, cMsgSize)
 
 	for i, addrHLT := range gAddrHLTs {
 		netSett := net_message.NewConstructSettings(&net_message.SConstructSettings{

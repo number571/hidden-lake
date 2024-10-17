@@ -9,22 +9,23 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
-	tcTestdataPath1024 = "./testdata/1024"
-	tcTestdataPath4096 = "./testdata/4096"
-	tcPathDB           = pkg_settings.CPathDB
-	tcPathConfig       = pkg_settings.CPathYML
+	tcTestdataPath = "./testdata/"
+	tcPathDB       = pkg_settings.CPathDB
+	tcPathConfig   = pkg_settings.CPathYML
+	tcPathKey      = pkg_settings.CPathKey
 )
 
 func testDeleteFiles(prefixPath string) {
 	os.RemoveAll(prefixPath + tcPathDB)
 	os.RemoveAll(prefixPath + tcPathConfig)
+	os.RemoveAll(prefixPath + tcPathKey)
 }
 
 func TestError(t *testing.T) {
@@ -41,24 +42,16 @@ func TestError(t *testing.T) {
 func TestInitApp(t *testing.T) {
 	t.Parallel()
 
-	testDeleteFiles(tcTestdataPath1024)
-	testDeleteFiles(tcTestdataPath4096)
+	testDeleteFiles(tcTestdataPath)
+	defer testDeleteFiles(tcTestdataPath)
 
-	defer testDeleteFiles(tcTestdataPath1024)
-	defer testDeleteFiles(tcTestdataPath4096)
-
-	if _, err := InitApp([]string{}, tcTestdataPath4096, 1); err != nil {
+	if _, err := InitApp([]string{}, tcTestdataPath, 1); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if _, err := InitApp([]string{"parallel", "abc"}, tcTestdataPath4096, 1); err == nil {
+	if _, err := InitApp([]string{"parallel", "abc"}, tcTestdataPath, 1); err == nil {
 		t.Error("success init app with parallel=abc")
-		return
-	}
-
-	if _, err := InitApp([]string{}, tcTestdataPath1024, 1); err == nil {
-		t.Error("success init app with diff key size")
 		return
 	}
 
@@ -77,18 +70,21 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FWorkSizeBits:     testutils.TCWorkSize,
-			FQueuePeriodMS:    testutils.TCQueuePeriod,
-			FFetchTimeoutMS:   testutils.TCFetchTimeout,
+			FMessageSizeBytes: (8 << 10),
+			FWorkSizeBits:     10,
+			FQueuePeriodMS:    5_000,
+			FFetchTimeoutMS:   30_000,
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
-			FTCP:  testutils.TgAddrs[14],
-			FHTTP: testutils.TgAddrs[15],
+			FTCP:  testutils.TgAddrs[2],
+			FHTTP: testutils.TgAddrs[3],
 		},
 		FFriends: map[string]string{
-			"Alice": testutils.TgPubKeys[0],
+			"Alice": asymmetric.NewPrivKeyChain(
+				asymmetric.NewKEncPrivKey(),
+				asymmetric.NewSignPrivKey(),
+			).GetPubKeyChain().ToString(),
 		},
 	})
 	if err != nil {
@@ -115,7 +111,7 @@ func TestApp(t *testing.T) {
 	client := client.NewClient(
 		client.NewBuilder(),
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[15],
+			"http://"+testutils.TgAddrs[3],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

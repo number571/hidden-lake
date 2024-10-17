@@ -10,9 +10,9 @@ import (
 
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	testutils "github.com/number571/go-peer/test/utils"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestErrorsAPI(t *testing.T) {
@@ -27,7 +27,7 @@ func TestErrorsAPI(t *testing.T) {
 		),
 	)
 
-	pld := payload.NewPayload32(testutils.TcHead, []byte(testutils.TcBody))
+	pld := payload.NewPayload32(tcHead, []byte(tcBody))
 	sett := message.NewConstructSettings(&message.SConstructSettings{
 		FSettings: testNetworkMessageSettings().GetSettings(),
 	})

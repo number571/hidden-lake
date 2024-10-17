@@ -10,16 +10,16 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
-	tcTestdataPath1024 = "./testdata/1024"
-	tcTestdataPath4096 = "./testdata/4096"
-	tcPathConfig       = pkg_settings.CPathYML
+	tcTestdataPath = "./testdata/"
+	tcPathConfig   = pkg_settings.CPathYML
+	tcPathKey      = pkg_settings.CPathKey
 )
 
 func TestError(t *testing.T) {
@@ -35,6 +35,7 @@ func TestError(t *testing.T) {
 
 func testDeleteFiles(prefixPath string) {
 	os.RemoveAll(prefixPath + tcPathConfig)
+	os.RemoveAll(prefixPath + tcPathKey)
 }
 
 func TestApp(t *testing.T) {
@@ -46,12 +47,12 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FWorkSizeBits:     testutils.TCWorkSize,
+			FMessageSizeBytes: (8 << 10),
+			FWorkSizeBits:     10,
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
-			FHTTP: testutils.TgAddrs[55],
+			FHTTP: testutils.TgAddrs[30],
 		},
 	})
 	if err != nil {
@@ -78,7 +79,7 @@ func TestApp(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	client := client.NewClient(
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[55],
+			"http://"+testutils.TgAddrs[30],
 			&http.Client{Timeout: time.Minute},
 			testNetworkMessageSettings(),
 		),
@@ -123,24 +124,16 @@ func TestApp(t *testing.T) {
 func TestInitApp(t *testing.T) {
 	t.Parallel()
 
-	testDeleteFiles(tcTestdataPath1024)
-	testDeleteFiles(tcTestdataPath4096)
+	testDeleteFiles(tcTestdataPath)
+	defer testDeleteFiles(tcTestdataPath)
 
-	defer testDeleteFiles(tcTestdataPath1024)
-	defer testDeleteFiles(tcTestdataPath4096)
-
-	if _, err := InitApp([]string{}, tcTestdataPath4096, 1); err != nil {
+	if _, err := InitApp([]string{}, tcTestdataPath, 1); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if _, err := InitApp([]string{"parallel", "abc"}, tcTestdataPath4096, 1); err == nil {
+	if _, err := InitApp([]string{"parallel", "abc"}, tcTestdataPath, 1); err == nil {
 		t.Error("success init app with parallel=abc")
-		return
-	}
-
-	if _, err := InitApp([]string{}, tcTestdataPath1024, 1); err == nil {
-		t.Error("success init app with diff key size")
 		return
 	}
 
@@ -152,7 +145,7 @@ func TestInitApp(t *testing.T) {
 
 func testNetworkMessageSettings() net_message.ISettings {
 	return net_message.NewSettings(&net_message.SSettings{
-		FNetworkKey:   testutils.TCNetworkKey,
-		FWorkSizeBits: testutils.TCWorkSize,
+		FNetworkKey:   "_",
+		FWorkSizeBits: 10,
 	})
 }

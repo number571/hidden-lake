@@ -5,15 +5,22 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/helpers/loader/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
+)
+
+const (
+	tcMessageSize = (8 << 10)
+	tcWorkSize    = 10
+	tcCapacity    = 16
+	tcNetworkKey  = "_"
 )
 
 var (
-	tgProducer = testutils.TgAddrs[42]
-	tgConsumer = testutils.TgAddrs[43]
-	tgTService = testutils.TgAddrs[44]
+	tgProducer = testutils.TgAddrs[25]
+	tgConsumer = testutils.TgAddrs[26]
+	tgTService = testutils.TgAddrs[27]
 )
 
 func testRunService(addr string) *http.Server {
@@ -21,9 +28,9 @@ func testRunService(addr string) *http.Server {
 
 	cfg := &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessagesCapacity: testutils.TCCapacity,
-			FWorkSizeBits:     testutils.TCWorkSize,
-			FNetworkKey:       testutils.TCNetworkKey,
+			FMessagesCapacity: tcCapacity,
+			FWorkSizeBits:     tcWorkSize,
+			FNetworkKey:       tcNetworkKey,
 		},
 		FProducers: []string{tgProducer},
 		FConsumers: []string{tgConsumer},

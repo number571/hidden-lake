@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestErrorsAPI(t *testing.T) {
@@ -93,7 +93,7 @@ func TestErrorsAPI(t *testing.T) {
 func TestHandleIndexAPI(t *testing.T) {
 	t.Parallel()
 
-	addr := testutils.TgAddrs[22]
+	addr := testutils.TgAddrs[15]
 	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 3)
 	pathDB := fmt.Sprintf(tcPathDBTemplate, 3)
 

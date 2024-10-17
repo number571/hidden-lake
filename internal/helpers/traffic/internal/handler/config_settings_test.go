@@ -6,15 +6,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	testutils "github.com/number571/go-peer/test/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleConfigSettingsAPI(t *testing.T) {
 	t.Parallel()
 
-	addr := testutils.TgAddrs[50]
+	addr := testutils.TgAddrs[22]
 	os.RemoveAll(fmt.Sprintf(databaseTemplate, addr))
 
 	srv, cancel, db, hltClient := testAllRun(addr)
@@ -26,27 +25,22 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if settings.GetNetworkKey() != testutils.TCNetworkKey {
+	if settings.GetNetworkKey() != tcNetworkKey {
 		t.Error("incorrect network key")
 		return
 	}
 
-	if settings.GetEncKeySizeBytes() != asymmetric.CKEncSize {
-		t.Error("incorrect key size bits")
-		return
-	}
-
-	if settings.GetWorkSizeBits() != testutils.TCWorkSize {
+	if settings.GetWorkSizeBits() != tcWorkSize {
 		t.Error("incorrect work size bits")
 		return
 	}
 
-	if settings.GetMessagesCapacity() != testutils.TCCapacity {
+	if settings.GetMessagesCapacity() != tcCapacity {
 		t.Error("incorrect messages capacity")
 		return
 	}
 
-	if settings.GetMessageSizeBytes() != testutils.TCMessageSize {
+	if settings.GetMessageSizeBytes() != tcMessageSize {
 		t.Error("incorrect messages size bytes")
 		return
 	}

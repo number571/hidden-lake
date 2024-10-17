@@ -10,12 +10,12 @@ import (
 
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/types"
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleRequestAPI(t *testing.T) {
@@ -114,10 +114,10 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 	node, ctx, cancel := testRunNewNode(dbPath, testutils.TgAddrs[11])
 	rawCFG := &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FWorkSizeBits:     testutils.TCWorkSize,
-			FQueuePeriodMS:    testutils.TCQueuePeriod,
-			FFetchTimeoutMS:   testutils.TCFetchTimeout,
+			FMessageSizeBytes: tcMessageSize,
+			FWorkSizeBits:     tcWorkSize,
+			FQueuePeriodMS:    tcQueuePeriod,
+			FFetchTimeoutMS:   tcFetchTimeout,
 		},
 		FServices: map[string]*config.SService{
 			tcServiceAddressInHLS: {FHost: testutils.TgAddrs[10]},

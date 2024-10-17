@@ -10,19 +10,13 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	testutils "github.com/number571/go-peer/test/utils"
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	hls_app "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
-)
-
-const (
-	tcMessageSize = (8 << 10)
 )
 
 const (
@@ -83,8 +77,8 @@ func TestHandleTransferAPI(t *testing.T) {
 
 	netMsgSettings := net_message.NewConstructSettings(&net_message.SConstructSettings{
 		FSettings: net_message.NewSettings(&net_message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
-			FNetworkKey:   testutils.TCNetworkKey,
+			FWorkSizeBits: tcWorkSize,
+			FNetworkKey:   tcNetworkKey,
 		}),
 	})
 
@@ -115,17 +109,11 @@ func TestHandleTransferAPI(t *testing.T) {
 
 	// PUSH MESSAGES
 
-	msgSettings := message.NewSettings(
-		&message.SSettings{
-			FMessageSizeBytes: tcMessageSize,
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		},
-	)
 	privKey := asymmetric.NewPrivKeyChain(
 		asymmetric.NewKEncPrivKey(),
 		asymmetric.NewSignPrivKey(),
 	)
-	client := client.NewClient(msgSettings, privKey)
+	client := client.NewClient(privKey, tcMessageSize)
 
 	for i := 0; i < 5; i++ {
 		encMsg, err := client.EncryptMessage(
@@ -205,7 +193,7 @@ func copyWithPaste(pathTo, addr string) error {
 	}
 	return os.WriteFile(
 		pathTo+"/hlt.yml",
-		[]byte(fmt.Sprintf(string(cfgDataFmt), testutils.TCWorkSize, testutils.TCNetworkKey, addr)),
+		[]byte(fmt.Sprintf(string(cfgDataFmt), tcWorkSize, tcNetworkKey, addr)),
 		0o600,
 	)
 }

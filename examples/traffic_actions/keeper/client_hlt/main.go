@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
@@ -29,11 +28,6 @@ const (
 func main() {
 	ctx := context.Background()
 
-	sett := message.NewSettings(&message.SSettings{
-		FMessageSizeBytes: (8 << 10),
-		FEncKeySizeBytes:  asymmetric.CKEncSize,
-	})
-
 	netSett := net_message.NewConstructSettings(&net_message.SConstructSettings{
 		FSettings: net_message.NewSettings(&net_message.SSettings{
 			FWorkSizeBits: 22,
@@ -47,7 +41,7 @@ func main() {
 	}
 
 	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
-	client := client.NewClient(sett, privKey)
+	client := client.NewClient(privKey, (8 << 10))
 
 	if len(os.Args) < 2 {
 		panic("len os.Args < 2")

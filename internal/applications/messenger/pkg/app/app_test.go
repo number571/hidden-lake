@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
@@ -43,11 +43,11 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessagesCapacity: testutils.TCCapacity,
+			FMessagesCapacity: 64,
 		},
 		FAddress: &config.SAddress{
-			FInterface: testutils.TgAddrs[57],
-			FIncoming:  testutils.TgAddrs[58],
+			FInterface: testutils.TgAddrs[36],
+			FIncoming:  testutils.TgAddrs[38],
 		},
 		FConnection: "test_connection",
 	})

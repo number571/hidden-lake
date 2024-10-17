@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestErrorsAPI(t *testing.T) {
@@ -45,13 +45,13 @@ func TestErrorsAPI(t *testing.T) {
 func TestHandleIndexAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[45])
+	service := testRunService(testutils.TgAddrs[24])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hllClient := hll_client.NewClient(
 		hll_client.NewRequester(
-			"http://"+testutils.TgAddrs[45],
+			"http://"+testutils.TgAddrs[24],
 			&http.Client{Timeout: time.Second / 2},
 		),
 	)

@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleFriendsAPI(t *testing.T) {

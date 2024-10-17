@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -18,9 +17,9 @@ type IEditor interface {
 }
 
 type IConfigSettings interface {
-	message.ISettings
 	net_message.ISettings
 
+	GetMessageSizeBytes() uint64
 	GetFetchTimeoutMS() uint64
 	GetQueuePeriodMS() uint64
 	GetRandQueuePeriodMS() uint64

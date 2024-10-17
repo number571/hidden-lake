@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	testutils "github.com/number571/go-peer/test/utils"
 )
 
 const (
+	tcBody = "hello, world!"
 	tcPath = "database.db"
 )
 
@@ -47,7 +47,7 @@ func TestDatabase(t *testing.T) {
 	).GetPubKeyChain()
 
 	rel := NewRelation(iam, friend)
-	err1 := db.Push(rel, NewMessage(true, []byte(testutils.TcBody)))
+	err1 := db.Push(rel, NewMessage(true, []byte(tcBody)))
 	if err1 != nil {
 		t.Error(err1)
 		return
@@ -75,8 +75,8 @@ func TestDatabase(t *testing.T) {
 		return
 	}
 
-	if !bytes.Equal(msgs[0].GetMessage(), []byte(testutils.TcBody)) {
-		t.Error("!bytes.Equal(msgs[0].GetMessage(), []byte(testutils.TcBody))")
+	if !bytes.Equal(msgs[0].GetMessage(), []byte(tcBody)) {
+		t.Error("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 		return
 	}
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	testutils "github.com/number571/go-peer/test/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleMessageAPI(t *testing.T) {
@@ -26,7 +26,7 @@ func TestHandleMessageAPI(t *testing.T) {
 	client := testNewClient()
 	msg, err := client.EncryptMessage(
 		client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
-		payload.NewPayload64(0, []byte(testutils.TcBody)).ToBytes(),
+		payload.NewPayload64(0, []byte(tcBody)).ToBytes(),
 	)
 	if err != nil {
 		t.Error(err)
@@ -61,7 +61,7 @@ func TestHandleMessageAPI(t *testing.T) {
 	}
 
 	gotPld := payload.LoadPayload64(decMsg)
-	if string(gotPld.GetBody()) != testutils.TcBody {
+	if string(gotPld.GetBody()) != tcBody {
 		t.Error(err)
 		return
 	}

@@ -12,7 +12,7 @@ import (
 func (p *sApp) initServiceHTTP() {
 	mux := http.NewServeMux()
 
-	client := client.NewClient(p.fConfig.GetSettings(), p.fPrivKey)
+	client := client.NewClient(p.fPrivKey, p.fConfig.GetSettings().GetMessageSizeBytes())
 
 	mux.HandleFunc(hle_settings.CHandleIndexPath, handler.HandleIndexAPI(p.fHTTPLogger))
 	mux.HandleFunc(hle_settings.CHandleMessageEncryptPath, handler.HandleMessageEncryptAPI(p.fConfig, p.fHTTPLogger, client, p.fParallel))

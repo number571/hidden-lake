@@ -6,20 +6,20 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandlePubKeyAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[49])
+	service := testRunService(testutils.TgAddrs[31])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hleClient := hle_client.NewClient(
 		hle_client.NewRequester(
-			"http://"+testutils.TgAddrs[49],
+			"http://"+testutils.TgAddrs[31],
 			&http.Client{Timeout: time.Second / 2},
 			testNetworkMessageSettings(),
 		),

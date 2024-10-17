@@ -6,20 +6,20 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestHandleConfigSettingsAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[52])
+	service := testRunService(testutils.TgAddrs[28])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hllClient := hll_client.NewClient(
 		hll_client.NewRequester(
-			"http://"+testutils.TgAddrs[52],
+			"http://"+testutils.TgAddrs[28],
 			&http.Client{Timeout: time.Second / 2},
 		),
 	)
@@ -30,17 +30,17 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if settings.GetNetworkKey() != testutils.TCNetworkKey {
+	if settings.GetNetworkKey() != tcNetworkKey {
 		t.Error("incorrect network key")
 		return
 	}
 
-	if settings.GetMessagesCapacity() != testutils.TCCapacity {
+	if settings.GetMessagesCapacity() != tcCapacity {
 		t.Error("incorrect messages capacity")
 		return
 	}
 
-	if settings.GetWorkSizeBits() != testutils.TCWorkSize {
+	if settings.GetWorkSizeBits() != tcWorkSize {
 		t.Error("incorrect work size bits")
 		return
 	}

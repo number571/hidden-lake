@@ -7,14 +7,21 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	testutils "github.com/number571/go-peer/test/utils"
 	hlt_database "github.com/number571/hidden-lake/internal/helpers/traffic/internal/database"
+)
+
+const (
+	tcHead        = uint64(123)
+	tcBody        = "hello, world!"
+	tcNetworkKey  = "_"
+	tcWorkSize    = 10
+	tcCapacity    = 16
+	tcMessageSize = (8 << 10)
 )
 
 func TestError(t *testing.T) {
@@ -33,11 +40,11 @@ func TestStorageLoad(t *testing.T) {
 
 	db := NewMessageStorage(
 		net_message.NewSettings(&net_message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
-			FNetworkKey:   testutils.TCNetworkKey,
+			FWorkSizeBits: tcWorkSize,
+			FNetworkKey:   tcNetworkKey,
 		}),
 		hlt_database.NewVoidKVDatabase(),
-		cache.NewLRUCache(testutils.TCCapacity),
+		cache.NewLRUCache(tcCapacity),
 	)
 
 	if _, err := db.Load([]byte("abc")); err == nil {
@@ -64,27 +71,24 @@ func TestStorageHashes(t *testing.T) {
 
 	db := NewMessageStorage(
 		net_message.NewSettings(&net_message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
-			FNetworkKey:   testutils.TCNetworkKey,
+			FWorkSizeBits: tcWorkSize,
+			FNetworkKey:   tcNetworkKey,
 		}),
 		hlt_database.NewVoidKVDatabase(),
 		cache.NewLRUCache(messagesCapacity),
 	)
 
 	cl := client.NewClient(
-		message.NewSettings(&message.SSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		}),
 		asymmetric.NewPrivKeyChain(
 			asymmetric.NewKEncPrivKey(),
 			asymmetric.NewSignPrivKey(),
 		),
+		tcMessageSize,
 	)
 
 	pushHashes := make([][]byte, 0, messagesCapacity+1)
 	for i := 0; i < messagesCapacity+1; i++ {
-		msg, err := newNetworkMessageWithData(cl, testutils.TCNetworkKey, strconv.Itoa(i))
+		msg, err := newNetworkMessageWithData(cl, tcNetworkKey, strconv.Itoa(i))
 		if err != nil {
 			t.Error(err)
 			return
@@ -122,22 +126,19 @@ func TestStoragePush(t *testing.T) {
 
 	db := NewMessageStorage(
 		net_message.NewSettings(&net_message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
-			FNetworkKey:   testutils.TCNetworkKey,
+			FWorkSizeBits: tcWorkSize,
+			FNetworkKey:   tcNetworkKey,
 		}),
 		hlt_database.NewVoidKVDatabase(),
 		cache.NewLRUCache(1),
 	)
 
 	clTest := client.NewClient(
-		message.NewSettings(&message.SSettings{
-			FMessageSizeBytes: (10 << 10),
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		}),
 		asymmetric.NewPrivKeyChain(
 			asymmetric.NewKEncPrivKey(),
 			asymmetric.NewSignPrivKey(),
 		),
+		tcMessageSize,
 	)
 
 	msgTest, err := newNetworkMessage(clTest, "some-another-key")
@@ -152,17 +153,14 @@ func TestStoragePush(t *testing.T) {
 	}
 
 	cl := client.NewClient(
-		message.NewSettings(&message.SSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		}),
 		asymmetric.NewPrivKeyChain(
 			asymmetric.NewKEncPrivKey(),
 			asymmetric.NewSignPrivKey(),
 		),
+		tcMessageSize,
 	)
 
-	msg1, err := newNetworkMessage(cl, testutils.TCNetworkKey)
+	msg1, err := newNetworkMessage(cl, tcNetworkKey)
 	if err != nil {
 		t.Error(err)
 		return
@@ -184,7 +182,7 @@ func TestStoragePush(t *testing.T) {
 		return
 	}
 
-	msg2, err := newNetworkMessage(cl, testutils.TCNetworkKey)
+	msg2, err := newNetworkMessage(cl, tcNetworkKey)
 	if err != nil {
 		t.Error(err)
 		return
@@ -201,27 +199,24 @@ func TestStorage(t *testing.T) {
 
 	db := NewMessageStorage(
 		net_message.NewSettings(&net_message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
-			FNetworkKey:   testutils.TCNetworkKey,
+			FWorkSizeBits: tcWorkSize,
+			FNetworkKey:   tcNetworkKey,
 		}),
 		hlt_database.NewVoidKVDatabase(),
 		cache.NewLRUCache(4),
 	)
 
 	cl := client.NewClient(
-		message.NewSettings(&message.SSettings{
-			FMessageSizeBytes: testutils.TCMessageSize,
-			FEncKeySizeBytes:  asymmetric.CKEncSize,
-		}),
 		asymmetric.NewPrivKeyChain(
 			asymmetric.NewKEncPrivKey(),
 			asymmetric.NewSignPrivKey(),
 		),
+		tcMessageSize,
 	)
 
 	putHashes := make([][]byte, 0, 3)
 	for i := 0; i < 3; i++ {
-		msg, err := newNetworkMessage(cl, testutils.TCNetworkKey)
+		msg, err := newNetworkMessage(cl, tcNetworkKey)
 		if err != nil {
 			t.Error(err)
 			return
@@ -279,12 +274,12 @@ func TestStorage(t *testing.T) {
 		}
 
 		pl := payload.LoadPayload64(decMsg)
-		if pl.GetHead() != uint64(testutils.TcHead) {
+		if pl.GetHead() != tcHead {
 			t.Error("load msg head != init head")
 			return
 		}
 
-		if !bytes.Equal(pl.GetBody(), []byte(testutils.TcBody)) {
+		if !bytes.Equal(pl.GetBody(), []byte(tcBody)) {
 			t.Error("load msg body != init body")
 			return
 		}
@@ -294,7 +289,7 @@ func TestStorage(t *testing.T) {
 func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_message.IMessage, error) {
 	msg, err := cl.EncryptMessage(
 		cl.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
-		payload.NewPayload64(uint64(testutils.TcHead), []byte(data)).ToBytes(),
+		payload.NewPayload64(tcHead, []byte(data)).ToBytes(),
 	)
 	if err != nil {
 		return nil, err
@@ -303,7 +298,7 @@ func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{
 				FNetworkKey:   networkKey,
-				FWorkSizeBits: testutils.TCWorkSize,
+				FWorkSizeBits: tcWorkSize,
 			}),
 		}),
 		payload.NewPayload32(0, msg),
@@ -312,5 +307,5 @@ func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_
 }
 
 func newNetworkMessage(cl client.IClient, networkKey string) (net_message.IMessage, error) {
-	return newNetworkMessageWithData(cl, networkKey, testutils.TcBody)
+	return newNetworkMessageWithData(cl, networkKey, tcBody)
 }

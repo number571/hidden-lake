@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
@@ -44,7 +44,7 @@ func TestApp(t *testing.T) {
 			FExecTimeoutMS: 5000,
 		},
 		FAddress: &config.SAddress{
-			FIncoming: testutils.TgAddrs[59],
+			FIncoming: testutils.TgAddrs[35],
 		},
 	})
 	if err != nil {

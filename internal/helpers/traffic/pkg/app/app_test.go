@@ -11,9 +11,9 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 
-	testutils "github.com/number571/go-peer/test/utils"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 const (
@@ -47,13 +47,13 @@ func TestApp(t *testing.T) {
 		tcPathConfig,
 		&config.SConfig{
 			FSettings: &config.SConfigSettings{
-				FMessageSizeBytes: testutils.TCMessageSize,
-				FWorkSizeBits:     testutils.TCWorkSize,
-				FMessagesCapacity: testutils.TCCapacity,
+				FMessageSizeBytes: (8 << 10),
+				FWorkSizeBits:     10,
+				FMessagesCapacity: 32,
 				FNetworkKey:       "_",
 			},
 			FAddress: &config.SAddress{
-				FHTTP: testutils.TgAddrs[23],
+				FHTTP: testutils.TgAddrs[17],
 			},
 		},
 	)
@@ -78,11 +78,11 @@ func TestApp(t *testing.T) {
 	hltClient := hlt_client.NewClient(
 		hlt_client.NewBuilder(),
 		hlt_client.NewRequester(
-			"http://"+testutils.TgAddrs[23],
+			"http://"+testutils.TgAddrs[17],
 			&http.Client{Timeout: time.Minute},
 			net_message.NewSettings(&net_message.SSettings{
-				FNetworkKey:   testutils.TCNetworkKey,
-				FWorkSizeBits: testutils.TCWorkSize,
+				FNetworkKey:   "_",
+				FWorkSizeBits: 10,
 			}),
 		),
 	)

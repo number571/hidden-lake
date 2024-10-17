@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
@@ -58,13 +57,8 @@ func main() {
 		}),
 	})
 
-	msgSettings := message.NewSettings(&message.SSettings{
-		FMessageSizeBytes: messageSize,
-		FEncKeySizeBytes:  asymmetric.CKEncSize,
-	})
-
 	ctx := context.Background()
-	if err := pushMessages(ctx, netMsgSettings, msgSettings); err != nil {
+	if err := pushMessages(ctx, netMsgSettings, messageSize); err != nil {
 		panic(err)
 	}
 
@@ -81,14 +75,14 @@ func main() {
 
 	time.Sleep(time.Second)
 
-	if err := checkMessages(ctx, netMsgSettings.GetSettings(), msgSettings); err != nil {
+	if err := checkMessages(ctx, netMsgSettings.GetSettings(), messageSize); err != nil {
 		panic(err)
 	}
 
 	fmt.Println("messages have been successfully transported")
 }
 
-func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSettings, msgSettings message.ISettings) error {
+func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSettings, msgSize uint64) error {
 	hltClient := hlt_client.NewClient(
 		hlt_client.NewBuilder(),
 		hlt_client.NewRequester(
@@ -98,7 +92,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 		),
 	)
 
-	client := client.NewClient(msgSettings, privKey)
+	client := client.NewClient(privKey, msgSize)
 
 	for i := 0; i < messageCount; i++ {
 		msg, err := client.EncryptMessage(
@@ -123,7 +117,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 	return nil
 }
 
-func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, msgSettings message.ISettings) error {
+func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, msgSize uint64) error {
 	hltClient := hlt_client.NewClient(
 		hlt_client.NewBuilder(),
 		hlt_client.NewRequester(
@@ -133,7 +127,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 		),
 	)
 
-	client := client.NewClient(msgSettings, privKey)
+	client := client.NewClient(privKey, msgSize)
 
 	hashes := make([]string, 0, messageCount)
 	for i := uint64(0); ; i++ {

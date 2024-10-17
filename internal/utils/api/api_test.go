@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	testutils "github.com/number571/go-peer/test/utils"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 type tsRequest tsResponse
@@ -70,7 +70,7 @@ func TestLoadResponse(t *testing.T) {
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
-	addr := testutils.TgAddrs[41]
+	addr := testutils.TgAddrs[0]
 	unknownURL := "http://" + addr + "/unknown"
 
 	client := &http.Client{
@@ -94,7 +94,7 @@ func TestErrorsAPI(t *testing.T) {
 func TestRequestResponseAPI(t *testing.T) {
 	t.Parallel()
 
-	addr := testutils.TgAddrs[40]
+	addr := testutils.TgAddrs[1]
 	testURL := "http://" + addr + "/test"
 
 	client := &http.Client{

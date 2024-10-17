@@ -8,9 +8,9 @@ import (
 
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	testutils "github.com/number571/go-peer/test/utils"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 func TestErrorsAPI(t *testing.T) {
@@ -29,10 +29,10 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	pld := payload.NewPayload32(testutils.TcHead, []byte(testutils.TcBody))
+	pld := payload.NewPayload32(tcHead, []byte(tcBody))
 	sett := message.NewConstructSettings(&message.SConstructSettings{
 		FSettings: message.NewSettings(&message.SSettings{
-			FWorkSizeBits: testutils.TCWorkSize,
+			FWorkSizeBits: tcWorkSize,
 		}),
 	})
 	if _, _, err := client.DecryptMessage(context.Background(), message.NewMessage(sett, pld)); err == nil {
@@ -59,13 +59,13 @@ func TestErrorsAPI(t *testing.T) {
 func TestHandleIndexAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[54])
+	service := testRunService(testutils.TgAddrs[32])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hleClient := hle_client.NewClient(
 		hle_client.NewRequester(
-			"http://"+testutils.TgAddrs[54],
+			"http://"+testutils.TgAddrs[32],
 			&http.Client{Timeout: time.Second / 2},
 			testNetworkMessageSettings(),
 		),
