@@ -39,7 +39,7 @@ type sApp struct {
 	fCfgW       config.IWrapper
 	fNode       anonymity.INode
 	fConnKeeper connkeeper.IConnKeeper
-	fPrivKey    asymmetric.IPrivKey
+	fPrivKey    asymmetric.IPrivKeyChain
 
 	fAnonLogger logger.ILogger
 	fHTTPLogger logger.ILogger
@@ -51,7 +51,7 @@ type sApp struct {
 
 func NewApp(
 	pCfg config.IConfig,
-	pPrivKey asymmetric.IPrivKey,
+	pPrivKey asymmetric.IPrivKeyChain,
 	pPathTo string,
 	pParallel uint64,
 ) types.IRunner {

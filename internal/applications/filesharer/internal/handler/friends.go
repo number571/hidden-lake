@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
@@ -50,7 +51,7 @@ func FriendsPage(
 				return
 			}
 
-			pubKey := asymmetric.LoadRSAPubKey(pubStrKey)
+			pubKey := asymmetric.LoadPubKeyChain(pubStrKey)
 			if pubKey == nil {
 				ErrorPage(pLogger, pCfg, "decode_public_key", "failed decode public key")(pW, pR)
 				return
@@ -58,7 +59,7 @@ func FriendsPage(
 
 			if aliasName == "" {
 				// get hash of public key as alias_name
-				aliasName = pubKey.GetHasher().ToString()
+				aliasName = hashing.NewHasher([]byte(pubKey.ToString())).ToString()
 			}
 
 			if err := pHlsClient.AddFriend(pCtx, aliasName, pubKey); err != nil {

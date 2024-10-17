@@ -175,6 +175,6 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 }
 
 func (p *sAdaptedConsumer) rememberMessage(pMsg net_message.IMessage) bool {
-	hash := hashing.NewSHA256Hasher(pMsg.GetHash()).ToBytes()
+	hash := hashing.NewHasher(pMsg.GetHash()).ToBytes()
 	return p.fCacheSetter.Set(hash, []byte{})
 }

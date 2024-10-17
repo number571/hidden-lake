@@ -125,7 +125,6 @@ func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (
 			FMessageSizeBytes:     testutils.TCMessageSize,
 			FWorkSizeBits:         testutils.TCWorkSize,
 			FRandMessageSizeBytes: hls_settings.CDefaultRandMessageSizeBytes,
-			FKeySizeBits:          testutils.TcKeySize,
 			FNetworkKey:           testutils.TCNetworkKey,
 			FMessagesCapacity:     testutils.TCCapacity,
 		},
@@ -155,11 +154,14 @@ func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (
 }
 
 func testNewClient() client.IClient {
-	privKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024)
+	privKey := asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
 	return client.NewClient(
 		message.NewSettings(&message.SSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
-			FKeySizeBits:      testutils.TcKeySize,
+			FEncKeySizeBytes:  asymmetric.CKEncSize,
 		}),
 		privKey,
 	)

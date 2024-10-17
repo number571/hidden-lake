@@ -95,7 +95,7 @@ func (p *sRequester) GetHash(pCtx context.Context, i uint64) (string, error) {
 	}
 
 	// response in hex encoding
-	if len(resp) != 2*hashing.CSHA256Size {
+	if len(resp) != 2*hashing.CHasherSize {
 		return "", ErrDecodeResponse
 	}
 

@@ -3,8 +3,6 @@ package config
 import (
 	"os"
 	"testing"
-
-	testutils "github.com/number571/go-peer/test/utils"
 )
 
 const (
@@ -43,7 +41,6 @@ func testConfigDefaultInit(configPath string) {
 			FWorkSizeBits:     tcWorkSize,
 			FMessagesCapacity: tcCapMessages,
 			FNetworkKey:       tcNetwork,
-			FKeySizeBits:      testutils.TcKeySize,
 			FDatabaseEnabled:  true,
 		},
 		FLogging: []string{"info", "erro"},

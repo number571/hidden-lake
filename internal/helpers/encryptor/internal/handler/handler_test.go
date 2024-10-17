@@ -14,6 +14,13 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 )
 
+var (
+	tgPrivKey = asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
+)
+
 func testRunService(addr string) *http.Server {
 	mux := http.NewServeMux()
 
@@ -21,7 +28,6 @@ func testRunService(addr string) *http.Server {
 		FSettings: &config.SConfigSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
 			FWorkSizeBits:     testutils.TCWorkSize,
-			FKeySizeBits:      testutils.TcKeySize,
 			FNetworkKey:       testutils.TCNetworkKey,
 		},
 	}
@@ -34,15 +40,15 @@ func testRunService(addr string) *http.Server {
 	client := client.NewClient(
 		message.NewSettings(&message.SSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
-			FKeySizeBits:      testutils.TcKeySize,
+			FEncKeySizeBytes:  asymmetric.CKEncSize,
 		}),
-		asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024),
+		tgPrivKey,
 	)
 
 	mux.HandleFunc(settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(settings.CHandleMessageEncryptPath, HandleMessageEncryptAPI(cfg, logger, client, 1))
 	mux.HandleFunc(settings.CHandleMessageDecryptPath, HandleMessageDecryptAPI(cfg, logger, client))
-	mux.HandleFunc(settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, client.GetPubKey()))
+	mux.HandleFunc(settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, client.GetPrivKeyChain().GetPubKeyChain()))
 	mux.HandleFunc(settings.CHandleConfigSettings, HandleConfigSettingsAPI(cfg, logger))
 
 	srv := &http.Server{

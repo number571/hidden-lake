@@ -73,7 +73,7 @@ func ConsumeProcessor(
 
 func wait(pCtx context.Context, pWaitTimeout time.Duration) {
 	randDuration := time.Duration(
-		random.NewCSPRNG().GetUint64() % uint64(pWaitTimeout+1),
+		random.NewRandom().GetUint64() % uint64(pWaitTimeout+1),
 	)
 	select {
 	case <-pCtx.Done():

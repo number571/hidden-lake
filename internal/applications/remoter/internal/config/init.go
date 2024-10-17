@@ -16,7 +16,7 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 		initCfg = &SConfig{
 			FSettings: &SConfigSettings{
 				FExecTimeoutMS: hlr_settings.CDefaultExecTimeout,
-				FPassword:      random.NewCSPRNG().GetString(32),
+				FPassword:      random.NewRandom().GetString(32),
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{

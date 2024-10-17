@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -24,7 +25,7 @@ func TestHandleMessageAPI(t *testing.T) {
 
 	client := testNewClient()
 	msg, err := client.EncryptMessage(
-		client.GetPubKey(),
+		client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
 		payload.NewPayload64(0, []byte(testutils.TcBody)).ToBytes(),
 	)
 	if err != nil {
@@ -54,8 +55,8 @@ func TestHandleMessageAPI(t *testing.T) {
 		return
 	}
 
-	if gotPubKey.GetHasher().ToString() != client.GetPubKey().GetHasher().ToString() {
-		t.Error(err)
+	if !bytes.Equal(gotPubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+		t.Error("invalid public keys")
 		return
 	}
 

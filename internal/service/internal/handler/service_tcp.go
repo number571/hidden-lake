@@ -24,7 +24,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 	return func(
 		pCtx context.Context,
 		pNode anonymity.INode,
-		pSender asymmetric.IPubKey,
+		pSender asymmetric.IPubKeyChain,
 		pReqBytes []byte,
 	) ([]byte, error) {
 		logger := pNode.GetLogger()
@@ -33,7 +33,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		// enrich logger
 		logBuilder.
 			WithSize(len(pReqBytes)).
-			WithPubKey(pSender)
+			WithPubKey(pSender.GetSignPubKey())
 
 		// load request from message's body
 		loadReq, err := request.LoadRequest(pReqBytes)

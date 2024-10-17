@@ -18,7 +18,6 @@ var (
 
 type SConfigSettings struct {
 	FMessageSizeBytes     uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FKeySizeBits          uint64 `json:"key_size_bits" yaml:"key_size_bits"`
 	FFetchTimeoutMS       uint64 `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
 	FQueuePeriodMS        uint64 `json:"queue_period_ms" yaml:"queue_period_ms"`
 	FWorkSizeBits         uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
@@ -31,7 +30,7 @@ type SConfig struct {
 	fFilepath string
 	fMutex    sync.RWMutex
 	fLogging  logger.ILogging
-	fFriends  map[string]asymmetric.IPubKey
+	fFriends  map[string]asymmetric.IPubKeyChain
 
 	FSettings    *SConfigSettings     `yaml:"settings"`
 	FLogging     []string             `yaml:"logging,omitempty"`
@@ -99,8 +98,8 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
 }
 
-func (p *SConfigSettings) GetKeySizeBits() uint64 {
-	return p.FKeySizeBits
+func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
+	return asymmetric.CKEncSize
 }
 
 func (p *SConfigSettings) GetFetchTimeoutMS() uint64 {
@@ -135,7 +134,6 @@ func (p *SConfig) isValid() bool {
 	}
 	return true &&
 		p.FSettings.FMessageSizeBytes != 0 &&
-		p.FSettings.FKeySizeBits != 0 &&
 		p.FSettings.FQueuePeriodMS != 0 &&
 		p.FSettings.FFetchTimeoutMS != 0
 }
@@ -180,7 +178,7 @@ func (p *SConfig) loadLogging() error {
 }
 
 func (p *SConfig) loadPubKeys() error {
-	p.fFriends = make(map[string]asymmetric.IPubKey)
+	p.fFriends = make(map[string]asymmetric.IPubKeyChain)
 
 	mapping := make(map[string]struct{})
 	for name, val := range p.FFriends {
@@ -189,25 +187,22 @@ func (p *SConfig) loadPubKeys() error {
 		}
 		mapping[val] = struct{}{}
 
-		pubKey := asymmetric.LoadRSAPubKey(val)
+		pubKey := asymmetric.LoadPubKeyChain(val)
 		if pubKey == nil {
 			return ErrInvalidPublicKey
 		}
 
 		p.fFriends[name] = pubKey
-		if pubKey.GetSize() != p.FSettings.FKeySizeBits {
-			return ErrNotSupportedKeySize
-		}
 	}
 
 	return nil
 }
 
-func (p *SConfig) GetFriends() map[string]asymmetric.IPubKey {
+func (p *SConfig) GetFriends() map[string]asymmetric.IPubKeyChain {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	result := make(map[string]asymmetric.IPubKey)
+	result := make(map[string]asymmetric.IPubKeyChain)
 	for k, v := range p.fFriends {
 		result[k] = v
 	}

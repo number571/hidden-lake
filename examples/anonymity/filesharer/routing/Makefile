@@ -3,10 +3,10 @@ ROOPATH=./../../../..
 default: copy run 
 copy:
 	cp \
-		$(ROOPATH)/examples/anonymity/_keys/4096/priv_node1.key \
+		$(ROOPATH)/examples/anonymity/_keys/priv_node1.key \
 		./node1_hlf/hls.key
 	cp \
-		$(ROOPATH)/examples/anonymity/_keys/4096/priv_node2.key \
+		$(ROOPATH)/examples/anonymity/_keys/priv_node2.key \
 		./node2_hlf/hls.key
 	cp ./node1_hlf/hls_copy.yml ./node1_hlf/hls.yml 
 	cp ./node2_hlf/hls_copy.yml ./node2_hlf/hls.yml 

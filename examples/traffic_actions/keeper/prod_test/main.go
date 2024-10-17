@@ -37,11 +37,11 @@ var gAddrHLTs = [][2]string{
 
 func main() {
 	ctx := context.Background()
-	randString := random.NewCSPRNG().GetString(16)
+	randString := random.NewRandom().GetString(16)
 
 	sett := message.NewSettings(&message.SSettings{
 		FMessageSizeBytes: cMsgSize,
-		FKeySizeBits:      cKeySize,
+		FEncKeySizeBytes:  asymmetric.CKEncSize,
 	})
 
 	readPrivKey, err := os.ReadFile(cPrivKeyPath)
@@ -49,7 +49,7 @@ func main() {
 		panic(err)
 	}
 
-	privKey := asymmetric.LoadRSAPrivKey(string(readPrivKey))
+	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
 	client := client.NewClient(sett, privKey)
 
 	for i, addrHLT := range gAddrHLTs {
@@ -70,7 +70,7 @@ func main() {
 		)
 
 		msg, err := client.EncryptMessage(
-			privKey.GetPubKey(),
+			privKey.GetKEncPrivKey().GetPubKey(),
 			payload.NewPayload64(cPldHead, []byte(randString)).ToBytes(),
 		)
 		if err != nil {

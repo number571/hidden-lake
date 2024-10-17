@@ -90,7 +90,6 @@ Default config `hls.yml`
 ```yaml
 settings:
   message_size_bytes: 8192
-  key_size_bits: 4096
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
 logging:
@@ -219,7 +218,6 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 settings:
   message_size_bytes: 8192
   work_size_bits: 22
-  key_size_bits: 4096
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
   rand_queue_period_ms: 5000

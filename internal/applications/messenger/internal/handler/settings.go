@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
@@ -128,7 +129,7 @@ func getSettings(pCtx context.Context, pCfg config.IConfig, pHlsClient hls_clien
 	}
 
 	result.FPublicKey = myPubKey.ToString()
-	result.FPublicKeyHash = myPubKey.GetHasher().ToString()
+	result.FPublicKeyHash = hashing.NewHasher([]byte(myPubKey.ToString())).ToString()
 
 	gotSettings, err := pHlsClient.GetSettings(pCtx)
 	if err != nil {

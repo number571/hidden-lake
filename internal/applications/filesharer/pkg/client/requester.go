@@ -42,7 +42,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 	}
 
 	for _, info := range list {
-		if len(encoding.HexDecode(info.FHash)) != hashing.CSHA256Size {
+		if len(encoding.HexDecode(info.FHash)) != hashing.CHasherSize {
 			return nil, ErrInvalidResponse
 		}
 	}

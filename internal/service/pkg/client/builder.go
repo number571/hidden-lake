@@ -17,7 +17,7 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
-func (p *sBuilder) Friend(pAliasName string, pPubKey asymmetric.IPubKey) *pkg_settings.SFriend {
+func (p *sBuilder) Friend(pAliasName string, pPubKey asymmetric.IPubKeyChain) *pkg_settings.SFriend {
 	if pPubKey == nil {
 		// del friend
 		return &pkg_settings.SFriend{

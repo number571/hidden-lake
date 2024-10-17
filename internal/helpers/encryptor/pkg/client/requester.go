@@ -61,14 +61,14 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
-func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
+func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEncPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleMessageEncryptTemplate, p.fHost),
 		hle_settings.SContainer{
-			FPublicKey: pPubKey.ToString(),
+			FPublicKey: encoding.HexEncode(pPubKey.ToBytes()),
 			FPldHead:   pPayload.GetHead(),
 			FHexData:   encoding.HexEncode(pPayload.GetBody()),
 		},
@@ -85,7 +85,7 @@ func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IPu
 	return msg, nil
 }
 
-func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IPubKey, payload.IPayload64, error) {
+func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.ISignPubKey, payload.IPayload64, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -102,7 +102,7 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 		return nil, nil, utils.MergeErrors(ErrDecodeResponse, err)
 	}
 
-	pubKey := asymmetric.LoadRSAPubKey(result.FPublicKey)
+	pubKey := asymmetric.LoadSignPubKey(encoding.HexDecode(result.FPublicKey))
 	if pubKey == nil {
 		return nil, nil, ErrInvalidPublicKey
 	}
@@ -115,7 +115,7 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 	return pubKey, payload.NewPayload64(result.FPldHead, data), nil
 }
 
-func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
+func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -127,7 +127,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error)
 		return nil, utils.MergeErrors(ErrBadRequest, err)
 	}
 
-	pubKey := asymmetric.LoadRSAPubKey(string(res))
+	pubKey := asymmetric.LoadPubKeyChain(string(res))
 	if pubKey == nil {
 		return nil, ErrInvalidPublicKey
 	}

@@ -14,8 +14,8 @@ type IKVDatabase interface {
 }
 
 type IRelation interface {
-	IAm() asymmetric.IPubKey
-	Friend() asymmetric.IPubKey
+	IAm() asymmetric.IPubKeyChain
+	Friend() asymmetric.IPubKeyChain
 }
 
 type IMessage interface {

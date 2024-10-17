@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -117,15 +118,18 @@ func TestHandleTransferAPI(t *testing.T) {
 	msgSettings := message.NewSettings(
 		&message.SSettings{
 			FMessageSizeBytes: tcMessageSize,
-			FKeySizeBits:      testutils.TcKeySize,
+			FEncKeySizeBytes:  asymmetric.CKEncSize,
 		},
 	)
-	privKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024)
+	privKey := asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
 	client := client.NewClient(msgSettings, privKey)
 
 	for i := 0; i < 5; i++ {
 		encMsg, err := client.EncryptMessage(
-			privKey.GetPubKey(),
+			privKey.GetKEncPrivKey().GetPubKey(),
 			payload.NewPayload64(
 				uint64(i),
 				[]byte("hello, world!"),
@@ -187,7 +191,7 @@ func TestHandleTransferAPI(t *testing.T) {
 			return
 		}
 
-		if pubKey.GetHasher().ToString() != client.GetPubKey().GetHasher().ToString() {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
 			t.Error("got bad public key")
 			return
 		}

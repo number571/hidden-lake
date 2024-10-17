@@ -22,7 +22,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 		initCfg = &SConfig{
 			FSettings: &SConfigSettings{
 				FMessageSizeBytes:     hls_settings.CDefaultMessageSizeBytes,
-				FKeySizeBits:          hls_settings.CDefaultKeySizeBits,
 				FWorkSizeBits:         hls_settings.CDefaultWorkSizeBits,
 				FRandMessageSizeBytes: hls_settings.CDefaultRandMessageSizeBytes,
 				FMessagesCapacity:     hlt_settings.CDefaultMessagesCapacity,

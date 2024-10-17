@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	testutils "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -43,8 +42,8 @@ func testGetFriends(t *testing.T, client hls_client.IClient, cfg config.IConfig)
 		return
 	}
 
-	if len(friends) != 3 {
-		t.Error("length of friends != 3")
+	if len(friends) != 2 {
+		t.Error("length of friends != 2")
 		return
 	}
 
@@ -65,7 +64,7 @@ func testAddFriend(t *testing.T, client hls_client.IClient, aliasName string) {
 	err := client.AddFriend(
 		context.Background(),
 		aliasName,
-		asymmetric.LoadRSAPubKey(testutils.TgPubKeys[3]),
+		tgPrivKey3.GetPubKeyChain(),
 	)
 	if err != nil {
 		t.Error(err)

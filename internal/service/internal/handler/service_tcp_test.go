@@ -17,7 +17,6 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/types"
@@ -81,7 +80,6 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 		FSettings: &config.SConfigSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
 			FWorkSizeBits:     testutils.TCWorkSize,
-			FKeySizeBits:      testutils.TcKeySize,
 			FQueuePeriodMS:    testutils.TCQueuePeriod,
 			FFetchTimeoutMS:   testutils.TCFetchTimeout,
 		},
@@ -101,7 +99,7 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 		pkg_settings.CServiceMask,
 		HandleServiceTCP(cfg),
 	)
-	node.GetListPubKeys().AddPubKey(asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024).GetPubKey())
+	node.GetListPubKeyChains().AddPubKeyChain(tgPrivKey1.GetPubKeyChain())
 
 	go func() {
 		_ = node.GetNetworkNode().Listen(ctx)
@@ -119,7 +117,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	if node == nil {
 		return nil, cancel, errors.New("node is not running")
 	}
-	node.GetListPubKeys().AddPubKey(asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024).GetPubKey())
+	node.GetListPubKeyChains().AddPubKeyChain(tgPrivKey1.GetPubKeyChain())
 
 	if err := node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[4]); err != nil {
 		return nil, cancel, err
@@ -135,8 +133,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 			ToBytes(),
 	)
 
-	pubKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024).GetPubKey()
-	respBytes, err := node.FetchPayload(ctx, pubKey, pld)
+	respBytes, err := node.FetchPayload(ctx, tgPrivKey1.GetPubKeyChain().GetKEncPubKey(), pld)
 	if err != nil {
 		return node, cancel, err
 	}

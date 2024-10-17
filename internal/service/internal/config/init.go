@@ -23,7 +23,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			FSettings: &SConfigSettings{
 				FMessageSizeBytes:     hls_settings.CDefaultMessageSizeBytes,
 				FWorkSizeBits:         hls_settings.CDefaultWorkSizeBits,
-				FKeySizeBits:          hls_settings.CDefaultKeySizeBits,
 				FFetchTimeoutMS:       hls_settings.CDefaultFetchTimeoutMS,
 				FQueuePeriodMS:        hls_settings.CDefaultQueuePeriodMS,
 				FRandQueuePeriodMS:    hls_settings.CDefaultRandQueuePeriodMS,

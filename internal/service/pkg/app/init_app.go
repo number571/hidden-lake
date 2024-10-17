@@ -31,7 +31,7 @@ func InitApp(pArgs []string, pDefaultPath string, pDefaultParallel uint64) (type
 	}
 
 	keyPath := filepath.Join(inputPath, pkg_settings.CPathKey)
-	privKey, err := privkey.GetPrivKey(keyPath, cfg.GetSettings().GetKeySizeBits())
+	privKey, err := privkey.GetPrivKey(keyPath)
 	if err != nil {
 		return nil, utils.MergeErrors(ErrGetPrivateKey, err)
 	}

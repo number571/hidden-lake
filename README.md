@@ -143,7 +143,6 @@ The Hidden Lake network must have `common configuration` file settings for succe
 # default settings
 message_size_bytes: 8192
 work_size_bits: 22
-key_size_bits: 4096
 fetch_timeout_ms: 60000
 queue_period_ms: 5000
 ```

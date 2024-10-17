@@ -30,8 +30,8 @@ func init() {
 	// The hls.db file stores only message hashes.
 	// If the other parameters have the same size as the hashes,
 	// then there will be a chance of overwriting.
-	if len(cPPKKey) == hashing.CSHA256Size {
-		panic("len(cPPKKey) == hashing.CSHA256Size")
+	if len(cPPKKey) == hashing.CHasherSize {
+		panic("len(cPPKKey) == hashing.CHasherSize")
 	}
 }
 
@@ -46,7 +46,7 @@ func (p *sApp) initAnonNode() error {
 		return utils.MergeErrors(ErrOpenKVDatabase, err)
 	}
 
-	psdPubKey, err := getPsdPubKey(kvDatabase, cfgSettings.GetKeySizeBits())
+	psdPubKey, err := getPsdPubKey(kvDatabase)
 	if err != nil {
 		return utils.MergeErrors(ErrGetPsdPubKey, err)
 	}
@@ -99,10 +99,10 @@ func (p *sApp) initAnonNode() error {
 			client,
 			psdPubKey,
 		),
-		func() asymmetric.IListPubKeys {
-			f2f := asymmetric.NewListPubKeys()
+		func() asymmetric.IListPubKeyChains {
+			f2f := asymmetric.NewListPubKeyChains()
 			for _, pubKey := range cfg.GetFriends() {
-				f2f.AddPubKey(pubKey)
+				f2f.AddPubKeyChain(pubKey)
 			}
 			return f2f
 		}(),
@@ -114,17 +114,17 @@ func (p *sApp) initAnonNode() error {
 	return nil
 }
 
-func getPsdPubKey(pDB database.IKVDatabase, pKeySize uint64) (asymmetric.IPubKey, error) {
+func getPsdPubKey(pDB database.IKVDatabase) (asymmetric.IKEncPubKey, error) {
 	ppk, err := pDB.Get([]byte(cPPKKey))
 	if err == nil {
-		pubKey := asymmetric.LoadRSAPubKey(ppk)
+		pubKey := asymmetric.LoadKEncPubKey(ppk)
 		if pubKey == nil {
 			return nil, ErrInvalidPsdPubKey
 		}
 		return pubKey, nil
 	}
 	if errors.Is(err, database.ErrNotFound) {
-		pubKey := asymmetric.NewRSAPrivKey(pKeySize).GetPubKey()
+		pubKey := asymmetric.NewKEncPrivKey().GetPubKey()
 		if err := pDB.Set([]byte(cPPKKey), pubKey.ToBytes()); err != nil {
 			return nil, ErrSetPsdPubKey
 		}

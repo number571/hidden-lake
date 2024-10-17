@@ -78,7 +78,7 @@ func (p *sMessageStorage) Push(pMsg net_message.IMessage) error {
 }
 
 func (p *sMessageStorage) Load(pHash []byte) (net_message.IMessage, error) {
-	if len(pHash) != hashing.CSHA256Size {
+	if len(pHash) != hashing.CHasherSize {
 		return nil, ErrInvalidKeySize
 	}
 	msgBytes, ok := p.fLRUCache.Get(pHash)

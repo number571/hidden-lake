@@ -48,7 +48,6 @@ func TestApp(t *testing.T) {
 		FSettings: &config.SConfigSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
 			FWorkSizeBits:     testutils.TCWorkSize,
-			FKeySizeBits:      testutils.TcKeySize,
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
@@ -60,7 +59,10 @@ func TestApp(t *testing.T) {
 		return
 	}
 
-	privKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024)
+	privKey := asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
 	app := NewApp(cfg, privKey, 1)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -88,7 +90,7 @@ func TestApp(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if pubKey.ToString() != privKey.GetPubKey().ToString() {
+	if pubKey.ToString() != privKey.GetPubKeyChain().ToString() {
 		t.Errorf("public keys are not equals")
 		return
 	}

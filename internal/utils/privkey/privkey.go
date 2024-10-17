@@ -7,9 +7,12 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 )
 
-func GetPrivKey(pKeyPath string, pKeySize uint64) (asymmetric.IPrivKey, error) {
+func GetPrivKey(pKeyPath string) (asymmetric.IPrivKeyChain, error) {
 	if _, err := os.Stat(pKeyPath); os.IsNotExist(err) {
-		privKey := asymmetric.NewRSAPrivKey(pKeySize)
+		privKey := asymmetric.NewPrivKeyChain(
+			asymmetric.NewKEncPrivKey(),
+			asymmetric.NewSignPrivKey(),
+		)
 		if err := os.WriteFile(pKeyPath, []byte(privKey.ToString()), 0o600); err != nil {
 			return nil, utils.MergeErrors(ErrWritePrivateKey, err)
 		}
@@ -19,12 +22,9 @@ func GetPrivKey(pKeyPath string, pKeySize uint64) (asymmetric.IPrivKey, error) {
 	if err != nil {
 		return nil, utils.MergeErrors(ErrReadPrivateKey, err)
 	}
-	privKey := asymmetric.LoadRSAPrivKey(string(privKeyStr))
+	privKey := asymmetric.LoadPrivKeyChain(string(privKeyStr))
 	if privKey == nil {
 		return nil, ErrInvalidPrivateKey
-	}
-	if privKey.GetSize() != pKeySize {
-		return nil, ErrSizePrivateKey
 	}
 	return privKey, nil
 }

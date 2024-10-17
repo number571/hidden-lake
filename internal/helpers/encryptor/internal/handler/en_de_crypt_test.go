@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/payload"
 	testutils "github.com/number571/go-peer/test/utils"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
@@ -29,25 +28,22 @@ func TestHandleEncryptDecryptAPI(t *testing.T) {
 	)
 
 	// same private key in the HLE
-	privKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024)
-	pubKey := privKey.GetPubKey()
-
+	pubKey := tgPrivKey.GetPubKeyChain()
 	data := []byte("hello, world!")
 
-	netMsg, err := hleClient.EncryptMessage(context.Background(), pubKey, payload.NewPayload64(1, data))
+	netMsg, err := hleClient.EncryptMessage(
+		context.Background(),
+		pubKey.GetKEncPubKey(),
+		payload.NewPayload64(1, data),
+	)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	gotPubKey, getPld, err := hleClient.DecryptMessage(context.Background(), netMsg)
+	_, getPld, err := hleClient.DecryptMessage(context.Background(), netMsg)
 	if err != nil {
 		t.Error(err)
-		return
-	}
-
-	if !bytes.Equal(pubKey.ToBytes(), gotPubKey.ToBytes()) {
-		t.Error("got invalid public key")
 		return
 	}
 

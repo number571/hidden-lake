@@ -14,7 +14,7 @@ type IWrapper interface {
 
 type IEditor interface {
 	UpdateConnections([]string) error
-	UpdateFriends(map[string]asymmetric.IPubKey) error
+	UpdateFriends(map[string]asymmetric.IPubKeyChain) error
 }
 
 type IConfigSettings interface {
@@ -31,7 +31,7 @@ type IConfig interface {
 	GetSettings() IConfigSettings
 	GetLogging() logger.ILogging
 	GetAddress() IAddress
-	GetFriends() map[string]asymmetric.IPubKey
+	GetFriends() map[string]asymmetric.IPubKeyChain
 	GetConnections() []string
 	GetService(string) (IService, bool)
 }

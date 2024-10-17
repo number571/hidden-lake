@@ -54,16 +54,9 @@ func (p *sEditor) UpdateConnections(pConns []string) error {
 	return nil
 }
 
-func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
+func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKeyChain) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
-
-	for _, pubKey := range pFriends {
-		if pubKey.GetSize() == p.fConfig.GetSettings().GetKeySizeBits() {
-			continue
-		}
-		return ErrNotSupportedKeySize
-	}
 
 	filepath := p.fConfig.fFilepath
 	icfg, err := LoadConfig(filepath)
@@ -90,7 +83,7 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	return nil
 }
 
-func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKey) map[string]string {
+func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKeyChain) map[string]string {
 	result := make(map[string]string, len(pPubKeys))
 	for name, pubKey := range pPubKeys {
 		result[name] = pubKey.ToString()
@@ -98,10 +91,10 @@ func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKey) map[string]string 
 	return result
 }
 
-func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
+func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKeyChain) bool {
 	mapping := make(map[string]struct{})
 	for _, pubKey := range pPubKeys {
-		pubStr := pubKey.GetHasher().ToString()
+		pubStr := pubKey.ToString()
 		if _, ok := mapping[pubStr]; ok {
 			return true
 		}

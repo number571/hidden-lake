@@ -11,7 +11,7 @@ import (
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 )
 
-func HandleServicePubKeyAPI(pLogger logger.ILogger, pPubKey asymmetric.IPubKey) http.HandlerFunc {
+func HandleServicePubKeyAPI(pLogger logger.ILogger, pPubKey asymmetric.IPubKeyChain) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hle_settings.CServiceName, pR)
 

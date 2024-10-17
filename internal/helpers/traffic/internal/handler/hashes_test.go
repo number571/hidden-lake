@@ -26,19 +26,22 @@ func TestHandleHashesAPI(t *testing.T) {
 	srv, cancel, wDB, hltClient := testAllRun(addr)
 	defer testAllFree(addr, srv, cancel, wDB)
 
-	privKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024)
-	pubKey := asymmetric.LoadRSAPubKey(testutils.TgPubKeys[0])
+	privKey := asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
+	pubKey := privKey.GetPubKeyChain()
 
 	client := client.NewClient(
 		message.NewSettings(&message.SSettings{
 			FMessageSizeBytes: testutils.TCMessageSize,
-			FKeySizeBits:      testutils.TcKeySize,
+			FEncKeySizeBytes:  asymmetric.CKEncSize,
 		}),
 		privKey,
 	)
 
 	msg, err := client.EncryptMessage(
-		pubKey,
+		pubKey.GetKEncPubKey(),
 		payload.NewPayload64(0, []byte("hello")).ToBytes(),
 	)
 	if err != nil {

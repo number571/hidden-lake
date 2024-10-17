@@ -103,7 +103,7 @@ func downloadFile(
 	fileName := query.Get("file_name")
 
 	fileHash := query.Get("file_hash")
-	if fileHash == "" || len(encoding.HexDecode(fileHash)) != hashing.CSHA256Size {
+	if fileHash == "" || len(encoding.HexDecode(fileHash)) != hashing.CHasherSize {
 		ErrorPage(pLogger, pCfg, "file_hash_error", "incorrect file hash")(pW, pR)
 		return
 	}

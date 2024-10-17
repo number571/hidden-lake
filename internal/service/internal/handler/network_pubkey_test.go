@@ -34,7 +34,7 @@ func TestHandlePubKeyAPI(t *testing.T) {
 		return
 	}
 
-	if pubKey.ToString() != node.GetMessageQueue().GetClient().GetPubKey().ToString() {
+	if pubKey.ToString() != node.GetMessageQueue().GetClient().GetPrivKeyChain().GetPubKeyChain().ToString() {
 		t.Error("public keys not equals")
 		return
 	}

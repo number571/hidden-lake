@@ -18,6 +18,7 @@ services:
       - SERVICE_PATH=examples/anonymity/messenger/simple/node2_hlm
     ports:
       - 7070:7070
+      - 7572:7572
     networks:
       - hidden-lake
 networks:

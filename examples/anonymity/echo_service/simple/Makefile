@@ -3,10 +3,10 @@ ROOPATH=./../../../..
 default: copy run 
 copy:
 	cp \
-		$(ROOPATH)/examples/anonymity/_keys/4096/priv_node1.key \
+		$(ROOPATH)/examples/anonymity/_keys/priv_node1.key \
 		./recv_hls/hls.key
 	cp \
-		$(ROOPATH)/examples/anonymity/_keys/4096/priv_node2.key \
+		$(ROOPATH)/examples/anonymity/_keys/priv_node2.key \
 		./send_hls/hls.key
 run:
 	docker-compose build

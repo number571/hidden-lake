@@ -21,7 +21,10 @@ func HandleNetworkPubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 			return
 		}
 
+		client := pNode.GetMessageQueue().GetClient()
+		pubKey := client.GetPrivKeyChain().GetPubKeyChain()
+
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, pNode.GetMessageQueue().GetClient().GetPubKey().ToString())
+		_ = api.Response(pW, http.StatusOK, pubKey.ToString())
 	}
 }

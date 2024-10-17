@@ -68,7 +68,7 @@ func sendMessage(pReceiver string, pMessage []byte) {
 }
 
 func getRandomMessageType(pMessage string) []byte {
-	if random.NewCSPRNG().GetBool() { // isText
+	if random.NewRandom().GetBool() { // isText
 		return bytes.Join(
 			[][]byte{
 				{hlm_settings.CIsText},

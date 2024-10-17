@@ -41,12 +41,12 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		conn = x.GetSocket().RemoteAddr().String()
 	}
 
-	addr := make([]byte, hashing.CSHA256Size)
+	addr := make([]byte, hashing.CHasherSize)
 	if x := pLogGetter.GetPubKey(); x != nil {
-		addr = x.GetHasher().ToBytes()
+		addr = hashing.NewHasher(x.ToBytes()).ToBytes()
 	}
 
-	hash := make([]byte, hashing.CSHA256Size)
+	hash := make([]byte, hashing.CHasherSize)
 	if x := pLogGetter.GetHash(); x != nil {
 		copy(hash, x)
 	}

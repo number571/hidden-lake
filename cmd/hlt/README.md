@@ -53,7 +53,6 @@ Default config `hlt.yml`
 ```yaml
 settings:
   message_size_bytes: 8192
-  key_size_bits: 4096
 logging:
   - info
   - warn
@@ -101,7 +100,6 @@ $ go run ./main.go r cb3c6558fe0cb64d0d2bad42dffc0f0d9b0f144bc24bb8f2ba06313af92
 ```yaml
 settings:
   message_size_bytes: 8192
-  key_size_bits: 4096
   work_size_bits: 22
   messages_capacity: 2048
   rand_message_size_bytes: 4096

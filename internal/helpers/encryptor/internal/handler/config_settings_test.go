@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	testutils "github.com/number571/go-peer/test/utils"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 )
@@ -36,7 +37,7 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if settings.GetKeySizeBits() != testutils.TcKeySize {
+	if settings.GetEncKeySizeBytes() != asymmetric.CKEncSize {
 		t.Error("incorrect key size bits")
 		return
 	}

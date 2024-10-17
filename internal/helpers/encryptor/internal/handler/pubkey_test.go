@@ -1,13 +1,11 @@
 package handler
 
 import (
-	"bytes"
 	"context"
 	"net/http"
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	testutils "github.com/number571/go-peer/test/utils"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 )
@@ -33,8 +31,8 @@ func TestHandlePubKeyAPI(t *testing.T) {
 		return
 	}
 
-	pubKey := asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024).GetPubKey()
-	if !bytes.Equal(gotPubKey.ToBytes(), pubKey.ToBytes()) {
+	pubKey := tgPrivKey.GetPubKeyChain()
+	if pubKey.ToString() != gotPubKey.ToString() {
 		t.Error("public keys not equals")
 		return
 	}

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	testutils "github.com/number571/go-peer/test/utils"
 )
 
 const (
@@ -42,8 +41,8 @@ var (
 		"test_connect2",
 	}
 	tgPubKeys = map[string]string{
-		tcPubKeyAlias1: testutils.TgPubKeys[0],
-		tcPubKeyAlias2: testutils.TgPubKeys[1],
+		tcPubKeyAlias1: tgPubKey1.ToString(),
+		tcPubKeyAlias2: tgPubKey2.ToString(),
 	}
 	tgServices = map[string]string{
 		tcServiceName1: "test_address1",
@@ -55,7 +54,6 @@ const (
 	tcConfigTemplate = `settings:
   message_size_bytes: %d
   work_size_bits: %d
-  key_size_bits: %d
   fetch_timeout_ms: %d
   queue_period_ms: %d
   rand_queue_period_ms: %d
@@ -87,7 +85,6 @@ func testNewConfigString() string {
 		tcConfigTemplate,
 		tcMessageSize,
 		tcWorkSize,
-		testutils.TcKeySize,
 		tcFetchTimeout,
 		tcQueuePeriod,
 		tcQueueRandPeriod,
@@ -208,16 +205,6 @@ func testIncorrectConfig(configFile string) error {
 		return errors.New("success load config with invalid fields (duplicate publc keys)")
 	}
 
-	newPubKey := asymmetric.NewRSAPrivKey(512).GetPubKey().ToString()
-	cfg5Bytes := []byte(strings.ReplaceAll(testNewConfigString(), pubKey1, newPubKey))
-	if err := os.WriteFile(configFile, cfg5Bytes, 0o600); err != nil {
-		return err
-	}
-
-	if _, err := LoadConfig(configFile); err == nil {
-		return errors.New("success load config with invalid fields (diff key sizes)")
-	}
-
 	return nil
 }
 
@@ -246,11 +233,6 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetMessageSizeBytes() != tcMessageSize {
 		t.Error("settings message size is invalid")
-		return
-	}
-
-	if cfg.GetSettings().GetKeySizeBits() != testutils.TcKeySize {
-		t.Error("settings key size is invalid")
 		return
 	}
 
@@ -334,8 +316,8 @@ func TestComplexConfig(t *testing.T) {
 
 	for name, pubStr := range tgPubKeys {
 		v1 := cfg.GetFriends()[name]
-		pubKey := asymmetric.LoadRSAPubKey(pubStr)
-		if pubKey.GetHasher().ToString() != v1.GetHasher().ToString() {
+		pubKey := asymmetric.LoadPubKeyChain(pubStr)
+		if pubKey.ToString() != v1.ToString() {
 			t.Errorf("public key is invalid '%s'", v1)
 			return
 		}

@@ -7,21 +7,21 @@ var (
 )
 
 type sRelation struct {
-	fIAm    asymmetric.IPubKey
-	fFriend asymmetric.IPubKey
+	fIAm    asymmetric.IPubKeyChain
+	fFriend asymmetric.IPubKeyChain
 }
 
-func NewRelation(pIAm, pFriend asymmetric.IPubKey) IRelation {
+func NewRelation(pIAm, pFriend asymmetric.IPubKeyChain) IRelation {
 	return &sRelation{
 		fIAm:    pIAm,
 		fFriend: pFriend,
 	}
 }
 
-func (p *sRelation) IAm() asymmetric.IPubKey {
+func (p *sRelation) IAm() asymmetric.IPubKeyChain {
 	return p.fIAm
 }
 
-func (p *sRelation) Friend() asymmetric.IPubKey {
+func (p *sRelation) Friend() asymmetric.IPubKeyChain {
 	return p.fFriend
 }

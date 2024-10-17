@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
@@ -45,7 +46,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		fPubKey := asymmetric.LoadRSAPubKey(pR.Header.Get(hls_settings.CHeaderPublicKey))
+		fPubKey := asymmetric.LoadPubKeyChain(pR.Header.Get(hls_settings.CHeaderPublicKey))
 		if fPubKey == nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
@@ -75,7 +76,7 @@ func HandleIncomingPushHTTP(
 		}
 
 		pBroker.Produce(
-			fPubKey.GetHasher().ToString(),
+			hashing.NewHasher([]byte(fPubKey.ToString())).ToString(),
 			getMessage(
 				true,
 				dbMsg.GetMessage(),

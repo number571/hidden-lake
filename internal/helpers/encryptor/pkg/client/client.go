@@ -32,7 +32,7 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	return res, nil
 }
 
-func (p *sClient) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
+func (p *sClient) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEncPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
 	res, err := p.fRequester.EncryptMessage(pCtx, pPubKey, pPayload)
 	if err != nil {
 		return nil, fmt.Errorf("encrypt message (client): %w", err)
@@ -40,7 +40,7 @@ func (p *sClient) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IPubKe
 	return res, nil
 }
 
-func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IPubKey, payload.IPayload64, error) {
+func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.ISignPubKey, payload.IPayload64, error) {
 	pubKey, data, err := p.fRequester.DecryptMessage(pCtx, pNetMsg)
 	if err != nil {
 		return nil, nil, fmt.Errorf("decrypt message (client): %w", err)
@@ -48,7 +48,7 @@ func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMess
 	return pubKey, data, nil
 }
 
-func (p *sClient) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
+func (p *sClient) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, error) {
 	pubKey, err := p.fRequester.GetPubKey(pCtx)
 	if err != nil {
 		return nil, fmt.Errorf("get public key (client): %w", err)

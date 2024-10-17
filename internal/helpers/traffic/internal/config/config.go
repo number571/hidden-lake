@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/utils"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -16,7 +17,6 @@ var (
 
 type SConfigSettings struct {
 	FMessageSizeBytes     uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FKeySizeBits          uint64 `json:"key_size_bits" yaml:"key_size_bits"`
 	FWorkSizeBits         uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FMessagesCapacity     uint64 `json:"messages_capacity,omitempty" yaml:"messages_capacity,omitempty"`
 	FRandMessageSizeBytes uint64 `json:"rand_message_size_bytes,omitempty" yaml:"rand_message_size_bytes,omitempty"`
@@ -101,8 +101,8 @@ func (p *SConfigSettings) GetNetworkKey() string {
 	return p.FNetworkKey
 }
 
-func (p *SConfigSettings) GetKeySizeBits() uint64 {
-	return p.FKeySizeBits
+func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
+	return asymmetric.CKEncSize
 }
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {
@@ -111,8 +111,7 @@ func (p *SConfigSettings) GetDatabaseEnabled() bool {
 
 func (p *SConfig) isValid() bool {
 	return true &&
-		p.FSettings.FMessageSizeBytes != 0 &&
-		p.FSettings.FKeySizeBits != 0
+		p.FSettings.FMessageSizeBytes != 0
 }
 
 func (p *SConfig) initConfig() error {

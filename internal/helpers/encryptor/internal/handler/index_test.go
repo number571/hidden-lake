@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	testutils "github.com/number571/go-peer/test/utils"
@@ -25,7 +24,7 @@ func TestErrorsAPI(t *testing.T) {
 		),
 	)
 
-	if _, err := client.EncryptMessage(context.Background(), asymmetric.LoadRSAPubKey(testutils.TgPubKeys[0]), payload.NewPayload64(1, []byte{123})); err == nil {
+	if _, err := client.EncryptMessage(context.Background(), tgPrivKey.GetKEncPrivKey().GetPubKey(), payload.NewPayload64(1, []byte{123})); err == nil {
 		t.Error("success encrypt message with unknown host")
 		return
 	}

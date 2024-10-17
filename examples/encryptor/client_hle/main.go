@@ -45,10 +45,10 @@ func main() {
 			panic(err)
 		}
 
-		pubKey := asymmetric.LoadRSAPubKey(string(readPubKey))
+		pubKey := asymmetric.LoadPubKeyChain(string(readPubKey))
 		netMsg, err := hleClient.EncryptMessage(
 			ctx,
-			pubKey,
+			pubKey.GetKEncPubKey(),
 			payload.NewPayload64(uint64(settings.CServiceMask), []byte(os.Args[2])),
 		)
 		if err != nil {

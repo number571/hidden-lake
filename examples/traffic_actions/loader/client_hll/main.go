@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -37,7 +38,7 @@ const (
 )
 
 var (
-	privKey      asymmetric.IPrivKey
+	privKey      asymmetric.IPrivKeyChain
 	pushedHashes = make([][]byte, 0, messageCount)
 )
 
@@ -46,7 +47,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	privKey = asymmetric.LoadRSAPrivKey(string(readPrivKey))
+	privKey = asymmetric.LoadPrivKeyChain(string(readPrivKey))
 }
 
 func main() {
@@ -59,7 +60,7 @@ func main() {
 
 	msgSettings := message.NewSettings(&message.SSettings{
 		FMessageSizeBytes: messageSize,
-		FKeySizeBits:      keySize,
+		FEncKeySizeBytes:  asymmetric.CKEncSize,
 	})
 
 	ctx := context.Background()
@@ -101,7 +102,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 
 	for i := 0; i < messageCount; i++ {
 		msg, err := client.EncryptMessage(
-			client.GetPubKey(), // self encrypt
+			client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(), // self encrypt
 			payload.NewPayload64(uint64(i), []byte("hello, world!")).ToBytes(),
 		)
 		if err != nil {
@@ -164,7 +165,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return err
 		}
 
-		if pubKey.GetHasher().ToString() != client.GetPubKey().GetHasher().ToString() {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
 			return errors.New("got invalid public key")
 		}
 
@@ -180,6 +181,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 
 	return nil
 }
+
 func hashIsExist(hash []byte, listHashes []string) bool {
 	strHash := encoding.HexEncode(hash)
 	for _, h := range listHashes {

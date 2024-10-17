@@ -65,7 +65,8 @@ func HandleNetworkRequestAPI(
 		switch pR.Method {
 		case http.MethodPut:
 			err := pNode.SendPayload(
-				pubKey,
+				pCtx,
+				pubKey.GetKEncPubKey(),
 				payload.NewPayload64(uint64(pkg_settings.CServiceMask), req.ToBytes()),
 			)
 			if err != nil {
@@ -81,7 +82,7 @@ func HandleNetworkRequestAPI(
 		case http.MethodPost:
 			respBytes, err := pNode.FetchPayload(
 				pCtx,
-				pubKey,
+				pubKey.GetKEncPubKey(),
 				payload.NewPayload32(pkg_settings.CServiceMask, req.ToBytes()),
 			)
 			if err != nil {
@@ -107,7 +108,7 @@ func HandleNetworkRequestAPI(
 func unwrapRequest(
 	pConfig config.IConfig,
 	pRequest pkg_settings.SRequest,
-) (asymmetric.IPubKey, request.IRequest, int) {
+) (asymmetric.IPubKeyChain, request.IRequest, int) {
 	friends := pConfig.GetFriends()
 
 	pubKey, ok := friends[pRequest.FReceiver]

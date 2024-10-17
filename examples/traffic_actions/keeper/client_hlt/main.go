@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -30,7 +31,7 @@ func main() {
 
 	sett := message.NewSettings(&message.SSettings{
 		FMessageSizeBytes: (8 << 10),
-		FKeySizeBits:      4096,
+		FEncKeySizeBytes:  asymmetric.CKEncSize,
 	})
 
 	netSett := net_message.NewConstructSettings(&net_message.SConstructSettings{
@@ -45,7 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	privKey := asymmetric.LoadRSAPrivKey(string(readPrivKey))
+	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
 	client := client.NewClient(sett, privKey)
 
 	if len(os.Args) < 2 {
@@ -79,7 +80,7 @@ func main() {
 		}
 
 		msg, err := client.EncryptMessage(
-			privKey.GetPubKey(),
+			privKey.GetKEncPrivKey().GetPubKey(),
 			payload.NewPayload64(cPldHead, []byte(args[1])).ToBytes(),
 		)
 		if err != nil {
@@ -124,7 +125,7 @@ func main() {
 			panic("payload.head != set.head")
 		}
 
-		if pubKey.GetHasher().ToString() != client.GetPubKey().GetHasher().ToString() {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
 			panic("public key is incorrect")
 		}
 

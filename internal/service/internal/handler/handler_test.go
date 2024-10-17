@@ -27,6 +27,21 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/closer"
 )
 
+var (
+	tgPrivKey1 = asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
+	tgPrivKey2 = asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
+	tgPrivKey3 = asymmetric.NewPrivKeyChain(
+		asymmetric.NewKEncPrivKey(),
+		asymmetric.NewSignPrivKey(),
+	)
+)
+
 const (
 	tcServiceAddressInHLS = "hidden-echo-service"
 	tcPathDBTemplate      = "database_test_%d.db"
@@ -37,7 +52,6 @@ var (
 	tcConfig = fmt.Sprintf(`settings:
   message_size_bytes: 8192
   work_size_bits: 22
-  key_size_bits: %d
   fetch_timeout_ms: 60000
   queue_period_ms: 1000
   rand_message_size_bytes: 4096
@@ -52,7 +66,6 @@ connections:
 friends:
   test_recvr: %s
   test_name1: %s
-  test_name2: %s
 services:
   test_service1: 
     host: test_address1
@@ -61,10 +74,8 @@ services:
   test_service3: 
     host: test_address3
 `,
-		testutils.TcKeySize,
-		testutils.TgPubKeys[0],
-		testutils.TgPubKeys[1],
-		testutils.TgPubKeys[2],
+		tgPrivKey1.GetPubKeyChain().ToString(),
+		tgPrivKey2.GetPubKeyChain().ToString(),
 	)
 )
 
@@ -216,13 +227,13 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			client.NewClient(
 				message.NewSettings(&message.SSettings{
 					FMessageSizeBytes: testutils.TCMessageSize,
-					FKeySizeBits:      testutils.TcKeySize,
+					FEncKeySizeBytes:  asymmetric.CKEncSize,
 				}),
-				asymmetric.LoadRSAPrivKey(testutils.TcPrivKey1024),
+				tgPrivKey1,
 			),
-			asymmetric.NewRSAPrivKey(testutils.TcKeySize).GetPubKey(),
+			asymmetric.NewKEncPrivKey().GetPubKey(),
 		),
-		asymmetric.NewListPubKeys(),
+		asymmetric.NewListPubKeyChains(),
 	)
 	return node
 }

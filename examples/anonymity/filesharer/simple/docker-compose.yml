@@ -7,6 +7,7 @@ services:
     environment:
       - SERVICE_PATH=examples/anonymity/filesharer/simple/node1_hlf
     ports:
+      - 8572:8572
       - 8080:8080
     networks:
       - hidden-lake
