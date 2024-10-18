@@ -23,7 +23,7 @@ func TestHandlePointerAPI(t *testing.T) {
 
 	client := testNewClient()
 	msg, err := client.EncryptMessage(
-		client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
+		client.GetPrivKey().GetKEncPrivKey().GetPubKey(),
 		payload.NewPayload64(0, []byte(tcBody)).ToBytes(),
 	)
 	if err != nil {

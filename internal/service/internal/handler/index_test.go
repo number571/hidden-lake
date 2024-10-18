@@ -34,7 +34,7 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if err := client.AddFriend(context.Background(), "", tgPrivKey1.GetPubKeyChain()); err == nil {
+	if err := client.AddFriend(context.Background(), "", tgPrivKey1.GetPubKey()); err == nil {
 		t.Error("success add friend with unknown host")
 		return
 	}

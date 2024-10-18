@@ -115,7 +115,7 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 	return pubKey, payload.NewPayload64(result.FPldHead, data), nil
 }
 
-func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, error) {
+func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -127,7 +127,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, e
 		return nil, utils.MergeErrors(ErrBadRequest, err)
 	}
 
-	pubKey := asymmetric.LoadPubKeyChain(string(res))
+	pubKey := asymmetric.LoadPubKey(string(res))
 	if pubKey == nil {
 		return nil, ErrInvalidPublicKey
 	}

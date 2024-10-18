@@ -12,25 +12,19 @@ import (
 )
 
 var (
-	tgPubKey1 = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	).GetPubKeyChain()
-	tgPubKey2 = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	).GetPubKeyChain()
+	tgPubKey1 = asymmetric.NewPrivKey().GetPubKey()
+	tgPubKey2 = asymmetric.NewPrivKey().GetPubKey()
 )
 
 var (
 	tgNewConnections = []string{"a", "b", "c", "b"}
-	tgNewFriends     = map[string]asymmetric.IPubKeyChain{
+	tgNewFriends     = map[string]asymmetric.IPubKey{
 		"a": tgPubKey1,
 		"b": tgPubKey2,
 	}
 
 	// duplicated public keys
-	tgNewIncorrect2Friends = map[string]asymmetric.IPubKeyChain{
+	tgNewIncorrect2Friends = map[string]asymmetric.IPubKey{
 		"a": tgPubKey1,
 		"b": tgPubKey1,
 	}
@@ -42,14 +36,14 @@ var (
 	_ IConfig = &tsConfig{}
 )
 
-func (p *tsConfig) GetSettings() IConfigSettings                   { return nil }
-func (p *tsConfig) GetLogging() logger.ILogging                    { return nil }
-func (p *tsConfig) GetShare() bool                                 { return false }
-func (p *tsConfig) GetAddress() IAddress                           { return nil }
-func (p *tsConfig) GetNetworkKey() string                          { return "" }
-func (p *tsConfig) GetConnections() []string                       { return nil }
-func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKeyChain { return nil }
-func (p *tsConfig) GetService(_ string) (IService, bool)           { return nil, false }
+func (p *tsConfig) GetSettings() IConfigSettings              { return nil }
+func (p *tsConfig) GetLogging() logger.ILogging               { return nil }
+func (p *tsConfig) GetShare() bool                            { return false }
+func (p *tsConfig) GetAddress() IAddress                      { return nil }
+func (p *tsConfig) GetNetworkKey() string                     { return "" }
+func (p *tsConfig) GetConnections() []string                  { return nil }
+func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey { return nil }
+func (p *tsConfig) GetService(_ string) (IService, bool)      { return nil, false }
 
 func TestPanicEditor(t *testing.T) {
 	t.Parallel()

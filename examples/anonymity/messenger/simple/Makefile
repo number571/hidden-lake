@@ -4,7 +4,7 @@ default: copy run
 copy:
 	cp \
 		$(ROOPATH)/examples/anonymity/_keys/priv_node1.key \
-		./node1_hlm/hls1.key
+		./node1_hlm/hls.key
 	cp \
 		$(ROOPATH)/examples/anonymity/_keys/priv_node2.key \
 		./node2_hlm/hls.key

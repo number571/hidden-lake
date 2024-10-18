@@ -1,5 +1,5 @@
 settings:
-  message_size_bytes: 8192
+  message_size_bytes: 10240
   work_size_bits: 22
   network_key: j2BR39JfDf7Bajx3
 logging:

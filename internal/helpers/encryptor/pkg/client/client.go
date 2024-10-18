@@ -48,7 +48,7 @@ func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMess
 	return pubKey, data, nil
 }
 
-func (p *sClient) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, error) {
+func (p *sClient) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
 	pubKey, err := p.fRequester.GetPubKey(pCtx)
 	if err != nil {
 		return nil, fmt.Errorf("get public key (client): %w", err)

@@ -31,7 +31,7 @@ func TestHandlePubKeyAPI(t *testing.T) {
 		return
 	}
 
-	pubKey := tgPrivKey.GetPubKeyChain()
+	pubKey := tgPrivKey.GetPubKey()
 	if pubKey.ToString() != gotPubKey.ToString() {
 		t.Error("public keys not equals")
 		return

@@ -70,7 +70,7 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: (8 << 10),
+			FMessageSizeBytes: (10 << 10),
 			FWorkSizeBits:     10,
 			FQueuePeriodMS:    5_000,
 			FFetchTimeoutMS:   30_000,
@@ -81,10 +81,7 @@ func TestApp(t *testing.T) {
 			FHTTP: testutils.TgAddrs[3],
 		},
 		FFriends: map[string]string{
-			"Alice": asymmetric.NewPrivKeyChain(
-				asymmetric.NewKEncPrivKey(),
-				asymmetric.NewSignPrivKey(),
-			).GetPubKeyChain().ToString(),
+			"Alice": asymmetric.NewPrivKey().GetPubKey().ToString(),
 		},
 	})
 	if err != nil {
@@ -92,10 +89,7 @@ func TestApp(t *testing.T) {
 		return
 	}
 
-	privKey := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
+	privKey := asymmetric.NewPrivKey()
 	app := NewApp(cfg, privKey, ".", 1)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -135,7 +129,7 @@ func TestApp(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if pubKey.ToString() != privKey.GetPubKeyChain().ToString() {
+	if pubKey.ToString() != privKey.GetPubKey().ToString() {
 		t.Errorf("public keys are not equals")
 		return
 	}

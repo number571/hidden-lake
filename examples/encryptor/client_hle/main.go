@@ -40,12 +40,12 @@ func main() {
 
 	switch os.Args[1] {
 	case "e", "encrypt":
-		readPubKey, err := os.ReadFile("pub.key")
+		readPubKey, err := os.ReadFile("pub_node1.key")
 		if err != nil {
 			panic(err)
 		}
 
-		pubKey := asymmetric.LoadPubKeyChain(string(readPubKey))
+		pubKey := asymmetric.LoadPubKey(string(readPubKey))
 		netMsg, err := hleClient.EncryptMessage(
 			ctx,
 			pubKey.GetKEncPubKey(),

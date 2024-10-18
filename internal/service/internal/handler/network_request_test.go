@@ -39,7 +39,7 @@ func TestHandleRequestAPI(t *testing.T) {
 	)
 
 	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[11])
-	node.GetListPubKeyChains().AddPubKeyChain(tgPrivKey1.GetPubKeyChain())
+	node.GetListPubKeys().AddPubKey(tgPrivKey1.GetPubKey())
 
 	testBroadcast(t, client)
 	testFetch(t, client)
@@ -133,7 +133,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 		hls_settings.CServiceMask,
 		HandleServiceTCP(cfg),
 	)
-	node.GetListPubKeyChains().AddPubKeyChain(tgPrivKey1.GetPubKeyChain())
+	node.GetListPubKeys().AddPubKey(tgPrivKey1.GetPubKey())
 
 	go func() { _ = node.GetNetworkNode().Listen(ctx) }()
 

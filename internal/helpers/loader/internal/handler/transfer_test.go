@@ -109,10 +109,7 @@ func TestHandleTransferAPI(t *testing.T) {
 
 	// PUSH MESSAGES
 
-	privKey := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
+	privKey := asymmetric.NewPrivKey()
 	client := client.NewClient(privKey, tcMessageSize)
 
 	for i := 0; i < 5; i++ {
@@ -179,7 +176,7 @@ func TestHandleTransferAPI(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
 			t.Error("got bad public key")
 			return
 		}

@@ -113,7 +113,7 @@ func (p *sRequester) BroadcastRequest(pCtx context.Context, pRequest *hls_settin
 	return nil
 }
 
-func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKeyChain, error) {
+func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKey, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -130,9 +130,9 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPu
 		return nil, utils.MergeErrors(ErrDecodeResponse, err)
 	}
 
-	result := make(map[string]asymmetric.IPubKeyChain, len(vFriends))
+	result := make(map[string]asymmetric.IPubKey, len(vFriends))
 	for _, friend := range vFriends {
-		result[friend.FAliasName] = asymmetric.LoadPubKeyChain(friend.FPublicKey)
+		result[friend.FAliasName] = asymmetric.LoadPubKey(friend.FPublicKey)
 	}
 
 	return result, nil
@@ -248,7 +248,7 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 	return nil
 }
 
-func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, error) {
+func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -260,7 +260,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKeyChain, e
 		return nil, utils.MergeErrors(ErrBadRequest, err)
 	}
 
-	pubKey := asymmetric.LoadPubKeyChain(string(res))
+	pubKey := asymmetric.LoadPubKey(string(res))
 	if pubKey == nil {
 		return nil, ErrInvalidPublicKey
 	}

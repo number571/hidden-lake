@@ -50,7 +50,7 @@ func FriendsPage(
 				return
 			}
 
-			pubKey := asymmetric.LoadPubKeyChain(pubStrKey)
+			pubKey := asymmetric.LoadPubKey(pubStrKey)
 			if pubKey == nil {
 				ErrorPage(pLogger, pCfg, "decode_public_key", "failed decode public key")(pW, pR)
 				return

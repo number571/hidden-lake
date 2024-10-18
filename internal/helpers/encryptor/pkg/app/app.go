@@ -31,7 +31,7 @@ type sApp struct {
 
 	fParallel uint64
 	fConfig   config.IConfig
-	fPrivKey  asymmetric.IPrivKeyChain
+	fPrivKey  asymmetric.IPrivKey
 
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
@@ -42,7 +42,7 @@ type sApp struct {
 
 func NewApp(
 	pCfg config.IConfig,
-	pPrivKey asymmetric.IPrivKeyChain,
+	pPrivKey asymmetric.IPrivKey,
 	pParallel uint64,
 ) types.IRunner {
 	logging := pCfg.GetLogging()

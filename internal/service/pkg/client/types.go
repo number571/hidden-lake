@@ -15,13 +15,13 @@ type IClient interface {
 	GetIndex(context.Context) (string, error)
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
-	GetPubKey(context.Context) (asymmetric.IPubKeyChain, error)
+	GetPubKey(context.Context) (asymmetric.IPubKey, error)
 
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error
 
-	GetFriends(context.Context) (map[string]asymmetric.IPubKeyChain, error)
-	AddFriend(context.Context, string, asymmetric.IPubKeyChain) error
+	GetFriends(context.Context) (map[string]asymmetric.IPubKey, error)
+	AddFriend(context.Context, string, asymmetric.IPubKey) error
 	DelFriend(context.Context, string) error
 
 	GetConnections(context.Context) ([]string, error)
@@ -36,12 +36,12 @@ type IRequester interface {
 	GetIndex(context.Context) (string, error)
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
-	GetPubKey(context.Context) (asymmetric.IPubKeyChain, error)
+	GetPubKey(context.Context) (asymmetric.IPubKey, error)
 
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error
 
-	GetFriends(context.Context) (map[string]asymmetric.IPubKeyChain, error)
+	GetFriends(context.Context) (map[string]asymmetric.IPubKey, error)
 	AddFriend(context.Context, *pkg_settings.SFriend) error
 	DelFriend(context.Context, *pkg_settings.SFriend) error
 
@@ -55,5 +55,5 @@ type IRequester interface {
 
 type IBuilder interface {
 	Request(string, request.IRequest) *pkg_settings.SRequest
-	Friend(string, asymmetric.IPubKeyChain) *pkg_settings.SFriend
+	Friend(string, asymmetric.IPubKey) *pkg_settings.SFriend
 }

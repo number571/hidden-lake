@@ -64,7 +64,7 @@ func testAddFriend(t *testing.T, client hls_client.IClient, aliasName string) {
 	err := client.AddFriend(
 		context.Background(),
 		aliasName,
-		tgPrivKey3.GetPubKeyChain(),
+		tgPrivKey3.GetPubKey(),
 	)
 	if err != nil {
 		t.Error(err)

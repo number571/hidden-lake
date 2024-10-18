@@ -30,7 +30,7 @@ type SConfig struct {
 	fFilepath string
 	fMutex    sync.RWMutex
 	fLogging  logger.ILogging
-	fFriends  map[string]asymmetric.IPubKeyChain
+	fFriends  map[string]asymmetric.IPubKey
 
 	FSettings    *SConfigSettings     `yaml:"settings"`
 	FLogging     []string             `yaml:"logging,omitempty"`
@@ -178,7 +178,7 @@ func (p *SConfig) loadLogging() error {
 }
 
 func (p *SConfig) loadPubKeys() error {
-	p.fFriends = make(map[string]asymmetric.IPubKeyChain)
+	p.fFriends = make(map[string]asymmetric.IPubKey)
 
 	mapping := make(map[string]struct{})
 	for name, val := range p.FFriends {
@@ -187,7 +187,7 @@ func (p *SConfig) loadPubKeys() error {
 		}
 		mapping[val] = struct{}{}
 
-		pubKey := asymmetric.LoadPubKeyChain(val)
+		pubKey := asymmetric.LoadPubKey(val)
 		if pubKey == nil {
 			return ErrInvalidPublicKey
 		}
@@ -198,11 +198,11 @@ func (p *SConfig) loadPubKeys() error {
 	return nil
 }
 
-func (p *SConfig) GetFriends() map[string]asymmetric.IPubKeyChain {
+func (p *SConfig) GetFriends() map[string]asymmetric.IPubKey {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	result := make(map[string]asymmetric.IPubKeyChain)
+	result := make(map[string]asymmetric.IPubKey)
 	for k, v := range p.fFriends {
 		result[k] = v
 	}

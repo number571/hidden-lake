@@ -7,12 +7,9 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 )
 
-func GetPrivKey(pKeyPath string) (asymmetric.IPrivKeyChain, error) {
+func GetPrivKey(pKeyPath string) (asymmetric.IPrivKey, error) {
 	if _, err := os.Stat(pKeyPath); os.IsNotExist(err) {
-		privKey := asymmetric.NewPrivKeyChain(
-			asymmetric.NewKEncPrivKey(),
-			asymmetric.NewSignPrivKey(),
-		)
+		privKey := asymmetric.NewPrivKey()
 		if err := os.WriteFile(pKeyPath, []byte(privKey.ToString()), 0o600); err != nil {
 			return nil, utils.MergeErrors(ErrWritePrivateKey, err)
 		}
@@ -22,7 +19,7 @@ func GetPrivKey(pKeyPath string) (asymmetric.IPrivKeyChain, error) {
 	if err != nil {
 		return nil, utils.MergeErrors(ErrReadPrivateKey, err)
 	}
-	privKey := asymmetric.LoadPrivKeyChain(string(privKeyStr))
+	privKey := asymmetric.LoadPrivKey(string(privKeyStr))
 	if privKey == nil {
 		return nil, ErrInvalidPrivateKey
 	}

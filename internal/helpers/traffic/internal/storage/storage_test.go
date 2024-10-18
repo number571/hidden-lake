@@ -21,7 +21,7 @@ const (
 	tcNetworkKey  = "_"
 	tcWorkSize    = 10
 	tcCapacity    = 16
-	tcMessageSize = (8 << 10)
+	tcMessageSize = (10 << 10)
 )
 
 func TestError(t *testing.T) {
@@ -79,10 +79,7 @@ func TestStorageHashes(t *testing.T) {
 	)
 
 	cl := client.NewClient(
-		asymmetric.NewPrivKeyChain(
-			asymmetric.NewKEncPrivKey(),
-			asymmetric.NewSignPrivKey(),
-		),
+		asymmetric.NewPrivKey(),
 		tcMessageSize,
 	)
 
@@ -134,10 +131,7 @@ func TestStoragePush(t *testing.T) {
 	)
 
 	clTest := client.NewClient(
-		asymmetric.NewPrivKeyChain(
-			asymmetric.NewKEncPrivKey(),
-			asymmetric.NewSignPrivKey(),
-		),
+		asymmetric.NewPrivKey(),
 		tcMessageSize,
 	)
 
@@ -153,10 +147,7 @@ func TestStoragePush(t *testing.T) {
 	}
 
 	cl := client.NewClient(
-		asymmetric.NewPrivKeyChain(
-			asymmetric.NewKEncPrivKey(),
-			asymmetric.NewSignPrivKey(),
-		),
+		asymmetric.NewPrivKey(),
 		tcMessageSize,
 	)
 
@@ -207,10 +198,7 @@ func TestStorage(t *testing.T) {
 	)
 
 	cl := client.NewClient(
-		asymmetric.NewPrivKeyChain(
-			asymmetric.NewKEncPrivKey(),
-			asymmetric.NewSignPrivKey(),
-		),
+		asymmetric.NewPrivKey(),
 		tcMessageSize,
 	)
 
@@ -268,7 +256,7 @@ func TestStorage(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
 			t.Error("load public key != init public key")
 			return
 		}
@@ -288,7 +276,7 @@ func TestStorage(t *testing.T) {
 
 func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_message.IMessage, error) {
 	msg, err := cl.EncryptMessage(
-		cl.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
+		cl.GetPrivKey().GetKEncPrivKey().GetPubKey(),
 		payload.NewPayload64(tcHead, []byte(data)).ToBytes(),
 	)
 	if err != nil {

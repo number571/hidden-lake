@@ -54,7 +54,7 @@ func (p *sEditor) UpdateConnections(pConns []string) error {
 	return nil
 }
 
-func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKeyChain) error {
+func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -83,7 +83,7 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKeyChain) err
 	return nil
 }
 
-func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKeyChain) map[string]string {
+func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKey) map[string]string {
 	result := make(map[string]string, len(pPubKeys))
 	for name, pubKey := range pPubKeys {
 		result[name] = pubKey.ToString()
@@ -91,7 +91,7 @@ func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKeyChain) map[string]st
 	return result
 }
 
-func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKeyChain) bool {
+func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
 	mapping := make(map[string]struct{})
 	for _, pubKey := range pPubKeys {
 		pubStr := pubKey.ToString()

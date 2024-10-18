@@ -24,7 +24,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 	return func(
 		pCtx context.Context,
 		pNode anonymity.INode,
-		pSender asymmetric.IPubKeyChain,
+		pSender asymmetric.IPubKey,
 		pReqBytes []byte,
 	) ([]byte, error) {
 		logger := pNode.GetLogger()

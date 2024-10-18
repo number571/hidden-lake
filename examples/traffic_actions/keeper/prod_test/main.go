@@ -21,9 +21,9 @@ import (
 const (
 	cPldHead     = 0x1
 	cKeySize     = 4096
-	cMsgSize     = (8 << 10)
+	cMsgSize     = (10 << 10)
 	cWrkSize     = 22
-	cPrivKeyPath = "../_keys/priv.key"
+	cPrivKeyPath = "../_keys/priv_node1.key"
 )
 
 // for i in {1..100}; do echo $i; go run .; done;
@@ -43,7 +43,7 @@ func main() {
 		panic(err)
 	}
 
-	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
+	privKey := asymmetric.LoadPrivKey(string(readPrivKey))
 	client := client.NewClient(privKey, cMsgSize)
 
 	for i, addrHLT := range gAddrHLTs {

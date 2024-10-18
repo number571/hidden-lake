@@ -31,7 +31,7 @@ const (
 	tcCapacity       = 32
 	tcWorkSize       = 10
 	tcNetworkKey     = "_"
-	tcMessageSize    = (8 << 10)
+	tcMessageSize    = (10 << 10)
 	tcHead           = uint32(123)
 	tcBody           = "hello, world!"
 	databaseTemplate = "database_test_%s.db"
@@ -159,10 +159,7 @@ func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (
 }
 
 func testNewClient() client.IClient {
-	privKey := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
+	privKey := asymmetric.NewPrivKey()
 	return client.NewClient(privKey, tcMessageSize)
 }
 

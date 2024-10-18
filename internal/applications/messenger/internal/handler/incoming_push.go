@@ -45,7 +45,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		fPubKey := asymmetric.LoadPubKeyChain(pR.Header.Get(hls_settings.CHeaderPublicKey))
+		fPubKey := asymmetric.LoadPubKey(pR.Header.Get(hls_settings.CHeaderPublicKey))
 		if fPubKey == nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")

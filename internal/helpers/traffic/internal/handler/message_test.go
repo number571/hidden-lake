@@ -25,7 +25,7 @@ func TestHandleMessageAPI(t *testing.T) {
 
 	client := testNewClient()
 	msg, err := client.EncryptMessage(
-		client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(),
+		client.GetPrivKey().GetKEncPrivKey().GetPubKey(),
 		payload.NewPayload64(0, []byte(tcBody)).ToBytes(),
 	)
 	if err != nil {
@@ -55,7 +55,7 @@ func TestHandleMessageAPI(t *testing.T) {
 		return
 	}
 
-	if !bytes.Equal(gotPubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+	if !bytes.Equal(gotPubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
 		t.Error("invalid public keys")
 		return
 	}

@@ -26,7 +26,7 @@ const (
 )
 
 const (
-	messageSize = (8 << 10) // 8KiB
+	messageSize = (10 << 10) // 8KiB
 	networkKey  = "some-network-key"
 	workSize    = 10
 	keySize     = 1024
@@ -37,7 +37,7 @@ const (
 )
 
 var (
-	privKey      asymmetric.IPrivKeyChain
+	privKey      asymmetric.IPrivKey
 	pushedHashes = make([][]byte, 0, messageCount)
 )
 
@@ -46,7 +46,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	privKey = asymmetric.LoadPrivKeyChain(string(readPrivKey))
+	privKey = asymmetric.LoadPrivKey(string(readPrivKey))
 }
 
 func main() {
@@ -96,7 +96,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 
 	for i := 0; i < messageCount; i++ {
 		msg, err := client.EncryptMessage(
-			client.GetPrivKeyChain().GetKEncPrivKey().GetPubKey(), // self encrypt
+			client.GetPrivKey().GetKEncPrivKey().GetPubKey(), // self encrypt
 			payload.NewPayload64(uint64(i), []byte("hello, world!")).ToBytes(),
 		)
 		if err != nil {
@@ -159,7 +159,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return err
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
 			return errors.New("got invalid public key")
 		}
 

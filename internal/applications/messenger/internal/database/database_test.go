@@ -37,14 +37,8 @@ func TestDatabase(t *testing.T) {
 	}
 	defer db.Close()
 
-	iam := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	).GetPubKeyChain()
-	friend := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	).GetPubKeyChain()
+	iam := asymmetric.NewPrivKey().GetPubKey()
+	friend := asymmetric.NewPrivKey().GetPubKey()
 
 	rel := NewRelation(iam, friend)
 	err1 := db.Push(rel, NewMessage(true, []byte(tcBody)))

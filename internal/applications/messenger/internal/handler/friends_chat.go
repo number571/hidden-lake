@@ -253,7 +253,7 @@ func getReceiverPubKey(
 	pCtx context.Context,
 	client hls_client.IClient,
 	aliasName string,
-) (asymmetric.IPubKeyChain, error) {
+) (asymmetric.IPubKey, error) {
 	friends, err := client.GetFriends(pCtx)
 	if err != nil {
 		return nil, utils.MergeErrors(ErrGetFriends, err)

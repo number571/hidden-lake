@@ -65,7 +65,7 @@ func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pN
 				return
 			}
 
-			pubKey := asymmetric.LoadPubKeyChain(vFriend.FPublicKey)
+			pubKey := asymmetric.LoadPubKey(vFriend.FPublicKey)
 			if pubKey == nil {
 				pLogger.PushWarn(logBuilder.WithMessage("decode_key"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
@@ -79,7 +79,7 @@ func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pN
 				return
 			}
 
-			pNode.GetListPubKeyChains().AddPubKeyChain(pubKey)
+			pNode.GetListPubKeys().AddPubKey(pubKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update friends")
@@ -101,7 +101,7 @@ func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pN
 				return
 			}
 
-			pNode.GetListPubKeyChains().DelPubKeyChain(pubKey)
+			pNode.GetListPubKeys().DelPubKey(pubKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete friend")

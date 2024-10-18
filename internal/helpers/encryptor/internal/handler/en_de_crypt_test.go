@@ -28,7 +28,7 @@ func TestHandleEncryptDecryptAPI(t *testing.T) {
 	)
 
 	// same private key in the HLE
-	pubKey := tgPrivKey.GetPubKeyChain()
+	pubKey := tgPrivKey.GetPubKey()
 	data := []byte("hello, world!")
 
 	netMsg, err := hleClient.EncryptMessage(

@@ -108,7 +108,7 @@ func HandleNetworkRequestAPI(
 func unwrapRequest(
 	pConfig config.IConfig,
 	pRequest pkg_settings.SRequest,
-) (asymmetric.IPubKeyChain, request.IRequest, int) {
+) (asymmetric.IPubKey, request.IRequest, int) {
 	friends := pConfig.GetFriends()
 
 	pubKey, ok := friends[pRequest.FReceiver]

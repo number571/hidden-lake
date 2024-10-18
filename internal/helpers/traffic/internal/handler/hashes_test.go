@@ -25,11 +25,8 @@ func TestHandleHashesAPI(t *testing.T) {
 	srv, cancel, wDB, hltClient := testAllRun(addr)
 	defer testAllFree(addr, srv, cancel, wDB)
 
-	privKey := asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
-	pubKey := privKey.GetPubKeyChain()
+	privKey := asymmetric.NewPrivKey()
+	pubKey := privKey.GetPubKey()
 
 	client := client.NewClient(privKey, tcMessageSize)
 

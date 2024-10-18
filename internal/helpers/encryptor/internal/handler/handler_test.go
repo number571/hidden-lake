@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	tcMessageSize = (8 << 10)
+	tcMessageSize = (10 << 10)
 	tcNetworkKey  = "_"
 	tcHead        = uint32(123)
 	tcBody        = "hello, world!"
@@ -21,10 +21,7 @@ const (
 )
 
 var (
-	tgPrivKey = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
+	tgPrivKey = asymmetric.NewPrivKey()
 )
 
 func testRunService(addr string) *http.Server {
@@ -48,7 +45,7 @@ func testRunService(addr string) *http.Server {
 	mux.HandleFunc(settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(settings.CHandleMessageEncryptPath, HandleMessageEncryptAPI(cfg, logger, client, 1))
 	mux.HandleFunc(settings.CHandleMessageDecryptPath, HandleMessageDecryptAPI(cfg, logger, client))
-	mux.HandleFunc(settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, client.GetPrivKeyChain().GetPubKeyChain()))
+	mux.HandleFunc(settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, client.GetPrivKey().GetPubKey()))
 	mux.HandleFunc(settings.CHandleConfigSettings, HandleConfigSettingsAPI(cfg, logger))
 
 	srv := &http.Server{

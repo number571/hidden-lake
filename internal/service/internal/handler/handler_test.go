@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	tcMessageSize   = (8 << 10)
+	tcMessageSize   = (10 << 10)
 	tcWorkSize      = 10
 	tcQueuePeriod   = 5_000
 	tcFetchTimeout  = 30_000
@@ -36,18 +36,9 @@ const (
 )
 
 var (
-	tgPrivKey1 = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
-	tgPrivKey2 = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
-	tgPrivKey3 = asymmetric.NewPrivKeyChain(
-		asymmetric.NewKEncPrivKey(),
-		asymmetric.NewSignPrivKey(),
-	)
+	tgPrivKey1 = asymmetric.NewPrivKey()
+	tgPrivKey2 = asymmetric.NewPrivKey()
+	tgPrivKey3 = asymmetric.NewPrivKey()
 )
 
 const (
@@ -58,7 +49,7 @@ const (
 
 var (
 	tcConfig = fmt.Sprintf(`settings:
-  message_size_bytes: 8192
+  message_size_bytes: 10240
   work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 1000
@@ -82,8 +73,8 @@ services:
   test_service3: 
     host: test_address3
 `,
-		tgPrivKey1.GetPubKeyChain().ToString(),
-		tgPrivKey2.GetPubKeyChain().ToString(),
+		tgPrivKey1.GetPubKey().ToString(),
+		tgPrivKey2.GetPubKey().ToString(),
 	)
 )
 
@@ -238,7 +229,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			),
 			asymmetric.NewKEncPrivKey().GetPubKey(),
 		),
-		asymmetric.NewListPubKeyChains(),
+		asymmetric.NewListPubKeys(),
 	)
 	return node
 }

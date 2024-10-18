@@ -47,7 +47,7 @@ func TestApp(t *testing.T) {
 		tcPathConfig,
 		&config.SConfig{
 			FSettings: &config.SConfigSettings{
-				FMessageSizeBytes: (8 << 10),
+				FMessageSizeBytes: (10 << 10),
 				FWorkSizeBits:     10,
 				FMessagesCapacity: 32,
 				FNetworkKey:       "_",

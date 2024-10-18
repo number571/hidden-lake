@@ -35,13 +35,13 @@ func main() {
 		}),
 	})
 
-	readPrivKey, err := os.ReadFile("../_keys/priv.key")
+	readPrivKey, err := os.ReadFile("../_keys/priv_node1.key")
 	if err != nil {
 		panic(err)
 	}
 
-	privKey := asymmetric.LoadPrivKeyChain(string(readPrivKey))
-	client := client.NewClient(privKey, (8 << 10))
+	privKey := asymmetric.LoadPrivKey(string(readPrivKey))
+	client := client.NewClient(privKey, (10 << 10))
 
 	if len(os.Args) < 2 {
 		panic("len os.Args < 2")
@@ -119,7 +119,7 @@ func main() {
 			panic("payload.head != set.head")
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKeyChain().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
 			panic("public key is incorrect")
 		}
 
