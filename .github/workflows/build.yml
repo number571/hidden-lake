@@ -15,7 +15,7 @@ jobs:
     - name: Set up Go 1.23
       uses: actions/setup-go@v2
       with:
-          go-version: ^1.23.0
+          go-version: 1.23.0
     - name: Go-peer version
       run: export PATH=$PATH:$(go env GOPATH)/bin && go version
     - name: Hidden-Lake downloading...
