@@ -1,32 +1,5 @@
 package testutils
 
-import (
-	"math/rand"
-	"time"
-)
-
-func PseudoRandomBytes(pSeed int) []byte {
-	r := rand.New(rand.NewSource(int64(pSeed))) //nolint:gosec
-	result := make([]byte, 0, 16)
-	for i := 0; i < 16; i++ {
-		result = append(result, byte(r.Intn(256)))
-	}
-	return result
-}
-
-func TryN(n int, t time.Duration, f func() error) error {
-	var resErr error
-	for i := 0; i < n; i++ {
-		time.Sleep(t)
-		if err := f(); err != nil {
-			resErr = err
-			continue
-		}
-		return nil
-	}
-	return resErr
-}
-
 const (
 	TcUnknownHost = "localhost:65535"
 )
