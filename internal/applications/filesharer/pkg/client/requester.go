@@ -2,9 +2,9 @@ package client
 
 import (
 	"context"
+	"crypto/sha256"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/utils"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
@@ -42,7 +42,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 	}
 
 	for _, info := range list {
-		if len(encoding.HexDecode(info.FHash)) != hashing.CHasherSize {
+		if len(info.FHash) != (sha256.Size << 1) {
 			return nil, ErrInvalidResponse
 		}
 	}

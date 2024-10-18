@@ -2,13 +2,12 @@ package handler
 
 import (
 	"context"
+	"crypto/sha256"
 	"html/template"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/stream"
@@ -103,7 +102,7 @@ func downloadFile(
 	fileName := query.Get("file_name")
 
 	fileHash := query.Get("file_hash")
-	if fileHash == "" || len(encoding.HexDecode(fileHash)) != hashing.CHasherSize {
+	if fileHash == "" || len(fileHash) != (sha256.Size<<1) {
 		ErrorPage(pLogger, pCfg, "file_hash_error", "incorrect file hash")(pW, pR)
 		return
 	}
