@@ -229,7 +229,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			),
 			asymmetric.NewKEMPrivKey().GetPubKey(),
 		),
-		asymmetric.NewListPubKeys(),
+		asymmetric.NewMapPubKeys(),
 	)
 	return node
 }

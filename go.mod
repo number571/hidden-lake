@@ -3,7 +3,7 @@ module github.com/number571/hidden-lake
 go 1.23
 
 require (
-	github.com/number571/go-peer v1.6.22-0.20241018104010-7850232add22
+	github.com/number571/go-peer v1.7.0
 	golang.org/x/net v0.30.0
 )
 

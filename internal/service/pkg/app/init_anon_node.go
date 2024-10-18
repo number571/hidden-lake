@@ -99,10 +99,10 @@ func (p *sApp) initAnonNode() error {
 			client,
 			psdPubKey,
 		),
-		func() asymmetric.IListPubKeys {
-			f2f := asymmetric.NewListPubKeys()
+		func() asymmetric.IMapPubKeys {
+			f2f := asymmetric.NewMapPubKeys()
 			for _, pubKey := range cfg.GetFriends() {
-				f2f.AddPubKey(pubKey)
+				f2f.SetPubKey(pubKey.GetDSAPubKey(), pubKey.GetKEMPubKey())
 			}
 			return f2f
 		}(),
