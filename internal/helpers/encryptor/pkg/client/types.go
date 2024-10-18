@@ -15,8 +15,8 @@ type IClient interface {
 
 	GetPubKey(context.Context) (asymmetric.IPubKey, error)
 
-	EncryptMessage(context.Context, asymmetric.IKEncPubKey, payload.IPayload64) (net_message.IMessage, error)
-	DecryptMessage(context.Context, net_message.IMessage) (asymmetric.ISignPubKey, payload.IPayload64, error)
+	EncryptMessage(context.Context, asymmetric.IKEMPubKey, payload.IPayload64) (net_message.IMessage, error)
+	DecryptMessage(context.Context, net_message.IMessage) (asymmetric.IDSAPubKey, payload.IPayload64, error)
 }
 
 type IRequester interface {
@@ -25,6 +25,6 @@ type IRequester interface {
 
 	GetPubKey(context.Context) (asymmetric.IPubKey, error)
 
-	EncryptMessage(context.Context, asymmetric.IKEncPubKey, payload.IPayload64) (net_message.IMessage, error)
-	DecryptMessage(context.Context, net_message.IMessage) (asymmetric.ISignPubKey, payload.IPayload64, error)
+	EncryptMessage(context.Context, asymmetric.IKEMPubKey, payload.IPayload64) (net_message.IMessage, error)
+	DecryptMessage(context.Context, net_message.IMessage) (asymmetric.IDSAPubKey, payload.IPayload64, error)
 }

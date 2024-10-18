@@ -114,7 +114,7 @@ func TestHandleTransferAPI(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		encMsg, err := client.EncryptMessage(
-			privKey.GetKEncPrivKey().GetPubKey(),
+			privKey.GetKEMPrivKey().GetPubKey(),
 			payload.NewPayload64(
 				uint64(i),
 				[]byte("hello, world!"),
@@ -176,7 +176,7 @@ func TestHandleTransferAPI(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
 			t.Error("got bad public key")
 			return
 		}

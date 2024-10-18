@@ -66,7 +66,7 @@ func HandleNetworkRequestAPI(
 		case http.MethodPut:
 			err := pNode.SendPayload(
 				pCtx,
-				pubKey.GetKEncPubKey(),
+				pubKey.GetKEMPubKey(),
 				payload.NewPayload64(uint64(pkg_settings.CServiceMask), req.ToBytes()),
 			)
 			if err != nil {
@@ -82,7 +82,7 @@ func HandleNetworkRequestAPI(
 		case http.MethodPost:
 			respBytes, err := pNode.FetchPayload(
 				pCtx,
-				pubKey.GetKEncPubKey(),
+				pubKey.GetKEMPubKey(),
 				payload.NewPayload32(pkg_settings.CServiceMask, req.ToBytes()),
 			)
 			if err != nil {

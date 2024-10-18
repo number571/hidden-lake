@@ -61,7 +61,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
-func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEncPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
+func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEMPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -85,7 +85,7 @@ func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKE
 	return msg, nil
 }
 
-func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.ISignPubKey, payload.IPayload64, error) {
+func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IDSAPubKey, payload.IPayload64, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -102,7 +102,7 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 		return nil, nil, utils.MergeErrors(ErrDecodeResponse, err)
 	}
 
-	pubKey := asymmetric.LoadSignPubKey(encoding.HexDecode(result.FPublicKey))
+	pubKey := asymmetric.LoadDSAPubKey(encoding.HexDecode(result.FPublicKey))
 	if pubKey == nil {
 		return nil, nil, ErrInvalidPublicKey
 	}

@@ -133,7 +133,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 			ToBytes(),
 	)
 
-	respBytes, err := node.FetchPayload(ctx, tgPrivKey1.GetPubKey().GetKEncPubKey(), pld)
+	respBytes, err := node.FetchPayload(ctx, tgPrivKey1.GetPubKey().GetKEMPubKey(), pld)
 	if err != nil {
 		return node, cancel, err
 	}

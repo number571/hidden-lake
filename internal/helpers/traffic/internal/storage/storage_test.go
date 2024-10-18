@@ -256,7 +256,7 @@ func TestStorage(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
 			t.Error("load public key != init public key")
 			return
 		}
@@ -276,7 +276,7 @@ func TestStorage(t *testing.T) {
 
 func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_message.IMessage, error) {
 	msg, err := cl.EncryptMessage(
-		cl.GetPrivKey().GetKEncPrivKey().GetPubKey(),
+		cl.GetPrivKey().GetKEMPrivKey().GetPubKey(),
 		payload.NewPayload64(tcHead, []byte(data)).ToBytes(),
 	)
 	if err != nil {

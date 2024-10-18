@@ -48,7 +48,7 @@ func main() {
 		pubKey := asymmetric.LoadPubKey(string(readPubKey))
 		netMsg, err := hleClient.EncryptMessage(
 			ctx,
-			pubKey.GetKEncPubKey(),
+			pubKey.GetKEMPubKey(),
 			payload.NewPayload64(uint64(settings.CServiceMask), []byte(os.Args[2])),
 		)
 		if err != nil {

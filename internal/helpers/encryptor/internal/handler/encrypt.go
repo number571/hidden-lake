@@ -41,7 +41,7 @@ func HandleMessageEncryptAPI(
 			return
 		}
 
-		pubKey := asymmetric.LoadKEncPubKey(encoding.HexDecode(vContainer.FPublicKey))
+		pubKey := asymmetric.LoadKEMPubKey(encoding.HexDecode(vContainer.FPublicKey))
 		if pubKey == nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_pubkey"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode public key")

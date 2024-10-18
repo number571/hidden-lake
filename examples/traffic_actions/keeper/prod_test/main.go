@@ -64,7 +64,7 @@ func main() {
 		)
 
 		msg, err := client.EncryptMessage(
-			privKey.GetKEncPrivKey().GetPubKey(),
+			privKey.GetKEMPrivKey().GetPubKey(),
 			payload.NewPayload64(cPldHead, []byte(randString)).ToBytes(),
 		)
 		if err != nil {

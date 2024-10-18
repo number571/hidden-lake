@@ -24,7 +24,7 @@ func TestErrorsAPI(t *testing.T) {
 		),
 	)
 
-	if _, err := client.EncryptMessage(context.Background(), tgPrivKey.GetKEncPrivKey().GetPubKey(), payload.NewPayload64(1, []byte{123})); err == nil {
+	if _, err := client.EncryptMessage(context.Background(), tgPrivKey.GetKEMPrivKey().GetPubKey(), payload.NewPayload64(1, []byte{123})); err == nil {
 		t.Error("success encrypt message with unknown host")
 		return
 	}

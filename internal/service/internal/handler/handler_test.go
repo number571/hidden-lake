@@ -227,7 +227,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 				tgPrivKey1,
 				tcMessageSize,
 			),
-			asymmetric.NewKEncPrivKey().GetPubKey(),
+			asymmetric.NewKEMPrivKey().GetPubKey(),
 		),
 		asymmetric.NewListPubKeys(),
 	)

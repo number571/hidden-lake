@@ -33,7 +33,7 @@ func TestHandleEncryptDecryptAPI(t *testing.T) {
 
 	netMsg, err := hleClient.EncryptMessage(
 		context.Background(),
-		pubKey.GetKEncPubKey(),
+		pubKey.GetKEMPubKey(),
 		payload.NewPayload64(1, data),
 	)
 	if err != nil {

@@ -74,7 +74,7 @@ func main() {
 		}
 
 		msg, err := client.EncryptMessage(
-			privKey.GetKEncPrivKey().GetPubKey(),
+			privKey.GetKEMPrivKey().GetPubKey(),
 			payload.NewPayload64(cPldHead, []byte(args[1])).ToBytes(),
 		)
 		if err != nil {
@@ -119,7 +119,7 @@ func main() {
 			panic("payload.head != set.head")
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetSignPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
 			panic("public key is incorrect")
 		}
 
