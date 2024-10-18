@@ -31,13 +31,13 @@ const (
 )
 
 const (
-	CDefaultMessageSizeBytes     = (10 << 10) // 8192-B
-	CDefaultKeySizeBits          = (4 << 10)  // 4096-b
-	CDefaultFetchTimeoutMS       = 60_000     // 60 seconds
-	CDefaultQueuePeriodMS        = 5_000      // 5 seconds
-	CDefaultWorkSizeBits         = 0          // bits
-	CDefaultRandQueuePeriodMS    = 0          // 0 seconds
-	CDefaultRandMessageSizeBytes = 0          // 0 bytes
+	CDefaultMessageSizeBytes     = (8 << 10) // 8192-B
+	CDefaultKeySizeBits          = (4 << 10) // 4096-b
+	CDefaultFetchTimeoutMS       = 60_000    // 60 seconds
+	CDefaultQueuePeriodMS        = 5_000     // 5 seconds
+	CDefaultWorkSizeBits         = 0         // bits
+	CDefaultRandQueuePeriodMS    = 0         // 0 seconds
+	CDefaultRandMessageSizeBytes = 0         // 0 bytes
 	CDefaultNetworkKey           = ""
 )
 

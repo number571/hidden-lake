@@ -52,7 +52,7 @@ Default config `hlt.yml`
 
 ```yaml
 settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
 logging:
   - info
   - warn
@@ -99,7 +99,7 @@ $ go run ./main.go r cb3c6558fe0cb64d0d2bad42dffc0f0d9b0f144bc24bb8f2ba06313af92
 
 ```yaml
 settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
   work_size_bits: 22
   messages_capacity: 2048
   rand_message_size_bytes: 4096
@@ -233,5 +233,5 @@ Content-Length: 126
 ```
 
 ```json
-{"message_size_bytes":10240,"work_size_bits":22,"messages_capacity":2048,"network_key":"j2BR39JfDf7Bajx3"}
+{"message_size_bytes":8192,"work_size_bits":22,"messages_capacity":2048,"network_key":"j2BR39JfDf7Bajx3"}
 ```

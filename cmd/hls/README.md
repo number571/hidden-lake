@@ -89,7 +89,7 @@ Default config `hls.yml`
 
 ```yaml
 settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
 logging:
@@ -216,7 +216,7 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 
 ```yaml
 settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
   work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
@@ -414,7 +414,7 @@ Content-Length: 120
 ```
 
 ```json
-{"message_size_bytes":10240,"queue_period_ms":5000,"work_size_bits":22}
+{"message_size_bytes":8192,"queue_period_ms":5000,"work_size_bits":22}
 ```
 
 ### 4. /api/network/online

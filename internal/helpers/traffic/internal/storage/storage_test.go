@@ -21,7 +21,7 @@ const (
 	tcNetworkKey  = "_"
 	tcWorkSize    = 10
 	tcCapacity    = 16
-	tcMessageSize = (10 << 10)
+	tcMessageSize = (8 << 10)
 )
 
 func TestError(t *testing.T) {

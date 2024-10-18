@@ -31,7 +31,7 @@ const (
 	tcCapacity       = 32
 	tcWorkSize       = 10
 	tcNetworkKey     = "_"
-	tcMessageSize    = (10 << 10)
+	tcMessageSize    = (8 << 10)
 	tcHead           = uint32(123)
 	tcBody           = "hello, world!"
 	databaseTemplate = "database_test_%s.db"

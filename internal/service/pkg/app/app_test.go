@@ -70,7 +70,7 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: (10 << 10),
+			FMessageSizeBytes: (8 << 10),
 			FWorkSizeBits:     10,
 			FQueuePeriodMS:    5_000,
 			FFetchTimeoutMS:   30_000,

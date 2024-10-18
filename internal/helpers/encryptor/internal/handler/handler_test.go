@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	tcMessageSize = (10 << 10)
+	tcMessageSize = (8 << 10)
 	tcNetworkKey  = "_"
 	tcHead        = uint32(123)
 	tcBody        = "hello, world!"

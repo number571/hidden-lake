@@ -1,5 +1,5 @@
 settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
   messages_capacity: 2048
   work_size_bits: %d
   network_key: %s

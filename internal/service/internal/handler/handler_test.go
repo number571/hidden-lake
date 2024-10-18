@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	tcMessageSize   = (10 << 10)
+	tcMessageSize   = (8 << 10)
 	tcWorkSize      = 10
 	tcQueuePeriod   = 5_000
 	tcFetchTimeout  = 30_000
@@ -49,7 +49,7 @@ const (
 
 var (
 	tcConfig = fmt.Sprintf(`settings:
-  message_size_bytes: 10240
+  message_size_bytes: 8192
   work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 1000

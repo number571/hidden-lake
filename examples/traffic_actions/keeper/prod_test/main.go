@@ -21,7 +21,7 @@ import (
 const (
 	cPldHead     = 0x1
 	cKeySize     = 4096
-	cMsgSize     = (10 << 10)
+	cMsgSize     = (8 << 10)
 	cWrkSize     = 22
 	cPrivKeyPath = "../_keys/priv_node1.key"
 )

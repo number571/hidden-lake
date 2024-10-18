@@ -45,7 +45,7 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if sett.GetMessageSizeBytes() != 10240 {
+	if sett.GetMessageSizeBytes() != (8 << 10) {
 		t.Error("invalid message size")
 		return
 	}

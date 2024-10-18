@@ -26,7 +26,7 @@ const (
 )
 
 const (
-	messageSize = (10 << 10) // 8KiB
+	messageSize = (8 << 10) // 8KiB
 	networkKey  = "some-network-key"
 	workSize    = 10
 	keySize     = 1024

@@ -41,7 +41,7 @@ func main() {
 	}
 
 	privKey := asymmetric.LoadPrivKey(string(readPrivKey))
-	client := client.NewClient(privKey, (10 << 10))
+	client := client.NewClient(privKey, (8 << 10))
 
 	if len(os.Args) < 2 {
 		panic("len os.Args < 2")

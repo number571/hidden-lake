@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	tcMessageSize = (10 << 10)
+	tcMessageSize = (8 << 10)
 	tcWorkSize    = 10
 	tcCapacity    = 16
 	tcNetworkKey  = "_"
