@@ -14,6 +14,7 @@ build:
 		do \
 			for platform in linux windows darwin; \
 			do \
+				echo "build $${app}_$${arch}_$${platform}"; \
 				if [[ $$platform == "windows" ]] \
 				then \
 					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -o $(BINPATH)/$${app}_$${arch}_$${platform}.exe ./$${app}; \
