@@ -59,7 +59,7 @@ func (p *sAdaptedConsumer) Consume(pCtx context.Context) (net_message.IMessage, 
 	return p.loadMessage(pCtx)
 }
 
-// curl 'https://api.chatingar.com/api/comment/65f7214f5b65dcbdedcca3fb?page=1' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site'
+// curl 'https://api.chatingar.com/api/comment/66a210bce354751661054a11?page=1' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site'
 func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessage, error) {
 	select {
 	case msg := <-p.fMessages:
@@ -81,6 +81,12 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 	if err != nil {
 		return nil, utils.MergeErrors(ErrBuildRequest, err)
 	}
+
+	// reqBytes, err := httputil.DumpRequest(req, false)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("api/comment", string(reqBytes))
 
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(autils.EnrichRequest(req))
@@ -131,7 +137,7 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 	}
 }
 
-// curl 'https://api.chatingar.com/api/post/65f7214f5b65dcbdedcca3fb' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site'
+// curl 'https://api.chatingar.com/api/post/66a210bce354751661054a11' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site'
 func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, error) {
 	req, err := http.NewRequestWithContext(
 		pCtx,
@@ -142,6 +148,12 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 	if err != nil {
 		return 0, utils.MergeErrors(ErrBuildRequest, err)
 	}
+
+	// reqBytes, err := httputil.DumpRequest(req, false)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("api/post", string(reqBytes))
 
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(autils.EnrichRequest(req))

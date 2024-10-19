@@ -21,7 +21,7 @@ type sAdaptedProducer struct {
 	fPostID string
 }
 
-// curl 'https://api.chatingar.com/api/comment' -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'content-type: application/json' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' --data-raw '{"postId":"65f7214f5b65dcbdedcca3fb","body":"\"123\""}'
+// curl 'https://api.chatingar.com/api/comment' -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://chatingar.com/' -H 'content-type: application/json' -H 'Origin: https://chatingar.com' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' --data-raw '{"postId":"66a210bce354751661054a11","body":"\"123\""}'
 func NewAdaptedProducer(pPostID string) adapters.IAdaptedProducer {
 	return &sAdaptedProducer{
 		fPostID: pPostID,
