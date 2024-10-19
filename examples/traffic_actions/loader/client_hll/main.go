@@ -42,7 +42,7 @@ var (
 )
 
 func init() {
-	readPrivKey, err := os.ReadFile("priv.key")
+	readPrivKey, err := os.ReadFile("priv_node1.key")
 	if err != nil {
 		panic(err)
 	}
