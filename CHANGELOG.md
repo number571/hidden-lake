@@ -9,7 +9,7 @@
 ### IMPROVEMENTS
 
 - Update `cmd/hlm`: add ping message
-- Update `cmd`: RSA -> Kyber768/DilithiumM3
+- Update `cmd`: RSA-4096 -> ML-KEM-768, ML-DSA-65
 
 <!-- ... -->
 
