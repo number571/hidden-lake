@@ -71,5 +71,5 @@ const (
 	CHandleConfigFriendsPath  = "/api/config/friends"
 	CHandleNetworkOnlinePath  = "/api/network/online"
 	CHandleNetworkRequestPath = "/api/network/request"
-	CHandleNetworkPubKeyPath  = "/api/network/pubkey"
+	CHandleServicePubKeyPath  = "/api/service/pubkey"
 )

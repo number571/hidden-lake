@@ -158,7 +158,7 @@ Transfer-Encoding: chunked
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET -H 'Accept: application/json' http://localhost:9551/api/service/pubkey
+curl -i -X GET -H 'Accept: application/json' 'http://localhost:9551/api/service/pubkey?separated=false'
 ```
 
 #### 3.1. GET Response

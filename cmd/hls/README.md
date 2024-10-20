@@ -282,7 +282,7 @@ and put result to "hex_data" HLS API
 3. GET             /api/config/settings
 4. GET/DELETE      /api/network/online
 5. POST/PUT        /api/network/request
-6. GET             /api/network/pubkey
+6. GET             /api/service/pubkey
 ```
 
 ### 1. /api/config/connects
@@ -509,12 +509,12 @@ Content-Type: text/plain; charset=utf-8
 success: broadcast
 ```
 
-### 6. /api/network/pubkey
+### 6. /api/service/pubkey
 
 #### 6.1. GET Request
 
 ```bash
-curl -i -X GET -H 'Accept: application/json' http://localhost:9572/api/network/pubkey
+curl -i -X GET -H 'Accept: application/json' 'http://localhost:9572/api/service/pubkey?separated=false'
 ```
 
 #### 6.1. GET Response

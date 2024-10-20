@@ -25,7 +25,7 @@ const (
 	cHandleConfigFriendsTemplate  = "%s" + hls_settings.CHandleConfigFriendsPath
 	cHandleNetworkOnlineTemplate  = "%s" + hls_settings.CHandleNetworkOnlinePath
 	cHandleNetworkRequestTemplate = "%s" + hls_settings.CHandleNetworkRequestPath
-	cHandleNetworkPubKeyTemplate  = "%s" + hls_settings.CHandleNetworkPubKeyPath
+	cHandleServicePubKeyTemplate  = "%s" + hls_settings.CHandleServicePubKeyPath
 )
 
 type sRequester struct {
@@ -253,7 +253,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error)
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleNetworkPubKeyTemplate, p.fHost),
+		fmt.Sprintf(cHandleServicePubKeyTemplate, p.fHost),
 		nil,
 	)
 	if err != nil {

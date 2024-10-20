@@ -6,6 +6,11 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- Update `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
+- Update `cmd/hls|cmd/hle`: add parameter to /api/network/pubkey => separated=false|true
+
 <!-- ... -->
 
 ## v1.7.0

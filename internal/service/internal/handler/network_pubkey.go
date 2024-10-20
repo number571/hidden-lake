@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -11,7 +12,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
-func HandleNetworkPubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
+func HandleServicePubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
 
@@ -24,7 +25,23 @@ func HandleNetworkPubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 		client := pNode.GetMessageQueue().GetClient()
 		pubKey := client.GetPrivKey().GetPubKey()
 
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, pubKey.ToString())
+		separated := pR.URL.Query().Get("separated")
+		switch separated {
+		case "true":
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, [2]string{
+				encoding.HexEncode(pubKey.GetKEMPubKey().ToBytes()),
+				encoding.HexEncode(pubKey.GetDSAPubKey().ToBytes()),
+			})
+			return
+		case "", "false":
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, pubKey.ToString())
+			return
+		default:
+			pLogger.PushWarn(logBuilder.WithMessage("incorrect_separeted"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect separated type")
+			return
+		}
 	}
 }
