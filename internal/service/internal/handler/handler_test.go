@@ -53,7 +53,6 @@ var (
   work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 1000
-  rand_message_size_bytes: 4096
   network_key: test
 address:
   tcp: test_address_tcp
