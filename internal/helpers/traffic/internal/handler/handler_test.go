@@ -22,7 +22,6 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 )
 
@@ -127,11 +126,10 @@ func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (
 
 	cfg := &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes:     tcMessageSize,
-			FWorkSizeBits:         tcWorkSize,
-			FRandMessageSizeBytes: hls_settings.CDefaultRandMessageSizeBytes,
-			FNetworkKey:           tcNetworkKey,
-			FMessagesCapacity:     tcCapacity,
+			FMessageSizeBytes: tcMessageSize,
+			FWorkSizeBits:     tcWorkSize,
+			FNetworkKey:       tcNetworkKey,
+			FMessagesCapacity: tcCapacity,
 		},
 	}
 

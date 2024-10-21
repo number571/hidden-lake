@@ -40,11 +40,6 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if sett.GetRandMessageSizeBytes() != 4096 {
-		t.Error("invalid rand message size")
-		return
-	}
-
 	if sett.GetMessageSizeBytes() != (8 << 10) {
 		t.Error("invalid message size")
 		return

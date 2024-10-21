@@ -15,10 +15,9 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 	if initCfg == nil {
 		initCfg = &SConfig{
 			FSettings: &SConfigSettings{
-				FMessageSizeBytes:     hls_settings.CDefaultMessageSizeBytes,
-				FWorkSizeBits:         hls_settings.CDefaultWorkSizeBits,
-				FRandMessageSizeBytes: hls_settings.CDefaultRandMessageSizeBytes,
-				FNetworkKey:           hls_settings.CDefaultNetworkKey,
+				FMessageSizeBytes: hls_settings.CDefaultMessageSizeBytes,
+				FWorkSizeBits:     hls_settings.CDefaultWorkSizeBits,
+				FNetworkKey:       hls_settings.CDefaultNetworkKey,
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{

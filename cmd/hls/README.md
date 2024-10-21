@@ -219,8 +219,6 @@ settings:
   work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
-  rand_queue_period_ms: 5000
-  rand_message_size_bytes: 4096
   network_key: hls-network-key
 logging:
   - info

@@ -17,13 +17,11 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes     uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FFetchTimeoutMS       uint64 `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS        uint64 `json:"queue_period_ms" yaml:"queue_period_ms"`
-	FWorkSizeBits         uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FRandQueuePeriodMS    uint64 `json:"rand_queue_period_ms,omitempty" yaml:"rand_queue_period_ms,omitempty"`
-	FRandMessageSizeBytes uint64 `json:"rand_message_size_bytes,omitempty" yaml:"rand_message_size_bytes,omitempty"`
-	FNetworkKey           string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
+	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
+	FQueuePeriodMS    uint64 `json:"queue_period_ms" yaml:"queue_period_ms"`
+	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 }
 
 type SConfig struct {
@@ -108,14 +106,6 @@ func (p *SConfigSettings) GetFetchTimeoutMS() uint64 {
 
 func (p *SConfigSettings) GetQueuePeriodMS() uint64 {
 	return p.FQueuePeriodMS
-}
-
-func (p *SConfigSettings) GetRandQueuePeriodMS() uint64 {
-	return p.FRandQueuePeriodMS
-}
-
-func (p *SConfigSettings) GetRandMessageSizeBytes() uint64 {
-	return p.FRandMessageSizeBytes
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

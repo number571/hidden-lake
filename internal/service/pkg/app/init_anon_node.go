@@ -74,7 +74,7 @@ func (p *sApp) initAnonNode() error {
 				FWriteTimeout: hls_settings.CNetworkWriteTimeout,
 				FConnSettings: conn.NewSettings(&conn.SSettings{
 					FMessageSettings:       cfgSettings,
-					FLimitMessageSizeBytes: cfgSettings.GetMessageSizeBytes() + cfgSettings.GetRandMessageSizeBytes(),
+					FLimitMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 					FWaitReadTimeout:       hls_settings.CConnWaitReadTimeout,
 					FDialTimeout:           hls_settings.CConnDialTimeout,
 					FReadTimeout:           hls_settings.CNetworkReadTimeout,
@@ -86,15 +86,13 @@ func (p *sApp) initAnonNode() error {
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
 				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-					FSettings:             cfgSettings,
-					FParallel:             p.fParallel,
-					FRandMessageSizeBytes: cfgSettings.GetRandMessageSizeBytes(),
+					FSettings: cfgSettings,
+					FParallel: p.fParallel,
 				}),
 				FNetworkMask:      hls_settings.CNetworkMask,
 				FMainPoolCapacity: hls_settings.CQueueMainPoolCapacity,
 				FRandPoolCapacity: hls_settings.CQueueRandPoolCapacity,
 				FQueuePeriod:      time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
-				FRandQueuePeriod:  time.Duration(cfgSettings.GetRandQueuePeriodMS()) * time.Millisecond,
 			}),
 			client,
 			psdPubKey,

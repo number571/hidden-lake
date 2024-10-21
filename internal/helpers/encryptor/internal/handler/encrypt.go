@@ -72,8 +72,7 @@ func HandleMessageEncryptAPI(
 					FWorkSizeBits: cfgSett.GetWorkSizeBits(),
 					FNetworkKey:   cfgSett.GetNetworkKey(),
 				}),
-				FParallel:             pParallel,
-				FRandMessageSizeBytes: cfgSett.GetRandMessageSizeBytes(),
+				FParallel: pParallel,
 			}),
 			payload.NewPayload32(hls_settings.CNetworkMask, msg),
 		)

@@ -22,8 +22,6 @@ type IConfigSettings interface {
 	GetMessageSizeBytes() uint64
 	GetFetchTimeoutMS() uint64
 	GetQueuePeriodMS() uint64
-	GetRandQueuePeriodMS() uint64
-	GetRandMessageSizeBytes() uint64
 }
 
 type IConfig interface {

@@ -18,7 +18,6 @@ type IConfigSettings interface {
 
 	GetMessageSizeBytes() uint64
 	GetMessagesCapacity() uint64
-	GetRandMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
 }
 

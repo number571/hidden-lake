@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -42,11 +41,6 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 
 	if settings.GetMessageSizeBytes() != tcMessageSize {
 		t.Error("incorrect messages size bytes")
-		return
-	}
-
-	if settings.GetRandMessageSizeBytes() != hls_settings.CDefaultRandMessageSizeBytes {
-		t.Error("incorrect rand message size bytes")
 		return
 	}
 }

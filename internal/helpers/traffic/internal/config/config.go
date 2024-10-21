@@ -16,12 +16,11 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes     uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FWorkSizeBits         uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FMessagesCapacity     uint64 `json:"messages_capacity,omitempty" yaml:"messages_capacity,omitempty"`
-	FRandMessageSizeBytes uint64 `json:"rand_message_size_bytes,omitempty" yaml:"rand_message_size_bytes,omitempty"`
-	FNetworkKey           string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
-	FDatabaseEnabled      bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
+	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
+	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FMessagesCapacity uint64 `json:"messages_capacity,omitempty" yaml:"messages_capacity,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
 }
 
 type SConfig struct {
@@ -91,10 +90,6 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 
 func (p *SConfigSettings) GetMessagesCapacity() uint64 {
 	return p.FMessagesCapacity
-}
-
-func (p *SConfigSettings) GetRandMessageSizeBytes() uint64 {
-	return p.FRandMessageSizeBytes
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

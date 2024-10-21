@@ -10,6 +10,7 @@
 
 - Update `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
 - Update `cmd/hls|cmd/hle`: add parameter to /api/network/pubkey => separated=false|true
+- Update `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
 
 <!-- ... -->
 

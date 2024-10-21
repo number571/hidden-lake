@@ -16,7 +16,6 @@ type IConfigSettings interface {
 	net_message.ISettings
 
 	GetMessageSizeBytes() uint64
-	GetRandMessageSizeBytes() uint64
 }
 
 type IAddress interface {

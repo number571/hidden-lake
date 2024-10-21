@@ -8,10 +8,9 @@ func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
 	sett := pCfg.GetSettings()
 	return SConfigSettings{
 		SConfigSettings: config.SConfigSettings{
-			FMessageSizeBytes:     sett.GetMessageSizeBytes(),
-			FWorkSizeBits:         sett.GetWorkSizeBits(),
-			FRandMessageSizeBytes: sett.GetRandMessageSizeBytes(),
-			FNetworkKey:           sett.GetNetworkKey(),
+			FMessageSizeBytes: sett.GetMessageSizeBytes(),
+			FWorkSizeBits:     sett.GetWorkSizeBits(),
+			FNetworkKey:       sett.GetNetworkKey(),
 		},
 	}
 }
