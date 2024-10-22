@@ -76,6 +76,19 @@ The `Hidden Lake` is an anonymous network built on a `micro-service` architectur
 
 All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux`, `darwin`} OS as pattern = `appname_arch_os`. In total, one application is compiled into six versions. The entire list of releases can be found here: [github.com/number571/hidden-lake/releases](https://github.com/number571/hidden-lake/releases "releases"). 
 
+## Dependencies
+
+1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hls,cmd/hle`)
+2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hlm`)
+3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hlm,cmd/hlf`)
+
+### Makefile
+
+There are a number of dependencies that represent separate applications for providing additional information about the quality of the code. These applications are not entered into the project, but are loaded via the `make install-deps` command. The list of applications is as follows:
+
+1. golangci-lint [github.com/golangci/golangci-lint/cmd/golangci-lintv1.60.0](https://github.com/golangci/golangci-lint/tree/v1.60.0)
+2. go-cover-treemap [github.com/nikolaydubina/go-cover-treemap@v1.4.2](https://github.com/nikolaydubina/go-cover-treemap/tree/v1.4.2)
+
 ## List of applications
 
 Basic | Applied | Helpers
