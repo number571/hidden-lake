@@ -12,6 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
@@ -68,9 +69,11 @@ func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKE
 		http.MethodPost,
 		fmt.Sprintf(cHandleMessageEncryptTemplate, p.fHost),
 		hle_settings.SContainer{
-			FPublicKey: encoding.HexEncode(pPubKey.ToBytes()),
-			FPldHead:   pPayload.GetHead(),
-			FHexData:   encoding.HexEncode(pPayload.GetBody()),
+			SPubKey: hls_settings.SPubKey{
+				FKEMPKey: encoding.HexEncode(pPubKey.ToBytes()),
+			},
+			FPldHead: pPayload.GetHead(),
+			FHexData: encoding.HexEncode(pPayload.GetBody()),
 		},
 	)
 	if err != nil {
@@ -85,7 +88,7 @@ func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKE
 	return msg, nil
 }
 
-func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IDSAPubKey, payload.IPayload64, error) {
+func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IPubKey, payload.IPayload64, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -102,8 +105,9 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 		return nil, nil, utils.MergeErrors(ErrDecodeResponse, err)
 	}
 
-	pubKey := asymmetric.LoadDSAPubKey(encoding.HexDecode(result.FPublicKey))
-	if pubKey == nil {
+	kemPubKey := asymmetric.LoadKEMPubKey(encoding.HexDecode(result.FKEMPKey))
+	dsaPubKey := asymmetric.LoadDSAPubKey(encoding.HexDecode(result.FDSAPKey))
+	if kemPubKey == nil || dsaPubKey == nil {
 		return nil, nil, ErrInvalidPublicKey
 	}
 
@@ -112,7 +116,7 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 		return nil, nil, ErrInvalidHexFormat
 	}
 
-	return pubKey, payload.NewPayload64(result.FPldHead, data), nil
+	return asymmetric.NewPubKey(kemPubKey, dsaPubKey), payload.NewPayload64(result.FPldHead, data), nil
 }
 
 func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {

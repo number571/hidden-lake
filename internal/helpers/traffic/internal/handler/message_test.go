@@ -55,7 +55,7 @@ func TestHandleMessageAPI(t *testing.T) {
 		return
 	}
 
-	if !bytes.Equal(gotPubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
+	if !bytes.Equal(gotPubKey.ToBytes(), client.GetPrivKey().GetPubKey().ToBytes()) {
 		t.Error("invalid public keys")
 		return
 	}

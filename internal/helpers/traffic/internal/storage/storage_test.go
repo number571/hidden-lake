@@ -256,7 +256,7 @@ func TestStorage(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), cl.GetPrivKey().GetPubKey().ToBytes()) {
 			t.Error("load public key != init public key")
 			return
 		}

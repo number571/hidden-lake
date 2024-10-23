@@ -67,9 +67,12 @@ func HandleMessageDecryptAPI(pConfig config.IConfig, pLogger logger.ILogger, pCl
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hle_settings.SContainer{
-			FPublicKey: encoding.HexEncode(pubKey.ToBytes()),
-			FPldHead:   pld.GetHead(),
-			FHexData:   encoding.HexEncode(pld.GetBody()),
+			SPubKey: hls_settings.SPubKey{
+				FKEMPKey: encoding.HexEncode(pubKey.GetKEMPubKey().ToBytes()),
+				FDSAPKey: encoding.HexEncode(pubKey.GetDSAPubKey().ToBytes()),
+			},
+			FPldHead: pld.GetHead(),
+			FHexData: encoding.HexEncode(pld.GetBody()),
 		})
 	}
 }

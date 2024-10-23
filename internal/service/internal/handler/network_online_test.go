@@ -38,7 +38,7 @@ func TestHandleOnlineAPI(t *testing.T) {
 	)
 
 	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[13])
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey().GetDSAPubKey(), tgPrivKey1.GetKEMPrivKey().GetPubKey())
+	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
 	testGetOnlines(t, client, node)
 	testDelOnline(t, client, testutils.TgAddrs[13])
@@ -125,7 +125,7 @@ func testOnlinePushNode(cfgPath, dbPath string) (anonymity.INode, context.Cancel
 		pkg_settings.CServiceMask,
 		HandleServiceTCP(cfg),
 	)
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey().GetDSAPubKey(), tgPrivKey1.GetKEMPrivKey().GetPubKey())
+	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
 	go func() { _ = node.GetNetworkNode().Listen(ctx) }()
 

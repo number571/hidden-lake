@@ -97,7 +97,7 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 }
 
 func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
-	return asymmetric.CKEncSize
+	return asymmetric.CKEMCiphertextSize
 }
 
 func (p *SConfigSettings) GetFetchTimeoutMS() uint64 {

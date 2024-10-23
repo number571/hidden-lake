@@ -79,7 +79,7 @@ func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pN
 				return
 			}
 
-			pNode.GetMapPubKeys().SetPubKey(pubKey.GetDSAPubKey(), pubKey.GetKEMPubKey())
+			pNode.GetMapPubKeys().SetPubKey(pubKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update friends")
@@ -101,7 +101,7 @@ func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pN
 				return
 			}
 
-			pNode.GetMapPubKeys().DelPubKey(pubKey.GetDSAPubKey())
+			pNode.GetMapPubKeys().DelPubKey(pubKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete friend")

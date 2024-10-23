@@ -100,7 +100,7 @@ func (p *sApp) initAnonNode() error {
 		func() asymmetric.IMapPubKeys {
 			f2f := asymmetric.NewMapPubKeys()
 			for _, pubKey := range cfg.GetFriends() {
-				f2f.SetPubKey(pubKey.GetDSAPubKey(), pubKey.GetKEMPubKey())
+				f2f.SetPubKey(pubKey)
 			}
 			return f2f
 		}(),

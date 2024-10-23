@@ -135,7 +135,7 @@ func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
 }
 
 func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
-	return asymmetric.CKEncSize
+	return asymmetric.CKEMCiphertextSize
 }
 
 func (p *SConfig) GetLogging() logger.ILogging {

@@ -176,7 +176,7 @@ func TestHandleTransferAPI(t *testing.T) {
 			return
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetPubKey().ToBytes()) {
 			t.Error("got bad public key")
 			return
 		}

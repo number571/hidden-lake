@@ -6,9 +6,9 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
@@ -29,9 +29,9 @@ func HandleServicePubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 		switch separated {
 		case "true":
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, [2]string{
-				encoding.HexEncode(pubKey.GetKEMPubKey().ToBytes()),
-				encoding.HexEncode(pubKey.GetDSAPubKey().ToBytes()),
+			_ = api.Response(pW, http.StatusOK, hls_settings.SPubKey{
+				FKEMPKey: encoding.HexEncode(pubKey.GetKEMPubKey().ToBytes()),
+				FDSAPKey: encoding.HexEncode(pubKey.GetDSAPubKey().ToBytes()),
 			})
 			return
 		case "", "false":

@@ -40,7 +40,7 @@ func (p *sClient) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEMPu
 	return res, nil
 }
 
-func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IDSAPubKey, payload.IPayload64, error) {
+func (p *sClient) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IPubKey, payload.IPayload64, error) {
 	pubKey, data, err := p.fRequester.DecryptMessage(pCtx, pNetMsg)
 	if err != nil {
 		return nil, nil, fmt.Errorf("decrypt message (client): %w", err)

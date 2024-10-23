@@ -97,7 +97,7 @@ func (p *SConfigSettings) GetNetworkKey() string {
 }
 
 func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
-	return asymmetric.CKEncSize
+	return asymmetric.CKEMCiphertextSize
 }
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {
