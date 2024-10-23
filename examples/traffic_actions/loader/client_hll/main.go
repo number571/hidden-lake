@@ -162,7 +162,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return err
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetPubKey().ToBytes()) {
 			return errors.New("got invalid public key")
 		}
 

@@ -122,7 +122,7 @@ func main() {
 			panic("payload.head != set.head")
 		}
 
-		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetDSAPrivKey().GetPubKey().ToBytes()) {
+		if !bytes.Equal(pubKey.ToBytes(), client.GetPrivKey().GetPubKey().ToBytes()) {
 			panic("public key is incorrect")
 		}
 
