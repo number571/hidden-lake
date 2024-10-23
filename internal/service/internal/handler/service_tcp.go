@@ -33,7 +33,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		// enrich logger
 		logBuilder.
 			WithSize(len(pReqBytes)).
-			WithPubKey(pSender.GetDSAPubKey())
+			WithPubKey(pSender)
 
 		// load request from message's body
 		loadReq, err := request.LoadRequest(pReqBytes)

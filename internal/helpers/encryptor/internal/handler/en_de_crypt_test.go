@@ -3,7 +3,9 @@ package handler
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -15,11 +17,15 @@ import (
 func TestHandleEncryptDecryptAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[33])
+	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 2)
+	defer os.Remove(pathCfg)
+
+	_, service := testRunService(pathCfg, testutils.TgAddrs[33])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hleClient := hle_client.NewClient(
+		hle_client.NewBuilder(),
 		hle_client.NewRequester(
 			"http://"+testutils.TgAddrs[33],
 			&http.Client{Timeout: time.Second / 2},
@@ -28,12 +34,10 @@ func TestHandleEncryptDecryptAPI(t *testing.T) {
 	)
 
 	// same private key in the HLE
-	pubKey := tgPrivKey.GetPubKey()
 	data := []byte("hello, world!")
-
 	netMsg, err := hleClient.EncryptMessage(
 		context.Background(),
-		pubKey.GetKEMPubKey(),
+		"test_recvr",
 		payload.NewPayload64(1, data),
 	)
 	if err != nil {
@@ -41,9 +45,14 @@ func TestHandleEncryptDecryptAPI(t *testing.T) {
 		return
 	}
 
-	_, getPld, err := hleClient.DecryptMessage(context.Background(), netMsg)
+	aliasName, getPld, err := hleClient.DecryptMessage(context.Background(), netMsg)
 	if err != nil {
 		t.Error(err)
+		return
+	}
+
+	if aliasName != "test_recvr" {
+		t.Error("got invalid alias_name")
 		return
 	}
 

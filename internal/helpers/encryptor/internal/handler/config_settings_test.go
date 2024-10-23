@@ -2,7 +2,9 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -13,11 +15,15 @@ import (
 func TestHandleConfigSettingsAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[34])
+	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 1)
+	defer os.Remove(pathCfg)
+
+	_, service := testRunService(pathCfg, testutils.TgAddrs[34])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hleClient := hle_client.NewClient(
+		hle_client.NewBuilder(),
 		hle_client.NewRequester(
 			"http://"+testutils.TgAddrs[34],
 			&http.Client{Timeout: time.Second / 2},

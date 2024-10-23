@@ -19,5 +19,6 @@ const (
 	CHandleMessageEncryptPath = "/api/message/encrypt"
 	CHandleMessageDecryptPath = "/api/message/decrypt"
 	CHandleServicePubKeyPath  = "/api/service/pubkey"
-	CHandleConfigSettings     = "/api/config/settings"
+	CHandleConfigSettingsPath = "/api/config/settings"
+	CHandleConfigFriendsPath  = "/api/config/friends"
 )

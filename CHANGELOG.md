@@ -9,7 +9,7 @@
 ### CHANGES
 
 - Update `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
-- Update `cmd/hls|cmd/hle`: add parameter to /api/service/pubkey => separated=false|true
+- Update `cmd/hle`: update API encrypt/decrypt messages
 - Update `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
 - Update `go.mod`: update go-peer version: 1.7.0 -> 1.7.1
 

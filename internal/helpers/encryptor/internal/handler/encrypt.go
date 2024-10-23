@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/client"
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/payload"
@@ -41,8 +40,9 @@ func HandleMessageEncryptAPI(
 			return
 		}
 
-		kemPubKey := asymmetric.LoadKEMPubKey(encoding.HexDecode(vContainer.FKEMPKey))
-		if kemPubKey == nil {
+		friends := pConfig.GetFriends()
+		pubKey, ok := friends[vContainer.FAliasName]
+		if !ok {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_pubkey"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode public key")
 			return
@@ -56,7 +56,7 @@ func HandleMessageEncryptAPI(
 		}
 
 		msg, err := pClient.EncryptMessage(
-			kemPubKey,
+			pubKey,
 			payload.NewPayload64(vContainer.FPldHead, bodyData).ToBytes(),
 		)
 		if err != nil {

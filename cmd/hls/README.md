@@ -512,7 +512,7 @@ success: broadcast
 #### 6.1. GET Request
 
 ```bash
-curl -i -X GET -H 'Accept: application/json' 'http://localhost:9572/api/service/pubkey?separated=false'
+curl -i -X GET -H 'Accept: application/json' 'http://localhost:9572/api/service/pubkey'
 ```
 
 #### 6.1. GET Response

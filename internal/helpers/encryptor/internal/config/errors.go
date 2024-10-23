@@ -22,4 +22,8 @@ var (
 	ErrConfigNotExist     = &SConfigError{"config not exist"}
 	ErrWriteConfig        = &SConfigError{"write config"}
 	ErrConfigAlreadyExist = &SConfigError{"config already exist"}
+	ErrDuplicatePublicKey = &SConfigError{"duplicate public key"}
+	ErrInvalidPublicKey   = &SConfigError{"invalid public key"}
+	ErrLoadPublicKey      = &SConfigError{"load public key"}
+	ErrLoadConfig         = &SConfigError{"load config"}
 )

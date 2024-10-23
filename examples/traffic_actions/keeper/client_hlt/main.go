@@ -74,7 +74,7 @@ func main() {
 		}
 
 		msg, err := client.EncryptMessage(
-			privKey.GetKEMPrivKey().GetPubKey(),
+			privKey.GetPubKey(),
 			payload.NewPayload64(cPldHead, []byte(args[1])).ToBytes(),
 		)
 		if err != nil {
@@ -105,7 +105,10 @@ func main() {
 			panic("net.payload.head is invalid")
 		}
 
-		pubKey, decMsg, err := client.DecryptMessage(netMsg.GetPayload().GetBody())
+		pubKey, decMsg, err := client.DecryptMessage(
+			asymmetric.NewMapPubKeys(privKey.GetPubKey()),
+			netMsg.GetPayload().GetBody(),
+		)
 		if err != nil {
 			panic(err)
 		}

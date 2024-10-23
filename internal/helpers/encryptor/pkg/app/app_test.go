@@ -75,6 +75,7 @@ func TestApp(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond)
 	client := client.NewClient(
+		client.NewBuilder(),
 		client.NewRequester(
 			"http://"+testutils.TgAddrs[30],
 			&http.Client{Timeout: time.Minute},

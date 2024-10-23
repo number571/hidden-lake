@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
@@ -31,6 +30,7 @@ func main() {
 	})
 
 	hleClient := hle_client.NewClient(
+		hle_client.NewBuilder(),
 		hle_client.NewRequester(
 			"http://"+cLocalAddressHLE,
 			&http.Client{Timeout: time.Minute},
@@ -40,15 +40,9 @@ func main() {
 
 	switch os.Args[1] {
 	case "e", "encrypt":
-		readPubKey, err := os.ReadFile("pub_node1.key")
-		if err != nil {
-			panic(err)
-		}
-
-		pubKey := asymmetric.LoadPubKey(string(readPubKey))
 		netMsg, err := hleClient.EncryptMessage(
 			ctx,
-			pubKey.GetKEMPubKey(),
+			"IAM",
 			payload.NewPayload64(uint64(settings.CServiceMask), []byte(os.Args[2])),
 		)
 		if err != nil {

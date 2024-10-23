@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
@@ -25,7 +26,7 @@ func TestHandleMessageAPI(t *testing.T) {
 
 	client := testNewClient()
 	msg, err := client.EncryptMessage(
-		client.GetPrivKey().GetKEMPrivKey().GetPubKey(),
+		client.GetPrivKey().GetPubKey(),
 		payload.NewPayload64(0, []byte(tcBody)).ToBytes(),
 	)
 	if err != nil {
@@ -49,7 +50,10 @@ func TestHandleMessageAPI(t *testing.T) {
 		return
 	}
 
-	gotPubKey, decMsg, err := client.DecryptMessage(gotNetMsg.GetPayload().GetBody())
+	gotPubKey, decMsg, err := client.DecryptMessage(
+		asymmetric.NewMapPubKeys(client.GetPrivKey().GetPubKey()),
+		gotNetMsg.GetPayload().GetBody(),
+	)
 	if err != nil {
 		t.Error(err)
 		return

@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"sync"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -21,11 +22,15 @@ type SConfigSettings struct {
 }
 
 type SConfig struct {
-	fLogging logger.ILogging
+	fFilepath string
+	fMutex    sync.RWMutex
+	fFriends  map[string]asymmetric.IPubKey
+	fLogging  logger.ILogging
 
-	FSettings *SConfigSettings `yaml:"settings"`
-	FLogging  []string         `yaml:"logging,omitempty"`
-	FAddress  *SAddress        `yaml:"address"`
+	FSettings *SConfigSettings  `yaml:"settings"`
+	FLogging  []string          `yaml:"logging,omitempty"`
+	FAddress  *SAddress         `yaml:"address"`
+	FFriends  map[string]string `yaml:"friends,omitempty"`
 }
 
 type SAddress struct {
@@ -38,6 +43,7 @@ func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
 		return nil, utils.MergeErrors(ErrConfigAlreadyExist, err)
 	}
 
+	pCfg.fFilepath = pFilepath
 	if err := pCfg.initConfig(); err != nil {
 		return nil, utils.MergeErrors(ErrInitConfig, err)
 	}
@@ -64,6 +70,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 		return nil, utils.MergeErrors(ErrDeserializeConfig, err)
 	}
 
+	cfg.fFilepath = pFilepath
 	if err := cfg.initConfig(); err != nil {
 		return nil, utils.MergeErrors(ErrInitConfig, err)
 	}
@@ -90,6 +97,10 @@ func (p *SConfig) initConfig() error {
 		return ErrInvalidConfig
 	}
 
+	if err := p.loadPubKeys(); err != nil {
+		return utils.MergeErrors(ErrLoadPublicKey, err)
+	}
+
 	if err := p.loadLogging(); err != nil {
 		return utils.MergeErrors(ErrLoadLogging, err)
 	}
@@ -103,6 +114,27 @@ func (p *SConfig) loadLogging() error {
 		return utils.MergeErrors(ErrInvalidLogging, err)
 	}
 	p.fLogging = result
+	return nil
+}
+
+func (p *SConfig) loadPubKeys() error {
+	p.fFriends = make(map[string]asymmetric.IPubKey)
+
+	mapping := make(map[string]struct{})
+	for name, val := range p.FFriends {
+		if _, ok := mapping[val]; ok {
+			return ErrDuplicatePublicKey
+		}
+		mapping[val] = struct{}{}
+
+		pubKey := asymmetric.LoadPubKey(val)
+		if pubKey == nil {
+			return ErrInvalidPublicKey
+		}
+
+		p.fFriends[name] = pubKey
+	}
+
 	return nil
 }
 
@@ -120,6 +152,17 @@ func (p *SAddress) GetHTTP() string {
 
 func (p *SAddress) GetPPROF() string {
 	return p.FPPROF
+}
+
+func (p *SConfig) GetFriends() map[string]asymmetric.IPubKey {
+	p.fMutex.RLock()
+	defer p.fMutex.RUnlock()
+
+	result := make(map[string]asymmetric.IPubKey, len(p.fFriends))
+	for k, v := range p.fFriends {
+		result[k] = v
+	}
+	return result
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

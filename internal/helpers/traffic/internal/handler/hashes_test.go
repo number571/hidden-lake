@@ -31,7 +31,7 @@ func TestHandleHashesAPI(t *testing.T) {
 	client := client.NewClient(privKey, tcMessageSize)
 
 	msg, err := client.EncryptMessage(
-		pubKey.GetKEMPubKey(),
+		pubKey,
 		payload.NewPayload64(0, []byte("hello")).ToBytes(),
 	)
 	if err != nil {

@@ -2,7 +2,9 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -17,6 +19,7 @@ func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
 	client := hle_client.NewClient(
+		hle_client.NewBuilder(),
 		hle_client.NewRequester(
 			"http://"+testutils.TcUnknownHost,
 			&http.Client{Timeout: time.Second},
@@ -24,7 +27,7 @@ func TestErrorsAPI(t *testing.T) {
 		),
 	)
 
-	if _, err := client.EncryptMessage(context.Background(), tgPrivKey.GetKEMPrivKey().GetPubKey(), payload.NewPayload64(1, []byte{123})); err == nil {
+	if _, err := client.EncryptMessage(context.Background(), "_", payload.NewPayload64(1, []byte{123})); err == nil {
 		t.Error("success encrypt message with unknown host")
 		return
 	}
@@ -59,11 +62,15 @@ func TestErrorsAPI(t *testing.T) {
 func TestHandleIndexAPI(t *testing.T) {
 	t.Parallel()
 
-	service := testRunService(testutils.TgAddrs[32])
+	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 1)
+	defer os.Remove(pathCfg)
+
+	_, service := testRunService(pathCfg, testutils.TgAddrs[32])
 	defer service.Close()
 
 	time.Sleep(100 * time.Millisecond)
 	hleClient := hle_client.NewClient(
+		hle_client.NewBuilder(),
 		hle_client.NewRequester(
 			"http://"+testutils.TgAddrs[32],
 			&http.Client{Timeout: time.Second / 2},

@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/client"
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/payload"
@@ -17,7 +19,12 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
-func HandleMessageDecryptAPI(pConfig config.IConfig, pLogger logger.ILogger, pClient client.IClient) http.HandlerFunc {
+func HandleMessageDecryptAPI(
+	pConfig config.IConfig,
+	pLogger logger.ILogger,
+	pClient client.IClient,
+	pMapKeys asymmetric.IMapPubKeys,
+) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hle_settings.CServiceName, pR)
 
@@ -34,10 +41,7 @@ func HandleMessageDecryptAPI(pConfig config.IConfig, pLogger logger.ILogger, pCl
 			return
 		}
 
-		netMsg, err := net_message.LoadMessage(
-			pConfig.GetSettings(),
-			string(msgStringAsBytes),
-		)
+		netMsg, err := net_message.LoadMessage(pConfig.GetSettings(), string(msgStringAsBytes))
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_net_message"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode network message")
@@ -51,28 +55,43 @@ func HandleMessageDecryptAPI(pConfig config.IConfig, pLogger logger.ILogger, pCl
 			return
 		}
 
-		pubKey, decMsg, err := pClient.DecryptMessage(netPld.GetBody())
+		pubKey, decMsg, err := pClient.DecryptMessage(pMapKeys, netPld.GetBody())
 		if err != nil {
+			fmt.Println(err, len(netPld.GetBody()))
 			pLogger.PushWarn(logBuilder.WithMessage("decrypt_message"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: decrypt message")
+			return
+		}
+
+		aliasName, ok := getAliasNameByPubKey(pConfig, pubKey)
+		if !ok {
+			pLogger.PushWarn(logBuilder.WithMessage("get_alias_name"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: get alias name")
 			return
 		}
 
 		pld := payload.LoadPayload64(decMsg)
 		if pld == nil {
 			pLogger.PushWarn(logBuilder.WithMessage("load_payload"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: load payload")
+			_ = api.Response(pW, http.StatusNotImplemented, "failed: load payload")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hle_settings.SContainer{
-			SPubKey: hls_settings.SPubKey{
-				FKEMPKey: encoding.HexEncode(pubKey.GetKEMPubKey().ToBytes()),
-				FDSAPKey: encoding.HexEncode(pubKey.GetDSAPubKey().ToBytes()),
-			},
-			FPldHead: pld.GetHead(),
-			FHexData: encoding.HexEncode(pld.GetBody()),
+			FAliasName: aliasName,
+			FPldHead:   pld.GetHead(),
+			FHexData:   encoding.HexEncode(pld.GetBody()),
 		})
 	}
+}
+
+func getAliasNameByPubKey(pConfig config.IConfig, pPubKey asymmetric.IPubKey) (string, bool) {
+	friends := pConfig.GetFriends()
+	for aliasName, pubKey := range friends {
+		if pubKey.GetHasher().ToString() == pPubKey.GetHasher().ToString() {
+			return aliasName, true
+		}
+	}
+	return "", false
 }

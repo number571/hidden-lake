@@ -29,8 +29,8 @@ var (
 type sApp struct {
 	fState state.IState
 
+	fCfgW     config.IWrapper
 	fParallel uint64
-	fConfig   config.IConfig
 	fPrivKey  asymmetric.IPrivKey
 
 	fHTTPLogger logger.ILogger
@@ -55,7 +55,7 @@ func NewApp(
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fParallel:   pParallel,
-		fConfig:     pCfg,
+		fCfgW:       config.NewWrapper(pCfg),
 		fPrivKey:    pPrivKey,
 		fHTTPLogger: httpLogger,
 		fStdfLogger: stdfLogger,
@@ -100,7 +100,7 @@ func (p *sApp) enable(_ context.Context) state.IStateF {
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
 			hle_settings.CServiceName,
-			encoding.SerializeJSON(pkg_config.GetConfigSettings(p.fConfig)),
+			encoding.SerializeJSON(pkg_config.GetConfigSettings(p.fCfgW.GetConfig())),
 		))
 		return nil
 	}
@@ -122,7 +122,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if p.fConfig.GetAddress().GetPPROF() == "" {
+	if p.fCfgW.GetConfig().GetAddress().GetPPROF() == "" {
 		return
 	}
 

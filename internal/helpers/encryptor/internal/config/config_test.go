@@ -3,16 +3,27 @@ package config
 import (
 	"os"
 	"testing"
+
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+)
+
+var (
+	tgPubKeys = map[string]string{
+		tcPubKeyAlias1: tgPubKey1.ToString(),
+		tcPubKeyAlias2: tgPubKey2.ToString(),
+	}
 )
 
 const (
-	tcConfigFile  = "config_test.txt"
-	tcLogging     = true
-	tcNetwork     = "test_network"
-	tcAddress1    = "test_address1"
-	tcAddress2    = "test_address2"
-	tcMessageSize = (1 << 20)
-	tcWorkSize    = 22
+	tcConfigFile   = "config_test.txt"
+	tcLogging      = true
+	tcNetwork      = "test_network"
+	tcAddress1     = "test_address1"
+	tcAddress2     = "test_address2"
+	tcMessageSize  = (1 << 20)
+	tcWorkSize     = 22
+	tcPubKeyAlias1 = "test_alias1"
+	tcPubKeyAlias2 = "test_alias2"
 )
 
 func TestError(t *testing.T) {
@@ -37,6 +48,10 @@ func testConfigDefaultInit(configPath string) {
 		FAddress: &SAddress{
 			FHTTP:  tcAddress1,
 			FPPROF: tcAddress2,
+		},
+		FFriends: map[string]string{
+			tcPubKeyAlias1: tgPubKey1.ToString(),
+			tcPubKeyAlias2: tgPubKey2.ToString(),
 		},
 	})
 }
@@ -91,5 +106,14 @@ func TestConfig(t *testing.T) {
 	if cfg.GetAddress().GetPPROF() != tcAddress2 {
 		t.Error("address pprof is invalid")
 		return
+	}
+
+	for name, pubStr := range tgPubKeys {
+		v1 := cfg.GetFriends()[name]
+		pubKey := asymmetric.LoadPubKey(pubStr)
+		if pubKey.ToString() != v1.ToString() {
+			t.Errorf("public key is invalid '%s'", v1)
+			return
+		}
 	}
 }

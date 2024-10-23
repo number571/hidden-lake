@@ -96,7 +96,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 
 	for i := 0; i < messageCount; i++ {
 		msg, err := client.EncryptMessage(
-			client.GetPrivKey().GetKEMPrivKey().GetPubKey(), // self encrypt
+			client.GetPrivKey().GetPubKey(), // self encrypt
 			payload.NewPayload64(uint64(i), []byte("hello, world!")).ToBytes(),
 		)
 		if err != nil {
@@ -154,7 +154,10 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return errors.New("network mask is invalid")
 		}
 
-		pubKey, decMsg, err := client.DecryptMessage(netMsg.GetPayload().GetBody())
+		pubKey, decMsg, err := client.DecryptMessage(
+			asymmetric.NewMapPubKeys(privKey.GetPubKey()),
+			netMsg.GetPayload().GetBody(),
+		)
 		if err != nil {
 			return err
 		}

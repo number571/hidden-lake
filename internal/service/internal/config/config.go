@@ -192,7 +192,7 @@ func (p *SConfig) GetFriends() map[string]asymmetric.IPubKey {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	result := make(map[string]asymmetric.IPubKey)
+	result := make(map[string]asymmetric.IPubKey, len(p.FFriends))
 	for k, v := range p.fFriends {
 		result[k] = v
 	}

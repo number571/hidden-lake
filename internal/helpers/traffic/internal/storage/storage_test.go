@@ -250,7 +250,10 @@ func TestStorage(t *testing.T) {
 			return
 		}
 
-		pubKey, decMsg, err := cl.DecryptMessage(loadNetMsg.GetPayload().GetBody())
+		pubKey, decMsg, err := cl.DecryptMessage(
+			asymmetric.NewMapPubKeys(cl.GetPrivKey().GetPubKey()),
+			loadNetMsg.GetPayload().GetBody(),
+		)
 		if err != nil {
 			t.Error(err)
 			return
@@ -276,7 +279,7 @@ func TestStorage(t *testing.T) {
 
 func newNetworkMessageWithData(cl client.IClient, networkKey, data string) (net_message.IMessage, error) {
 	msg, err := cl.EncryptMessage(
-		cl.GetPrivKey().GetKEMPrivKey().GetPubKey(),
+		cl.GetPrivKey().GetPubKey(),
 		payload.NewPayload64(tcHead, []byte(data)).ToBytes(),
 	)
 	if err != nil {

@@ -21,7 +21,8 @@ const (
 	cHandleMessageEncryptTemplate = "%s" + hle_settings.CHandleMessageEncryptPath
 	cHandleMessageDecryptTemplate = "%s" + hle_settings.CHandleMessageDecryptPath
 	cHandleServicePubKeyTemplate  = "%s" + hle_settings.CHandleServicePubKeyPath
-	cHandleConfigSettingsTemplate = "%s" + hle_settings.CHandleConfigSettings
+	cHandleConfigSettingsTemplate = "%s" + hle_settings.CHandleConfigSettingsPath
+	cHandleConfigFriendsTemplate  = "%s" + hle_settings.CHandleConfigFriendsPath
 )
 
 var (
@@ -62,18 +63,69 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
-func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKEMPubKey, pPayload payload.IPayload64) (net_message.IMessage, error) {
+func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKey, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		nil,
+	)
+	if err != nil {
+		return nil, utils.MergeErrors(ErrBadRequest, err)
+	}
+
+	var vFriends []hls_settings.SFriend
+	if err := encoding.DeserializeJSON(res, &vFriends); err != nil {
+		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+	}
+
+	result := make(map[string]asymmetric.IPubKey, len(vFriends))
+	for _, friend := range vFriends {
+		result[friend.FAliasName] = asymmetric.LoadPubKey(friend.FPublicKey)
+	}
+
+	return result, nil
+}
+
+func (p *sRequester) AddFriend(pCtx context.Context, pFriend *hls_settings.SFriend) error {
+	_, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodPost,
+		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		pFriend,
+	)
+	if err != nil {
+		return utils.MergeErrors(ErrBadRequest, err)
+	}
+	return nil
+}
+
+func (p *sRequester) DelFriend(pCtx context.Context, pFriend *hls_settings.SFriend) error {
+	_, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		pFriend,
+	)
+	if err != nil {
+		return utils.MergeErrors(ErrBadRequest, err)
+	}
+	return nil
+}
+
+func (p *sRequester) EncryptMessage(pCtx context.Context, pAliasName string, pPayload payload.IPayload64) (net_message.IMessage, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleMessageEncryptTemplate, p.fHost),
 		hle_settings.SContainer{
-			SPubKey: hls_settings.SPubKey{
-				FKEMPKey: encoding.HexEncode(pPubKey.ToBytes()),
-			},
-			FPldHead: pPayload.GetHead(),
-			FHexData: encoding.HexEncode(pPayload.GetBody()),
+			FAliasName: pAliasName,
+			FPldHead:   pPayload.GetHead(),
+			FHexData:   encoding.HexEncode(pPayload.GetBody()),
 		},
 	)
 	if err != nil {
@@ -88,7 +140,7 @@ func (p *sRequester) EncryptMessage(pCtx context.Context, pPubKey asymmetric.IKE
 	return msg, nil
 }
 
-func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (asymmetric.IPubKey, payload.IPayload64, error) {
+func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IMessage) (string, payload.IPayload64, error) {
 	resp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -97,26 +149,20 @@ func (p *sRequester) DecryptMessage(pCtx context.Context, pNetMsg net_message.IM
 		pNetMsg.ToString(),
 	)
 	if err != nil {
-		return nil, nil, utils.MergeErrors(ErrBadRequest, err)
+		return "", nil, utils.MergeErrors(ErrBadRequest, err)
 	}
 
 	var result hle_settings.SContainer
 	if err := encoding.DeserializeJSON(resp, &result); err != nil {
-		return nil, nil, utils.MergeErrors(ErrDecodeResponse, err)
-	}
-
-	kemPubKey := asymmetric.LoadKEMPubKey(encoding.HexDecode(result.FKEMPKey))
-	dsaPubKey := asymmetric.LoadDSAPubKey(encoding.HexDecode(result.FDSAPKey))
-	if kemPubKey == nil || dsaPubKey == nil {
-		return nil, nil, ErrInvalidPublicKey
+		return "", nil, utils.MergeErrors(ErrDecodeResponse, err)
 	}
 
 	data := encoding.HexDecode(result.FHexData)
 	if data == nil {
-		return nil, nil, ErrInvalidHexFormat
+		return "", nil, ErrInvalidHexFormat
 	}
 
-	return asymmetric.NewPubKey(kemPubKey, dsaPubKey), payload.NewPayload64(result.FPldHead, data), nil
+	return result.FAliasName, payload.NewPayload64(result.FPldHead, data), nil
 }
 
 func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {

@@ -114,7 +114,7 @@ func TestHandleTransferAPI(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		encMsg, err := client.EncryptMessage(
-			privKey.GetKEMPrivKey().GetPubKey(),
+			privKey.GetPubKey(),
 			payload.NewPayload64(
 				uint64(i),
 				[]byte("hello, world!"),
@@ -164,7 +164,10 @@ func TestHandleTransferAPI(t *testing.T) {
 			return
 		}
 
-		pubKey, decMsg, err := client.DecryptMessage(netMsg.GetPayload().GetBody())
+		pubKey, decMsg, err := client.DecryptMessage(
+			asymmetric.NewMapPubKeys(privKey.GetPubKey()),
+			netMsg.GetPayload().GetBody(),
+		)
 		if err != nil {
 			t.Error(err)
 			return

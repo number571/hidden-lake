@@ -112,17 +112,17 @@ func (p *sApp) initAnonNode() error {
 	return nil
 }
 
-func getPsdPubKey(pDB database.IKVDatabase) (asymmetric.IKEMPubKey, error) {
+func getPsdPubKey(pDB database.IKVDatabase) (asymmetric.IPubKey, error) {
 	ppk, err := pDB.Get([]byte(cPPKKey))
 	if err == nil {
-		pubKey := asymmetric.LoadKEMPubKey(ppk)
+		pubKey := asymmetric.LoadPubKey(ppk)
 		if pubKey == nil {
 			return nil, ErrInvalidPsdPubKey
 		}
 		return pubKey, nil
 	}
 	if errors.Is(err, database.ErrNotFound) {
-		pubKey := asymmetric.NewKEMPrivKey().GetPubKey()
+		pubKey := asymmetric.NewPrivKey().GetPubKey()
 		if err := pDB.Set([]byte(cPPKKey), pubKey.ToBytes()); err != nil {
 			return nil, ErrSetPsdPubKey
 		}
