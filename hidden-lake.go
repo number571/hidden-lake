@@ -1,5 +1,5 @@
 package hiddenlake
 
 const (
-	CVersion = "v1.7.1"
+	CVersion = "v1.7.2~"
 )
