@@ -2,8 +2,8 @@ github.com/cloudflare/circl v1.5.0 h1:hxIWksrX6XN5a1L2TI/h53AGPhNHoUBo+TD1ms9+py
 github.com/cloudflare/circl v1.5.0/go.mod h1:uddAzsPgqdMAYatqJ0lsjX1oECcQLIlRpzZh3pJrofs=
 github.com/g8rswimmer/error-chain v1.0.0 h1:WnwnunlvqtGPHVHmBfbmUyAgrtag8Y6nNpwLWmtSYOQ=
 github.com/g8rswimmer/error-chain v1.0.0/go.mod h1:XPJ/brUsL7yzc5VRlIxtf9GvoUqnOKVI9fg2MB5DWx8=
-github.com/number571/go-peer v1.7.2-0.20241023212439-011b403e9bcc h1:ih+XgEq9gpZUC2e6eSTrVEgiJXL1BiAKFhlHkO3ciOo=
-github.com/number571/go-peer v1.7.2-0.20241023212439-011b403e9bcc/go.mod h1:YUbfYZTh5+r9fU7UbNJchGiaMW2R4xREU8tjA/1A3Yo=
+github.com/number571/go-peer v1.7.2 h1:c5alTZltCm4wwid9juu0PTmq3bbh4o5rSwMME8zbnRY=
+github.com/number571/go-peer v1.7.2/go.mod h1:YUbfYZTh5+r9fU7UbNJchGiaMW2R4xREU8tjA/1A3Yo=
 go.etcd.io/bbolt v1.3.5 h1:XAzx9gjCb0Rxj7EoqcClPD1d5ZBxZJk0jbuoPHenBt0=
 go.etcd.io/bbolt v1.3.5/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
 golang.org/x/crypto v0.28.0 h1:GBDwsMXVQi34v5CCYUm2jkJvu4cbtru2U4TN2PSyQnw=
