@@ -2,16 +2,22 @@
 
 <!-- ... -->
 
-## v1.7.1~
+## v1.7.2~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.7.1
+
+*October 24, 2024*
 
 ### CHANGES
 
 - Update `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
 - Update `cmd/hle`: update API encrypt/decrypt messages
 - Update `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
-- Update `go.mod`: update go-peer version: 1.7.0 -> 1.7.1
+- Update `go.mod`: update go-peer version: 1.7.0 -> 1.7.2
 
 <!-- ... -->
 
