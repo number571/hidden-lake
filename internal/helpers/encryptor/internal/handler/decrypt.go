@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 
@@ -57,7 +56,6 @@ func HandleMessageDecryptAPI(
 
 		pubKey, decMsg, err := pClient.DecryptMessage(pMapKeys, netPld.GetBody())
 		if err != nil {
-			fmt.Println(err, len(netPld.GetBody()))
 			pLogger.PushWarn(logBuilder.WithMessage("decrypt_message"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: decrypt message")
 			return
