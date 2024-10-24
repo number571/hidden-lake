@@ -62,7 +62,7 @@ func TestErrorsAPI(t *testing.T) {
 func TestHandleIndexAPI(t *testing.T) {
 	t.Parallel()
 
-	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 1)
+	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 4)
 	defer os.Remove(pathCfg)
 
 	_, service := testRunService(pathCfg, testutils.TgAddrs[32])
