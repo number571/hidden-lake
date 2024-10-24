@@ -171,13 +171,11 @@ queue_period_ms: 5000
             <tr>
                 <th>ID</th>
                 <th>Type</th>
-                <th>Version</th>
                 <th>Host</th>
                 <th>Port</th>
                 <th>Network key</th>
                 <th>Provider</th>
-                <th>Country</th>
-                <th>City</th>
+                <th>Location</th>
                 <th>Characteristics</th>
                 <th>Expired time</th>
                 <th>Logging</th>
@@ -187,13 +185,11 @@ queue_period_ms: 5000
             <tr>
                 <td>1</td>
                 <td>HLTr/HLTs</td>
-                <td>v1.7.0</td>
                 <td>94.103.91.81</td> 
                 <td>9581/9582</td>
                 <td>8Jkl93Mdk93md1bz</td>
                 <td><a href="https://vdsina.ru">vdsina.ru</a></td>
-                <td>Russia</td>
-                <td>Moscow</td>
+                <td>Russia/Moscow</td>
                 <td>1x4.0GHz, 1.0GB RAM, 30GB HDD</td>
                 <td>±eternal</td>
                 <td>off</td>
@@ -203,13 +199,11 @@ queue_period_ms: 5000
             <tr>
                 <td>2</td>
                 <td>HLTr/HLTs</td>
-                <td>v1.7.0</td>
                 <td>195.133.1.126</td>
                 <td>9581/9582</td>
                 <td>kf92j74Nof92n9F4</td>
                 <td><a href="https://ruvds.com">ruvds.ru</a></td>
-                <td>Russia</td>
-                <td>Moscow</td>
+                <td>Russia/Moscow</td>
                 <td>1x2.2GHz, 0.5GB RAM, 10GB HDD</td>
                 <td>±28.07.2027</td>
                 <td>off</td>
@@ -219,13 +213,11 @@ queue_period_ms: 5000
             <tr>
                 <td>3</td>
                 <td>HLTr/HLTs</td>
-                <td>v1.7.0</td>
                 <td>193.233.18.245</td>
                 <td>9581/9582</td>
                 <td>oi4r9NW9Le7fKF9d</td>
                 <td><a href="https://4vps.su">4vps.su</a></td>
-                <td>Russia</td>
-                <td>Novosibirsk</td>
+                <td>Russia/Novosibirsk</td>
                 <td>1x2.5GHz, 1.0GB RAM, 5GB VNMe</td>
                 <td>±07.08.2027</td>
                 <td>on</td>
@@ -235,13 +227,11 @@ queue_period_ms: 5000
             <tr>
                 <td>4</td>
                 <td>HLTr/HLTs</td>
-                <td>v1.7.0</td>
                 <td>185.43.4.253</td>
                 <td>9581/9582</td>
                 <td>j2BR39JfDf7Bajx3</td>
                 <td><a href="https://firstvds.ru">firstvds.ru</a></td>
-                <td>Russia</td>
-                <td>Moscow</td>
+                <td>Russia/Moscow</td>
                 <td>1x3.1GHz, 2.0GB RAM, 300GB HDD</td>
                 <td>±10.12.2024</td>
                 <td>off</td>
