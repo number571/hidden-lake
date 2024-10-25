@@ -82,7 +82,11 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPu
 
 	result := make(map[string]asymmetric.IPubKey, len(vFriends))
 	for _, friend := range vFriends {
-		result[friend.FAliasName] = asymmetric.LoadPubKey(friend.FPublicKey)
+		pubKey := asymmetric.LoadPubKey(friend.FPublicKey)
+		if pubKey == nil {
+			return nil, ErrInvalidPublicKey
+		}
+		result[friend.FAliasName] = pubKey
 	}
 
 	return result, nil

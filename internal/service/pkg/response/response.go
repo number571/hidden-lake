@@ -62,7 +62,7 @@ func (p *SResponse) ToString() string {
 }
 
 func (p *SResponse) WithHead(pHead map[string]string) IResponse {
-	p.FHead = make(map[string]string)
+	p.FHead = make(map[string]string, len(pHead))
 	for k, v := range pHead {
 		p.FHead[k] = v
 	}
@@ -79,7 +79,7 @@ func (p *SResponse) GetCode() int {
 }
 
 func (p *SResponse) GetHead() map[string]string {
-	headers := make(map[string]string)
+	headers := make(map[string]string, len(p.FHead))
 	for k, v := range p.FHead {
 		headers[k] = v
 	}

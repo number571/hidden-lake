@@ -168,9 +168,9 @@ func (p *SConfig) loadLogging() error {
 }
 
 func (p *SConfig) loadPubKeys() error {
-	p.fFriends = make(map[string]asymmetric.IPubKey)
+	p.fFriends = make(map[string]asymmetric.IPubKey, len(p.FFriends))
+	mapping := make(map[string]struct{}, len(p.FFriends))
 
-	mapping := make(map[string]struct{})
 	for name, val := range p.FFriends {
 		if _, ok := mapping[val]; ok {
 			return ErrDuplicatePublicKey
@@ -181,7 +181,6 @@ func (p *SConfig) loadPubKeys() error {
 		if pubKey == nil {
 			return ErrInvalidPublicKey
 		}
-
 		p.fFriends[name] = pubKey
 	}
 

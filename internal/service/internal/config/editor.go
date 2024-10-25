@@ -92,7 +92,7 @@ func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKey) map[string]string 
 }
 
 func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
-	mapping := make(map[string]struct{})
+	mapping := make(map[string]struct{}, len(pPubKeys))
 	for _, pubKey := range pPubKeys {
 		pubStr := pubKey.ToString()
 		if _, ok := mapping[pubStr]; ok {
@@ -105,7 +105,7 @@ func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
 
 func deleteDuplicateStrings(pStrs []string) []string {
 	result := make([]string, 0, len(pStrs))
-	mapping := make(map[string]struct{})
+	mapping := make(map[string]struct{}, len(pStrs))
 	for _, s := range pStrs {
 		if _, ok := mapping[s]; ok {
 			continue
