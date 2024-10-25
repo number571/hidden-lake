@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### BUG FIXES
+
+- `cmd/hle`: delete print log in decrypt failed block
+
 <!-- ... -->
 
 ## v1.7.1
@@ -14,10 +18,10 @@
 
 ### CHANGES
 
-- Update `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
-- Update `cmd/hle`: update API encrypt/decrypt messages
-- Update `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
-- Update `go.mod`: update go-peer version: 1.7.0 -> 1.7.2
+- `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
+- `cmd/hle`: update API encrypt/decrypt messages
+- `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
+- `go.mod`: update go-peer version: 1.7.0 -> 1.7.2
 
 <!-- ... -->
 
@@ -27,8 +31,8 @@
 
 ### IMPROVEMENTS
 
-- Update `cmd/hlm`: add ping message
-- Update `cmd`: RSA-4096 -> ML-KEM-768, ML-DSA-65
+- `cmd/hlm`: add ping message
+- `cmd`: RSA-4096 -> ML-KEM-768, ML-DSA-65
 
 <!-- ... -->
 
