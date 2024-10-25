@@ -18,6 +18,8 @@ jobs:
           go-version: 1.23.0
     - name: Go-peer version
       run: export PATH=$PATH:$(go env GOPATH)/bin && go version
+    - name: Path ls
+      run: ls -la
     - name: Hidden-Lake deps installing...
       run: export PATH=$PATH:$(go env GOPATH)/bin && make install-deps
     - name: Hidden-Lake lint/test running...
