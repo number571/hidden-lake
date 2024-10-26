@@ -133,7 +133,7 @@ $ ./hls_amd64_linux
 
 ### Production
 
-The HLS node is easily connected to the production environment. To do this, you just need to specify the network_key at startup. You can find them in the [networks.yml](networks.yml) file.
+The HLS node is easily connected to the production environment. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](networks.yml) file.
 
 ```bash
 $ hls -network=oi4r9NW9Le7fKF9d
@@ -144,7 +144,7 @@ After such a launch, the hls.yml file will be created or overwritten (if it exis
 <p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
 <p align="center">Figure 2. Example of request to echo-service</p>
 
-> There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
+> Examples of running HL applications in a production environment: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
 
 ## Star History
 
