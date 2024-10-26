@@ -90,20 +90,12 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	}
 
 	connection := network.FConnections[0]
-	if connection.FHost != "xxx.xxx.xxx.xxx" {
-		t.Error(`connection.FHost != "xxx.xxx.xxx.xxx"`)
+	if connection.FHost != "127.0.0.1" {
+		t.Error(`connection.FHost != "127.0.0.1"`)
 		return
 	}
-	if len(connection.FPorts) != 2 {
-		t.Error(`len(connection.FPorts) != 2`)
-		return
-	}
-	if connection.FPorts[0] != 1 {
-		t.Error(`connection.FPorts[0] != 1`)
-		return
-	}
-	if connection.FPorts[1] != 2 {
-		t.Error(`connection.FPorts[1] != 2`)
+	if connection.FPort != 9581 {
+		t.Error(`connection.FPort != 9581`)
 		return
 	}
 	if connection.FProvider != "_provider_" {

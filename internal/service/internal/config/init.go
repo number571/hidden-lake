@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/utils"
@@ -50,7 +52,10 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 
 	cfg.FConnections = make([]string, 0, len(network.FConnections))
 	for _, c := range network.FConnections {
-		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPorts[0]))
+		if isAmI(pCfg, c) {
+			continue
+		}
+		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
 	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
@@ -63,6 +68,20 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	return rCfg, nil
+}
+
+func isAmI(pCfg IConfig, conn hiddenlake.SConnection) bool {
+	splited := strings.Split(pCfg.GetAddress().GetTCP(), ":")
+	if len(splited) < 2 {
+		return false
+	}
+	tcpPort, _ := strconv.Atoi(splited[1])
+	if conn.FHost == "localhost" || conn.FHost == "127.0.0.1" {
+		if conn.FPort == uint16(tcpPort) {
+			return true
+		}
+	}
+	return false
 }
 
 func initConfig() *SConfig {

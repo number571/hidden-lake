@@ -41,8 +41,12 @@ func main() {
 
 	i := 0
 	for key, network := range hiddenlake.GNetworks {
-		connect := network.FConnections[0].FHost + ":9582" // HTTP port
+		i++
+		if key == hiddenlake.CDefaultNetwork {
+			continue
+		}
 
+		connect := fmt.Sprintf("%s:%d", network.FConnections[0].FHost, 9582)
 		netSett := net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{
 				FWorkSizeBits: cWrkSize,
@@ -64,7 +68,7 @@ func main() {
 			payload.NewPayload64(cPldHead, []byte(randString)).ToBytes(),
 		)
 		if err != nil {
-			fmt.Printf("%d. %s: %s\n", i+1, connect, err)
+			fmt.Printf("%d. %s: %s\n", i, connect, err)
 			continue
 		}
 
@@ -75,25 +79,25 @@ func main() {
 
 		start1 := time.Now()
 		if err := hltClient.PutMessage(ctx, netMsg); err != nil {
-			fmt.Printf("%d. %s: %s\n", i+1, connect, err)
+			fmt.Printf("%d. %s: %s\n", i, connect, err)
 			continue
 		}
 
 		start2 := time.Now()
 		gotNetMsg, err := hltClient.GetMessage(ctx, encoding.HexEncode(netMsg.GetHash()))
 		if err != nil {
-			fmt.Printf("%d. %s: %s\n", i+1, connect, err)
+			fmt.Printf("%d. %s: %s\n", i, connect, err)
 			continue
 		}
 
 		if !bytes.Equal(netMsg.ToBytes(), gotNetMsg.ToBytes()) {
-			fmt.Printf("%d. %s: !bytes.Equal(netMsg.ToBytes(), gotNetMsg.ToBytes())\n", i+1, connect)
+			fmt.Printf("%d. %s: !bytes.Equal(netMsg.ToBytes(), gotNetMsg.ToBytes())\n", i, connect)
 			continue
 		}
 
 		fmt.Printf(
 			"%d. HLT server '%s' is working properly (response_time=%s,%s);\n",
-			i+1,
+			i,
 			connect,
 			time.Since(start1),
 			time.Since(start2),
