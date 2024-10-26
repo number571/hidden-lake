@@ -119,8 +119,8 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 			FQueuePeriodMS:    tcQueuePeriod,
 			FFetchTimeoutMS:   tcFetchTimeout,
 		},
-		FServices: map[string]*config.SService{
-			tcServiceAddressInHLS: {FHost: testutils.TgAddrs[10]},
+		FServices: map[string]string{
+			tcServiceAddressInHLS: testutils.TgAddrs[10],
 		},
 	}
 

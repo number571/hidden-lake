@@ -1,0 +1,18 @@
+settings: &default_settings
+  message_size_bytes: 8192
+  work_size_bits: 22
+  fetch_timeout_ms: 60000
+  queue_period_ms: 5000
+networks:
+  8Jkl93Mdk93md1bz:
+    <<: *default_settings
+    connections: [94.103.91.81:9581]
+  j2BR39JfDf7Bajx3:
+    <<: *default_settings
+    connections: [185.43.4.253:9581]
+  kf92j74Nof92n9F4:
+    <<: *default_settings
+    connections: [195.133.1.126:9581]
+  oi4r9NW9Le7fKF9d:
+    <<: *default_settings
+    connections: [193.233.18.245:9581]

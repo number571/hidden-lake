@@ -69,10 +69,8 @@ friends:
   %s: %s
   %s: %s
 services:
-  %s: 
-    host: %s
-  %s: 
-    host: %s
+  %s: %s
+  %s: %s
 `
 )
 
@@ -292,7 +290,7 @@ func TestComplexConfig(t *testing.T) {
 			t.Errorf("service undefined '%s'", k)
 			return
 		}
-		if v != v1.GetHost() {
+		if v != v1 {
 			t.Errorf("service host is invalid '%s'", v1)
 			return
 		}

@@ -138,9 +138,8 @@ $ ./hls_amd64_linux
 The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes.
 
 ```bash
-$ wget https://github.com/number571/hidden-lake/blob/master/configs/8Jkl93Mdk93md1bz/hls.yml
-# where 8Jkl93Mdk93md1bz is a network key
-$ hls
+$ hls -network=8Jkl93Mdk93md1bz
+# where '8Jkl93Mdk93md1bz' is a network key from networks.yml
 ```
 
 <p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
@@ -150,7 +149,7 @@ $ hls
 
 ### Settings
 
-The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [configs](https://github.com/number571/hidden-lake/tree/master/configs) directory.
+The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [networks.yml](https://github.com/number571/hidden-lake/tree/master/networks.yml) file.
 
 ```yaml
 # default settings

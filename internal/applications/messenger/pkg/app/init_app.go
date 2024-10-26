@@ -11,8 +11,8 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
-func InitApp(pArgs []string, pDefaultPath string) (types.IRunner, error) {
-	inputPath := strings.TrimSuffix(flag.GetFlagValue(pArgs, "path", pDefaultPath), "/")
+func InitApp(pArgs []string) (types.IRunner, error) {
+	inputPath := strings.TrimSuffix(flag.GetFlagValue(pArgs, "path", "."), "/")
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
 	cfg, err := config.InitConfig(cfgPath, nil)

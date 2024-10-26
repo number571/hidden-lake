@@ -74,8 +74,8 @@ func TestHLS(t *testing.T) {
 
 func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 	rawCFG := &config.SConfig{
-		FServices: map[string]*config.SService{
-			tcServiceAddressInHLS: {FHost: testutils.TgAddrs[5]},
+		FServices: map[string]string{
+			tcServiceAddressInHLS: testutils.TgAddrs[5],
 		},
 		FSettings: &config.SConfigSettings{
 			FMessageSizeBytes: tcMessageSize,

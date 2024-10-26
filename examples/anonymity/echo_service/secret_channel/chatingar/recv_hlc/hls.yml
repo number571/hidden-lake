@@ -8,8 +8,7 @@ logging:
   - warn
   - erro
 services:
-  hidden-echo-service: 
-    host: recv_hls_service:8080
+  hidden-echo-service: recv_hls_service:8080
 connections:
   - recv_hlc:8581
 friends:

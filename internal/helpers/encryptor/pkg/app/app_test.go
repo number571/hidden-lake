@@ -125,17 +125,17 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcTestdataPath)
 	defer testDeleteFiles(tcTestdataPath)
 
-	if _, err := InitApp([]string{}, tcTestdataPath, 1); err != nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath}); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if _, err := InitApp([]string{"parallel", "abc"}, tcTestdataPath, 1); err == nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath, "parallel", "abc"}); err == nil {
 		t.Error("success init app with parallel=abc")
 		return
 	}
 
-	if _, err := InitApp([]string{}, "./not_exist/path/to/hle", 1); err == nil {
+	if _, err := InitApp([]string{"path", "./not_exist/path/to/hle"}); err == nil {
 		t.Error("success init app with undefined dir key")
 		return
 	}

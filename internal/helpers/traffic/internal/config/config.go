@@ -24,7 +24,8 @@ type SConfigSettings struct {
 }
 
 type SConfig struct {
-	fLogging logger.ILogging
+	fFilepath string
+	fLogging  logger.ILogging
 
 	FSettings    *SConfigSettings `yaml:"settings"`
 	FLogging     []string         `yaml:"logging,omitempty"`
@@ -44,6 +45,7 @@ func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
 		return nil, utils.MergeErrors(ErrConfigAlreadyExist, err)
 	}
 
+	pCfg.fFilepath = pFilepath
 	if err := pCfg.initConfig(); err != nil {
 		return nil, utils.MergeErrors(ErrInitConfig, err)
 	}
@@ -70,9 +72,11 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 		return nil, utils.MergeErrors(ErrDeserializeConfig, err)
 	}
 
+	cfg.fFilepath = pFilepath
 	if err := cfg.initConfig(); err != nil {
 		return nil, utils.MergeErrors(ErrInitConfig, err)
 	}
+
 	return cfg, nil
 }
 

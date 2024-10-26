@@ -6,6 +6,15 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hls|cmd/hle|cmd/hlt|cmd/hll`: add 'network' run option
+
+### CHANGES
+
+- `cmd/hls`: delete yaml host field from services in hls.yml
+- `cmd/*`: delete default args from InitApp functions
+
 ### BUG FIXES
 
 - `cmd/hle`: delete print log in decrypt failed block

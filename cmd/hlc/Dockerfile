@@ -9,6 +9,7 @@ ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
 RUN go build -o hlc ./cmd/hlc
 
+ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="/mounted"
 ENV SERVICE_PARALLEL="1"
-CMD ./hlc -path="${SERVICE_PATH}" -parallel="${SERVICE_PARALLEL}"
+CMD ./hlc -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}" -parallel="${SERVICE_PARALLEL}"

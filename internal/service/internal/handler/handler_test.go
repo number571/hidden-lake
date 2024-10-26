@@ -65,12 +65,9 @@ friends:
   test_recvr: %s
   test_name1: %s
 services:
-  test_service1: 
-    host: test_address1
-  test_service2: 
-    host: test_address2
-  test_service3: 
-    host: test_address3
+  test_service1: test_address1
+  test_service2: test_address2
+  test_service3: test_address3
 `,
 		tgPrivKey1.GetPubKey().ToString(),
 		tgPrivKey2.GetPubKey().ToString(),

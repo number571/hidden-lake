@@ -16,7 +16,7 @@ func TestInit(t *testing.T) {
 
 	testConfigDefaultInit(configFile)
 
-	config1, err := InitConfig(configFile, nil)
+	config1, err := InitConfig(configFile, nil, "")
 	if err != nil {
 		t.Error(err)
 		return
@@ -33,21 +33,21 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if _, err := InitConfig(configFile, nil); err == nil {
+	if _, err := InitConfig(configFile, nil, ""); err == nil {
 		t.Error("success init config with invalid config structure (1)")
 		return
 	}
 
 	os.Remove(configFile)
 
-	if _, err := InitConfig(configFile, &SConfig{}); err == nil {
+	if _, err := InitConfig(configFile, &SConfig{}, ""); err == nil {
 		t.Error("success init config with invalid config structure (2)")
 		return
 	}
 
 	os.Remove(configFile)
 
-	config2, err := InitConfig(configFile, config1.(*SConfig))
+	config2, err := InitConfig(configFile, config1.(*SConfig), "")
 	if err != nil {
 		t.Error(err)
 		return
@@ -60,7 +60,7 @@ func TestInit(t *testing.T) {
 
 	os.Remove(configFile)
 
-	config3, err := InitConfig(configFile, nil)
+	config3, err := InitConfig(configFile, nil, "")
 	if err != nil {
 		t.Error(err)
 		return

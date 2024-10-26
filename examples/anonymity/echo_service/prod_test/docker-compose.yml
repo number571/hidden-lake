@@ -11,6 +11,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hls/Dockerfile
     environment:
+      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/anonymity/echo_service/prod_test/recv_hls
     networks:
       - local-network
@@ -19,6 +20,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hls/Dockerfile
     environment:
+      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/anonymity/echo_service/prod_test/send_hls
     ports:
       - 7572:7572
@@ -29,6 +31,7 @@ services:
     deploy:
         replicas: 3
     environment:
+      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/anonymity/echo_service/prod_test/other_hls
 networks:
   local-network:

@@ -10,8 +10,7 @@ logging:
 address:
   http: :7572
 services:
-  hidden-lake-filesharer: 
-    host: node2_hlc:7071
+  hidden-lake-filesharer: node2_hlc:7071
 connections:
   - node2_hlc:7581
 friends:

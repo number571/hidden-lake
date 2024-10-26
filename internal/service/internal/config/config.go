@@ -30,16 +30,12 @@ type SConfig struct {
 	fLogging  logger.ILogging
 	fFriends  map[string]asymmetric.IPubKey
 
-	FSettings    *SConfigSettings     `yaml:"settings"`
-	FLogging     []string             `yaml:"logging,omitempty"`
-	FAddress     *SAddress            `yaml:"address,omitempty"`
-	FServices    map[string]*SService `yaml:"services,omitempty"`
-	FConnections []string             `yaml:"connections,omitempty"`
-	FFriends     map[string]string    `yaml:"friends,omitempty"`
-}
-
-type SService struct {
-	FHost string `yaml:"host"`
+	FSettings    *SConfigSettings  `yaml:"settings"`
+	FLogging     []string          `yaml:"logging,omitempty"`
+	FAddress     *SAddress         `yaml:"address,omitempty"`
+	FServices    map[string]string `yaml:"services,omitempty"`
+	FConnections []string          `yaml:"connections,omitempty"`
+	FFriends     map[string]string `yaml:"friends,omitempty"`
 }
 
 type SAddress struct {
@@ -118,7 +114,7 @@ func (p *SConfig) GetSettings() IConfigSettings {
 
 func (p *SConfig) isValid() bool {
 	for _, v := range p.FServices {
-		if v.FHost == "" {
+		if v == "" {
 			return false
 		}
 	}
@@ -135,12 +131,6 @@ func (p *SConfig) initConfig() error {
 
 	if p.FAddress == nil {
 		p.FAddress = new(SAddress)
-	}
-
-	for k, v := range p.FServices {
-		if v == nil {
-			p.FServices[k] = new(SService)
-		}
 	}
 
 	if !p.isValid() {
@@ -213,16 +203,12 @@ func (p *SConfig) GetConnections() []string {
 	return p.FConnections
 }
 
-func (p *SConfig) GetService(name string) (IService, bool) {
+func (p *SConfig) GetService(name string) (string, bool) {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
 	service, ok := p.FServices[name]
 	return service, ok
-}
-
-func (p *SService) GetHost() string {
-	return p.FHost
 }
 
 func (p *SAddress) GetTCP() string {

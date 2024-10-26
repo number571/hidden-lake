@@ -10,8 +10,7 @@ logging:
 address:
   http: :6572
 services:
-  hidden-lake-messenger: 
-    host: node3_hlc:6061
+  hidden-lake-messenger: node3_hlc:6061
 connections:
 - middle_hlt:5581
 friends:

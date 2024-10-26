@@ -53,7 +53,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		pushReq, err := http.NewRequestWithContext(
 			pCtx,
 			loadReq.GetMethod(),
-			fmt.Sprintf("http://%s%s", service.GetHost(), loadReq.GetPath()),
+			fmt.Sprintf("http://%s%s", service, loadReq.GetPath()),
 			bytes.NewReader(loadReq.GetBody()),
 		)
 		if err != nil {

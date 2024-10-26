@@ -9,8 +9,7 @@ logging:
   - warn
   - erro
 services:
-  hidden-lake-remoter: 
-    host: recv_hlc:9532
+  hidden-lake-remoter: recv_hlc:9532
 connections:
   - middle_hlt_3:6581
 friends:

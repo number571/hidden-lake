@@ -100,15 +100,15 @@ address:
   tcp: 127.0.0.1:9571
   http: 127.0.0.1:9572
 services:
-  hidden-lake-messenger: 
-    host: 127.0.0.1:9592
+  hidden-lake-messenger: 127.0.0.1:9592
 ```
 
 ## Running options
 
 ```bash
-$ ./hls -path=/root -parallel=1
+$ ./hls -path=/root -network=xxx -parallel=1
 # path     = path to config, database, key files
+# network  = use network configuration from networks.yml
 # parallel = num of parallel functions for PoW algorithm
 ```
 
@@ -228,8 +228,7 @@ address:
   tcp: localhost:9571
   http: localhost:9572
 services:
-  hidden-default-service:
-    host: localhost:8080
+  hidden-default-service: localhost:8080
 connections:
   - localhost:8571
 friends:

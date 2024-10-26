@@ -26,4 +26,7 @@ var (
 	ErrInvalidPublicKey   = &SConfigError{"invalid public key"}
 	ErrLoadPublicKey      = &SConfigError{"load public key"}
 	ErrLoadConfig         = &SConfigError{"load config"}
+	ErrRebuildConfig      = &SConfigError{"rebuild config"}
+	ErrNetworkNotFound    = &SConfigError{"network not found"}
+	ErrBuildConfig        = &SConfigError{"build config"}
 )

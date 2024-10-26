@@ -1,8 +1,8 @@
 settings:
   message_size_bytes: 8192
   work_size_bits: 22
-  fetch_timeout_ms: 60000
-  queue_period_ms: 5000
+  fetch_timeout_ms: 300_000
+  queue_period_ms: 30_000
 logging:
 - info
 - warn
@@ -10,8 +10,7 @@ logging:
 address:
   http: :8572
 services:
-  hidden-lake-messenger: 
-    host: node1_hlc:8081
+  hidden-lake-messenger: node1_hlc:8081
 connections:
   - node1_hlc:8581
 friends:

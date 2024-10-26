@@ -36,7 +36,7 @@ func testCreateHLT(
 		return cancel, nil, err
 	}
 
-	app1, err := hls_app.InitApp([]string{}, path)
+	app1, err := hls_app.InitApp([]string{"path", path})
 	if err != nil {
 		return cancel, nil, err
 	}

@@ -30,11 +30,7 @@ type IConfig interface {
 	GetAddress() IAddress
 	GetFriends() map[string]asymmetric.IPubKey
 	GetConnections() []string
-	GetService(string) (IService, bool)
-}
-
-type IService interface {
-	GetHost() string
+	GetService(string) (string, bool)
 }
 
 type IAddress interface {

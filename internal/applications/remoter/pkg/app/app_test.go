@@ -97,7 +97,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcTestdataPath)
 	defer testDeleteFiles(tcTestdataPath)
 
-	if _, err := InitApp([]string{}, tcTestdataPath); err != nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath}); err != nil {
 		t.Error(err)
 		return
 	}
