@@ -131,7 +131,7 @@ $ chmod +x hls_amd64_linux
 $ ./hls_amd64_linux
 ```
 
-### Production
+## Production
 
 The HLS node is easily connected to the production environment. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](networks.yml) file.
 
