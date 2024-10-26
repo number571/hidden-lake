@@ -38,7 +38,7 @@ networks:
         ports: [9581, 9582]
   _default_network_:
     <<: *default_settings
-    connections: 
+    connections: # test only
       - provider: _provider_
         location: _location_
         logging: true
