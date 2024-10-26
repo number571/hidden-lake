@@ -64,7 +64,7 @@
 </h2>
 
 > [!IMPORTANT]
-> The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](https://github.com/number571/hidden-lake/blob/master/CHANGELOG.md) file.
+> The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
 The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
@@ -145,11 +145,11 @@ $ hls -network=8Jkl93Mdk93md1bz
 <p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
 <p align="center">Figure 2. Example of request to echo-service</p>
 
-> There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/echo_service/prod_test), [anon_messenger](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/messenger/prod_test), [anon_filesharer](https://github.com/number571/hidden-lake/tree/master/examples/anonymity/filesharer/prod_test).
+> There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
 
 ### Settings
 
-The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [networks.yml](https://github.com/number571/hidden-lake/tree/master/networks.yml) file.
+The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [networks.yml](networks.yml) file.
 
 ```yaml
 # default settings
