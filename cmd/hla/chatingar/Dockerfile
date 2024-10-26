@@ -9,5 +9,6 @@ ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
 RUN go build -o chatingar ./cmd/hla/chatingar
 
+ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="/mounted"
-CMD ./chatingar -path="${SERVICE_PATH}"
+CMD ./chatingar -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}"

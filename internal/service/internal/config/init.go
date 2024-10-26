@@ -66,13 +66,16 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func initConfig() *SConfig {
+	defaultNetwork, ok := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
+	if !ok {
+		panic("get default network")
+	}
 	return &SConfig{
 		FSettings: &SConfigSettings{
-			FMessageSizeBytes: hls_settings.CDefaultMessageSizeBytes,
-			FWorkSizeBits:     hls_settings.CDefaultWorkSizeBits,
-			FFetchTimeoutMS:   hls_settings.CDefaultFetchTimeoutMS,
-			FQueuePeriodMS:    hls_settings.CDefaultQueuePeriodMS,
-			FNetworkKey:       hls_settings.CDefaultNetworkKey,
+			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,
+			FWorkSizeBits:     defaultNetwork.FWorkSizeBits,
+			FFetchTimeoutMS:   defaultNetwork.FFetchTimeoutMS,
+			FQueuePeriodMS:    defaultNetwork.FQueuePeriodMS,
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{

@@ -9,5 +9,6 @@ ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
 RUN go build -o common ./cmd/hla/common
 
+ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="/mounted"
-CMD ./common -path="${SERVICE_PATH}"
+CMD ./common -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}"

@@ -17,7 +17,7 @@ func InitApp(pArgs []string) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(flag.GetFlagValue(pArgs, "path", "."), "/")
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
-	cfg, err := config.InitConfig(cfgPath, nil)
+	cfg, err := config.InitConfig(cfgPath, nil, flag.GetFlagValue(pArgs, "network", ""))
 	if err != nil {
 		return nil, fmt.Errorf("init config: %w", err)
 	}

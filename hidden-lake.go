@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	CVersion = "v1.7.2~"
+	CVersion        = "v1.7.2~"
+	CDefaultNetwork = "_default_network_"
 )
 
 var (

@@ -36,7 +36,7 @@ networks:
         logging: true
         host: 193.233.18.245
         ports: [9581, 9582]
-  _test_network_:
+  _default_network_:
     <<: *default_settings
     connections: 
       - provider: _provider_

@@ -58,12 +58,7 @@ func TestHiddenLakeVersion(t *testing.T) {
 func TestHiddenLakeNetworks(t *testing.T) {
 	t.Parallel()
 
-	if len(GNetworks) == 0 {
-		t.Error("len GNetworks = 0")
-		return
-	}
-
-	network, ok := GNetworks["_test_network_"]
+	network, ok := GNetworks[CDefaultNetwork]
 	if !ok {
 		t.Error("not found network _test_network_")
 		return
