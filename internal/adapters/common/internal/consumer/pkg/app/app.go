@@ -8,12 +8,10 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/state"
-	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters"
 	"github.com/number571/hidden-lake/internal/adapters/common/internal/config"
 	"github.com/number571/hidden-lake/internal/adapters/common/internal/consumer/internal/adapted"
-	"github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -48,15 +46,9 @@ func (p *sApp) Run(pCtx context.Context) error {
 	}
 	defer func() { _ = p.fState.Disable(nil) }()
 
-	kvDB, err := database.NewKVDatabase(settings.CPathDB)
-	if err != nil {
-		return err
-	}
-	defer kvDB.Close()
-
 	return adapters.ConsumeProcessor(
 		pCtx,
-		adapted.NewAdaptedConsumer(p.fServiceAddr, p.fSettings, kvDB),
+		adapted.NewAdaptedConsumer(p.fSettings, p.fServiceAddr),
 		p.fStdfLogger,
 		hlt_client.NewClient(
 			hlt_client.NewBuilder(),

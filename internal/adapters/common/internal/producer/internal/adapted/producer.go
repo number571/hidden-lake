@@ -3,8 +3,6 @@ package adapted
 import (
 	"bytes"
 	"context"
-	"fmt"
-	"io"
 	"net/http"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
@@ -30,30 +28,19 @@ func (p *sAdaptedProducer) Produce(pCtx context.Context, pMsg net_message.IMessa
 	req, err := http.NewRequestWithContext(
 		pCtx,
 		http.MethodPost,
-		fmt.Sprintf("http://%s/push", p.fServiceAddr),
+		p.fServiceAddr+"/push",
 		bytes.NewBuffer([]byte(pMsg.ToString())),
 	)
 	if err != nil {
 		return utils.MergeErrors(ErrBuildRequest, err)
 	}
-
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return utils.MergeErrors(ErrBadRequest, err)
 	}
 	defer resp.Body.Close()
-
 	if code := resp.StatusCode; code != http.StatusOK {
 		return ErrBadStatusCode
-	}
-
-	res, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return utils.MergeErrors(ErrReadResponse, err)
-	}
-
-	if len(res) == 0 || res[0] == '!' {
-		return ErrInvalidResponse
 	}
 	return nil
 }

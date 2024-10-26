@@ -8,4 +8,4 @@ logging:
 address: :7072
 connection:
   hlt_host: node2_hlc:7582
-  srv_host: service:6060
+  srv_host: http://service:6060

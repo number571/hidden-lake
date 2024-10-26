@@ -1,3 +1,4 @@
+// nolint: err113
 package adapted
 
 import (
@@ -7,15 +8,10 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/adapters"
-)
-
-const (
-	cDBCountKey = "db_count_key"
 )
 
 var (
@@ -23,150 +19,109 @@ var (
 )
 
 type sAdaptedConsumer struct {
-	fServiceAddr string
 	fSettings    net_message.ISettings
-	fKVDatabase  database.IKVDatabase
+	fServiceAddr string
+	fStates      [2]sState // 0 = got, 1 = cur
+}
+
+type sState struct {
+	fIter uint64
+	fLast uint64
 }
 
 func NewAdaptedConsumer(
-	pServiceAddr string,
 	pSettings net_message.ISettings,
-	pKVDatabase database.IKVDatabase,
+	pServiceAddr string,
 ) adapters.IAdaptedConsumer {
 	return &sAdaptedConsumer{
-		fServiceAddr: pServiceAddr,
 		fSettings:    pSettings,
-		fKVDatabase:  pKVDatabase,
+		fServiceAddr: pServiceAddr,
+		fStates:      [2]sState{},
 	}
 }
 
 func (p *sAdaptedConsumer) Consume(pCtx context.Context) (net_message.IMessage, error) {
-	countService, err := p.loadCountFromService(pCtx)
+	if p.fStates[0].fIter == p.fStates[1].fIter && p.fStates[0].fLast == p.fStates[1].fLast {
+		iter, last, err := p.getIterAndLast(pCtx)
+		if err != nil {
+			return nil, err
+		}
+		if iter == p.fStates[0].fIter && last == p.fStates[0].fLast {
+			return nil, nil
+		}
+		p.fStates[0].fIter = iter
+		p.fStates[0].fLast = last
+	}
+
+	if p.fStates[1].fIter != p.fStates[0].fIter {
+		p.fStates[1].fIter = p.fStates[0].fIter
+		p.fStates[1].fLast = 0
+	}
+
+	msg, err := p.loadMessage(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrLoadCountService, err)
+		p.fStates[0].fIter, p.fStates[0].fLast = 0, 0
+		p.fStates[1].fIter, p.fStates[1].fLast = 0, 0
+		return nil, err
 	}
 
-	countDB, err := p.loadCountFromDB()
-	if err != nil {
-		return nil, utils.MergeErrors(ErrLoadCountDB, err)
-	}
-
-	if countDB >= countService {
-		return nil, nil
-	}
-
-	msg, err := p.loadMessageFromService(pCtx, countDB)
-	if err != nil {
-		return nil, utils.MergeErrors(ErrLoadMessage, err)
-	}
-
-	if err := p.incrementCountInDB(); err != nil {
-		return nil, utils.MergeErrors(ErrIncrementCount, err)
-	}
-
+	p.fStates[1].fLast++
 	return msg, nil
 }
 
-func (p *sAdaptedConsumer) loadMessageFromService(pCtx context.Context, pID uint64) (net_message.IMessage, error) {
+func (p *sAdaptedConsumer) getIterAndLast(pCtx context.Context) (uint64, uint64, error) {
+	req, err := http.NewRequestWithContext(pCtx, http.MethodGet, p.fServiceAddr+"/last", nil)
+	if err != nil {
+		return 0, 0, err
+	}
+	rsp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, 0, err
+	}
+	defer rsp.Body.Close()
+	if code := rsp.StatusCode; code != http.StatusOK {
+		return 0, 0, fmt.Errorf("status code: %d", code)
+	}
+	res, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return 0, 0, err
+	}
+	splited := strings.Split(string(res), ".")
+	if len(splited) != 2 {
+		return 0, 0, errors.New("failed splited uints")
+	}
+	iter, err := strconv.ParseUint(splited[0], 10, 64)
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed iter: %s", err.Error())
+	}
+	last, err := strconv.ParseUint(splited[1], 10, 64)
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed last: %s", err.Error())
+	}
+	return iter, last, nil
+}
+
+func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessage, error) {
 	req, err := http.NewRequestWithContext(
 		pCtx,
 		http.MethodGet,
-		fmt.Sprintf("http://%s/load?data_id=%d", p.fServiceAddr, pID),
+		fmt.Sprintf(p.fServiceAddr+"/load?id=%d", p.fStates[1].fLast),
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBuildRequest, err)
+		return nil, err
 	}
-
-	resp, err := http.DefaultClient.Do(req)
+	rsp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	msgStringAsBytes, err := io.ReadAll(resp.Body)
+	defer rsp.Body.Close()
+	if code := rsp.StatusCode; code != http.StatusOK {
+		return nil, fmt.Errorf("status code: %d", code)
+	}
+	res, err := io.ReadAll(rsp.Body)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrReadResponse, err)
+		return nil, err
 	}
-
-	if len(msgStringAsBytes) <= 1 || msgStringAsBytes[0] == '!' {
-		return nil, ErrInvalidResponse
-	}
-
-	msg, err := net_message.LoadMessage(p.fSettings, string(msgStringAsBytes[1:]))
-	if err != nil {
-		return nil, utils.MergeErrors(ErrDecodeMessage, err)
-	}
-
-	return msg, nil
-}
-
-func (p *sAdaptedConsumer) loadCountFromService(pCtx context.Context) (uint64, error) {
-	req, err := http.NewRequestWithContext(
-		pCtx,
-		http.MethodGet,
-		fmt.Sprintf("http://%s/size", p.fServiceAddr),
-		nil,
-	)
-	if err != nil {
-		return 0, utils.MergeErrors(ErrBuildRequest, err)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return 0, utils.MergeErrors(ErrBadRequest, err)
-	}
-	defer resp.Body.Close()
-
-	bytesCount, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, utils.MergeErrors(ErrReadResponse, err)
-	}
-
-	if len(bytesCount) <= 1 || bytesCount[0] == '!' {
-		return 0, ErrInvalidResponse
-	}
-
-	strCount := string(bytesCount[1:])
-	countService, err := strconv.ParseUint(strCount, 10, 64)
-	if err != nil {
-		return 0, utils.MergeErrors(ErrParseCount, err)
-	}
-
-	return countService, nil
-}
-
-func (p *sAdaptedConsumer) loadCountFromDB() (uint64, error) {
-	res, err := p.fKVDatabase.Get([]byte(cDBCountKey))
-	if err != nil {
-		if !errors.Is(err, database.ErrNotFound) {
-			return 0, utils.MergeErrors(ErrGetCount, err)
-		}
-		res = []byte(strconv.Itoa(0))
-		if err := p.fKVDatabase.Set([]byte(cDBCountKey), res); err != nil {
-			return 0, utils.MergeErrors(ErrInitCountKey, err)
-		}
-	}
-
-	count, err := strconv.ParseUint(string(res), 10, 64)
-	if err != nil {
-		return 0, utils.MergeErrors(ErrParseCount, err)
-	}
-	return count, nil
-}
-
-func (p *sAdaptedConsumer) incrementCountInDB() error {
-	count, err := p.loadCountFromDB()
-	if err != nil {
-		return utils.MergeErrors(ErrLoadCountDB, err)
-	}
-
-	err = p.fKVDatabase.Set(
-		[]byte(cDBCountKey),
-		[]byte(strconv.FormatUint(count+1, 10)),
-	)
-	if err != nil {
-		return utils.MergeErrors(ErrSetNewCount, err)
-	}
-	return nil
+	return net_message.LoadMessage(p.fSettings, string(res))
 }

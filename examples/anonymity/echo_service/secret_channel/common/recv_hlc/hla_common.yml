@@ -8,4 +8,4 @@ logging:
 address: :8082
 connection:
   hlt_host: recv_hlc:8582
-  srv_host: service:6060
+  srv_host: http://service:6060

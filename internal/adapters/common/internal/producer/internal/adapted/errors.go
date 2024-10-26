@@ -13,9 +13,7 @@ func (err *SAdaptedError) Error() string {
 }
 
 var (
-	ErrInvalidResponse = &SAdaptedError{"invalid response"}
-	ErrReadResponse    = &SAdaptedError{"read response"}
-	ErrBadStatusCode   = &SAdaptedError{"bad status code"}
-	ErrBadRequest      = &SAdaptedError{"bad request"}
-	ErrBuildRequest    = &SAdaptedError{"build request"}
+	ErrBadStatusCode = &SAdaptedError{"bad status code"}
+	ErrBadRequest    = &SAdaptedError{"bad request"}
+	ErrBuildRequest  = &SAdaptedError{"build request"}
 )

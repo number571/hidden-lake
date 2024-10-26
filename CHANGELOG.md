@@ -14,6 +14,7 @@
 
 - `cmd/hls`: delete yaml host field from services in hls.yml
 - `cmd/*`: delete default args from InitApp functions
+- `cmd/hla/common`: simplified the code
 
 ### BUG FIXES
 
