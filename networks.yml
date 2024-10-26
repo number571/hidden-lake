@@ -6,13 +6,41 @@ settings: &default_settings
 networks:
   8Jkl93Mdk93md1bz:
     <<: *default_settings
-    connections: [94.103.91.81:9581]
+    connections: 
+      - provider: vdsina.ru
+        location: Russia/Moscow
+        logging: false
+        host: 94.103.91.81
+        ports: [9581, 9582]
   j2BR39JfDf7Bajx3:
     <<: *default_settings
-    connections: [185.43.4.253:9581]
+    connections: 
+      - provider: firstvds.ru
+        location: Russia/Moscow
+        logging: false
+        host: 185.43.4.253
+        ports: [9581, 9582]
   kf92j74Nof92n9F4:
     <<: *default_settings
-    connections: [195.133.1.126:9581]
+    connections: 
+      - provider: ruvds.ru
+        location: Russia/Moscow
+        logging: false
+        host: 195.133.1.126
+        ports: [9581, 9582]
   oi4r9NW9Le7fKF9d:
     <<: *default_settings
-    connections: [193.233.18.245:9581]
+    connections: 
+      - provider: 4vps.su
+        location: Russia/Novosibirsk
+        logging: true
+        host: 193.233.18.245
+        ports: [9581, 9582]
+  _test_network_:
+    <<: *default_settings
+    connections: 
+      - provider: _provider_
+        location: _location_
+        logging: true
+        host: xxx.xxx.xxx.xxx
+        ports: [1, 2]

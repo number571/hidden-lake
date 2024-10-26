@@ -66,7 +66,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLT` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLF` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 ## Coverage map
 
@@ -114,7 +114,7 @@ The Hidden Lake anonymous network is based on the (queue-based) `QB-problem`, wh
 
 ## Build and run
 
-Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. It is recommended to run applications with the available release version, [tag](https://github.com/number571/hidden-lake/tags).
+Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
@@ -131,140 +131,18 @@ $ chmod +x hls_amd64_linux
 $ ./hls_amd64_linux
 ```
 
-## Production
+### Production
 
-### Running
-
-The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes.
+The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes. These parameters can be found in the [networks.yml](networks.yml) file.
 
 ```bash
-$ hls -network=8Jkl93Mdk93md1bz
-# where '8Jkl93Mdk93md1bz' is a network key from networks.yml
+$ hls -network=oi4r9NW9Le7fKF9d
 ```
 
 <p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
 <p align="center">Figure 2. Example of request to echo-service</p>
 
 > There are also examples of running HL applications in a production environment. For more information, follow the links: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
-
-### Settings
-
-The Hidden Lake network must have `common configuration` file settings for successful data exchange between network nodes. If some settings are different, other nodes will consider it a `protocol violation` and reject the connection attempt. You can find ready-made configuration files for HLS services in the [networks.yml](networks.yml) file.
-
-```yaml
-# default settings
-message_size_bytes: 8192
-work_size_bits: 22
-fetch_timeout_ms: 60000
-queue_period_ms: 5000
-```
-
-<table style="width: 100%">
-  <tr>
-    <th>Available network</th>
-    <th>Types of services</th>
-  </tr>
-  <tr>
-    <td>
-        <table style="width: 100%">
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Host</th>
-                <th>Port</th>
-                <th>Network key</th>
-                <th>Provider</th>
-                <th>Location</th>
-                <th>Characteristics</th>
-                <th>Expired time</th>
-                <th>Logging</th>
-                <th>DB-hash</th>
-                <th>STG-size</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>HLTr/HLTs</td>
-                <td>94.103.91.81</td> 
-                <td>9581/9582</td>
-                <td>8Jkl93Mdk93md1bz</td>
-                <td><a href="https://vdsina.ru">vdsina.ru</a></td>
-                <td>Russia/Moscow</td>
-                <td>1x4.0GHz, 1.0GB RAM, 30GB HDD</td>
-                <td>±eternal</td>
-                <td>off</td>
-                <td>on</td>
-                <td>30_000</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>HLTr/HLTs</td>
-                <td>195.133.1.126</td>
-                <td>9581/9582</td>
-                <td>kf92j74Nof92n9F4</td>
-                <td><a href="https://ruvds.com">ruvds.ru</a></td>
-                <td>Russia/Moscow</td>
-                <td>1x2.2GHz, 0.5GB RAM, 10GB HDD</td>
-                <td>±28.07.2027</td>
-                <td>off</td>
-                <td>off</td>
-                <td>10_000</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>HLTr/HLTs</td>
-                <td>193.233.18.245</td>
-                <td>9581/9582</td>
-                <td>oi4r9NW9Le7fKF9d</td>
-                <td><a href="https://4vps.su">4vps.su</a></td>
-                <td>Russia/Novosibirsk</td>
-                <td>1x2.5GHz, 1.0GB RAM, 5GB VNMe</td>
-                <td>±07.08.2027</td>
-                <td>on</td>
-                <td>off</td>
-                <td>10_000</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>HLTr/HLTs</td>
-                <td>185.43.4.253</td>
-                <td>9581/9582</td>
-                <td>j2BR39JfDf7Bajx3</td>
-                <td><a href="https://firstvds.ru">firstvds.ru</a></td>
-                <td>Russia/Moscow</td>
-                <td>1x3.1GHz, 2.0GB RAM, 300GB HDD</td>
-                <td>±10.12.2024</td>
-                <td>off</td>
-                <td>on</td>
-                <td>30_000</td>
-            </tr>
-        </table>
-    </td>
-    <td>
-        <table style="width: 100%">
-            <tr>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Default port</th>
-            </tr>
-            <tr>
-                <td>HLS</td>
-                <td>node</td>
-                <td>9571</td>
-            </tr>
-            <tr>
-                <td>HLTr</td>
-                <td>relayer</td>
-                <td>9581</td>
-            </tr>
-            <tr>
-                <td>HLTs</td>
-                <td>storage</td>
-                <td>9582</td>
-            </tr>
-        </table>
-    </td>
-  </tr>
-</table>
 
 ## Star History
 

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -46,7 +47,11 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FQueuePeriodMS = network.FQueuePeriodMS
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
-	cfg.FConnections = network.FConnections
+
+	cfg.FConnections = make([]string, 0, len(network.FConnections))
+	for _, c := range network.FConnections {
+		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPorts[0]))
+	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, utils.MergeErrors(ErrRebuildConfig, ErrWriteConfig, err)
