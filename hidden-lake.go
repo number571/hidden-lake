@@ -2,6 +2,7 @@ package hiddenlake
 
 import (
 	_ "embed"
+	"fmt"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
@@ -23,6 +24,9 @@ func init() {
 		panic(err)
 	}
 	GNetworks = networksYAML.FNetworks
+	if _, ok := GNetworks[CDefaultNetwork]; !ok {
+		panic(fmt.Sprintf("'%s' = nil", CDefaultNetwork))
+	}
 }
 
 type SNetworksYAML struct {

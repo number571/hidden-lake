@@ -56,10 +56,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, ok := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
-	if !ok {
-		panic("get default network")
-	}
+	defaultNetwork := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,

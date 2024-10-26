@@ -30,10 +30,7 @@ func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, e
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, ok := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
-	if !ok {
-		panic("get default network")
-	}
+	defaultNetwork := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FWorkSizeBits: defaultNetwork.FWorkSizeBits,
