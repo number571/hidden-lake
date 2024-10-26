@@ -133,11 +133,13 @@ $ ./hls_amd64_linux
 
 ### Production
 
-The HLS node is easy to connect to a production environment. To do this, it is sufficient to specify two parameters: `network_key` and `connections`. The network_key parameter is used to separate networks from each other, preventing them from merging. The connections parameter is used for direct network connection to HLS and HLT nodes. These parameters can be found in the [networks.yml](networks.yml) file.
+The HLS node is easily connected to the production environment. To do this, you just need to specify the network_key at startup. You can find them in the [networks.yml](networks.yml) file.
 
 ```bash
 $ hls -network=oi4r9NW9Le7fKF9d
 ```
+
+After such a launch, the hls.yml file will be created or overwritten (if it existed). The `settings` and `connections` fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
 <p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
 <p align="center">Figure 2. Example of request to echo-service</p>
