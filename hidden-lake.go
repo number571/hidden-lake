@@ -42,9 +42,6 @@ type SNetwork struct {
 }
 
 type SConnection struct {
-	FProvider string `yaml:"provider"`
-	FLocation string `yaml:"location"`
-	FLogging  bool   `yaml:"logging"`
-	FHost     string `yaml:"host"`
-	FPort     uint16 `yaml:"port"`
+	FHost string `yaml:"host"`
+	FPort uint16 `yaml:"port"`
 }

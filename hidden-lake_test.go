@@ -98,16 +98,4 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		t.Error(`connection.FPort != 9581`)
 		return
 	}
-	if connection.FProvider != "_provider_" {
-		t.Error(`connection.FProvider != "_provider_"`)
-		return
-	}
-	if connection.FLocation != "_location_" {
-		t.Error(`connection.FLocation != "_location_"`)
-		return
-	}
-	if connection.FLogging != true {
-		t.Error(`connection.FLogging != true`)
-		return
-	}
 }
