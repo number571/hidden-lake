@@ -62,7 +62,7 @@ connection: 127.0.0.1:9572
 ## Running options
 
 ```bash
-$ ./hlm -path=/root
+$ hlm -path=/root
 # path = path to config and database files
 ```
 

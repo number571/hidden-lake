@@ -52,7 +52,7 @@ address:
 ## Running options
 
 ```bash
-$ ./hle -path=/root -network=xxx -parallel=1
+$ hle -path=/root -network=xxx -parallel=1
 # path     = path to config, database, key files
 # network  = use network configuration from networks.yml
 # parallel = num of parallel functions for PoW algorithm

@@ -67,7 +67,7 @@ connections:
 ## Running options
 
 ```bash
-$ ./hlt -path=/root -network=xxx
+$ hlt -path=/root -network=xxx
 # path    = path to config and database files
 # network = use network configuration from networks.yml
 ```

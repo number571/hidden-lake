@@ -27,7 +27,7 @@ The application HLC includes the download of all Hidden Lake services, and runs 
 Default build and run
 
 ```bash 
-$ cd ./cmd/hlc
+$ go run ./cmd/hlc
 
 > [INFO] 2023/12/03 02:12:51 HLC is running...
 > ...
@@ -51,7 +51,7 @@ services:
 ## Running options
 
 ```bash
-$ ./hlc -path=/root -network=xxx -parallel=1
+$ hlc -path=/root -network=xxx -parallel=1
 # path     = path to config, database, key files
 # network  = use network configuration from networks.yml
 # parallel = num of parallel functions for PoW algorithm

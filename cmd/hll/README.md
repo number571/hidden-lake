@@ -55,7 +55,7 @@ address:
 ## Running options
 
 ```bash
-$ ./hll -path=/root -network=xxx
+$ hll -path=/root -network=xxx
 # path    = path to config and database files
 # network = use network configuration from networks.yml
 ```

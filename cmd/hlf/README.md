@@ -67,7 +67,7 @@ connection: 127.0.0.1:9572
 ## Running options
 
 ```bash
-$ ./hlf -path=/root
+$ hlf -path=/root
 # path = path to config and storage
 ```
 
