@@ -6,6 +6,17 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/hlm,cmd/hlf`: add HLR link to HL services in /about page
+- `cmd/hlf`: file hashing: sha256 -> sha384
+- `cmd/hlm,cmd/hlf`: hash(pubkey.bytes()) -> hash(pubkey.string())
+
+### BUG FIXES
+
+- `cmd/hlm,cmd/hlf`: fix links to HL services in /about page
+- `cmd/hlm`: fix emoji replacer
+
 <!-- ... -->
 
 ## v1.7.2
@@ -14,7 +25,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hls|cmd/hle|cmd/hlt|cmd/hll`: add 'network' run option
+- `cmd/hls,cmd/hle,cmd/hlt,cmd/hll`: add 'network' run option
 
 ### CHANGES
 
@@ -36,7 +47,7 @@
 
 - `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
 - `cmd/hle`: update API encrypt/decrypt messages
-- `cmd/hls|cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
+- `cmd/hls,cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
 - `go.mod`: update go-peer version: 1.7.0 -> 1.7.2
 
 <!-- ... -->

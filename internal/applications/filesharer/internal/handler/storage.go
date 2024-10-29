@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"crypto/sha256"
+	"crypto/sha512"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -102,7 +102,7 @@ func downloadFile(
 	fileName := query.Get("file_name")
 
 	fileHash := query.Get("file_hash")
-	if fileHash == "" || len(fileHash) != (sha256.Size<<1) {
+	if len(fileHash) != (sha512.Size384 << 1) {
 		ErrorPage(pLogger, pCfg, "file_hash_error", "incorrect file hash")(pW, pR)
 		return
 	}

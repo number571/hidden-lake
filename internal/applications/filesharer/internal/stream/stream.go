@@ -2,7 +2,7 @@ package stream
 
 import (
 	"context"
-	"crypto/sha256"
+	"crypto/sha512"
 	"hash"
 	"io"
 
@@ -49,7 +49,7 @@ func BuildStream(
 			hlf_client.NewRequester(pHlsClient),
 		),
 		fAliasName: pAliasName,
-		fHasher:    sha256.New(),
+		fHasher:    sha512.New384(),
 		fChunkSize: chunkSize,
 		fFileInfo:  pFileInfo,
 	}, nil

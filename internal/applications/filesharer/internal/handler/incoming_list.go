@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"crypto/sha256"
+	"crypto/sha512"
 	"io"
 	"io/fs"
 	"net/http"
@@ -98,10 +98,9 @@ func getFileHash(filename string) string {
 	}
 	defer f.Close()
 
-	h := sha256.New()
+	h := sha512.New384()
 	if _, err := io.Copy(h, f); err != nil {
 		return ""
 	}
-
 	return encoding.HexEncode(h.Sum(nil))
 }

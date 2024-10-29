@@ -15,7 +15,7 @@ type sEmojis struct {
 }
 
 var (
-	gEmojiReplacer *strings.Replacer
+	gEmojiReplacer map[string]string
 )
 
 func init() {
@@ -29,18 +29,24 @@ func init() {
 		panic(err)
 	}
 
-	replacerList := make([]string, 0, len(emojiSimple.Emojis)+len(emoji.Emojis))
+	gEmojiReplacer = make(map[string]string, len(emojiSimple.Emojis)+len(emoji.Emojis))
 
 	for _, emoji := range emojiSimple.Emojis {
-		replacerList = append(replacerList, emoji.Shortname, emoji.Emoji)
+		gEmojiReplacer[emoji.Shortname] = emoji.Emoji
 	}
 	for _, emoji := range emoji.Emojis {
-		replacerList = append(replacerList, emoji.Shortname, emoji.Emoji)
+		gEmojiReplacer[emoji.Shortname] = emoji.Emoji
 	}
-
-	gEmojiReplacer = strings.NewReplacer(replacerList...)
 }
 
 func ReplaceTextToEmoji(pS string) string {
-	return gEmojiReplacer.Replace(pS)
+	splited := strings.Split(pS, " ")
+	for i, s := range splited {
+		v, ok := gEmojiReplacer[s]
+		if !ok {
+			continue
+		}
+		splited[i] = v
+	}
+	return strings.Join(splited, " ")
 }

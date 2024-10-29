@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"crypto/sha256"
+	"crypto/sha512"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -42,7 +42,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 	}
 
 	for _, info := range list {
-		if len(info.FHash) != (sha256.Size << 1) {
+		if len(info.FHash) != (sha512.Size384 << 1) {
 			return nil, ErrInvalidResponse
 		}
 	}
