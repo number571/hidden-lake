@@ -1,11 +1,11 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	hiddenlake "github.com/number571/hidden-lake"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -18,7 +18,7 @@ func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, e
 	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
 		cfg, err := LoadConfig(cfgPath)
 		if err != nil {
-			return nil, utils.MergeErrors(ErrLoadConfig, err)
+			return nil, errors.Join(ErrLoadConfig, err)
 		}
 		return rebuildConfig(cfg, useNetwork)
 	}
@@ -27,7 +27,7 @@ func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, e
 	}
 	cfg, err := BuildConfig(cfgPath, initCfg)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBuildConfig, err)
+		return nil, errors.Join(ErrBuildConfig, err)
 	}
 	return rebuildConfig(cfg, useNetwork)
 }
@@ -40,7 +40,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg := pCfg.(*SConfig)
 	network, ok := hiddenlake.GNetworks[pUseNetwork]
 	if !ok {
-		return nil, utils.MergeErrors(ErrRebuildConfig, ErrNetworkNotFound)
+		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
 
 	cfg.FSettings.FFetchTimeoutMS = network.FFetchTimeoutMS
@@ -58,12 +58,12 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
-		return nil, utils.MergeErrors(ErrRebuildConfig, ErrWriteConfig, err)
+		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)
 	}
 
 	rCfg, err := LoadConfig(cfg.fFilepath)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrRebuildConfig, ErrLoadConfig, err)
+		return nil, errors.Join(ErrRebuildConfig, ErrLoadConfig, err)
 	}
 
 	return rCfg, nil

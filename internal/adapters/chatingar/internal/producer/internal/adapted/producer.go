@@ -3,12 +3,12 @@ package adapted
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/adapters"
 	autils "github.com/number571/hidden-lake/internal/adapters/chatingar/internal/utils"
 )
@@ -42,13 +42,13 @@ func (p *sAdaptedProducer) Produce(pCtx context.Context, pMsg net_message.IMessa
 		bytes.NewBuffer([]byte(reqStr)),
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBuildRequest, err)
+		return errors.Join(ErrBuildRequest, err)
 	}
 
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(autils.EnrichRequest(req))
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	defer resp.Body.Close()
 

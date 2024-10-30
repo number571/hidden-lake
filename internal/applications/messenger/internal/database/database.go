@@ -1,11 +1,11 @@
 package database
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 type sKeyValueDB struct {
@@ -16,7 +16,7 @@ type sKeyValueDB struct {
 func NewKeyValueDB(pPath string) (IKVDatabase, error) {
 	db, err := database.NewKVDatabase(pPath)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrCreateDB, err)
+		return nil, errors.Join(ErrCreateDB, err)
 	}
 	return &sKeyValueDB{fDB: db}, nil
 }
@@ -45,7 +45,7 @@ func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]IMessage, error
 	for i := pStart; i < pEnd; i++ {
 		data, err := p.fDB.Get(getKeyMessageByEnum(pR, i))
 		if err != nil {
-			return nil, utils.MergeErrors(ErrGetMessage, err)
+			return nil, errors.Join(ErrGetMessage, err)
 		}
 		msg := LoadMessage(data)
 		if msg == nil {
@@ -64,11 +64,11 @@ func (p *sKeyValueDB) Push(pR IRelation, pMsg IMessage) error {
 	size := p.getSize(pR)
 	numBytes := encoding.Uint64ToBytes(size + 1)
 	if err := p.fDB.Set(getKeySize(pR), numBytes[:]); err != nil {
-		return utils.MergeErrors(ErrSetSizeMessage, err)
+		return errors.Join(ErrSetSizeMessage, err)
 	}
 
 	if err := p.fDB.Set(getKeyMessageByEnum(pR, size), pMsg.ToBytes()); err != nil {
-		return utils.MergeErrors(ErrSetMessage, err)
+		return errors.Join(ErrSetMessage, err)
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func (p *sKeyValueDB) Close() error {
 	defer p.fMutex.Unlock()
 
 	if err := p.fDB.Close(); err != nil {
-		return utils.MergeErrors(ErrCloseDB, err)
+		return errors.Join(ErrCloseDB, err)
 	}
 	return nil
 }

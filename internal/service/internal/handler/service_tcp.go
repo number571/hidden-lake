@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
@@ -39,7 +39,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		loadReq, err := request.LoadRequest(pReqBytes)
 		if err != nil {
 			logger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroLoadRequestType))
-			return nil, utils.MergeErrors(ErrLoadRequest, err)
+			return nil, errors.Join(ErrLoadRequest, err)
 		}
 
 		// get service's address by hostname
@@ -58,7 +58,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		)
 		if err != nil {
 			logger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroProxyRequestType))
-			return nil, utils.MergeErrors(ErrBuildRequest, err)
+			return nil, errors.Join(ErrBuildRequest, err)
 		}
 
 		// append headers from request & set service headers
@@ -72,7 +72,7 @@ func HandleServiceTCP(pCfg config.IConfig) anonymity.IHandlerF {
 		resp, err := httpClient.Do(pushReq)
 		if err != nil {
 			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestToService))
-			return nil, utils.MergeErrors(ErrBadRequest, err)
+			return nil, errors.Join(ErrBadRequest, err)
 		}
 		defer resp.Body.Close()
 

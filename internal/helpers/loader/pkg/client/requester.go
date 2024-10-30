@@ -2,11 +2,11 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/config"
 	hll_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -43,7 +43,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", utils.MergeErrors(ErrBadRequest, err)
+		return "", errors.Join(ErrBadRequest, err)
 	}
 
 	result := string(res)
@@ -63,7 +63,7 @@ func (p *sRequester) RunTransfer(pCtx context.Context) error {
 		nil,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -77,7 +77,7 @@ func (p *sRequester) StopTransfer(pCtx context.Context) error {
 		nil,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -91,12 +91,12 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	cfgSettings := new(config.SConfigSettings)
 	if err := encoding.DeserializeJSON(res, cfgSettings); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return cfgSettings, nil

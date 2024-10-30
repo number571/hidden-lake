@@ -1,8 +1,9 @@
 package closer
 
 import (
+	"errors"
+
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 // Close all elements in a slice.
@@ -13,5 +14,5 @@ func CloseAll(pClosers []types.ICloser) error {
 			errList = append(errList, err)
 		}
 	}
-	return utils.MergeErrors(errList...)
+	return errors.Join(errList...)
 }

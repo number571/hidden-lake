@@ -4,13 +4,13 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/adapters"
 	autils "github.com/number571/hidden-lake/internal/adapters/chatingar/internal/utils"
 )
@@ -49,7 +49,7 @@ func (p *sAdaptedConsumer) Consume(pCtx context.Context) (net_message.IMessage, 
 	if !p.fEnabled {
 		countComments, err := p.loadCountComments(pCtx)
 		if err != nil {
-			return nil, utils.MergeErrors(ErrLoadCountComments, err)
+			return nil, errors.Join(ErrLoadCountComments, err)
 		}
 
 		p.fCurrPage = (countComments / cPageOffet) + 1
@@ -79,7 +79,7 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBuildRequest, err)
+		return nil, errors.Join(ErrBuildRequest, err)
 	}
 
 	// reqBytes, err := httputil.DumpRequest(req, false)
@@ -91,7 +91,7 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(autils.EnrichRequest(req))
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 	defer resp.Body.Close()
 
@@ -107,7 +107,7 @@ func (p *sAdaptedConsumer) loadMessage(pCtx context.Context) (net_message.IMessa
 
 	var messagesDTO sMessagesDTO
 	if err := json.NewDecoder(gr).Decode(&messagesDTO); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeMessages, err)
+		return nil, errors.Join(ErrDecodeMessages, err)
 	}
 
 	sizeComments := len(messagesDTO.Comments)
@@ -146,7 +146,7 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 		nil,
 	)
 	if err != nil {
-		return 0, utils.MergeErrors(ErrBuildRequest, err)
+		return 0, errors.Join(ErrBuildRequest, err)
 	}
 
 	// reqBytes, err := httputil.DumpRequest(req, false)
@@ -158,7 +158,7 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(autils.EnrichRequest(req))
 	if err != nil {
-		return 0, utils.MergeErrors(ErrBadRequest, err)
+		return 0, errors.Join(ErrBadRequest, err)
 	}
 	defer resp.Body.Close()
 
@@ -174,7 +174,7 @@ func (p *sAdaptedConsumer) loadCountComments(pCtx context.Context) (uint64, erro
 
 	var count sCountDTO
 	if err := json.NewDecoder(gr).Decode(&count); err != nil {
-		return 0, utils.MergeErrors(ErrDecodeCount, err)
+		return 0, errors.Join(ErrDecodeCount, err)
 	}
 
 	result := count.Post.CommentCount

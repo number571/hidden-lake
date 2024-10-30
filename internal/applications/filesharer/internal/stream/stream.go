@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha512"
+	"errors"
 	"hash"
 	"io"
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	internal_utils "github.com/number571/hidden-lake/internal/applications/filesharer/internal/utils"
 	hlf_client "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/client"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -49,7 +49,7 @@ func BuildStream(
 ) (IReadSeeker, error) {
 	chunkSize, err := internal_utils.GetMessageLimit(pCtx, pHlsClient)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetMessageLimit, err)
+		return nil, errors.Join(ErrGetMessageLimit, err)
 	}
 
 	return &sStream{
@@ -70,10 +70,10 @@ func (p *sStream) Read(b []byte) (int, error) {
 	if len(p.fBuffer) == 0 {
 		chunk, err := p.loadFileChunk()
 		if err != nil {
-			return 0, utils.MergeErrors(ErrLoadFileChunk, err)
+			return 0, errors.Join(ErrLoadFileChunk, err)
 		}
 		if _, err := p.fHasher.Write(chunk); err != nil {
-			return 0, utils.MergeErrors(ErrWriteFileChunk, err)
+			return 0, errors.Join(ErrWriteFileChunk, err)
 		}
 		p.fBuffer = chunk
 	}
@@ -129,5 +129,5 @@ func (p *sStream) loadFileChunk() ([]byte, error) {
 		}
 		return chunk, nil
 	}
-	return nil, utils.MergeErrors(ErrRetryFailed, lastErr)
+	return nil, errors.Join(ErrRetryFailed, lastErr)
 }

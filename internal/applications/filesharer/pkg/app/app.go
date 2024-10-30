@@ -13,7 +13,6 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/config"
@@ -73,7 +72,7 @@ func (p *sApp) Run(pCtx context.Context) error {
 	wg.Add(len(services))
 
 	if err := p.fState.Enable(p.enable(ctx)); err != nil {
-		return utils.MergeErrors(ErrRunning, err)
+		return errors.Join(ErrRunning, err)
 	}
 	defer func() { _ = p.fState.Disable(p.disable(cancel, wg)) }()
 
@@ -86,14 +85,14 @@ func (p *sApp) Run(pCtx context.Context) error {
 	case <-pCtx.Done():
 		return pCtx.Err()
 	case err := <-chErr:
-		return utils.MergeErrors(ErrService, err)
+		return errors.Join(ErrService, err)
 	}
 }
 
 func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
 		if err := p.initStorage(); err != nil {
-			return utils.MergeErrors(ErrInitSTG, err)
+			return errors.Join(ErrInitSTG, err)
 		}
 
 		hlsClient := hls_client.NewClient(
@@ -183,7 +182,7 @@ func (p *sApp) stop() error {
 		p.fServicePPROF,
 	})
 	if err != nil {
-		return utils.MergeErrors(ErrClose, err)
+		return errors.Join(ErrClose, err)
 	}
 	return nil
 }

@@ -1,12 +1,12 @@
 package app
 
 import (
+	"errors"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/privkey"
 
@@ -19,7 +19,7 @@ func InitApp(pArgs []string) (types.IRunner, error) {
 	strParallel := flag.GetFlagValue(pArgs, "parallel", "1")
 	setParallel, err := strconv.ParseUint(strParallel, 10, 64)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetParallel, err)
+		return nil, errors.Join(ErrGetParallel, err)
 	}
 
 	inputPath := strings.TrimSuffix(flag.GetFlagValue(pArgs, "path", "."), "/")
@@ -27,13 +27,13 @@ func InitApp(pArgs []string) (types.IRunner, error) {
 	cfgPath := filepath.Join(inputPath, pkg_settings.CPathYML)
 	cfg, err := config.InitConfig(cfgPath, nil, flag.GetFlagValue(pArgs, "network", ""))
 	if err != nil {
-		return nil, utils.MergeErrors(ErrInitConfig, err)
+		return nil, errors.Join(ErrInitConfig, err)
 	}
 
 	keyPath := filepath.Join(inputPath, pkg_settings.CPathKey)
 	privKey, err := privkey.GetPrivKey(keyPath)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetPrivateKey, err)
+		return nil, errors.Join(ErrGetPrivateKey, err)
 	}
 
 	return NewApp(cfg, privKey, inputPath, setParallel), nil

@@ -1,12 +1,12 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -46,16 +46,16 @@ type SAddress struct {
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
 	if _, err := os.Stat(pFilepath); !os.IsNotExist(err) {
-		return nil, utils.MergeErrors(ErrConfigAlreadyExist, err)
+		return nil, errors.Join(ErrConfigAlreadyExist, err)
 	}
 
 	pCfg.fFilepath = pFilepath
 	if err := pCfg.initConfig(); err != nil {
-		return nil, utils.MergeErrors(ErrInitConfig, err)
+		return nil, errors.Join(ErrInitConfig, err)
 	}
 
 	if err := os.WriteFile(pFilepath, encoding.SerializeYAML(pCfg), 0o600); err != nil {
-		return nil, utils.MergeErrors(ErrWriteConfig, err)
+		return nil, errors.Join(ErrWriteConfig, err)
 	}
 
 	return pCfg, nil
@@ -63,22 +63,22 @@ func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
 
 func LoadConfig(pFilepath string) (IConfig, error) {
 	if _, err := os.Stat(pFilepath); os.IsNotExist(err) {
-		return nil, utils.MergeErrors(ErrConfigNotFound, err)
+		return nil, errors.Join(ErrConfigNotFound, err)
 	}
 
 	bytes, err := os.ReadFile(pFilepath)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrReadConfig, err)
+		return nil, errors.Join(ErrReadConfig, err)
 	}
 
 	cfg := new(SConfig)
 	if err := encoding.DeserializeYAML(bytes, cfg); err != nil {
-		return nil, utils.MergeErrors(ErrDeserializeConfig, err)
+		return nil, errors.Join(ErrDeserializeConfig, err)
 	}
 
 	cfg.fFilepath = pFilepath
 	if err := cfg.initConfig(); err != nil {
-		return nil, utils.MergeErrors(ErrInitConfig, err)
+		return nil, errors.Join(ErrInitConfig, err)
 	}
 
 	return cfg, nil
@@ -138,11 +138,11 @@ func (p *SConfig) initConfig() error {
 	}
 
 	if err := p.loadPubKeys(); err != nil {
-		return utils.MergeErrors(ErrLoadPublicKey, err)
+		return errors.Join(ErrLoadPublicKey, err)
 	}
 
 	if err := p.loadLogging(); err != nil {
-		return utils.MergeErrors(ErrLoadLogging, err)
+		return errors.Join(ErrLoadLogging, err)
 	}
 
 	return nil
@@ -151,7 +151,7 @@ func (p *SConfig) initConfig() error {
 func (p *SConfig) loadLogging() error {
 	result, err := logger.LoadLogging(p.FLogging)
 	if err != nil {
-		return utils.MergeErrors(ErrInvalidLogging, err)
+		return errors.Join(ErrInvalidLogging, err)
 	}
 	p.fLogging = result
 	return nil

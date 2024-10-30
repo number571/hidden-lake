@@ -2,12 +2,12 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -49,7 +49,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", utils.MergeErrors(ErrBadRequest, err)
+		return "", errors.Join(ErrBadRequest, err)
 	}
 
 	result := string(res)
@@ -69,12 +69,12 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	cfgSettings := new(config.SConfigSettings)
 	if err := encoding.DeserializeJSON(res, cfgSettings); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return cfgSettings, nil
@@ -89,12 +89,12 @@ func (p *sRequester) FetchRequest(pCtx context.Context, pRequest *hls_settings.S
 		pRequest,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	resp, err := response.LoadResponse(string(res))
 	if err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 	return resp, nil
 }
@@ -108,7 +108,7 @@ func (p *sRequester) BroadcastRequest(pCtx context.Context, pRequest *hls_settin
 		pRequest,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -122,12 +122,12 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPu
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	var vFriends []hls_settings.SFriend
 	if err := encoding.DeserializeJSON(res, &vFriends); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	result := make(map[string]asymmetric.IPubKey, len(vFriends))
@@ -151,7 +151,7 @@ func (p *sRequester) AddFriend(pCtx context.Context, pFriend *hls_settings.SFrie
 		pFriend,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -165,7 +165,7 @@ func (p *sRequester) DelFriend(pCtx context.Context, pFriend *hls_settings.SFrie
 		pFriend,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -179,12 +179,12 @@ func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	var onlines []string
 	if err := encoding.DeserializeJSON(res, &onlines); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return onlines, nil
@@ -199,7 +199,7 @@ func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
 		pConnect,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -213,12 +213,12 @@ func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	var connects []string
 	if err := encoding.DeserializeJSON(res, &connects); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return connects, nil
@@ -233,7 +233,7 @@ func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error 
 		pConnect,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -247,7 +247,7 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 		pConnect,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -261,7 +261,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error)
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	pubKey := asymmetric.LoadPubKey(string(res))

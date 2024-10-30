@@ -14,7 +14,6 @@ import (
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 
 	"github.com/number571/go-peer/pkg/client"
@@ -43,17 +42,12 @@ func (p *sApp) initAnonNode() error {
 
 	kvDatabase, err := database.NewKVDatabase(filepath.Join(p.fPathTo, hls_settings.CPathDB))
 	if err != nil {
-		return utils.MergeErrors(ErrOpenKVDatabase, err)
-	}
-
-	psdPubKey, err := getPsdPubKey(kvDatabase)
-	if err != nil {
-		return utils.MergeErrors(ErrGetPsdPubKey, err)
+		return errors.Join(ErrOpenKVDatabase, err)
 	}
 
 	client := client.NewClient(p.fPrivKey, cfgSettings.GetMessageSizeBytes())
 	if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-		return utils.MergeErrors(ErrMessageSizeLimit, err)
+		return errors.Join(ErrMessageSizeLimit, err)
 	}
 
 	p.fNode = anonymity.NewNode(
@@ -89,13 +83,14 @@ func (p *sApp) initAnonNode() error {
 					FSettings: cfgSettings,
 					FParallel: p.fParallel,
 				}),
-				FNetworkMask:      hls_settings.CNetworkMask,
-				FMainPoolCapacity: hls_settings.CQueueMainPoolCapacity,
-				FRandPoolCapacity: hls_settings.CQueueRandPoolCapacity,
-				FQueuePeriod:      time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
+				FNetworkMask: hls_settings.CNetworkMask,
+				FQueuePeriod: time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
+				FPoolCapacity: [2]uint64{
+					hls_settings.CQueueMainPoolCapacity,
+					hls_settings.CQueueRandPoolCapacity,
+				},
 			}),
 			client,
-			psdPubKey,
 		),
 		func() asymmetric.IMapPubKeys {
 			f2f := asymmetric.NewMapPubKeys()
@@ -110,23 +105,4 @@ func (p *sApp) initAnonNode() error {
 	)
 
 	return nil
-}
-
-func getPsdPubKey(pDB database.IKVDatabase) (asymmetric.IPubKey, error) {
-	ppk, err := pDB.Get([]byte(cPPKKey))
-	if err == nil {
-		pubKey := asymmetric.LoadPubKey(ppk)
-		if pubKey == nil {
-			return nil, ErrInvalidPsdPubKey
-		}
-		return pubKey, nil
-	}
-	if errors.Is(err, database.ErrNotFound) {
-		pubKey := asymmetric.NewPrivKey().GetPubKey()
-		if err := pDB.Set([]byte(cPPKKey), pubKey.ToBytes()); err != nil {
-			return nil, ErrSetPsdPubKey
-		}
-		return pubKey, nil
-	}
-	return nil, utils.MergeErrors(err, ErrReadKVDatabase)
 }

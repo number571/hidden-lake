@@ -2,11 +2,11 @@ package api
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 func Response(
@@ -35,7 +35,7 @@ func Response(
 	pW.WriteHeader(pRet)
 
 	if _, err := io.Copy(pW, bytes.NewBuffer(respBytes)); err != nil {
-		return utils.MergeErrors(ErrCopyBytes, err)
+		return errors.Join(ErrCopyBytes, err)
 	}
 
 	return nil

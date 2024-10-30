@@ -1,9 +1,10 @@
 package response
 
 import (
+	"errors"
+
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/payload/joiner"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 var (
@@ -37,12 +38,12 @@ func LoadResponse(pData interface{}) (IResponse, error) {
 			return nil, ErrLoadBytesJoiner
 		}
 		if err := encoding.DeserializeJSON(bytesSlice[0], response); err != nil {
-			return nil, utils.MergeErrors(ErrDecodeResponse, err)
+			return nil, errors.Join(ErrDecodeResponse, err)
 		}
 		response.FBody = bytesSlice[1]
 	case string:
 		if err := encoding.DeserializeJSON([]byte(x), response); err != nil {
-			return nil, utils.MergeErrors(ErrDecodeResponse, err)
+			return nil, errors.Join(ErrDecodeResponse, err)
 		}
 	default:
 		return nil, ErrUnknownType

@@ -13,7 +13,6 @@ import (
 	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	"github.com/number571/go-peer/pkg/network/conn"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
@@ -40,7 +39,7 @@ func HandleServiceTCP(
 
 		if _, err := message.LoadMessage(pCfg.GetSettings().GetMessageSizeBytes(), pNetMsg.GetPayload().GetBody()); err != nil {
 			pLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
-			return utils.MergeErrors(ErrLoadMessage, err)
+			return errors.Join(ErrLoadMessage, err)
 		}
 
 		// check message from in storage queue
@@ -50,7 +49,7 @@ func HandleServiceTCP(
 				return nil
 			}
 			pLogger.PushErro(logBuilder.WithType(anon_logger.CLogErroDatabaseSet))
-			return utils.MergeErrors(ErrPushMessageDB, err)
+			return errors.Join(ErrPushMessageDB, err)
 		}
 
 		// some of connections may be closed

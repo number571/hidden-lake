@@ -1,12 +1,12 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 var (
@@ -38,7 +38,7 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	filepath := p.fConfig.fFilepath
 	icfg, err := LoadConfig(filepath)
 	if err != nil {
-		return utils.MergeErrors(ErrLoadConfig, err)
+		return errors.Join(ErrLoadConfig, err)
 	}
 
 	if hasDuplicatePubKeys(pFriends) {
@@ -49,7 +49,7 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	cfg.fFriends = pFriends
 	cfg.FFriends = pubKeysToStrings(pFriends)
 	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
-		return utils.MergeErrors(ErrWriteConfig, err)
+		return errors.Join(ErrWriteConfig, err)
 	}
 
 	p.fConfig.fMutex.Lock()

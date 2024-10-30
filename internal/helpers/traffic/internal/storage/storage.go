@@ -7,7 +7,6 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/utils"
 )
 
 var (
@@ -58,7 +57,7 @@ func (p *sMessageStorage) Hash(i uint64) ([]byte, error) {
 
 func (p *sMessageStorage) Push(pMsg net_message.IMessage) error {
 	if _, err := net_message.LoadMessage(p.fSettings, pMsg.ToBytes()); err != nil {
-		return utils.MergeErrors(ErrLoadMessage, err)
+		return errors.Join(ErrLoadMessage, err)
 	}
 	hash := pMsg.GetHash()
 	_, err := p.fDatabase.Get(hash)
@@ -66,10 +65,10 @@ func (p *sMessageStorage) Push(pMsg net_message.IMessage) error {
 		return ErrHashAlreadyExist
 	}
 	if !errors.Is(err, database.ErrNotFound) {
-		return utils.MergeErrors(ErrGetHashFromDB, err)
+		return errors.Join(ErrGetHashFromDB, err)
 	}
 	if err := p.fDatabase.Set(hash, []byte{}); err != nil {
-		return utils.MergeErrors(ErrSetHashIntoDB, err)
+		return errors.Join(ErrSetHashIntoDB, err)
 	}
 	if ok := p.fLRUCache.Set(hash, pMsg.ToBytes()); !ok {
 		return ErrMessageIsExist
@@ -87,7 +86,7 @@ func (p *sMessageStorage) Load(pHash []byte) (net_message.IMessage, error) {
 	}
 	msg, err := net_message.LoadMessage(p.fSettings, msgBytes)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrLoadMessage, err)
+		return nil, errors.Join(ErrLoadMessage, err)
 	}
 	return msg, nil
 }

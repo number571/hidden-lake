@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -10,7 +11,6 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/config"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -51,7 +51,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", utils.MergeErrors(ErrBadRequest, err)
+		return "", errors.Join(ErrBadRequest, err)
 	}
 
 	result := string(resp)
@@ -71,12 +71,12 @@ func (p *sRequester) GetPointer(pCtx context.Context) (uint64, error) {
 		nil,
 	)
 	if err != nil {
-		return 0, utils.MergeErrors(ErrBadRequest, err)
+		return 0, errors.Join(ErrBadRequest, err)
 	}
 
 	pointer, err := strconv.ParseUint(string(resp), 10, 64)
 	if err != nil {
-		return 0, utils.MergeErrors(ErrDecodeResponse, err)
+		return 0, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return pointer, nil
@@ -91,7 +91,7 @@ func (p *sRequester) GetHash(pCtx context.Context, i uint64) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", utils.MergeErrors(ErrBadRequest, err)
+		return "", errors.Join(ErrBadRequest, err)
 	}
 
 	// response in hex encoding
@@ -111,12 +111,12 @@ func (p *sRequester) GetMessage(pCtx context.Context, pHash string) (net_message
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	msg, err := net_message.LoadMessage(p.fParams, string(resp))
 	if err != nil {
-		return nil, utils.MergeErrors(ErrDecodeMessage, err)
+		return nil, errors.Join(ErrDecodeMessage, err)
 	}
 
 	if !bytes.Equal(msg.GetHash(), encoding.HexDecode(pHash)) {
@@ -135,7 +135,7 @@ func (p *sRequester) PutMessage(pCtx context.Context, pRequest string) error {
 		pRequest,
 	)
 	if err != nil {
-		return utils.MergeErrors(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }
@@ -149,12 +149,12 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 		nil,
 	)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	cfgSettings := new(config.SConfigSettings)
 	if err := encoding.DeserializeJSON(res, cfgSettings); err != nil {
-		return nil, utils.MergeErrors(ErrDecodeResponse, err)
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
 	return cfgSettings, nil

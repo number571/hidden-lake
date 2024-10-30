@@ -3,10 +3,10 @@ package client
 import (
 	"context"
 	"crypto/sha512"
+	"errors"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/utils"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
@@ -29,7 +29,7 @@ func NewRequester(pHLSClient hls_client.IClient) IRequester {
 func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) ([]hlf_settings.SFileInfo, error) {
 	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	if resp.GetCode() != http.StatusOK {
@@ -38,7 +38,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 
 	list := make([]hlf_settings.SFileInfo, 0, hlf_settings.CDefaultPageOffset)
 	if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
-		return nil, utils.MergeErrors(ErrInvalidResponse, err)
+		return nil, errors.Join(ErrInvalidResponse, err)
 	}
 
 	for _, info := range list {
@@ -53,7 +53,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) ([]byte, error) {
 	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 
 	if resp.GetCode() != http.StatusOK {

@@ -10,7 +10,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	internal_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
@@ -182,7 +181,7 @@ func getMessageBytes(pR *http.Request) ([]byte, error) {
 	case http.MethodPut:
 		filename, fileBytes, err := getUploadFile(pR)
 		if err != nil {
-			return nil, utils.MergeErrors(ErrUploadFile, err)
+			return nil, errors.Join(ErrUploadFile, err)
 		}
 		return wrapFile(filename, fileBytes), nil
 	default:
@@ -194,7 +193,7 @@ func getUploadFile(pR *http.Request) (string, []byte, error) {
 	// Get handler for filename, size and headers
 	file, handler, err := pR.FormFile("input_file")
 	if err != nil {
-		return "", nil, utils.MergeErrors(ErrGetFormFile, err)
+		return "", nil, errors.Join(ErrGetFormFile, err)
 	}
 	defer file.Close()
 
@@ -204,7 +203,7 @@ func getUploadFile(pR *http.Request) (string, []byte, error) {
 
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
-		return "", nil, utils.MergeErrors(ErrReadFile, err)
+		return "", nil, errors.Join(ErrReadFile, err)
 	}
 
 	return handler.Filename, fileBytes, nil
@@ -230,7 +229,7 @@ func pushMessage(
 ) error {
 	msgLimit, err := internal_utils.GetMessageLimit(pCtx, pClient)
 	if err != nil {
-		return utils.MergeErrors(ErrGetMessageLimit, err)
+		return errors.Join(ErrGetMessageLimit, err)
 	}
 
 	if uint64(len(pMsgBytes)) > msgLimit {
@@ -243,7 +242,7 @@ func pushMessage(
 	)
 
 	if err := hlmClient.PushMessage(pCtx, pAliasName, pMsgBytes); err != nil {
-		return utils.MergeErrors(ErrPushMessage, err)
+		return errors.Join(ErrPushMessage, err)
 	}
 
 	return nil
@@ -256,7 +255,7 @@ func getReceiverPubKey(
 ) (asymmetric.IPubKey, error) {
 	friends, err := client.GetFriends(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetFriends, err)
+		return nil, errors.Join(ErrGetFriends, err)
 	}
 
 	friendPubKey, ok := friends[aliasName]

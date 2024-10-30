@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
@@ -129,7 +129,7 @@ func getSettings(
 
 	myPubKey, err := pHlsClient.GetPubKey(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetPublicKey, err)
+		return nil, errors.Join(ErrGetPublicKey, err)
 	}
 
 	myPubKeyStr := myPubKey.ToString()
@@ -140,13 +140,13 @@ func getSettings(
 
 	gotSettings, err := pHlsClient.GetSettings(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetSettingsHLS, err)
+		return nil, errors.Join(ErrGetSettingsHLS, err)
 	}
 	result.FNetworkKey = gotSettings.GetNetworkKey()
 
 	allConns, err := getAllConnections(pCtx, pHlsClient)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrGetAllConnections, err)
+		return nil, errors.Join(ErrGetAllConnections, err)
 	}
 	result.FConnections = allConns
 
@@ -159,12 +159,12 @@ func getAllConnections(
 ) ([]sConnection, error) {
 	conns, err := pClient.GetConnections(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrReadConnections, err)
+		return nil, errors.Join(ErrReadConnections, err)
 	}
 
 	onlines, err := pClient.GetOnlines(pCtx)
 	if err != nil {
-		return nil, utils.MergeErrors(ErrReadOnlineConnections, err)
+		return nil, errors.Join(ErrReadOnlineConnections, err)
 	}
 
 	connections := make([]sConnection, 0, len(conns))

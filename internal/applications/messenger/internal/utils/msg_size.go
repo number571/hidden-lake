@@ -2,8 +2,8 @@ package utils
 
 import (
 	"context"
+	"errors"
 
-	"github.com/number571/go-peer/pkg/utils"
 	hlm_client "github.com/number571/hidden-lake/internal/applications/messenger/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/client"
 )
@@ -17,7 +17,7 @@ var (
 func GetMessageLimit(pCtx context.Context, pHlsClient client.IClient) (uint64, error) {
 	sett, err := pHlsClient.GetSettings(pCtx)
 	if err != nil {
-		return 0, utils.MergeErrors(ErrGetSettingsHLS, err)
+		return 0, errors.Join(ErrGetSettingsHLS, err)
 	}
 
 	msgLimitOrig := sett.GetLimitMessageSizeBytes()
