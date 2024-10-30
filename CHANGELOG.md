@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `cmd/hlm,cmd/hlf`: add HLR,HLC,HLA links to HL services in /about page
+- `cmd/hlm,cmd/hlf`: add target="_blank" to external links
 - `cmd/hlf`: file hashing: sha256 -> sha384
 - `cmd/hlm,cmd/hlf`: hash(pubkey.bytes()) -> hash(pubkey.string())
 
