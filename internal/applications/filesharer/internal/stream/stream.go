@@ -1,17 +1,28 @@
 package stream
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha512"
 	"hash"
 	"io"
 
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/utils"
 	internal_utils "github.com/number571/hidden-lake/internal/applications/filesharer/internal/utils"
 	hlf_client "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/client"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 )
+
+func init() {
+	v := []byte("init_value")
+	h := sha512.Sum384(v)
+	// maintaining the overall level of security and uniformity of the algorithms used
+	if !bytes.Equal(h[:], hashing.NewHasher(v).ToBytes()) {
+		panic("uses diff hash functions")
+	}
+}
 
 var (
 	_ IReadSeeker = &sStream{}

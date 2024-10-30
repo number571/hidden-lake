@@ -125,7 +125,7 @@ Pri la projekto
                     a cryptographic protocol applicable in anonymous networks and secure client applications with
                     subsequent implementation in the Go programming language.
                     {{else if (eq .FLanguage 1)}}
-                    Монолитный криптографический протокол - это научно-аналитическая статья, описывающая анализ
+                    Монолитный криптографический протокол - это научно-исследовательская статья, описывающая анализ
                     криптографического протокола, применимого в анонимных сетях и клиент-безопасных приложениях с
                     последующей реализацией на языке программирования Go.
                     {{else if (eq .FLanguage 2)}}
@@ -151,7 +151,7 @@ Pri la projekto
                     analysis of theoretically provable anonymous networks with unique characteristics of immunity to
                     the level of centralization and the number of nodes in the network.
                     {{else if (eq .FLanguage 1)}}
-                    Абстрактные анонимные сети - это научно-аналитическая статья, описывающая
+                    Абстрактные анонимные сети - это научно-исследовательская статья, описывающая
                     анализ теоретически доказуемых анонимных сетей с уникальными характеристиками невосприимчивости к
                     уровню централизации и количеству узлов в сети.
                     {{else if (eq .FLanguage 2)}}
@@ -176,7 +176,7 @@ Pri la projekto
                     The Decentralized Key Exchange Protocol is a scientific and analytical article describing secure
                     ways to transfer keys without using trusted certification authorities.
                     {{else if (eq .FLanguage 1)}}
-                    Децентрализованный протокол обмена ключами - это научно-аналитическая статья, описывающая
+                    Децентрализованный протокол обмена ключами - это научно-исследовательская статья, описывающая
                     безопасные способы передачи ключей без использования доверенных центров сертификации.
                     {{else if (eq .FLanguage 2)}}
                     La Protokolo De Malcentra Ŝlosila Interŝanĝo estas scienca kaj analiza artikolo priskribanta sekuraj
@@ -198,7 +198,7 @@ Pri la projekto
                     {{if (eq .FLanguage 0)}}
                     The Anonymous Hidden Lake Network is a research article describing the basic mechanisms of the Hidden Lake anonymous network using mathematical models.
                     {{else if (eq .FLanguage 1)}}
-                    Анонимная сеть "Hidden Lake" - это научно-аналитическая статья, описывающая
+                    Анонимная сеть "Hidden Lake" - это научно-исследовательская статья, описывающая
                     основные механизмы работы анонимной сети Hidden Lake при помощи математических моделей.
                     {{else if (eq .FLanguage 2)}}
                     La Anonima Kaŝa Lago Reto Estas esplorartikolo priskribanta La bazajn mekanismojn De La Kaŝa Lago anonima reto uzanta matematikajn modelojn.
@@ -217,27 +217,23 @@ Pri la projekto
                 </p>
             </div>
             <div class="p-3 tab-pane fade" id="pills-source" role="tabpanel" aria-labelledby="pills-source-tab">
-                <p class="text-left">
-                    {{if (eq .FLanguage 0)}}
-                    All HL (Hidden Lake) type applications are located in the cmd directory of the go-peer
-                    project/library.
-                    The go-peer library provides packages in the Go programming language for implementing secure and
-                    anonymous decentralized networks and applications.
-                    {{else if (eq .FLanguage 1)}}
-                    Все приложения типа HL (Hidden Lake) находятся в директории cmd проекта/библиотеки go-peer.
-                    Библиотека go-peer представляет пакеты на языке программирования Go для реализации безопасных и
-                    анонимных децентрализованный сетей и приложений.
-                    {{else if (eq .FLanguage 2)}}
-                    Ĉiuj HL (Hidden Lake) tipo aplikoj situas en la cmd adresaro de la go-peer projekto/biblioteko.
-                    La go-peer biblioteko disponigas pakaĵojn en La go programlingvo por efektivigi secure kaj
-                    anonimaj malcentralizitaj retoj kaj aplikoj.
-                    {{end}}
-                </p>
                 <ol>
                     <li>
                         <p class="text-left">
                             <a href="https://github.com/number571/hidden-lake/tree/master/cmd/hls"
                                 class="text-info">Hidden Lake Service</a>;
+                        </p>
+                    </li>
+                    <li>
+                        <p class="text-left">
+                            <a href="https://github.com/number571/hidden-lake/tree/master/cmd/hlc"
+                                class="text-info">Hidden Lake Composite</a>;
+                        </p>
+                    </li>
+                    <li>
+                        <p class="text-left">
+                            <a href="https://github.com/number571/hidden-lake/tree/master/cmd/hla"
+                                class="text-info">Hidden Lake Adapters</a>;
                         </p>
                     </li>
                     <li>
