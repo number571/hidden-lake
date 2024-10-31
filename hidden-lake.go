@@ -9,7 +9,7 @@ import (
 
 const (
 	CVersion        = "v1.7.4~"
-	CDefaultNetwork = "_default_network_"
+	CDefaultNetwork = "__default_network__"
 )
 
 var (
@@ -23,13 +23,15 @@ func init() {
 	if err := encoding.DeserializeYAML(gNetworks, networksYAML); err != nil {
 		panic(err)
 	}
-	GNetworks = networksYAML.FNetworks
-	if _, ok := GNetworks[CDefaultNetwork]; !ok {
-		panic(fmt.Sprintf("'%s' = nil", CDefaultNetwork))
+	if _, ok := networksYAML.FNetworks[CDefaultNetwork]; ok {
+		panic(fmt.Sprintf("network '%s' already exist", CDefaultNetwork))
 	}
+	GNetworks = networksYAML.FNetworks
+	GNetworks[CDefaultNetwork] = networksYAML.FSettings
 }
 
 type SNetworksYAML struct {
+	FSettings SNetwork            `yaml:"settings"`
 	FNetworks map[string]SNetwork `yaml:"networks"`
 }
 

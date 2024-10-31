@@ -83,19 +83,4 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		t.Error("network.FQueuePeriodMS != 5_000")
 		return
 	}
-
-	if len(network.FConnections) == 0 {
-		t.Error("len(network.FConnections) == 0")
-		return
-	}
-
-	connection := network.FConnections[0]
-	if connection.FHost != "127.0.0.1" {
-		t.Error(`connection.FHost != "127.0.0.1"`)
-		return
-	}
-	if connection.FPort != 9581 {
-		t.Error(`connection.FPort != 9581`)
-		return
-	}
 }

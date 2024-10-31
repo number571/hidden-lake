@@ -28,11 +28,3 @@ networks:
       # provider=4vps.su, location=Russia/Novosibirsk, logging=true
       - host: 193.233.18.245 
         port: 9581
-
-  # network for getting default settings
-  _default_network_:
-    <<: *default_settings
-    connections: 
-      # connection for testing
-      - host: 127.0.0.1
-        port: 9581
