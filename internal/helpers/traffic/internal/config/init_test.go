@@ -5,12 +5,38 @@ import (
 	"os"
 	"testing"
 
+	hiddenlake "github.com/number571/hidden-lake"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 )
 
 const (
 	tcConfigFileTemplate = "config_test_%d.txt"
 )
+
+func TestRebuild(t *testing.T) {
+	t.Parallel()
+
+	configFile := fmt.Sprintf(tcConfigFileTemplate, 99)
+	defer os.Remove(configFile)
+
+	testConfigDefaultInit(configFile)
+
+	if _, err := InitConfig(configFile, nil, "test_rebuild_config_network"); err == nil {
+		t.Error("success init config with rebuild for unknown network")
+		return
+	}
+
+	network := ""
+	for k := range hiddenlake.GNetworks {
+		network = k
+		break
+	}
+
+	if _, err := InitConfig(configFile, nil, network); err != nil {
+		t.Error(err)
+		return
+	}
+}
 
 func TestInit(t *testing.T) {
 	t.Parallel()
