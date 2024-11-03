@@ -74,6 +74,7 @@ func TestApp(t *testing.T) {
 	}()
 
 	time.Sleep(100 * time.Millisecond)
+
 	client := client.NewClient(
 		client.NewBuilder(),
 		client.NewRequester(

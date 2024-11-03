@@ -1,5 +1,14 @@
 package web
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestNothing(_ *testing.T) {}
+func TestWeb(t *testing.T) {
+	t.Parallel()
+
+	if !cUsedEmbedFS {
+		t.Error("cUsedEmbedFS should be = true")
+		return
+	}
+}
