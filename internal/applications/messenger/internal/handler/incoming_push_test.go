@@ -150,20 +150,24 @@ var (
 )
 
 type tsHLSClient struct {
-	fGetPubKey bool
-	fPrivKey   asymmetric.IPrivKey
+	fGetPubKey    bool
+	fPrivKey      asymmetric.IPrivKey
+	fFriendPubKey asymmetric.IPubKey
 }
 
 func newTsHLSClient(pGetPubKey bool) *tsHLSClient {
 	return &tsHLSClient{
-		fGetPubKey: pGetPubKey,
-		fPrivKey:   asymmetric.NewPrivKey(),
+		fGetPubKey:    pGetPubKey,
+		fPrivKey:      asymmetric.NewPrivKey(),
+		fFriendPubKey: asymmetric.NewPrivKey().GetPubKey(),
 	}
 }
 
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
-	return &hls_config.SConfigSettings{}, nil
+	return &hls_config.SConfigSettings{
+		FLimitMessageSizeBytes: 256,
+	}, nil
 }
 
 func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
@@ -177,7 +181,9 @@ func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) { return nil
 func (p *tsHLSClient) DelOnline(context.Context, string) error      { return nil }
 
 func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return nil, nil
+	return map[string]asymmetric.IPubKey{
+		"abc": p.fFriendPubKey,
+	}, nil
 }
 
 func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
@@ -192,7 +198,7 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return nil, nil
+	return response.NewResponse(200), nil
 }
 
 type tsDatabase struct {
@@ -224,5 +230,8 @@ func (p *tsDatabase) Push(_ database.IRelation, pM database.IMessage) error {
 }
 
 func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]database.IMessage, error) {
+	if p.fMsg == nil {
+		return nil, nil
+	}
 	return []database.IMessage{p.fMsg}, nil
 }
