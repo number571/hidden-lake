@@ -31,5 +31,5 @@ func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
 		WithHead(map[string]string{
 			hlr_settings.CHeaderPassword: p.fPassword,
 		}).
-		WithBody([]byte(strings.Join(pCmd, " ")))
+		WithBody([]byte(strings.Join(pCmd, hlr_settings.CExecSeparator)))
 }

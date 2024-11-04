@@ -2,14 +2,12 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/client"
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -46,11 +44,7 @@ func TestIncomingExecHTTP(t *testing.T) {
 	)
 
 	msg := "hello, world!"
-	rsp, err := hlrClient.Exec(
-		ctx,
-		"test_recv",
-		fmt.Sprintf("echo%s%s", hlr_settings.CExecSeparator, msg),
-	)
+	rsp, err := hlrClient.Exec(ctx, "test_recv", "echo", msg)
 	if err != nil {
 		t.Error(err)
 		return
