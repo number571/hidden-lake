@@ -35,7 +35,13 @@ func ProduceProcessor(
 		server.Close()
 	}()
 
-	return server.ListenAndServe()
+	err := server.ListenAndServe()
+	select {
+	case <-pCtx.Done():
+		return pCtx.Err()
+	default:
+		return err
+	}
 }
 
 func ConsumeProcessor(
