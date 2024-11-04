@@ -28,8 +28,6 @@ func TestIncomingExecHTTP(t *testing.T) {
 		testutils.TgAddrs[40],
 	)
 
-	time.Sleep(100 * time.Millisecond)
-
 	hlsClient := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(

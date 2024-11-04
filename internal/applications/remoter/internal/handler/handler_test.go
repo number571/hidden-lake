@@ -86,8 +86,10 @@ func testRunNewNodes(ctx context.Context, httpAddrNode1, tcpAddrNode2, addrServi
 		1,
 	)
 
-	go func() { _ = runner1.Run(ctx) }()
 	go func() { _ = runner2.Run(ctx) }()
+	time.Sleep(time.Second)
+	go func() { _ = runner1.Run(ctx) }()
+	time.Sleep(time.Second)
 }
 
 func initConfig(
@@ -111,7 +113,7 @@ func initConfig(
 			FMessageSizeBytes: (8 << 10),
 			FWorkSizeBits:     1,
 			FFetchTimeoutMS:   10_000,
-			FQueuePeriodMS:    500,
+			FQueuePeriodMS:    1_000,
 		},
 		FLogging: []string{},
 		FAddress: &hls_config.SAddress{
