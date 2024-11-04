@@ -163,7 +163,7 @@ func newTsHLSClient(pGetPubKey bool) *tsHLSClient {
 
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
-	return nil, nil
+	return &hls_config.SConfigSettings{}, nil
 }
 
 func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
