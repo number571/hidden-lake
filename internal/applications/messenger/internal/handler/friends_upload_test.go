@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
-	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -38,20 +36,31 @@ func TestFriendsUploadPage(t *testing.T) {
 		},
 	}
 
-	hlsClient := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
-			"http://"+cfg.GetConnection(),
-			&http.Client{Timeout: (10 * time.Minute)},
-		),
-	)
-
-	handler := FriendsUploadPage(ctx, httpLogger, cfg, hlsClient)
+	handler := FriendsUploadPage(ctx, httpLogger, cfg, newTsHLSClient(true))
+	if err := friendsUploadOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
 
 	if err := friendsUploadRequest404(handler); err == nil {
 		t.Error("request success with invalid path")
 		return
 	}
+}
+
+func friendsUploadOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/friends/upload?alias_name=abc", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
 }
 
 func friendsUploadRequest404(handler http.HandlerFunc) error {
