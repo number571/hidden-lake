@@ -39,7 +39,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	msgBroker := msgbroker.NewMessageBroker()
-	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true), msgBroker, newTsHLSClient(true))
+	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true))
 
 	if err := incomingPushRequestOK(handler); err != nil {
 		t.Error(err)
@@ -59,12 +59,12 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true), msgBroker, newTsHLSClient(false))
+	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false))
 	if err := incomingPushRequestOK(handlerx); err == nil {
 		t.Error("request success with invalid my pubkey")
 		return
 	}
-	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false), msgBroker, newTsHLSClient(true))
+	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true))
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Error("request success with invalid push message")
 		return
@@ -203,12 +203,14 @@ func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (r
 
 type tsDatabase struct {
 	fPushOK bool
+	fLoadOK bool
 	fMsg    database.IMessage
 }
 
-func newTsDatabase(pPushOK bool) *tsDatabase {
+func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
 	return &tsDatabase{
 		fPushOK: pPushOK,
+		fLoadOK: pLoadOK,
 	}
 }
 
@@ -230,6 +232,9 @@ func (p *tsDatabase) Push(_ database.IRelation, pM database.IMessage) error {
 }
 
 func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]database.IMessage, error) {
+	if !p.fLoadOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
 	if p.fMsg == nil {
 		return nil, nil
 	}

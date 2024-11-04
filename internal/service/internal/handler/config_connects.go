@@ -15,7 +15,12 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
-func HandleConfigConnectsAPI(pCtx context.Context, pWrapper config.IWrapper, pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
+func HandleConfigConnectsAPI(
+	pCtx context.Context,
+	pWrapper config.IWrapper,
+	pLogger logger.ILogger,
+	pNode anonymity.INode,
+) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
 
