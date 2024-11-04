@@ -54,6 +54,22 @@ func TestSettingsPage(t *testing.T) {
 		return
 	}
 
+	if err := settingsRequestDeleteAddress(handler); err == nil {
+		t.Error("request success with invalid address")
+		return
+	}
+	if err := settingsRequestPostPort(handler); err == nil {
+		t.Error("request success with invalid port")
+		return
+	}
+	if err := settingsRequestPostHostPort(handler); err == nil {
+		t.Error("request success with invalid host:port")
+		return
+	}
+	if err := settingsRequestPutLanguage(handler); err == nil {
+		t.Error("request success with invalid language")
+		return
+	}
 	if err := settingsRequest404(handler); err == nil {
 		t.Error("request success with invalid path")
 		return
@@ -64,6 +80,26 @@ func settingsRequestDeleteOK(handler http.HandlerFunc) error {
 	formData := url.Values{
 		"method":  {"DELETE"},
 		"address": {"127.0.0.1:9999"},
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/settings", strings.NewReader(formData.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func settingsRequestDeleteAddress(handler http.HandlerFunc) error {
+	formData := url.Values{
+		"method": {"DELETE"},
 	}
 
 	w := httptest.NewRecorder()
@@ -103,10 +139,73 @@ func settingsRequestPostOK(handler http.HandlerFunc) error {
 	return nil
 }
 
+func settingsRequestPostPort(handler http.HandlerFunc) error {
+	formData := url.Values{
+		"method": {"POST"},
+		"host":   {"127.0.0.1"},
+		"port":   {"abc"},
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/settings", strings.NewReader(formData.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func settingsRequestPostHostPort(handler http.HandlerFunc) error {
+	formData := url.Values{
+		"method": {"POST"},
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/settings", strings.NewReader(formData.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
 func settingsRequestPutOK(handler http.HandlerFunc) error {
 	formData := url.Values{
 		"method":   {"PUT"},
 		"language": {"ENG"},
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/settings", strings.NewReader(formData.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func settingsRequestPutLanguage(handler http.HandlerFunc) error {
+	formData := url.Values{
+		"method":   {"PUT"},
+		"language": {"unknown"},
 	}
 
 	w := httptest.NewRecorder()
