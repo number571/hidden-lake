@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
-	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -38,15 +36,7 @@ func TestSettingsPage(t *testing.T) {
 		},
 	})
 
-	hlsClient := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
-			"http://"+cfgWrapper.GetConfig().GetConnection(),
-			&http.Client{Timeout: (10 * time.Minute)},
-		),
-	)
-
-	handler := SettingsPage(ctx, httpLogger, cfgWrapper, hlsClient)
+	handler := SettingsPage(ctx, httpLogger, cfgWrapper, newTsHLSClient(true))
 
 	if err := settingsRequest404(handler); err == nil {
 		t.Error("request success with invalid path")
