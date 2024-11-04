@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	tcPathConfig = settings.CPathYML
+	tcPathConfig = "./testdata/"
 )
 
 func TestError(t *testing.T) {
@@ -29,8 +29,20 @@ func TestError(t *testing.T) {
 	}
 }
 
+func TestInitApp(t *testing.T) {
+	t.Parallel()
+
+	testDeleteFiles()
+	defer testDeleteFiles()
+
+	if _, err := InitApp([]string{"path", tcPathConfig}); err != nil {
+		t.Error(err)
+		return
+	}
+}
+
 func testDeleteFiles() {
-	os.RemoveAll(tcPathConfig)
+	os.RemoveAll(tcPathConfig + settings.CPathYML)
 }
 
 func TestApp(t *testing.T) {
@@ -40,7 +52,7 @@ func TestApp(t *testing.T) {
 	defer testDeleteFiles()
 
 	// Run application
-	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
+	cfg, err := config.BuildConfig(tcPathConfig+settings.CPathYML, &config.SConfig{
 		FSettings: &config.SConfigSettings{
 			FWorkSizeBits: 10,
 			FNetworkKey:   "_",

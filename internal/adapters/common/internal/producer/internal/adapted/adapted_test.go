@@ -13,4 +13,9 @@ func TestError(t *testing.T) {
 	}
 }
 
-func TestNothing(_ *testing.T) {}
+func TestAdaptedProducer(t *testing.T) {
+	t.Parallel()
+
+	_ = NewAdaptedProducer("")
+
+}
