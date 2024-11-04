@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
@@ -23,8 +24,12 @@ func NewRequester(pHLSClient hls_client.IClient) IRequester {
 }
 
 func (p *sRequester) PingMessage(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
-	if _, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest); err != nil {
+	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
+	if err != nil {
 		return errors.Join(ErrPingMessage, err)
+	}
+	if resp.GetCode() != http.StatusOK {
+		return ErrDecodeResponse
 	}
 	return nil
 }
