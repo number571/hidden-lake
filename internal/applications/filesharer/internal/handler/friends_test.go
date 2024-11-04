@@ -39,7 +39,7 @@ func TestFriendsPage(t *testing.T) {
 		},
 	}
 
-	handler := FriendsPage(ctx, httpLogger, cfg, newTsHLSClient())
+	handler := FriendsPage(ctx, httpLogger, cfg, newTsHLSClient(true))
 	if err := friendsRequestPostOK(handler); err != nil {
 		t.Error(err)
 		return

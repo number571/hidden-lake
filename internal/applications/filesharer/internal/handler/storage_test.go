@@ -31,17 +31,14 @@ func TestStoragePage(t *testing.T) {
 		},
 	)
 
-	ctx := context.Background()
-	handler := StoragePage(
-		ctx,
-		httpLogger,
-		&config.SConfig{
-			FSettings: &config.SConfigSettings{
-				FLanguage: "ENG",
-			},
+	cfg := &config.SConfig{
+		FSettings: &config.SConfigSettings{
+			FLanguage: "ENG",
 		},
-		newTsHLSClient(),
-	)
+	}
+
+	ctx := context.Background()
+	handler := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(true))
 	if err := storageRequestOK(handler); err == nil {
 		t.Error(err)
 		return
@@ -55,11 +52,36 @@ func TestStoragePage(t *testing.T) {
 		t.Error("request success with invalid path")
 		return
 	}
+	if err := storageRequestNotFoundName(handler); err == nil {
+		t.Error("request success with not found alias_name")
+		return
+	}
+
+	handlerx := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(false))
+	if err := storageRequestOK(handlerx); err == nil {
+		t.Error("request success with fetch failed")
+		return
+	}
 }
 
 func storageRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/friends/storage?alias_name=abc&page=0", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func storageRequestNotFoundName(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/friends/storage?alias_name=notfound&page=0", nil)
 
 	handler(w, req)
 	res := w.Result()

@@ -34,7 +34,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient())
+	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true))
 
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Error(err)
@@ -162,11 +162,13 @@ var (
 )
 
 type tsHLSClient struct {
+	fFetchOK bool
 	fPrivKey asymmetric.IPrivKey
 }
 
-func newTsHLSClient() *tsHLSClient {
+func newTsHLSClient(pFetchOK bool) *tsHLSClient {
 	return &tsHLSClient{
+		fFetchOK: pFetchOK,
 		fPrivKey: asymmetric.NewPrivKey(),
 	}
 }
@@ -201,5 +203,8 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
+	if !p.fFetchOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
 	return response.NewResponse(200), nil
 }
