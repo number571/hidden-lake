@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/privkey"

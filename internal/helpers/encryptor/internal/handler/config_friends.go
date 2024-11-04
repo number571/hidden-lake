@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"

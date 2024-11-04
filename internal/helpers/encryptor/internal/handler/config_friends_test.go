@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )

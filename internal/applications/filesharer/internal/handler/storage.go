@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/stream"
+	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_client "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/client"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/web"

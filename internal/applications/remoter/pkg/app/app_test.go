@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )

@@ -11,7 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/helpers/loader/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/loader/pkg/config"
 	hll_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"

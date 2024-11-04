@@ -15,7 +15,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/service/internal/config"
+	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 
 	pkg_config "github.com/number571/hidden-lake/internal/service/pkg/config"

@@ -9,7 +9,7 @@ import (
 
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/composite/internal/config"
+	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
 	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )

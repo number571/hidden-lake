@@ -12,9 +12,9 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/messenger/pkg/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )

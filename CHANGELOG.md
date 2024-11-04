@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/*`: move internal/config -> pkg/app/config
+
 <!-- ... -->
 
 ## v1.7.3

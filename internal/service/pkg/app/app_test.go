@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	testutils "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/internal/service/internal/config"
+	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )

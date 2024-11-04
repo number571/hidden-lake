@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/messenger/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"

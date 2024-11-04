@@ -15,8 +15,8 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
+	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/config"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"

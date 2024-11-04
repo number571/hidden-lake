@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )

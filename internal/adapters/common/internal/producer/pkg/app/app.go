@@ -8,8 +8,8 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters"
-	"github.com/number571/hidden-lake/internal/adapters/common/internal/config"
 	"github.com/number571/hidden-lake/internal/adapters/common/internal/producer/internal/adapted"
+	"github.com/number571/hidden-lake/internal/adapters/common/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 

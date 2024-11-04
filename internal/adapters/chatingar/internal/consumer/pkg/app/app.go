@@ -11,8 +11,8 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters"
-	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/config"
 	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/consumer/internal/adapted"
+	"github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/app/config"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/logger/std"
 )

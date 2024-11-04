@@ -11,7 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/hidden-lake/internal/service/internal/config"
+	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
