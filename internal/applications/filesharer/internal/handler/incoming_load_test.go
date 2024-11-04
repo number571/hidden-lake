@@ -34,7 +34,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true))
+	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient())
 
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Error(err)
@@ -162,14 +162,12 @@ var (
 )
 
 type tsHLSClient struct {
-	fGetPubKey bool
-	fPrivKey   asymmetric.IPrivKey
+	fPrivKey asymmetric.IPrivKey
 }
 
-func newTsHLSClient(pGetPubKey bool) *tsHLSClient {
+func newTsHLSClient() *tsHLSClient {
 	return &tsHLSClient{
-		fGetPubKey: pGetPubKey,
-		fPrivKey:   asymmetric.NewPrivKey(),
+		fPrivKey: asymmetric.NewPrivKey(),
 	}
 }
 
@@ -181,9 +179,6 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 }
 
 func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	if !p.fGetPubKey {
-		return nil, errors.New("some error") // nolint: err113
-	}
 	return p.fPrivKey.GetPubKey(), nil
 }
 
@@ -206,5 +201,5 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return nil, nil
+	return response.NewResponse(200), nil
 }

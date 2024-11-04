@@ -39,7 +39,7 @@ func TestSettingsPage(t *testing.T) {
 		},
 	}
 
-	handler := SettingsPage(ctx, httpLogger, &tsWrapper{cfg}, newTsHLSClient(true))
+	handler := SettingsPage(ctx, httpLogger, &tsWrapper{cfg}, newTsHLSClient())
 
 	if err := settingsRequestPutOK(handler); err != nil {
 		t.Error(err)
