@@ -13,7 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )

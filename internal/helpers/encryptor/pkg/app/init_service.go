@@ -6,8 +6,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/handler"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 )
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/language"
 )
 

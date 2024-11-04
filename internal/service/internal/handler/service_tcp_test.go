@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/internal/service/internal/config"
+	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"

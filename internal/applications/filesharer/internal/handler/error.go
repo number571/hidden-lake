@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
 

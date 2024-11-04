@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )

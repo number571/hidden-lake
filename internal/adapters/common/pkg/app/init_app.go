@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/adapters/common/internal/config"
 	consumer_app "github.com/number571/hidden-lake/internal/adapters/common/internal/consumer/pkg/app"
 	producer_app "github.com/number571/hidden-lake/internal/adapters/common/internal/producer/pkg/app"
+	"github.com/number571/hidden-lake/internal/adapters/common/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )

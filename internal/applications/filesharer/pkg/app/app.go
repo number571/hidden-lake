@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"

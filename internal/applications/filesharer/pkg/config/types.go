@@ -1,6 +1,6 @@
 package config
 
-import "github.com/number571/hidden-lake/internal/applications/filesharer/internal/config"
+import "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 
 type IConfigSettings interface {
 	config.IConfigSettings

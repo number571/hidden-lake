@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"

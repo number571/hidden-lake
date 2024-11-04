@@ -10,7 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/composite/internal/config"
+	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
 
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"

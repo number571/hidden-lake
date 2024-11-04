@@ -9,7 +9,7 @@ import (
 	"time"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"

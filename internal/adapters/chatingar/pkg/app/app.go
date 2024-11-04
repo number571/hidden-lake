@@ -9,7 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/adapters/chatingar/internal/config"
+	"github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/app/config"
 
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/logger/std"

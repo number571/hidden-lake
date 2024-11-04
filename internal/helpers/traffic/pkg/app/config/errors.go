@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "internal/applications/filesharer/internal/config = "
+	errPrefix = "internal/helpers/traffic/pkg/app/config = "
 )
 
 type SConfigError struct {
@@ -16,12 +16,14 @@ var (
 	ErrInvalidConfig      = &SConfigError{"invalid config"}
 	ErrLoadLogging        = &SConfigError{"load logging"}
 	ErrInvalidLogging     = &SConfigError{"invalid logging"}
-	ErrLoadLanguage       = &SConfigError{"load language"}
-	ErrToLanguage         = &SConfigError{"to language"}
 	ErrInitConfig         = &SConfigError{"init config"}
 	ErrDeserializeConfig  = &SConfigError{"deserialize config"}
 	ErrReadConfig         = &SConfigError{"read config"}
 	ErrConfigNotExist     = &SConfigError{"config not exist"}
 	ErrWriteConfig        = &SConfigError{"write config"}
 	ErrConfigAlreadyExist = &SConfigError{"config already exist"}
+	ErrRebuildConfig      = &SConfigError{"rebuild config"}
+	ErrNetworkNotFound    = &SConfigError{"network not found"}
+	ErrLoadConfig         = &SConfigError{"load config"}
+	ErrBuildConfig        = &SConfigError{"build config"}
 )

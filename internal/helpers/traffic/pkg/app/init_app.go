@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 

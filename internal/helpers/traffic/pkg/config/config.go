@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 )
 
 func GetConfigSettings(pCfg config.IConfig) SConfigSettings {

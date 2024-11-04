@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "internal/helpers/loader/internal/config = "
+	errPrefix = "internal/adapters/chatingar/pkg/app/config = "
 )
 
 type SConfigError struct {
@@ -22,8 +22,8 @@ var (
 	ErrConfigNotExist     = &SConfigError{"config not exist"}
 	ErrWriteConfig        = &SConfigError{"write config"}
 	ErrConfigAlreadyExist = &SConfigError{"config already exist"}
+	ErrLoadConfig         = &SConfigError{"load config"}
 	ErrRebuildConfig      = &SConfigError{"rebuild config"}
 	ErrNetworkNotFound    = &SConfigError{"network not found"}
-	ErrLoadConfig         = &SConfigError{"load config"}
 	ErrBuildConfig        = &SConfigError{"build config"}
 )

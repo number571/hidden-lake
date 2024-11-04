@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/number571/hidden-lake/internal/helpers/encryptor/internal/config"
+	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 )
 
 func GetConfigSettings(pCfg config.IConfig) SConfigSettings {

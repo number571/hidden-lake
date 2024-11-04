@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/number571/hidden-lake/internal/applications/remoter/internal/config"
+	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
 )
 
 func GetConfigSettings(pCfg config.IConfig) SConfigSettings {

@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "internal/service/internal/config = "
+	errPrefix = "internal/service/pkg/app/config = "
 )
 
 type SConfigError struct {
