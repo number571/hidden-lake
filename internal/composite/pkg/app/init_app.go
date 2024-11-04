@@ -10,9 +10,6 @@ import (
 	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 
-	hla_chatingar_app "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/app"
-	hla_chatingar_settings "github.com/number571/hidden-lake/internal/adapters/chatingar/pkg/settings"
-
 	hla_common_app "github.com/number571/hidden-lake/internal/adapters/common/pkg/app"
 	hla_common_settings "github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
 
@@ -90,8 +87,6 @@ func getRunners(pCfg config.IConfig, pArgs []string) ([]types.IRunner, error) {
 			runner, err = hlr_app.InitApp(pArgs)
 		case hla_common_settings.CServiceFullName:
 			runner, err = hla_common_app.InitApp(pArgs)
-		case hla_chatingar_settings.CServiceFullName:
-			runner, err = hla_chatingar_app.InitApp(pArgs)
 		default:
 			return nil, ErrUnknownService
 		}

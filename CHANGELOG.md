@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `cmd/*`: move internal/config -> pkg/app/config
+- `cmd/hla/chatingar`: deleted
 
 <!-- ... -->
 
