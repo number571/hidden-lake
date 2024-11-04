@@ -13,10 +13,13 @@ var (
 )
 
 type sBuilder struct {
+	fPassword string
 }
 
-func NewBuilder() IBuilder {
-	return &sBuilder{}
+func NewBuilder(pPassword string) IBuilder {
+	return &sBuilder{
+		fPassword: pPassword,
+	}
 }
 
 func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
@@ -24,5 +27,9 @@ func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
 		http.MethodPost,
 		hlr_settings.CServiceFullName,
 		hlr_settings.CExecPath,
-	).WithBody([]byte(strings.Join(pCmd, " ")))
+	).
+		WithHead(map[string]string{
+			hlr_settings.CHeaderPassword: p.fPassword,
+		}).
+		WithBody([]byte(strings.Join(pCmd, " ")))
 }
