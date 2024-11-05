@@ -32,8 +32,8 @@ func TestError(t *testing.T) {
 func TestInitApp(t *testing.T) {
 	t.Parallel()
 
-	testDeleteFiles()
-	defer testDeleteFiles()
+	testDeleteFiles(tcPathConfig)
+	defer testDeleteFiles(tcPathConfig)
 
 	if _, err := InitApp([]string{"path", tcPathConfig}); err != nil {
 		t.Error(err)
@@ -41,18 +41,18 @@ func TestInitApp(t *testing.T) {
 	}
 }
 
-func testDeleteFiles() {
-	os.RemoveAll(tcPathConfig + settings.CPathYML)
+func testDeleteFiles(path string) {
+	os.RemoveAll(path + settings.CPathYML)
 }
 
 func TestApp(t *testing.T) {
 	t.Parallel()
 
-	testDeleteFiles()
-	defer testDeleteFiles()
+	testDeleteFiles("./")
+	defer testDeleteFiles("./")
 
 	// Run application
-	cfg, err := config.BuildConfig(tcPathConfig+settings.CPathYML, &config.SConfig{
+	cfg, err := config.BuildConfig(settings.CPathYML, &config.SConfig{
 		FSettings: &config.SConfigSettings{
 			FWorkSizeBits: 10,
 			FNetworkKey:   "_",
