@@ -23,6 +23,7 @@ import (
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 const (
@@ -180,3 +181,64 @@ func testNewNetworkNode(addr string) network.INode {
 		cache.NewLRUCache(tcCapacity),
 	)
 }
+
+type tsConfig struct {
+}
+
+func (p *tsConfig) GetSettings() config.IConfigSettings {
+	return &config.SConfigSettings{
+		FMessageSizeBytes: tcMessageSize,
+	}
+}
+
+func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }
+func (p *tsConfig) GetAddress() config.IAddress     { return nil }
+func (p *tsConfig) GetConnections() []string        { return nil }
+func (p *tsConfig) GetConsumers() []string          { return nil }
+
+var (
+	_ network.INode = &tsNetworkNode{}
+)
+
+func newNetworkNode() *tsNetworkNode {
+	return &tsNetworkNode{
+		fCacheSetter: cache.NewLRUCache(1),
+	}
+}
+
+type tsNetworkNode struct {
+	fCacheSetter cache.ILRUCache
+}
+
+func (p *tsNetworkNode) Close() error                                       { return nil }
+func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
+func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
+
+func (p *tsNetworkNode) GetSettings() network.ISettings {
+	return network.NewSettings(&network.SSettings{
+		FConnSettings: conn.NewSettings(&conn.SSettings{
+			FMessageSettings:       net_message.NewSettings(&net_message.SSettings{}),
+			FLimitMessageSizeBytes: 8192,
+			FWaitReadTimeout:       time.Second,
+			FDialTimeout:           time.Second,
+			FReadTimeout:           time.Second,
+			FWriteTimeout:          time.Second,
+		}),
+		FMaxConnects:  1,
+		FReadTimeout:  time.Second,
+		FWriteTimeout: time.Second,
+	})
+}
+func (p *tsNetworkNode) GetCacheSetter() cache.ICacheSetter { return p.fCacheSetter }
+
+func (p *tsNetworkNode) GetConnections() map[string]conn.IConn {
+	return map[string]conn.IConn{
+		"127.0.0.1:9999": nil,
+	}
+}
+func (p *tsNetworkNode) AddConnection(context.Context, string) error { return nil }
+func (p *tsNetworkNode) DelConnection(string) error {
+	return nil
+}
+
+func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }

@@ -2,18 +2,65 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
+
+func TestHandleIndexAPI2(t *testing.T) {
+	t.Parallel()
+
+	httpLogger := std_logger.NewStdLogger(
+		func() std_logger.ILogging {
+			logging, err := std_logger.LoadLogging([]string{})
+			if err != nil {
+				panic(err)
+			}
+			return logging
+		}(),
+		func(_ logger.ILogArg) string {
+			return ""
+		},
+	)
+
+	handler := HandleIndexAPI(httpLogger)
+	if err := indexAPIRequestOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
+}
+
+func indexAPIRequestOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
