@@ -23,6 +23,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -304,11 +305,21 @@ var (
 	_ anonymity.INode = &tsNode{}
 )
 
-func newTsNode() *tsNode {
-	return &tsNode{}
+func newTsNode(pConnectionsOK, pFetchOK, pSendOK, pLoadResponseOK bool) *tsNode {
+	return &tsNode{
+		fConnectionsOK:  pConnectionsOK,
+		fFetchOK:        pFetchOK,
+		fSendOK:         pSendOK,
+		fLoadResponseOK: pLoadResponseOK,
+	}
 }
 
-type tsNode struct{}
+type tsNode struct {
+	fConnectionsOK  bool
+	fFetchOK        bool
+	fSendOK         bool
+	fLoadResponseOK bool
+}
 
 func (p *tsNode) Run(context.Context) error                              { return nil }
 func (p *tsNode) HandleFunc(uint32, anonymity.IHandlerF) anonymity.INode { return p }
@@ -316,7 +327,7 @@ func (p *tsNode) HandleFunc(uint32, anonymity.IHandlerF) anonymity.INode { retur
 func (p *tsNode) GetLogger() logger.ILogger           { return nil }
 func (p *tsNode) GetSettings() anonymity.ISettings    { return nil }
 func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
-func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{} }
+func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{p.fConnectionsOK} }
 func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
 	return queue.NewQBProblemProcessor(
 		queue.NewSettings(&queue.SSettings{
@@ -333,17 +344,28 @@ func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
 func (p *tsNode) GetMapPubKeys() asymmetric.IMapPubKeys { return asymmetric.NewMapPubKeys() }
 
 func (p *tsNode) SendPayload(context.Context, asymmetric.IPubKey, payload.IPayload64) error {
+	if !p.fSendOK {
+		return errors.New("some error") // nolint: err113
+	}
 	return nil
 }
 func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayload32) ([]byte, error) {
-	return nil, nil
+	if !p.fFetchOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
+	if !p.fLoadResponseOK {
+		return []byte{123}, nil
+	}
+	return response.NewResponse(200).ToBytes(), nil
 }
 
 var (
 	_ network.INode = &tsNetworkNode{}
 )
 
-type tsNetworkNode struct{}
+type tsNetworkNode struct {
+	fConnectionsOK bool
+}
 
 func (p *tsNetworkNode) Close() error                                       { return nil }
 func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
@@ -352,8 +374,17 @@ func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { re
 func (p *tsNetworkNode) GetSettings() network.ISettings     { return nil }
 func (p *tsNetworkNode) GetCacheSetter() cache.ICacheSetter { return nil }
 
-func (p *tsNetworkNode) GetConnections() map[string]conn.IConn       { return nil }
+func (p *tsNetworkNode) GetConnections() map[string]conn.IConn {
+	return map[string]conn.IConn{
+		"127.0.0.1:9999": nil,
+	}
+}
 func (p *tsNetworkNode) AddConnection(context.Context, string) error { return nil }
-func (p *tsNetworkNode) DelConnection(string) error                  { return nil }
+func (p *tsNetworkNode) DelConnection(string) error {
+	if !p.fConnectionsOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
 
 func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }

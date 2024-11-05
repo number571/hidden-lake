@@ -36,8 +36,7 @@ func TestHandleConnectsAPI2(t *testing.T) {
 		},
 	)
 
-	node := newTsNode()
-	handler := HandleConfigConnectsAPI(ctx, newTsWrapper(true), httpLogger, node)
+	handler := HandleConfigConnectsAPI(ctx, newTsWrapper(true), httpLogger, newTsNode(true, true, true, true))
 	if err := connectsAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -60,7 +59,7 @@ func TestHandleConnectsAPI2(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleConfigConnectsAPI(ctx, newTsWrapper(false), httpLogger, node)
+	handlerx := HandleConfigConnectsAPI(ctx, newTsWrapper(false), httpLogger, newTsNode(true, true, true, true))
 	if err := connectsAPIRequestPostOK(handlerx); err == nil {
 		t.Error("request success with invalid update editor (post)")
 		return

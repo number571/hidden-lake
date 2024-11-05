@@ -32,8 +32,7 @@ func TestHandleConfigSettingsAPI2(t *testing.T) {
 		},
 	)
 
-	node := newTsNode()
-	handler := HandleConfigSettingsAPI(newTsWrapper(true), httpLogger, node)
+	handler := HandleConfigSettingsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true, true))
 	if err := settingsAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
