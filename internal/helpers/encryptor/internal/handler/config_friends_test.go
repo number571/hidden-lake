@@ -1,17 +1,302 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
+	"github.com/number571/hidden-lake/internal/service/pkg/settings"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
+
+func TestHandleFriendsAPI2(t *testing.T) {
+	t.Parallel()
+
+	httpLogger := std_logger.NewStdLogger(
+		func() std_logger.ILogging {
+			logging, err := std_logger.LoadLogging([]string{})
+			if err != nil {
+				panic(err)
+			}
+			return logging
+		}(),
+		func(_ logger.ILogArg) string {
+			return ""
+		},
+	)
+
+	handler := HandleConfigFriendsAPI(newTsWrapper(true), httpLogger, asymmetric.NewMapPubKeys())
+	if err := friendsAPIRequestOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := friendsAPIRequestPostOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := friendsAPIRequestDeleteOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
+
+	if err := friendsAPIRequestNotFound(handler); err == nil {
+		t.Error("request success with not found alias_name")
+		return
+	}
+	if err := friendsAPIRequestPubKey(handler); err == nil {
+		t.Error("request success with invalid pubkey")
+		return
+	}
+	if err := friendsAPIRequestExist(handler); err == nil {
+		t.Error("request success with exist alias_name")
+		return
+	}
+	if err := friendsAPIRequestAliasName(handler); err == nil {
+		t.Error("request success with invalid alias_name")
+		return
+	}
+	if err := friendsAPIRequestDecode(handler); err == nil {
+		t.Error("request success with invalid decode")
+		return
+	}
+	if err := friendsAPIRequestMethod(handler); err == nil {
+		t.Error("request success with invalid method")
+		return
+	}
+
+	handlerx := HandleConfigFriendsAPI(newTsWrapper(false), httpLogger, asymmetric.NewMapPubKeys())
+	if err := friendsAPIRequestPostOK(handlerx); err == nil {
+		t.Error("request success with invalid update editor (post)")
+		return
+	}
+	if err := friendsAPIRequestDeleteOK(handlerx); err == nil {
+		t.Error("request success with invalid update editor (post)")
+		return
+	}
+}
+
+func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "abc",
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "new_friend",
+		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestNotFound(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "notfound",
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "new_friend",
+		FPublicKey: "abc",
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestExist(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "abc",
+		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "",
+		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestDecode(handler http.HandlerFunc) error {
+	newFriend := settings.SFriend{
+		FAliasName: "new_friend",
+		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+	}
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(bytes.Join(
+		[][]byte{
+			[]byte{1},
+			encoding.SerializeJSON(newFriend),
+		},
+		[]byte{},
+	)))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func friendsAPIRequestMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPut, "/", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func TestHandleConfigFriendsAPI(t *testing.T) {
 	t.Parallel()

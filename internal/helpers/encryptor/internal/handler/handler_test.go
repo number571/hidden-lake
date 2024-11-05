@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 const (
@@ -105,4 +107,80 @@ func testNetworkMessageSettings() net_message.ISettings {
 		FNetworkKey:   tcNetworkKey,
 		FWorkSizeBits: tcWorkSize,
 	})
+}
+
+type tsWrapper struct {
+	fEditorOK bool
+}
+
+func newTsWrapper(pEditorOK bool) *tsWrapper {
+	return &tsWrapper{
+		fEditorOK: pEditorOK,
+	}
+}
+
+func (p *tsWrapper) GetConfig() config.IConfig { return &tsConfig{} }
+func (p *tsWrapper) GetEditor() config.IEditor { return &tsEditor{p.fEditorOK} }
+
+type tsEditor struct {
+	fEditorOK bool
+}
+
+func (p *tsEditor) UpdateConnections([]string) error {
+	if !p.fEditorOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsEditor) UpdateFriends(map[string]asymmetric.IPubKey) error {
+	if !p.fEditorOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+
+type tsConfig struct {
+}
+
+func (p *tsConfig) GetSettings() config.IConfigSettings {
+	return &config.SConfigSettings{}
+}
+
+func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }
+func (p *tsConfig) GetAddress() config.IAddress     { return nil }
+func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
+	return map[string]asymmetric.IPubKey{
+		"abc": tgPrivKey2.GetPubKey(),
+	}
+}
+func (p *tsConfig) GetConnections() []string         { return nil }
+func (p *tsConfig) GetService(string) (string, bool) { return "", false }
+
+var (
+	_ client.IClient = &tsClient{}
+)
+
+func newTsClient(pEncryptOK bool) *tsClient {
+	return &tsClient{
+		fEncryptOK: pEncryptOK,
+	}
+}
+
+type tsClient struct {
+	fEncryptOK bool
+}
+
+func (p *tsClient) GetMessageSize() uint64  { return 8192 }
+func (p *tsClient) GetPayloadLimit() uint64 { return 4000 }
+
+func (p *tsClient) GetPrivKey() asymmetric.IPrivKey { return tgPrivKey1 }
+
+func (p *tsClient) EncryptMessage(asymmetric.IPubKey, []byte) ([]byte, error) {
+	if !p.fEncryptOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
+	return []byte{1}, nil
+}
+func (p *tsClient) DecryptMessage(asymmetric.IMapPubKeys, []byte) (asymmetric.IPubKey, []byte, error) {
+	return tgPrivKey2.GetPubKey(), []byte{1}, nil
 }
