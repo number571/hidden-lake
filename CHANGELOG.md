@@ -2,16 +2,25 @@
 
 <!-- ... -->
 
-## v1.7.4~
+## v1.7.5~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.7.4
+
+*November 05, 2024*
+
+### IMPROVEMENTS
+
+- `*`: test coverage > 80%
 
 ### CHANGES
 
 - `cmd/*`: move internal/config -> pkg/app/config
 - `cmd/hla/chatingar`: deleted
 - `cmd/hls,cmd/hlc`: add sh daemon/checklast
-- `*`: test coverage > 80%
 
 <!-- ... -->
 
