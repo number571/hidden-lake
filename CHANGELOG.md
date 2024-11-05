@@ -10,6 +10,8 @@
 
 - `cmd/*`: move internal/config -> pkg/app/config
 - `cmd/hla/chatingar`: deleted
+- `cmd/hls,cmd/hlc`: add sh daemon/checklast
+- `*`: test coverage > 80%
 
 <!-- ... -->
 

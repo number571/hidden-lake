@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,12 +18,14 @@ import (
 	"github.com/number571/go-peer/pkg/network/anonymity/queue"
 	"github.com/number571/go-peer/pkg/network/conn"
 	net_message "github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 const (
@@ -249,3 +252,108 @@ func testNewNetworkNode(addr string) network.INode {
 		cache.NewLRUCache(tcCapacity),
 	)
 }
+
+type tsWrapper struct {
+	fEditorOK bool
+}
+
+func newTsWrapper(pEditorOK bool) *tsWrapper {
+	return &tsWrapper{
+		fEditorOK: pEditorOK,
+	}
+}
+
+func (p *tsWrapper) GetConfig() config.IConfig { return &tsConfig{} }
+func (p *tsWrapper) GetEditor() config.IEditor { return &tsEditor{p.fEditorOK} }
+
+type tsEditor struct {
+	fEditorOK bool
+}
+
+func (p *tsEditor) UpdateConnections([]string) error {
+	if !p.fEditorOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsEditor) UpdateFriends(map[string]asymmetric.IPubKey) error {
+	if !p.fEditorOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+
+type tsConfig struct {
+}
+
+func (p *tsConfig) GetSettings() config.IConfigSettings {
+	return &config.SConfigSettings{}
+}
+
+func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }
+func (p *tsConfig) GetAddress() config.IAddress     { return nil }
+func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
+	return map[string]asymmetric.IPubKey{
+		"abc": tgPrivKey2.GetPubKey(),
+	}
+}
+func (p *tsConfig) GetConnections() []string         { return nil }
+func (p *tsConfig) GetService(string) (string, bool) { return "", false }
+
+var (
+	_ anonymity.INode = &tsNode{}
+)
+
+func newTsNode() *tsNode {
+	return &tsNode{}
+}
+
+type tsNode struct{}
+
+func (p *tsNode) Run(context.Context) error                              { return nil }
+func (p *tsNode) HandleFunc(uint32, anonymity.IHandlerF) anonymity.INode { return p }
+
+func (p *tsNode) GetLogger() logger.ILogger           { return nil }
+func (p *tsNode) GetSettings() anonymity.ISettings    { return nil }
+func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
+func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{} }
+func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
+	return queue.NewQBProblemProcessor(
+		queue.NewSettings(&queue.SSettings{
+			FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
+				FSettings: net_message.NewSettings(&net_message.SSettings{}),
+			}),
+			FQueuePeriod:  5_000,
+			FPoolCapacity: [2]uint64{16, 16},
+		}),
+		client.NewClient(asymmetric.NewPrivKey(), 8192),
+	)
+}
+
+func (p *tsNode) GetMapPubKeys() asymmetric.IMapPubKeys { return asymmetric.NewMapPubKeys() }
+
+func (p *tsNode) SendPayload(context.Context, asymmetric.IPubKey, payload.IPayload64) error {
+	return nil
+}
+func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayload32) ([]byte, error) {
+	return nil, nil
+}
+
+var (
+	_ network.INode = &tsNetworkNode{}
+)
+
+type tsNetworkNode struct{}
+
+func (p *tsNetworkNode) Close() error                                       { return nil }
+func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
+func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
+
+func (p *tsNetworkNode) GetSettings() network.ISettings     { return nil }
+func (p *tsNetworkNode) GetCacheSetter() cache.ICacheSetter { return nil }
+
+func (p *tsNetworkNode) GetConnections() map[string]conn.IConn       { return nil }
+func (p *tsNetworkNode) AddConnection(context.Context, string) error { return nil }
+func (p *tsNetworkNode) DelConnection(string) error                  { return nil }
+
+func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }
