@@ -285,6 +285,7 @@ func (p *tsEditor) UpdateFriends(map[string]asymmetric.IPubKey) error {
 }
 
 type tsConfig struct {
+	fServiceAddr string
 }
 
 func (p *tsConfig) GetSettings() config.IConfigSettings {
@@ -298,8 +299,16 @@ func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
 		"abc": tgPrivKey2.GetPubKey(),
 	}
 }
-func (p *tsConfig) GetConnections() []string         { return nil }
-func (p *tsConfig) GetService(string) (string, bool) { return "", false }
+func (p *tsConfig) GetConnections() []string { return nil }
+func (p *tsConfig) GetService(s string) (string, bool) {
+	if s == "hidden-some-host-ok" {
+		return p.fServiceAddr, true
+	}
+	if s == "hidden-some-host-failed" {
+		return "localhost:99999", true
+	}
+	return "", false
+}
 
 var (
 	_ anonymity.INode = &tsNode{}
@@ -324,7 +333,14 @@ type tsNode struct {
 func (p *tsNode) Run(context.Context) error                              { return nil }
 func (p *tsNode) HandleFunc(uint32, anonymity.IHandlerF) anonymity.INode { return p }
 
-func (p *tsNode) GetLogger() logger.ILogger           { return nil }
+func (p *tsNode) GetLogger() logger.ILogger {
+	return logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string {
+			return ""
+		},
+	)
+}
 func (p *tsNode) GetSettings() anonymity.ISettings    { return nil }
 func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
 func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{p.fConnectionsOK} }

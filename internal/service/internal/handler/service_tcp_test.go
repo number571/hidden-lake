@@ -13,6 +13,7 @@ import (
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	testutils "github.com/number571/hidden-lake/test/utils"
@@ -21,6 +22,95 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/types"
 )
+
+func TestHandleServiceTCP(t *testing.T) {
+	t.Parallel()
+
+	rspMsg := "hello, world!"
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/rsp-mode-on", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeON)
+		fmt.Fprint(w, rspMsg)
+	})
+	mux.HandleFunc("/rsp-mode-off", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeOFF)
+		fmt.Fprint(w, rspMsg)
+	})
+	mux.HandleFunc("/rsp-mode-unknown", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set(hls_settings.CHeaderResponseMode, "unknown")
+		fmt.Fprint(w, rspMsg)
+	})
+
+	addr := testutils.TgAddrs[49]
+	srv := &http.Server{
+		Addr:        addr,
+		Handler:     mux,
+		ReadTimeout: time.Second,
+	}
+	defer srv.Close()
+	go func() { _ = srv.ListenAndServe() }()
+
+	time.Sleep(200 * time.Millisecond)
+
+	ctx := context.Background()
+	cfg := &tsConfig{fServiceAddr: addr}
+	node := newTsNode(true, true, true, true)
+	pubKey := tgPrivKey2.GetPubKey()
+	handler := HandleServiceTCP(cfg)
+
+	if _, err := handler(ctx, node, pubKey, []byte{1}); err == nil {
+		t.Error("success handle request with invalid request")
+		return
+	}
+
+	reqx := request.NewRequest(http.MethodGet, "hidden-some-host-not-found", "/rsp-mode-on")
+	if _, err := handler(ctx, node, pubKey, reqx.ToBytes()); err == nil {
+		t.Error("success handle request with invalid service")
+		return
+	}
+
+	reqy := request.NewRequest(http.MethodGet, "hidden-some-host-failed", "/rsp-mode-on")
+	if _, err := handler(ctx, node, pubKey, reqy.ToBytes()); err == nil {
+		t.Error("success handle request with invalid do request")
+		return
+	}
+
+	req := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-on")
+	rspBytes, err := handler(ctx, node, pubKey, req.ToBytes())
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	rsp, err := response.LoadResponse(rspBytes)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if string(rsp.GetBody()) != rspMsg {
+		t.Error("string(rsp.GetBody()) != rspMsg")
+		return
+	}
+
+	req2 := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-off")
+	rsp2Bytes, err := handler(ctx, node, pubKey, req2.ToBytes())
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if rsp2Bytes != nil {
+		t.Error("rsp2Bytes != nil")
+		return
+	}
+
+	req3 := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-unknown")
+	if _, err := handler(ctx, node, pubKey, req3.ToBytes()); err == nil {
+		t.Error("success response with unknown response mode")
+		return
+	}
+}
 
 func testCleanHLS() {
 	os.RemoveAll(fmt.Sprintf(tcPathConfigTemplate, 9))
