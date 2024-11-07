@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/anonymity"
@@ -20,19 +19,6 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
-
-const (
-	cPPKKey = "__PSD_PUB_KEY__"
-)
-
-func init() {
-	// The hls.db file stores only message hashes.
-	// If the other parameters have the same size as the hashes,
-	// then there will be a chance of overwriting.
-	if len(cPPKKey) == hashing.CHasherSize {
-		panic("len(cPPKKey) == hashing.CHasherSize")
-	}
-}
 
 func (p *sApp) initAnonNode() error {
 	var (
