@@ -20,10 +20,6 @@ import (
 )
 
 const (
-	cPldHead     = 0x1
-	cKeySize     = 4096
-	cMsgSize     = (8 << 10)
-	cWrkSize     = 22
 	cPrivKeyPath = "../_keys/priv_node1.key"
 )
 
@@ -37,7 +33,6 @@ func main() {
 	}
 
 	privKey := asymmetric.LoadPrivKey(string(readPrivKey))
-	client := client.NewClient(privKey, cMsgSize)
 
 	i := 0
 	for key, network := range hiddenlake.GNetworks {
@@ -49,7 +44,7 @@ func main() {
 		connect := fmt.Sprintf("%s:%d", network.FConnections[0].FHost, 9582)
 		netSett := net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{
-				FWorkSizeBits: cWrkSize,
+				FWorkSizeBits: network.FWorkSizeBits,
 				FNetworkKey:   key,
 			}),
 		})
@@ -63,9 +58,10 @@ func main() {
 			),
 		)
 
+		client := client.NewClient(privKey, network.FMessageSizeBytes)
 		msg, err := client.EncryptMessage(
 			privKey.GetPubKey(),
-			payload.NewPayload64(cPldHead, []byte(randString)).ToBytes(),
+			payload.NewPayload64(0x01, []byte(randString)).ToBytes(),
 		)
 		if err != nil {
 			fmt.Printf("%d. %s: %s\n", i, connect, err)
