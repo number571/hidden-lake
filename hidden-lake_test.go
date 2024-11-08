@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 )
 
 var (
@@ -82,5 +83,66 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	if network.FQueuePeriodMS != 5_000 {
 		t.Error("network.FQueuePeriodMS != 5_000")
 		return
+	}
+}
+
+func TestHiddenLakeSettings(t *testing.T) {
+	t.Parallel()
+
+	if GSettings.ProtoMask.Network != 0x5f67705f {
+		t.Error(`GSettings.ProtoMask.Network != 0x5f67705f`)
+		return
+	}
+	if GSettings.ProtoMask.Service != 0x5f686c5f {
+		t.Error(`GGSettings.ProtoMask.Service != 0x5f686c5f`)
+		return
+	}
+	if GSettings.QueueCapacity.Main != 256 {
+		t.Error(`GSettings.QueueCapacity.Main != 256`)
+		return
+	}
+	if GSettings.QueueCapacity.Rand != 32 {
+		t.Error(`GSettings.QueueCapacity.Rand != 32`)
+		return
+	}
+	if GSettings.NetworkManager.CacheHashesCap != 2048 {
+		t.Error(`GSettings.NetworkManager.CacheHashesCap != 2048`)
+		return
+	}
+	if GSettings.NetworkManager.ConnectsLimiter != 256 {
+		t.Error(`GSettings.NetworkManager.ConnectsLimiter != 256`)
+		return
+	}
+	if GSettings.NetworkManager.KeeperPeriodMS != 10_000 {
+		t.Error(`GSettings.NetworkManager.KeeperPeriodMS != 10_000`)
+		return
+	}
+	if GSettings.NetworkConnection.DialTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.DialTimeoutMS != 5_000`)
+		return
+	}
+	if GSettings.NetworkConnection.ReadTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.ReadTimeoutMS != 5_000`)
+		return
+	}
+	if GSettings.NetworkConnection.WriteTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.WriteTimeoutMS != 5_000`)
+		return
+	}
+	if GSettings.NetworkConnection.WaitTimeoutMS != 3_600_000 {
+		t.Error(`GSettings.NetworkConnection.WaitTimeoutMS != 3_600_000`)
+		return
+	}
+	switch {
+	case GSettings.GetWaitTimeout() != time.Duration(GSettings.NetworkConnection.WaitTimeoutMS)*time.Millisecond:
+		fallthrough
+	case GSettings.GetDialTimeout() != time.Duration(GSettings.NetworkConnection.DialTimeoutMS)*time.Millisecond:
+		fallthrough
+	case GSettings.GetReadTimeout() != time.Duration(GSettings.NetworkConnection.ReadTimeoutMS)*time.Millisecond:
+		fallthrough
+	case GSettings.GetWriteTimeout() != time.Duration(GSettings.NetworkConnection.WriteTimeoutMS)*time.Millisecond:
+		fallthrough
+	case GSettings.GetKeeperPeriod() != time.Duration(GSettings.NetworkManager.KeeperPeriodMS)*time.Millisecond:
+		t.Error("Get methods is not valid")
 	}
 }

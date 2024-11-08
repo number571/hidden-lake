@@ -71,8 +71,6 @@ func initConfig() *SConfig {
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,
 			FWorkSizeBits:     defaultNetwork.FWorkSizeBits,
-			FMessagesCapacity: hlt_settings.CDefaultMessagesCapacity,
-			FDatabaseEnabled:  hlt_settings.CDefaultDatabaseEnabled,
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{

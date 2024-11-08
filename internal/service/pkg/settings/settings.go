@@ -1,9 +1,5 @@
 package settings
 
-import (
-	"time"
-)
-
 const (
 	CServiceName     = "HLS"
 	CServiceFullName = "hidden-lake-service"
@@ -33,24 +29,6 @@ const (
 const (
 	CDefaultTCPAddress  = "127.0.0.1:9571"
 	CDefaultHTTPAddress = "127.0.0.1:9572"
-)
-
-const (
-	CQueueMainPoolCapacity = (1 << 8) // 256 messages ~= 2MiB
-	CQueueRandPoolCapacity = (1 << 5) //  32 messages ~= 256KiB
-)
-
-const (
-	CNetworkQueueCapacity = (2 << 10) // 2048 hashes ~= 64KiB
-	CNetworkMaxConns      = (1 << 8)  // 256 conns
-	CNetworkWriteTimeout  = 5 * time.Second
-	CNetworkReadTimeout   = 5 * time.Second
-)
-
-const (
-	CConnKeeperDuration  = 10 * time.Second
-	CConnDialTimeout     = 30 * time.Second
-	CConnWaitReadTimeout = time.Hour
 )
 
 const (

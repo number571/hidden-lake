@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `hidden-lake`: add settings.yml
+
 <!-- ... -->
 
 ## v1.7.4

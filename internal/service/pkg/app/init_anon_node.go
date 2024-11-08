@@ -13,6 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 
 	"github.com/number571/go-peer/pkg/client"
@@ -49,19 +50,19 @@ func (p *sApp) initAnonNode() error {
 		network.NewNode(
 			network.NewSettings(&network.SSettings{
 				FAddress:      cfg.GetAddress().GetTCP(),
-				FMaxConnects:  hls_settings.CNetworkMaxConns,
-				FReadTimeout:  hls_settings.CNetworkReadTimeout,
-				FWriteTimeout: hls_settings.CNetworkWriteTimeout,
+				FMaxConnects:  hiddenlake.GSettings.NetworkManager.ConnectsLimiter,
+				FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
+				FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
 				FConnSettings: conn.NewSettings(&conn.SSettings{
 					FMessageSettings:       cfgSettings,
 					FLimitMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
-					FWaitReadTimeout:       hls_settings.CConnWaitReadTimeout,
-					FDialTimeout:           hls_settings.CConnDialTimeout,
-					FReadTimeout:           hls_settings.CNetworkReadTimeout,
-					FWriteTimeout:          hls_settings.CNetworkWriteTimeout,
+					FWaitReadTimeout:       hiddenlake.GSettings.GetWaitTimeout(),
+					FDialTimeout:           hiddenlake.GSettings.GetDialTimeout(),
+					FReadTimeout:           hiddenlake.GSettings.GetReadTimeout(),
+					FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
 				}),
 			}),
-			cache.NewLRUCache(hls_settings.CNetworkQueueCapacity),
+			cache.NewLRUCache(hiddenlake.GSettings.NetworkManager.CacheHashesCap),
 		),
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
@@ -72,8 +73,8 @@ func (p *sApp) initAnonNode() error {
 				FNetworkMask: hls_settings.CNetworkMask,
 				FQueuePeriod: time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
 				FPoolCapacity: [2]uint64{
-					hls_settings.CQueueMainPoolCapacity,
-					hls_settings.CQueueRandPoolCapacity,
+					hiddenlake.GSettings.QueueCapacity.Main,
+					hiddenlake.GSettings.QueueCapacity.Rand,
 				},
 			}),
 			client,
