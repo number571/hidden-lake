@@ -133,7 +133,7 @@ $ ./hls_amd64_linux
 
 ## Production
 
-The HLS node is easily connected to the production environment. To do this, you just need to specify the `network` at startup. You can find them in the [build/networks.yml](networks.yml) file.
+The HLS node is easily connected to the production environment. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file.
 
 ```bash
 $ hls -network=oi4r9NW9Le7fKF9d
