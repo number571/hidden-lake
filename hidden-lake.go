@@ -16,11 +16,11 @@ const (
 )
 
 var (
-	//go:embed networks.yml
+	//go:embed build/networks.yml
 	gNetworks []byte
 	GNetworks map[string]SNetwork
 
-	//go:embed settings.yml
+	//go:embed build/settings.yml
 	gSettings []byte
 	GSettings SSettings
 )

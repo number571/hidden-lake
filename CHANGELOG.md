@@ -8,7 +8,8 @@
 
 ### CHANGES
 
-- `hidden-lake`: add settings.yml
+- `hidden-lake`: add build/settings.yml
+- `hidden-lake`: move networks.yml -> build/networks.yml
 
 <!-- ... -->
 
