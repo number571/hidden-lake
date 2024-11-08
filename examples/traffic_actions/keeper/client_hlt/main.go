@@ -22,7 +22,6 @@ const (
 
 const (
 	cLocalAddressHLT = "localhost:9582"
-	cProdAddressHLT  = "185.43.4.253:9582"
 )
 
 func main() {
@@ -49,14 +48,6 @@ func main() {
 
 	args := os.Args[1:]
 	addr := cLocalAddressHLT
-
-	if args[0] == "prod" {
-		args = os.Args[2:]
-		addr = cProdAddressHLT
-		if len(args) == 0 {
-			panic("len os.Args < 2")
-		}
-	}
 
 	hltClient := hlt_client.NewClient(
 		hlt_client.NewBuilder(),

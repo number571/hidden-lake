@@ -10,6 +10,7 @@
 
 - `hidden-lake`: add build/settings.yml
 - `hidden-lake`: move networks.yml -> build/networks.yml
+- `networks.yml`: deleted j2BR39JfDf7Bajx3 network
 
 <!-- ... -->
 
