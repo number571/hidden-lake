@@ -22,7 +22,7 @@
 		<a href="https://github.com/number571/hidden-lake/blob/629bbca6e6bed8961175e8722efb62e575343971/Makefile#L76">
         	<img src="test/result/badge_coverage.svg" alt="Coverage" />
 		</a>
-        <a href="https://pkg.go.dev/github.com/number571/hidden-lake/cmd/hidden-lake?status.svg">
+        <a href="https://pkg.go.dev/github.com/number571/hidden-lake?status.svg">
         	<img src="https://godoc.org/github.com/number571/hidden-lake?status.svg" alt="GoDoc" />
 		</a>
         <a href="https://github.com/number571/go-peer">
