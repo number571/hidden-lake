@@ -50,7 +50,7 @@ func (p *sApp) initAnonNode() error {
 		network.NewNode(
 			network.NewSettings(&network.SSettings{
 				FAddress:      cfg.GetAddress().GetTCP(),
-				FMaxConnects:  hiddenlake.GSettings.NetworkManager.ConnectsLimiter,
+				FMaxConnects:  hiddenlake.GSettings.FNetworkManager.FConnectsLimiter,
 				FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
 				FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
 				FConnSettings: conn.NewSettings(&conn.SSettings{
@@ -62,7 +62,7 @@ func (p *sApp) initAnonNode() error {
 					FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
 				}),
 			}),
-			cache.NewLRUCache(hiddenlake.GSettings.NetworkManager.CacheHashesCap),
+			cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
 		),
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
@@ -73,8 +73,8 @@ func (p *sApp) initAnonNode() error {
 				FNetworkMask: hls_settings.CNetworkMask,
 				FQueuePeriod: time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
 				FPoolCapacity: [2]uint64{
-					hiddenlake.GSettings.QueueCapacity.Main,
-					hiddenlake.GSettings.QueueCapacity.Rand,
+					hiddenlake.GSettings.FQueueCapacity.FMain,
+					hiddenlake.GSettings.FQueueCapacity.FRand,
 				},
 			}),
 			client,

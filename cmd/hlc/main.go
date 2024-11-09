@@ -17,7 +17,7 @@ func main() {
 	args := os.Args[1:]
 
 	if flag.GetBoolFlagValue(args, "version") {
-		fmt.Println(hiddenlake.CVersion)
+		fmt.Println(hiddenlake.GVersion)
 		return
 	}
 

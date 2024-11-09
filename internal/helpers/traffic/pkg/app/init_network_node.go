@@ -16,7 +16,7 @@ func (p *sApp) initNetworkNode(pStorage storage.IMessageStorage) {
 	p.fNode = network.NewNode(
 		network.NewSettings(&network.SSettings{
 			FAddress:      p.fConfig.GetAddress().GetTCP(),
-			FMaxConnects:  hiddenlake.GSettings.NetworkManager.ConnectsLimiter,
+			FMaxConnects:  hiddenlake.GSettings.FNetworkManager.FConnectsLimiter,
 			FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
 			FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
 			FConnSettings: conn.NewSettings(&conn.SSettings{
@@ -28,7 +28,7 @@ func (p *sApp) initNetworkNode(pStorage storage.IMessageStorage) {
 				FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
 			}),
 		}),
-		cache.NewLRUCache(hiddenlake.GSettings.NetworkManager.CacheHashesCap),
+		cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
 	).HandleFunc(
 		hls_settings.CNetworkMask,
 		handler.HandleServiceTCP(p.fConfig, pStorage, p.fAnonLogger),

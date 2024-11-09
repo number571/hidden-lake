@@ -23,14 +23,14 @@ func TestHiddenLakeVersion(t *testing.T) {
 		return
 	}
 
-	if strings.HasSuffix(CVersion, "~") {
-		if match[0][1] != CVersion {
+	if strings.HasSuffix(GVersion, "~") {
+		if match[0][1] != GVersion {
 			t.Error("the versions do not match")
 			return
 		}
 	} else {
 		// current version is always previous version in the changelog
-		if match[1][1] != CVersion {
+		if match[1][1] != GVersion {
 			t.Error("the versions do not match")
 			return
 		}
@@ -89,60 +89,60 @@ func TestHiddenLakeNetworks(t *testing.T) {
 func TestHiddenLakeSettings(t *testing.T) {
 	t.Parallel()
 
-	if GSettings.ProtoMask.Network != 0x5f67705f {
+	if GSettings.FProtoMask.FNetwork != 0x5f67705f {
 		t.Error(`GSettings.ProtoMask.Network != 0x5f67705f`)
 		return
 	}
-	if GSettings.ProtoMask.Service != 0x5f686c5f {
+	if GSettings.FProtoMask.FService != 0x5f686c5f {
 		t.Error(`GGSettings.ProtoMask.Service != 0x5f686c5f`)
 		return
 	}
-	if GSettings.QueueCapacity.Main != 256 {
+	if GSettings.FQueueCapacity.FMain != 256 {
 		t.Error(`GSettings.QueueCapacity.Main != 256`)
 		return
 	}
-	if GSettings.QueueCapacity.Rand != 32 {
+	if GSettings.FQueueCapacity.FRand != 32 {
 		t.Error(`GSettings.QueueCapacity.Rand != 32`)
 		return
 	}
-	if GSettings.NetworkManager.CacheHashesCap != 2048 {
+	if GSettings.FNetworkManager.FCacheHashesCap != 2048 {
 		t.Error(`GSettings.NetworkManager.CacheHashesCap != 2048`)
 		return
 	}
-	if GSettings.NetworkManager.ConnectsLimiter != 256 {
+	if GSettings.FNetworkManager.FConnectsLimiter != 256 {
 		t.Error(`GSettings.NetworkManager.ConnectsLimiter != 256`)
 		return
 	}
-	if GSettings.NetworkManager.KeeperPeriodMS != 10_000 {
+	if GSettings.FNetworkManager.FKeeperPeriodMS != 10_000 {
 		t.Error(`GSettings.NetworkManager.KeeperPeriodMS != 10_000`)
 		return
 	}
-	if GSettings.NetworkConnection.DialTimeoutMS != 5_000 {
+	if GSettings.FNetworkConnection.FDialTimeoutMS != 5_000 {
 		t.Error(`GSettings.NetworkConnection.DialTimeoutMS != 5_000`)
 		return
 	}
-	if GSettings.NetworkConnection.ReadTimeoutMS != 5_000 {
+	if GSettings.FNetworkConnection.FReadTimeoutMS != 5_000 {
 		t.Error(`GSettings.NetworkConnection.ReadTimeoutMS != 5_000`)
 		return
 	}
-	if GSettings.NetworkConnection.WriteTimeoutMS != 5_000 {
+	if GSettings.FNetworkConnection.FWriteTimeoutMS != 5_000 {
 		t.Error(`GSettings.NetworkConnection.WriteTimeoutMS != 5_000`)
 		return
 	}
-	if GSettings.NetworkConnection.WaitTimeoutMS != 3_600_000 {
+	if GSettings.FNetworkConnection.FWaitTimeoutMS != 3_600_000 {
 		t.Error(`GSettings.NetworkConnection.WaitTimeoutMS != 3_600_000`)
 		return
 	}
 	switch {
-	case GSettings.GetWaitTimeout() != time.Duration(GSettings.NetworkConnection.WaitTimeoutMS)*time.Millisecond:
+	case GSettings.GetWaitTimeout() != time.Duration(GSettings.FNetworkConnection.FWaitTimeoutMS)*time.Millisecond:
 		fallthrough
-	case GSettings.GetDialTimeout() != time.Duration(GSettings.NetworkConnection.DialTimeoutMS)*time.Millisecond:
+	case GSettings.GetDialTimeout() != time.Duration(GSettings.FNetworkConnection.FDialTimeoutMS)*time.Millisecond:
 		fallthrough
-	case GSettings.GetReadTimeout() != time.Duration(GSettings.NetworkConnection.ReadTimeoutMS)*time.Millisecond:
+	case GSettings.GetReadTimeout() != time.Duration(GSettings.FNetworkConnection.FReadTimeoutMS)*time.Millisecond:
 		fallthrough
-	case GSettings.GetWriteTimeout() != time.Duration(GSettings.NetworkConnection.WriteTimeoutMS)*time.Millisecond:
+	case GSettings.GetWriteTimeout() != time.Duration(GSettings.FNetworkConnection.FWriteTimeoutMS)*time.Millisecond:
 		fallthrough
-	case GSettings.GetKeeperPeriod() != time.Duration(GSettings.NetworkManager.KeeperPeriodMS)*time.Millisecond:
+	case GSettings.GetKeeperPeriod() != time.Duration(GSettings.FNetworkManager.FKeeperPeriodMS)*time.Millisecond:
 		t.Error("Get methods is not valid")
 	}
 }

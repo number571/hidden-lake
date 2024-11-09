@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	CVersion        = "v1.7.6~"
 	CDefaultNetwork = "__default_network__"
 )
 
@@ -23,6 +22,10 @@ var (
 	//go:embed build/settings.yml
 	gSettings []byte
 	GSettings SSettings
+
+	//go:embed build/version.yml
+	gVersion []byte
+	GVersion string
 )
 
 func init() {
@@ -46,6 +49,16 @@ func init() {
 	}
 }
 
+func init() {
+	var versionYAML struct {
+		FVersion string `yaml:"version"`
+	}
+	if err := encoding.DeserializeYAML(gVersion, &versionYAML); err != nil {
+		panic(err)
+	}
+	GVersion = versionYAML.FVersion
+}
+
 type SNetworksYAML struct {
 	FSettings SNetwork            `yaml:"settings"`
 	FNetworks map[string]SNetwork `yaml:"networks"`
@@ -65,64 +78,65 @@ type SConnection struct {
 }
 
 type SSettings struct {
-	ProtoMask struct {
-		Network uint32 `yaml:"network"`
-		Service uint32 `yaml:"service"`
+	FVersion   string `yaml:"version"`
+	FProtoMask struct {
+		FNetwork uint32 `yaml:"network"`
+		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
-	QueueCapacity struct {
-		Main uint64 `yaml:"main"`
-		Rand uint64 `yaml:"rand"`
+	FQueueCapacity struct {
+		FMain uint64 `yaml:"main"`
+		FRand uint64 `yaml:"rand"`
 	} `yaml:"queue_capacity"`
-	NetworkManager struct {
-		ConnectsLimiter uint64 `yaml:"connects_limiter"`
-		CacheHashesCap  uint64 `yaml:"cache_hashes_cap"`
-		KeeperPeriodMS  uint64 `yaml:"keeper_period_ms"`
+	FNetworkManager struct {
+		FConnectsLimiter uint64 `yaml:"connects_limiter"`
+		FCacheHashesCap  uint64 `yaml:"cache_hashes_cap"`
+		FKeeperPeriodMS  uint64 `yaml:"keeper_period_ms"`
 	} `yaml:"network_manager"`
-	NetworkConnection struct {
-		WriteTimeoutMS uint64 `yaml:"write_timeout_ms"`
-		ReadTimeoutMS  uint64 `yaml:"read_timeout_ms"`
-		DialTimeoutMS  uint64 `yaml:"dial_timeout_ms"`
-		WaitTimeoutMS  uint64 `yaml:"wait_timeout_ms"`
+	FNetworkConnection struct {
+		FWriteTimeoutMS uint64 `yaml:"write_timeout_ms"`
+		FReadTimeoutMS  uint64 `yaml:"read_timeout_ms"`
+		FDialTimeoutMS  uint64 `yaml:"dial_timeout_ms"`
+		FWaitTimeoutMS  uint64 `yaml:"wait_timeout_ms"`
 	} `yaml:"network_connection"`
 }
 
 func (p SSettings) validate() error {
 	switch {
 	case
-		p.QueueCapacity.Main == 0,
-		p.QueueCapacity.Rand == 0:
+		p.FQueueCapacity.FMain == 0,
+		p.FQueueCapacity.FRand == 0:
 		return errors.New("queue_capacity is invalid")
 	case
-		p.NetworkManager.ConnectsLimiter == 0,
-		p.NetworkManager.CacheHashesCap == 0,
-		p.NetworkManager.KeeperPeriodMS == 0:
+		p.FNetworkManager.FConnectsLimiter == 0,
+		p.FNetworkManager.FCacheHashesCap == 0,
+		p.FNetworkManager.FKeeperPeriodMS == 0:
 		return errors.New("network_manager is invalid")
 	case
-		p.NetworkConnection.WriteTimeoutMS == 0,
-		p.NetworkConnection.ReadTimeoutMS == 0,
-		p.NetworkConnection.DialTimeoutMS == 0,
-		p.NetworkConnection.WaitTimeoutMS == 0:
+		p.FNetworkConnection.FWriteTimeoutMS == 0,
+		p.FNetworkConnection.FReadTimeoutMS == 0,
+		p.FNetworkConnection.FDialTimeoutMS == 0,
+		p.FNetworkConnection.FWaitTimeoutMS == 0:
 		return errors.New("network_connection is invalid")
 	}
 	return nil
 }
 
 func (p SSettings) GetKeeperPeriod() time.Duration {
-	return time.Duration(p.NetworkManager.KeeperPeriodMS) * time.Millisecond
+	return time.Duration(p.FNetworkManager.FKeeperPeriodMS) * time.Millisecond
 }
 
 func (p SSettings) GetWriteTimeout() time.Duration {
-	return time.Duration(p.NetworkConnection.WriteTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FWriteTimeoutMS) * time.Millisecond
 }
 
 func (p SSettings) GetReadTimeout() time.Duration {
-	return time.Duration(p.NetworkConnection.ReadTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FReadTimeoutMS) * time.Millisecond
 }
 
 func (p SSettings) GetDialTimeout() time.Duration {
-	return time.Duration(p.NetworkConnection.DialTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FDialTimeoutMS) * time.Millisecond
 }
 
 func (p SSettings) GetWaitTimeout() time.Duration {
-	return time.Duration(p.NetworkConnection.WaitTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FWaitTimeoutMS) * time.Millisecond
 }
