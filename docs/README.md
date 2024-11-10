@@ -1,223 +1,23 @@
-# Docs
+# Quick start
 
-## Material
+Run HLC (composite of HL services). The following services are started by default: HLS, HLM, HLF.
 
-1. Research paper: [hidden_lake_anonymous_network.pdf](hidden_lake_anonymous_network.pdf)
-2. Presentation: [hidden_lake_anonymous_network_view.pdf](hidden_lake_anonymous_network_view.pdf)
-3. Video: [// Пишем сервис с нуля в анонимной сети «Hidden Lake» //](https://www.youtube.com/watch?v=ztdtOTZqxy0)
-4. Video: [Теоретически доказуемая анонимность. DC, EI и QB сети. Настройка Hidden Lake | number571](https://www.youtube.com/watch?v=o2J6ewvBKmg)
-
-## HL ports
-
-```
-1. HLS = 957x
-2. HLT = 958x
-3. HLM = 959x
-4. HLL = 956x
-5. HLE = 955x
-6. HLF = 954x
-7. HLR = 953x
+```bash
+$ go install github.com/number571/hidden-lake/cmd/hlc@latest
+$ hlc -network=oi4r9NW9Le7fKF9d
 ```
 
-## Code style
+The list of networks can be found here: [hidden-lake/build/networks.yml](https://github.com/number571/hidden-lake/blob/master/build/networks.yml).
 
-In the course of editing the project, some code styles may be added, some edited. Therefore, the current state of the project may not fully adhere to the code style, but you need to strive for it.
+After launching, open the browser and go to `localhost:9591` (HLM) or `localhost:9541` (HLF).
 
-### 1. Prefixes
+To start communicating with someone on the network, you need to follow the following list of actions:
+1. Go to `Settings` (with HLM or with HLF) and click on the `Copy key` button. Your public key will be copied to the clipboard,
+2. Send your public key to the person you want to contact, as well as receive from him, already his, public key. That is, you just need to `exchange keys` with each other,
+3. Log in to `Friends`, enter any nickname in the `Alias` field (this will be the naming of the contact) and insert the public key in the `Key` field. Next, click the ◀ button to add a friend.
 
-The name of the global constants must begin with the prefix 'c' (internal) or 'C' (external).
-```go
-const (
-    cInternalConst = 1
-    CExternalConst = 2
-)
-```
+As a result, when a friend does the same list of actions, you can start chatting. In order to check if a friend is online, you can send a `ping` request to HLM.
 
-The name of the global variables must begin with the prefix 'g' (internal) or 'G' (external). The exception is errors with the prefix 'err' or 'Err'.
-```go
-var (
-    gInternalVariable = 1
-    GExternalVariable = 2
-)
-```
+In order to disable HLM or HLF (for example, because it is not needed), the hidden-lake-messenger or hidden-lake-filesharer line should be deleted (or commented) in `hlc.yml`, respectively. It would also be better to delete / comment a similar line in the `hls.yml` file. After that, you just need to restart HLC.
 
-The name of the global structs must begin with the prefix 's' (internal) or 'S' (external). Also fields in the structure must begin with the prefix 'f' or 'F'.
-```go
-type (
-    sInternalStruct struct{
-        fInternalField int 
-    }
-    SExternalStruct struct{
-        FExternalField int
-    }
-)
-```
-
-The name of the global interfaces must begin with the prefix 'i' (internal) or 'I' (external). Also type functions must begin with the prefix 'i' or 'I'.
-```go
-type (
-    iInternalInterface interface{}
-    IExternalInterface interface{}
-)
-
-type (
-    iInternalFunc func()
-    iExternalFunc func()
-)
-```
-
-The name of the function parameters must begin with the prefix 'p'. Also method's object must be equal 'p'. The exception of this code style is test files.
-```go
-func f(pK, pV int) {}
-func (p *sObject) m() {}
-```
-
-The name of the global constants, variables, structures, fields, interfaces in the test environment must begin with prefix 't' (internal) or 'T' (external).
-```go
-const (
-    tcInternalConst = 1
-    TcExternalConst = 2
-)
-
-var (
-    tgInternalVariable = 1
-    TgExternalVariable = 2
-)
-
-type (
-    tsInternalStruct struct{
-        tfInternalField int 
-    }
-    TsExternalStruct struct{
-        TfInternalField int 
-    }
-)
-
-type (
-    tiInternalInterface interface{}
-    TiExternalInterface interface{}
-)
-
-type (
-    tiInternalFunc func()
-    TiExternalFunc func()
-)
-```
-
-### 2. Function / Methods names
-
-Functions and methods should consist of two parts, where the first is a verb, the second is a noun. Standart names: Get, Set, Add, Del and etc. Example
-```go
-type IClient interface {
-	GetIndex() (string, error)
-
-	GetPubKey() (asymmetric.IPubKey, error)
-	SetPrivKey(asymmetric.IPrivKey) error
-
-	GetOnlines() ([]string, error)
-	DelOnline(string) error
-
-	GetFriends() (map[string]asymmetric.IPubKey, error)
-	AddFriend(string, asymmetric.IPubKey) error
-	DelFriend(string) error
-
-	GetConnections() ([]string, error)
-	AddConnection(string) error
-	DelConnection(string) error
-
-	BroadcastRequest(asymmetric.IPubKey, request.IRequest) error
-	FetchRequest(asymmetric.IPubKey, request.IRequest) ([]byte, error)
-}
-```
-
-### 3. If blocks
-
-The following is allowed.
-```go
-if err := f(); err != nil {
-    // ...
-}
-
-err := g(
-    a,
-    b,
-    c,
-)
-if err != nil {
-    // ...
-}
-```
-
-The following is not allowed.
-```go
-if v {
-    // ...
-} else { /* eradicate the 'else' block */
-    // ...
-}
-
-err := f() /* may be in if block */
-if err != nil {
-    // ...
-}
-
-if err := g(
-    a,
-    b,
-    c,
-); err != nil { /* not allowed multiply line-args in if block */
-    // ...
-}
-```
-
-### 4. Interface declaration
-
-When a type is bound to an interface, it must be explicitly specified like this.
-```go
-var (
-	_ types.IRunner = &sApp{}
-)
-```
-
-### 5. Calling functions/methods
-
-External simple getter functions/methods should not be used inside the package.
-```go
-func (p *sObject) GetSettings() ISettings {
-	return p.fSettings
-}
-func (p *sObject) GetValue() IValue {
-    p.fMutex.Lock()
-    defer p.fMutex.Unlock()
-
-    return p.fValue
-}
-...
-func (p *sObject) DoSomething() {
-	_ = p.fSettings // correct
-    _ = p.GetSettings() // incorrect
-
-    // incorrect
-    p.fMutex.Lock()
-    _ = p.fValue
-    p.fMutex.Unlock()
-
-    _ = p.GetValue() // correct
-}
-```
-
-### 6. Args/Returns interfaces
-
-It is not allowed to use global structures in function arguments or when returning. Interfaces should be used instead of structures.
-
-The following is allowed.
-```go
-func doObject(_ IObject) {}
-func newObject() IObject {}
-```
-
-The following is not allowed.
-```go
-func doObject(_ *SObject) {}
-func newObject() *SObject {}
-```
+You can also commit your public key here: [number571/hidden-public-keys](https://github.com/number571/hidden-public-keys) to make it easier for people to contact you.
