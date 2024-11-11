@@ -8,7 +8,7 @@
 
 ### CHANGES
 
-- `pkg`: add pkg/network, pkg/logger
+- `pkg`: add pkg/network
 
 <!-- ... -->
 

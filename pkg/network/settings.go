@@ -1,13 +1,11 @@
 package network
 
 import (
-	"os"
 	"time"
 
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	gopeer_message "github.com/number571/go-peer/pkg/network/message"
 	hiddenlake "github.com/number571/hidden-lake"
-	hiddenlake_logger "github.com/number571/hidden-lake/pkg/logger"
 )
 
 var (
@@ -73,12 +71,8 @@ func (p *sSettings) defaultValue() *sSettings {
 	}
 	if p.FLogger == nil {
 		p.FLogger = gopeer_logger.NewLogger(
-			gopeer_logger.NewSettings(&gopeer_logger.SSettings{
-				FInfo: os.Stdout,
-				FWarn: os.Stdout,
-				FErro: os.Stdout,
-			}),
-			hiddenlake_logger.GetLogFunc(),
+			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
+			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
 	}
 	return p

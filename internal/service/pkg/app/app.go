@@ -20,10 +20,10 @@ import (
 
 	pkg_config "github.com/number571/hidden-lake/internal/service/pkg/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
-	anon_logger "github.com/number571/hidden-lake/pkg/logger"
 )
 
 var (
