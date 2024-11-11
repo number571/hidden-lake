@@ -28,7 +28,7 @@ You can also commit your public key here: [number571/hidden-public-keys](https:/
 
 ```go
 import (
-    "context"
+	"context"
 	"fmt"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
