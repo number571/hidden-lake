@@ -21,3 +21,42 @@ As a result, when a friend does the same list of actions, you can start chatting
 In order to disable HLM or HLF (for example, because it is not needed), the hidden-lake-messenger or hidden-lake-filesharer line should be deleted (or commented) in `hlc.yml`, respectively. It would also be better to delete / comment a similar line in the `hls.yml` file. After that, you just need to restart HLC.
 
 You can also commit your public key here: [number571/hidden-public-keys](https://github.com/number571/hidden-public-keys) to make it easier for people to contact you.
+
+## Run a HL node in the Go language
+
+> Full example: [pkg/network/examples/node/main.go](https://github.com/number571/hidden-lake/blob/master/pkg/network/examples/node/main.go)
+
+```go
+import (
+    "context"
+	"fmt"
+
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/network/anonymity"
+	"github.com/number571/go-peer/pkg/storage/database"
+	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/pkg/network"
+    ...
+)
+
+func runNode(ctx context.Context, name, networkKey string) anonymity.INode {
+	node := network.NewHiddenLakeNode(
+		name,
+		network.NewSettingsByNetworkKey(networkKey, nil),
+		asymmetric.NewPrivKey(),
+		func() database.IKVDatabase {
+			kv, _ := database.NewKVDatabase(name + ".db")
+			return kv
+		}(),
+	)
+	network := hiddenlake.GNetworks[networkKey]
+	for _, c := range network.FConnections {
+		_ = node.GetNetworkNode().AddConnection(
+			ctx,
+			fmt.Sprintf("%s:%d", c.FHost, c.FPort),
+		)
+	}
+	go func() { _ = node.Run(ctx) }()
+	return node
+}
+```

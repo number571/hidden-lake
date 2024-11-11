@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `pkg`: add pkg/network, pkg/logger
+
 <!-- ... -->
 
 ## v1.7.5
