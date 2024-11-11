@@ -16,10 +16,10 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/types"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -343,7 +343,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 	}
 
 	node.HandleFunc(
-		hls_settings.CServiceMask,
+		hiddenlake.GSettings.FProtoMask.FService,
 		HandleServiceTCP(cfg),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())

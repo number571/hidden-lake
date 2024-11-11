@@ -16,7 +16,6 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	hiddenlake "github.com/number571/hidden-lake"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 const (
@@ -70,7 +69,7 @@ func main() {
 
 		netMsg := net_message.NewMessage(
 			netSett,
-			payload.NewPayload32(hls_settings.CNetworkMask, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
 		)
 
 		start1 := time.Now()

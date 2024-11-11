@@ -1,4 +1,4 @@
-package anon
+package logger
 
 import (
 	"context"

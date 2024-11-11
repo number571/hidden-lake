@@ -8,13 +8,13 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/payload"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 func HandleMessageEncryptAPI(
@@ -74,7 +74,7 @@ func HandleMessageEncryptAPI(
 				}),
 				FParallel: pParallel,
 			}),
-			payload.NewPayload32(hls_settings.CNetworkMask, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
 		)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

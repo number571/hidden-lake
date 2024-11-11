@@ -7,8 +7,6 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/cache"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/handler"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
-
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 func (p *sApp) initNetworkNode(pStorage storage.IMessageStorage) {
@@ -30,7 +28,7 @@ func (p *sApp) initNetworkNode(pStorage storage.IMessageStorage) {
 		}),
 		cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
 	).HandleFunc(
-		hls_settings.CNetworkMask,
+		hiddenlake.GSettings.FProtoMask.FService,
 		handler.HandleServiceTCP(p.fConfig, pStorage, p.fAnonLogger),
 	)
 }

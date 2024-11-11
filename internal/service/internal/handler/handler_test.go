@@ -22,6 +22,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -187,7 +188,7 @@ func testNewWrapper(cfgPath string) config.IWrapper {
 
 func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, context.CancelFunc) {
 	os.RemoveAll(dbPath)
-	node := testNewNode(dbPath, addr).HandleFunc(pkg_settings.CServiceMask, nil)
+	node := testNewNode(dbPath, addr).HandleFunc(hiddenlake.GSettings.FProtoMask.FService, nil)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() { _ = node.Run(ctx) }()
 	return node, ctx, cancel

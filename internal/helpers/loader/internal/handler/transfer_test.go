@@ -13,10 +13,10 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
+	hiddenlake "github.com/number571/hidden-lake"
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	hls_app "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 const (
@@ -127,7 +127,7 @@ func TestHandleTransferAPI(t *testing.T) {
 		netMsg := net_message.NewMessage(
 			netMsgSettings,
 			payload.NewPayload32(
-				hls_settings.CNetworkMask,
+				hiddenlake.GSettings.FProtoMask.FService,
 				encMsg,
 			),
 		)

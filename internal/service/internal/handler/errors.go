@@ -17,6 +17,5 @@ var (
 	ErrBuildRequest        = &SHandlerError{"build request"}
 	ErrUndefinedService    = &SHandlerError{"undefined service"}
 	ErrLoadRequest         = &SHandlerError{"load request"}
-	ErrUpdateFriends       = &SHandlerError{"update friends"}
 	ErrInvalidResponseMode = &SHandlerError{"invalid response mode"}
 )

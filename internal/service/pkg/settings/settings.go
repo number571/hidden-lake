@@ -6,11 +6,6 @@ const (
 )
 
 const (
-	CNetworkMask = uint32(0x5f67705f) // bytes_prefix: _gp_
-	CServiceMask = uint32(0x5f686c5f) // bytes_prefix: _hl_
-)
-
-const (
 	CPathKey = "hls.key"
 	CPathYML = "hls.yml"
 	CPathDB  = "hls.db"

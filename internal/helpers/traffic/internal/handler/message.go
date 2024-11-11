@@ -9,10 +9,10 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
 	net_message "github.com/number571/go-peer/pkg/network/message"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
@@ -75,7 +75,7 @@ func HandleMessageAPI(
 				return
 			}
 
-			if netMsg.GetPayload().GetHead() != hls_settings.CNetworkMask {
+			if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FService {
 				pHTTPLogger.PushWarn(logBuilder.WithMessage("network_mask"))
 				_ = api.Response(pW, http.StatusLocked, "failed: network mask")
 				return
