@@ -32,7 +32,6 @@ func (p *sApp) initAnonNode() error {
 	}
 
 	p.fNode = network.NewHiddenLakeNode(
-		hls_settings.CServiceName,
 		network.NewSettings(&network.SSettings{
 			FMessageSettings:  cfg.GetSettings(),
 			FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),

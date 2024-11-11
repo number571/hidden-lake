@@ -41,13 +41,12 @@ func main() {
 	fmt.Println(string(rsp))
 }
 
-func runNode(ctx context.Context, name, networkKey string) anonymity.INode {
+func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
 	node := network.NewHiddenLakeNode(
-		name,
 		network.NewSettingsByNetworkKey(networkKey, nil),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {
-			kv, _ := database.NewKVDatabase(name + ".db")
+			kv, _ := database.NewKVDatabase(dbPath + ".db")
 			return kv
 		}(),
 	)

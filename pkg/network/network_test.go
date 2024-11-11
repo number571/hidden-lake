@@ -19,7 +19,6 @@ func TestPanicNode(t *testing.T) {
 	}()
 
 	_ = NewHiddenLakeNode(
-		"name",
 		NewSettings(&SSettings{
 			FMessageSizeBytes: 4570,
 			FQueuePeriod:      time.Second,

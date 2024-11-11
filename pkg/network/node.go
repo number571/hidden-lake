@@ -12,17 +12,17 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 func NewHiddenLakeNode(
-	pName string,
 	pSettings ISettings,
 	pPrivKey asymmetric.IPrivKey,
 	pKVDatabase database.IKVDatabase,
 ) anonymity.INode {
 	return anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
-			FServiceName:  pName,
+			FServiceName:  hls_settings.CServiceName,
 			FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
 			FFetchTimeout: pSettings.GetFetchTimeout(),
 		}),
