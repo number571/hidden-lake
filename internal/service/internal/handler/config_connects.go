@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -12,7 +13,6 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
 func HandleConfigConnectsAPI(
@@ -52,7 +52,7 @@ func HandleConfigConnectsAPI(
 
 		switch pR.Method {
 		case http.MethodPost:
-			connects := slices.UniqAppendToSlice(
+			connects := uniqAppendToSlice(
 				pWrapper.GetConfig().GetConnections(),
 				connect,
 			)
@@ -69,7 +69,10 @@ func HandleConfigConnectsAPI(
 			return
 
 		case http.MethodDelete:
-			connects := slices.DeleteFromSlice(pWrapper.GetConfig().GetConnections(), connect)
+			connects := slices.DeleteFunc(
+				pWrapper.GetConfig().GetConnections(),
+				func(p string) bool { return p == connect },
+			)
 			if err := pWrapper.GetEditor().UpdateConnections(connects); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("update_connections"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete connection")
@@ -82,4 +85,11 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusOK, "success: delete connection")
 		}
 	}
+}
+
+func uniqAppendToSlice(pSlice []string, pStr string) []string {
+	if slices.Contains(pSlice, pStr) {
+		return pSlice
+	}
+	return append(pSlice, pStr)
 }

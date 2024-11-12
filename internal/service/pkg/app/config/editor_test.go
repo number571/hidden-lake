@@ -3,12 +3,12 @@ package config
 import (
 	"fmt"
 	"os"
+	"slices"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/random"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
 var (
@@ -100,7 +100,7 @@ func TestEditor(t *testing.T) {
 	}
 	hasNewConn := false
 	for _, ac := range afterConnections {
-		if !slices.HasInSlice(beforeConnections, ac) {
+		if !slices.Contains(beforeConnections, ac) {
 			hasNewConn = true
 			break
 		}
@@ -110,7 +110,7 @@ func TestEditor(t *testing.T) {
 		return
 	}
 	for _, nc := range tgNewConnections {
-		if !slices.HasInSlice(afterConnections, nc) {
+		if !slices.Contains(afterConnections, nc) {
 			t.Error("afterConnections != tgNewConnections")
 			return
 		}
