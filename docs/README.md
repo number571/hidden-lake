@@ -24,7 +24,7 @@ You can also commit your public key here: [number571/hidden-public-keys](https:/
 
 ## Run a HL node in the Go language
 
-> Full example: [pkg/network/examples/node/main.go](https://github.com/number571/hidden-lake/blob/master/pkg/network/examples/node/main.go)
+> Full example: [pkg/network/examples/node/main.go](../pkg/network/examples/node/main.go)
 
 ```go
 import (
