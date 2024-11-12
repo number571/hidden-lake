@@ -1,30 +1,31 @@
 package flag
 
 import (
+	"slices"
 	"strings"
 )
 
-func GetBoolFlagValue(args []string, pKey string) bool {
-	for _, arg := range args {
+func GetBoolFlagValue(pArgs, pKeyAliases []string) bool {
+	for _, arg := range pArgs {
 		trimArg := strings.TrimLeft(arg, "-")
-		if trimArg == pKey {
+		if slices.Contains(pKeyAliases, trimArg) {
 			return true
 		}
 	}
 	return false
 }
 
-func GetFlagValue(args []string, pKey, pDefault string) string {
+func GetFlagValue(pArgs, pKeyAliases []string, pDefault string) string {
 	isNextValue := false
-	for _, arg := range args {
+	for _, arg := range pArgs {
 		if isNextValue {
 			return arg
 		}
 		trimArg := strings.TrimLeft(arg, "-")
-		if !strings.HasPrefix(trimArg, pKey) {
+		splited := strings.Split(trimArg, "=")
+		if !slices.Contains(pKeyAliases, splited[0]) {
 			continue
 		}
-		splited := strings.Split(trimArg, "=")
 		if len(splited) == 1 {
 			isNextValue = true
 			continue

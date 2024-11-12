@@ -10,5 +10,5 @@ COPY ./ ./
 RUN go build -o common ./cmd/hla/common
 
 ENV SERVICE_NETWORK=""
-ENV SERVICE_PATH="/mounted"
+ENV SERVICE_PATH="."
 CMD ./common -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}"

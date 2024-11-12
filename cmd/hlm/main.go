@@ -19,8 +19,20 @@ import (
 func main() {
 	args := os.Args[1:]
 
-	if flag.GetBoolFlagValue(args, "version") {
+	if flag.GetBoolFlagValue(args, []string{"v", "version"}) {
 		fmt.Println(hiddenlake.GVersion)
+		return
+	}
+
+	if flag.GetBoolFlagValue(args, []string{"h", "help"}) {
+		fmt.Print(
+			"Hidden Lake Messenger (HLM)\n" +
+				"Description: messenger with a web interface\n" +
+				"Arguments:\n" +
+				"[ -h, --help    ] - print information about service\n" +
+				"[ -v, --version ] - print version of service\n" +
+				"[ -p, --path    ] - set path to config, database files\n",
+		)
 		return
 	}
 

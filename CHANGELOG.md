@@ -9,6 +9,10 @@
 ### CHANGES
 
 - `pkg`: add pkg/network
+- `pkg/internal/utils/flag`: add key aliases
+- `cmd/hls,cmd/hle`: rename parallel -> threads
+- `cmd/*`: add 'help' arg
+- `cmd/*/Dockerfile`: change SERVICE_PATH: "/mounted" -> "."
 
 <!-- ... -->
 

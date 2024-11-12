@@ -10,6 +10,6 @@ COPY ./ ./
 RUN go build -o hle ./cmd/hle
 
 ENV SERVICE_NETWORK=""
-ENV SERVICE_PATH="/mounted"
-ENV SERVICE_PARALLEL="1"
-CMD ./hle -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}" -parallel="${SERVICE_PARALLEL}"
+ENV SERVICE_PATH="."
+ENV SERVICE_THREADS="1"
+CMD ./hle -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}" -threads="${SERVICE_THREADS}"

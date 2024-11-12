@@ -107,8 +107,8 @@ func TestInitApp(t *testing.T) {
 		return
 	}
 
-	if _, err := InitApp([]string{"path", tcTestdataPath, "parallel", "abc"}); err == nil {
-		t.Error("success init app with parallel=abc")
+	if _, err := InitApp([]string{"path", tcTestdataPath, "threads", "abc"}); err == nil {
+		t.Error("success init app with threads=abc")
 		return
 	}
 

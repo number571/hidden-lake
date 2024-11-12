@@ -10,5 +10,5 @@ COPY ./ ./
 RUN go build -o hll ./cmd/hll
 
 ENV SERVICE_NETWORK=""
-ENV SERVICE_PATH="/mounted"
+ENV SERVICE_PATH="."
 CMD ./hll -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}"
