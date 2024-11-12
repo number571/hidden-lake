@@ -19,4 +19,5 @@ type ISubSettings interface {
 	GetLogger() gopeer_logger.ILogger
 	GetParallel() uint64
 	GetTCPAddress() string
+	GetServiceName() string
 }

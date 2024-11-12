@@ -22,9 +22,10 @@ type sSettings struct {
 }
 
 type SSubSettings struct {
-	FLogger     gopeer_logger.ILogger
-	FParallel   uint64
-	FTCPAddress string
+	FLogger      gopeer_logger.ILogger
+	FParallel    uint64
+	FTCPAddress  string
+	FServiceName string
 }
 
 func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
@@ -44,9 +45,10 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		FQueuePeriod:      time.Duration(network.FQueuePeriodMS) * time.Millisecond,
 		FFetchTimeout:     time.Duration(network.FFetchTimeoutMS) * time.Millisecond,
 		SSubSettings: SSubSettings{
-			FParallel:   pSubSettings.FParallel,
-			FLogger:     pSubSettings.FLogger,
-			FTCPAddress: pSubSettings.FTCPAddress,
+			FParallel:    pSubSettings.FParallel,
+			FLogger:      pSubSettings.FLogger,
+			FTCPAddress:  pSubSettings.FTCPAddress,
+			FServiceName: pSubSettings.FServiceName,
 		},
 	}).defaultValue().mustNotNull()
 }
@@ -58,9 +60,10 @@ func NewSettings(pSett *SSettings) ISettings {
 		FQueuePeriod:      pSett.FQueuePeriod,
 		FFetchTimeout:     pSett.FFetchTimeout,
 		SSubSettings: SSubSettings{
-			FParallel:   pSett.FParallel,
-			FLogger:     pSett.FLogger,
-			FTCPAddress: pSett.FTCPAddress,
+			FParallel:    pSett.FParallel,
+			FLogger:      pSett.FLogger,
+			FTCPAddress:  pSett.FTCPAddress,
+			FServiceName: pSett.FServiceName,
 		},
 	}).defaultValue().mustNotNull()
 }
@@ -74,6 +77,9 @@ func (p *sSettings) defaultValue() *sSettings {
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
 			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
+	}
+	if p.FServiceName == "" {
+		p.FServiceName = "_"
 	}
 	return p
 }
@@ -101,6 +107,10 @@ func (p *sSettings) GetMessageSizeBytes() uint64 {
 
 func (p *sSettings) GetParallel() uint64 {
 	return p.FParallel
+}
+
+func (p *sSettings) GetServiceName() string {
+	return p.FServiceName
 }
 
 func (p *sSettings) GetTCPAddress() string {

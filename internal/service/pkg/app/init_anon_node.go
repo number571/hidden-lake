@@ -38,9 +38,10 @@ func (p *sApp) initAnonNode() error {
 			FQueuePeriod:      time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
 			FFetchTimeout:     time.Duration(cfgSettings.GetFetchTimeoutMS()) * time.Millisecond,
 			SSubSettings: network.SSubSettings{
-				FParallel:   p.fParallel,
-				FTCPAddress: cfg.GetAddress().GetTCP(),
-				FLogger:     p.fAnonLogger,
+				FServiceName: hls_settings.CServiceName,
+				FTCPAddress:  cfg.GetAddress().GetTCP(),
+				FParallel:    p.fParallel,
+				FLogger:      p.fAnonLogger,
 			},
 		}),
 		p.fPrivKey,

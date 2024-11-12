@@ -12,7 +12,6 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
 func NewHiddenLakeNode(
@@ -22,8 +21,8 @@ func NewHiddenLakeNode(
 ) anonymity.INode {
 	return anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
-			FServiceName:  hls_settings.CServiceName,
 			FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
+			FServiceName:  pSettings.GetServiceName(),
 			FFetchTimeout: pSettings.GetFetchTimeout(),
 		}),
 		// Insecure to use logging in real anonymity projects!
