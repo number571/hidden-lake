@@ -127,7 +127,7 @@ func TestHandleTransferAPI(t *testing.T) {
 		netMsg := net_message.NewMessage(
 			netMsgSettings,
 			payload.NewPayload32(
-				hiddenlake.GSettings.FProtoMask.FService,
+				hiddenlake.GSettings.FProtoMask.FNetwork,
 				encMsg,
 			),
 		)

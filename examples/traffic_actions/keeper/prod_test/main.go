@@ -69,7 +69,7 @@ func main() {
 
 		netMsg := net_message.NewMessage(
 			netSett,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 		)
 
 		start1 := time.Now()

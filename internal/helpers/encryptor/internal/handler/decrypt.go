@@ -48,7 +48,7 @@ func HandleMessageDecryptAPI(
 		}
 
 		netPld := netMsg.GetPayload()
-		if netPld.GetHead() != hiddenlake.GSettings.FProtoMask.FService {
+		if netPld.GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
 			pLogger.PushWarn(logBuilder.WithMessage("invalid_net_mask"))
 			_ = api.Response(pW, http.StatusUnsupportedMediaType, "failed: invalid network mask")
 			return

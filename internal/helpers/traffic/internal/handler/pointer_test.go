@@ -114,7 +114,7 @@ func TestHandlePointerAPI(t *testing.T) {
 
 	netMsg := net_message.NewMessage(
 		testNetworkMessageSettings(),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 	)
 	if err := hltClient.PutMessage(context.Background(), netMsg); err != nil {
 		t.Error(err)

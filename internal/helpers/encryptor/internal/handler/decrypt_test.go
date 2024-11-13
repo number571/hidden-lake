@@ -47,7 +47,7 @@ func TestHandleMessageDecryptAPI(t *testing.T) {
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{}),
 		}),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, encMsg),
+		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, encMsg),
 	).ToString()
 
 	mapKeys := asymmetric.NewMapPubKeys()
@@ -92,7 +92,7 @@ func TestHandleMessageDecryptAPI(t *testing.T) {
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{}),
 		}),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, encMsgNotFayload),
+		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, encMsgNotFayload),
 	).ToString()
 	if err := decryptAPIRequestOK(handler, netMsgNotPayload); err == nil {
 		t.Error("request success with invalid decrypted payload")

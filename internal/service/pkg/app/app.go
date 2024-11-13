@@ -77,7 +77,7 @@ func (p *sApp) Run(pCtx context.Context) error {
 		p.runListenerPPROF,
 		p.runListenerHTTP,
 		p.runListenerNode,
-		p.runNode,
+		p.runAnonymityNode,
 	}
 
 	ctx, cancel := context.WithCancel(pCtx)
@@ -208,7 +208,7 @@ func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 	<-pCtx.Done()
 }
 
-func (p *sApp) runNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runAnonymityNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	if err := p.fNode.Run(pCtx); err != nil {

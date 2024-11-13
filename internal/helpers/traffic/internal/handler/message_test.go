@@ -61,7 +61,7 @@ func TestHandleMessageAPI2(t *testing.T) {
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{}),
 		}),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 	)
 	if err := storage.Push(netMsg); err != nil {
 		t.Error(err)
@@ -190,7 +190,7 @@ func TestHandleMessageAPI(t *testing.T) {
 
 	netMsg := net_message.NewMessage(
 		testNetworkMessageSettings(),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 	)
 	if err := hltClient.PutMessage(context.Background(), netMsg); err != nil {
 		t.Error(err)

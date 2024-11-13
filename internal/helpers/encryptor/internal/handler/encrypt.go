@@ -74,7 +74,7 @@ func HandleMessageEncryptAPI(
 				}),
 				FParallel: pParallel,
 			}),
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 		)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

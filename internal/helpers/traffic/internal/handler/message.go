@@ -75,7 +75,7 @@ func HandleMessageAPI(
 				return
 			}
 
-			if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FService {
+			if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
 				pHTTPLogger.PushWarn(logBuilder.WithMessage("network_mask"))
 				_ = api.Response(pW, http.StatusLocked, "failed: network mask")
 				return

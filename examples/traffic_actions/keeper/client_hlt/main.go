@@ -74,7 +74,7 @@ func main() {
 
 		netMsg := net_message.NewMessage(
 			netSett,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 		)
 
 		if err := hltClient.PutMessage(ctx, netMsg); err != nil {
@@ -92,7 +92,7 @@ func main() {
 			panic(err)
 		}
 
-		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FService {
+		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
 			panic("net.payload.head is invalid")
 		}
 

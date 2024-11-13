@@ -28,7 +28,7 @@ func (p *sApp) initNetworkNode(pStorage storage.IMessageStorage) {
 		}),
 		cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
 	).HandleFunc(
-		hiddenlake.GSettings.FProtoMask.FService,
+		hiddenlake.GSettings.FProtoMask.FNetwork,
 		handler.HandleServiceTCP(p.fConfig, pStorage, p.fAnonLogger),
 	)
 }

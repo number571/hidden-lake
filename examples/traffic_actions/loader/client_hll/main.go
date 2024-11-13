@@ -105,7 +105,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 
 		netMsg := net_message.NewMessage(
 			netMsgSettings,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, msg),
+			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
 		)
 		if err := hltClient.PutMessage(ctx, netMsg); err != nil {
 			return err
@@ -150,7 +150,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return err
 		}
 
-		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FService {
+		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
 			return errors.New("network mask is invalid")
 		}
 
