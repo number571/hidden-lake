@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"sync"
 
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
@@ -113,14 +114,36 @@ func NewRawHiddenLakeNode(
 }
 
 func (p *sHiddenLakeNode) Run(ctx context.Context) error {
-	chErr := make(chan error, 1)
-	go func() { chErr <- p.fConnKeeper.Run(ctx) }()
-	go func() { chErr <- p.fAnonNode.Run(ctx) }()
+	chCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	const N = 2
+
+	errs := [N]error{}
+	wg := sync.WaitGroup{}
+	wg.Add(N)
+
+	go func() {
+		defer func() { wg.Done(); cancel() }()
+		errs[0] = p.fConnKeeper.Run(chCtx)
+	}()
+	go func() {
+		defer func() { wg.Done(); cancel() }()
+		errs[1] = p.fAnonNode.Run(chCtx)
+	}()
+
+	wg.Wait()
+
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
-	case err := <-chErr:
-		return err
+	default:
+		for _, err := range errs {
+			if err != nil {
+				return err
+			}
+		}
+		panic("closed without errors")
 	}
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/request"
 )
 
-func RequestHandler(pF IHandlerF) anonymity.IHandlerF {
+func RequestHandler(pHandle IHandlerF) anonymity.IHandlerF {
 	return func(
 		pCtx context.Context,
 		pNode anonymity.INode,
@@ -34,7 +34,7 @@ func RequestHandler(pF IHandlerF) anonymity.IHandlerF {
 		}
 
 		// handle request
-		rsp, err := pF(pCtx, pSender, loadReq)
+		rsp, err := pHandle(pCtx, pSender, loadReq)
 		if err != nil {
 			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestHandle))
 			return nil, ErrUndefinedService
