@@ -49,8 +49,8 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if err := client.BroadcastRequest(context.Background(), "", request.NewRequest()); err == nil {
-		t.Error("success broadcast request with unknown host")
+	if err := client.SendRequest(context.Background(), "", request.NewRequest()); err == nil {
+		t.Error("success send request with unknown host")
 		return
 	}
 

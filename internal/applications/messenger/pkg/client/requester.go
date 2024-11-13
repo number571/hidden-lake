@@ -35,7 +35,7 @@ func (p *sRequester) PingMessage(pCtx context.Context, pAliasName string, pReque
 }
 
 func (p *sRequester) PushMessage(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
-	if err := p.fHLSClient.BroadcastRequest(pCtx, pAliasName, pRequest); err != nil {
+	if err := p.fHLSClient.SendRequest(pCtx, pAliasName, pRequest); err != nil {
 		return errors.Join(ErrPushMessage, err)
 	}
 	return nil

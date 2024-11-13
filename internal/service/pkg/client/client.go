@@ -42,9 +42,9 @@ func (p *sClient) GetSettings(pCtx context.Context) (config.IConfigSettings, err
 	return res, nil
 }
 
-func (p *sClient) BroadcastRequest(pCtx context.Context, pRecv string, pData request.IRequest) error {
-	if err := p.fRequester.BroadcastRequest(pCtx, p.fBuilder.Request(pRecv, pData)); err != nil {
-		return fmt.Errorf("broadcast request (client): %w", err)
+func (p *sClient) SendRequest(pCtx context.Context, pRecv string, pData request.IRequest) error {
+	if err := p.fRequester.SendRequest(pCtx, p.fBuilder.Request(pRecv, pData)); err != nil {
+		return fmt.Errorf("send request (client): %w", err)
 	}
 	return nil
 }

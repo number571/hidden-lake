@@ -104,7 +104,7 @@ type IClient interface {
 	AddConnection(string) error
 	DelConnection(string) error
 
-	BroadcastRequest(asymmetric.IPubKey, request.IRequest) error
+	SendRequest(asymmetric.IPubKey, request.IRequest) error
 	FetchRequest(asymmetric.IPubKey, request.IRequest) ([]byte, error)
 }
 ```

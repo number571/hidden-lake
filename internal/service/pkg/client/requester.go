@@ -99,7 +99,7 @@ func (p *sRequester) FetchRequest(pCtx context.Context, pRequest *hls_settings.S
 	return resp, nil
 }
 
-func (p *sRequester) BroadcastRequest(pCtx context.Context, pRequest *hls_settings.SRequest) error {
+func (p *sRequester) SendRequest(pCtx context.Context, pRequest *hls_settings.SRequest) error {
 	_, err := api.Request(
 		pCtx,
 		p.fClient,

@@ -28,7 +28,7 @@ type IClient interface {
 	AddConnection(context.Context, string) error
 	DelConnection(context.Context, string) error
 
-	BroadcastRequest(context.Context, string, request.IRequest) error
+	SendRequest(context.Context, string, request.IRequest) error
 	FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error)
 }
 
@@ -49,7 +49,7 @@ type IRequester interface {
 	AddConnection(context.Context, string) error
 	DelConnection(context.Context, string) error
 
-	BroadcastRequest(context.Context, *pkg_settings.SRequest) error
+	SendRequest(context.Context, *pkg_settings.SRequest) error
 	FetchRequest(context.Context, *pkg_settings.SRequest) (response.IResponse, error)
 }
 

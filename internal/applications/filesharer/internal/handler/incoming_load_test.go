@@ -198,7 +198,7 @@ func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) { return
 func (p *tsHLSClient) AddConnection(context.Context, string) error      { return nil }
 func (p *tsHLSClient) DelConnection(context.Context, string) error      { return nil }
 
-func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest) error {
+func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
 	return nil
 }
 

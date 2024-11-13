@@ -271,12 +271,12 @@ func TestHandleRequestAPI(t *testing.T) {
 	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[11])
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	testBroadcast(t, client)
+	testSend(t, client)
 	testFetch(t, client)
 }
 
-func testBroadcast(t *testing.T, client hls_client.IClient) {
-	err := client.BroadcastRequest(
+func testSend(t *testing.T, client hls_client.IClient) {
+	err := client.SendRequest(
 		context.Background(),
 		"test_recvr",
 		request.NewRequest().
