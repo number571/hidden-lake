@@ -122,7 +122,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 1. Basic
    * [HLS](cmd/hls) - anonymizes traffic using the QB-problem
-   * [HLC](cmd/hlc) - runs many HL services
+   * [HLC](cmd/hlc) - runs many HL services as one application
    * [HLA](cmd/hla) - adapts HL traffic to external communication environments
 2. Applied
    * [HLM](cmd/hlm) - messenger with a web interface

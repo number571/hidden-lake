@@ -24,7 +24,7 @@ func main() {
 	if flag.GetBoolFlagValue(args, []string{"h", "help"}) {
 		fmt.Print(
 			"Hidden Lake Composite (HLC)\n" +
-				"Description: runs many HL services\n" +
+				"Description: runs many HL services as one application\n" +
 				"Arguments:\n" +
 				"[ -h, --help    ] - print information about service\n" +
 				"[ -v, --version ] - print version of service\n" +
