@@ -3,18 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/database"
-	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
 
 const (
-	serviceMask = uint32(0x011111111)
-	networkKey  = "oi4r9NW9Le7fKF9d"
+	nodeTCPAddress = "localhost:9999"
 )
 
 func main() {
@@ -22,8 +22,8 @@ func main() {
 	defer cancel()
 
 	var (
-		node1 = runNode(ctx, "node1", networkKey)
-		node2 = runNode(ctx, "node2", networkKey)
+		node1 = runNode(ctx, "node1", nodeTCPAddress, func() []string { return nil })
+		node2 = runNode(ctx, "node2", "", func() []string { return []string{nodeTCPAddress} })
 	)
 
 	_, pubKey := exchangeKeys(node1, node2)
@@ -36,28 +36,38 @@ func main() {
 	fmt.Println(string(rsp.GetBody()))
 }
 
-func runNode(ctx context.Context, dbPath, networkKey string) network.IHiddenLakeNode {
+func runNode(
+	ctx context.Context,
+	dbPath, tcpAddr string,
+	connsF func() []string,
+) network.IHiddenLakeNode {
+	const networkKey = "custom_network_key"
 	node := network.NewHiddenLakeNode(
-		network.NewSettingsByNetworkKey(networkKey, nil),
+		network.NewSettings(&network.SSettings{
+			FMessageSettings: message.NewSettings(&message.SSettings{
+				FWorkSizeBits: 10,
+				FNetworkKey:   networkKey,
+			}),
+			FQueuePeriod:      time.Second,
+			FFetchTimeout:     time.Minute,
+			FMessageSizeBytes: (8 << 10),
+			SSubSettings: network.SSubSettings{
+				FTCPAddress: tcpAddr,
+			},
+		}),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {
 			kv, _ := database.NewKVDatabase(dbPath + ".db")
 			return kv
 		}(),
-		func() []string {
-			network := hiddenlake.GNetworks[networkKey]
-			conns := make([]string, 0, len(network.FConnections))
-			for _, c := range network.FConnections {
-				conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
-			}
-			return conns
-		},
+		connsF,
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
 			return response.NewResponse().WithBody(rsp), nil
 		},
 	)
 	go func() { _ = node.Run(ctx) }()
+	go func() { _ = node.GetOrigNode().GetNetworkNode().Listen(ctx) }()
 	return node
 }
 

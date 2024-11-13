@@ -24,7 +24,7 @@ You can also commit your public key here: [number571/hidden-public-keys](https:/
 
 ## Run a HL node in the Go language
 
-> Full example: [pkg/network/examples/node/main.go](../pkg/network/examples/node/main.go)
+> Full example: [pkg/network/examples/prod/main.go](../pkg/network/examples/prod/main.go)
 
 ```go
 import (
@@ -33,15 +33,16 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
-    ...
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
+	...
 )
 
-func runNode(ctx context.Context, dbPath, networkKey string) network.IHiddenLakeNode {
+func runNode(ctx context.Context, dbPath string) network.IHiddenLakeNode {
+	const networkKey = "oi4r9NW9Le7fKF9d"
 	node := network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(networkKey, nil),
 		asymmetric.NewPrivKey(),
