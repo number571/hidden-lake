@@ -7,15 +7,12 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
 )
 
 const (
@@ -28,7 +25,7 @@ func HandleNetworkRequestAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,
-	pNode anonymity.INode,
+	pNode network.IHiddenLakeNode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
@@ -65,12 +62,7 @@ func HandleNetworkRequestAPI(
 
 		switch pR.Method {
 		case http.MethodPut:
-			err := pNode.SendPayload(
-				pCtx,
-				pubKey,
-				payload.NewPayload64(uint64(hiddenlake.GSettings.FProtoMask.FService), req.ToBytes()),
-			)
-			if err != nil {
+			if err := pNode.SendRequest(pCtx, pubKey, req); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("send_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: send payload")
 				return
@@ -81,21 +73,10 @@ func HandleNetworkRequestAPI(
 			return
 
 		case http.MethodPost:
-			respBytes, err := pNode.FetchPayload(
-				pCtx,
-				pubKey,
-				payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FService, req.ToBytes()),
-			)
+			resp, err := pNode.FetchRequest(pCtx, pubKey, req)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("fetch_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: fetch payload")
-				return
-			}
-
-			resp, err := response.LoadResponse(respBytes)
-			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("load_response"))
-				_ = api.Response(pW, http.StatusNotExtended, "failed: load response")
 				return
 			}
 

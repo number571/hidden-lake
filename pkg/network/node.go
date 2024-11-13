@@ -36,58 +36,69 @@ func NewHiddenLakeNode(
 	pConnsGetter func() []string,
 	pHandlerF IHandlerF,
 ) IHiddenLakeNode {
-	node := anonymity.NewNode(
-		anonymity.NewSettings(&anonymity.SSettings{
-			FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
-			FServiceName:  pSettings.GetServiceName(),
-			FFetchTimeout: pSettings.GetFetchTimeout(),
-		}),
-		// Insecure to use logging in real anonymity projects!
-		// Logging should only be used in overview or testing;
-		pSettings.GetLogger(),
-		pKVDatabase,
-		network.NewNode(
-			network.NewSettings(&network.SSettings{
-				FAddress:      pSettings.GetTCPAddress(),
-				FMaxConnects:  hiddenlake.GSettings.FNetworkManager.FConnectsLimiter,
-				FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
-				FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
-				FConnSettings: conn.NewSettings(&conn.SSettings{
-					FMessageSettings:       pSettings.GetMessageSettings(),
-					FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
-					FWaitReadTimeout:       hiddenlake.GSettings.GetWaitTimeout(),
-					FDialTimeout:           hiddenlake.GSettings.GetDialTimeout(),
-					FReadTimeout:           hiddenlake.GSettings.GetReadTimeout(),
-					FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
-				}),
+	return NewRawHiddenLakeNode(
+		anonymity.NewNode(
+			anonymity.NewSettings(&anonymity.SSettings{
+				FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
+				FServiceName:  pSettings.GetServiceName(),
+				FFetchTimeout: pSettings.GetFetchTimeout(),
 			}),
-			cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
-		),
-		queue.NewQBProblemProcessor(
-			queue.NewSettings(&queue.SSettings{
-				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-					FSettings: pSettings.GetMessageSettings(),
-					FParallel: pSettings.GetParallel(),
+			// Insecure to use logging in real anonymity projects!
+			// Logging should only be used in overview or testing;
+			pSettings.GetLogger(),
+			pKVDatabase,
+			network.NewNode(
+				network.NewSettings(&network.SSettings{
+					FAddress:      pSettings.GetTCPAddress(),
+					FMaxConnects:  hiddenlake.GSettings.FNetworkManager.FConnectsLimiter,
+					FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
+					FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
+					FConnSettings: conn.NewSettings(&conn.SSettings{
+						FMessageSettings:       pSettings.GetMessageSettings(),
+						FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
+						FWaitReadTimeout:       hiddenlake.GSettings.GetWaitTimeout(),
+						FDialTimeout:           hiddenlake.GSettings.GetDialTimeout(),
+						FReadTimeout:           hiddenlake.GSettings.GetReadTimeout(),
+						FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
+					}),
 				}),
-				FNetworkMask: hiddenlake.GSettings.FProtoMask.FNetwork,
-				FQueuePeriod: pSettings.GetQueuePeriod(),
-				FPoolCapacity: [2]uint64{
-					hiddenlake.GSettings.FQueueCapacity.FMain,
-					hiddenlake.GSettings.FQueueCapacity.FRand,
-				},
-			}),
-			func() client.IClient {
-				client := client.NewClient(pPrivKey, pSettings.GetMessageSizeBytes())
-				if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-					panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
-				}
-				return client
-			}(),
+				cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
+			),
+			queue.NewQBProblemProcessor(
+				queue.NewSettings(&queue.SSettings{
+					FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
+						FSettings: pSettings.GetMessageSettings(),
+						FParallel: pSettings.GetParallel(),
+					}),
+					FNetworkMask: hiddenlake.GSettings.FProtoMask.FNetwork,
+					FQueuePeriod: pSettings.GetQueuePeriod(),
+					FPoolCapacity: [2]uint64{
+						hiddenlake.GSettings.FQueueCapacity.FMain,
+						hiddenlake.GSettings.FQueueCapacity.FRand,
+					},
+				}),
+				func() client.IClient {
+					client := client.NewClient(pPrivKey, pSettings.GetMessageSizeBytes())
+					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
+						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
+					}
+					return client
+				}(),
+			),
+			asymmetric.NewMapPubKeys(),
 		),
-		asymmetric.NewMapPubKeys(),
+		pConnsGetter,
+		pHandlerF,
 	)
+}
+
+func NewRawHiddenLakeNode(
+	pOriginNode anonymity.INode,
+	pConnsGetter func() []string,
+	pHandlerF IHandlerF,
+) IHiddenLakeNode {
 	return &sHiddenLakeNode{
-		fAnonNode: node.HandleFunc(
+		fAnonNode: pOriginNode.HandleFunc(
 			hiddenlake.GSettings.FProtoMask.FService,
 			RequestHandler(pHandlerF),
 		),
@@ -96,7 +107,7 @@ func NewHiddenLakeNode(
 				FDuration:    hiddenlake.GSettings.GetKeeperPeriod(),
 				FConnections: pConnsGetter,
 			}),
-			node.GetNetworkNode(),
+			pOriginNode.GetNetworkNode(),
 		),
 	}
 }

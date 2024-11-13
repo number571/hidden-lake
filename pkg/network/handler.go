@@ -36,7 +36,7 @@ func RequestHandler(pF IHandlerF) anonymity.IHandlerF {
 		// handle request
 		rsp, err := pF(pCtx, pSender, loadReq)
 		if err != nil {
-			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnUndefinedService)) // TODO:
+			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestHandle))
 			return nil, ErrUndefinedService
 		}
 

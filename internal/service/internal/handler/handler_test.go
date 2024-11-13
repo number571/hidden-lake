@@ -27,6 +27,8 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
 
@@ -159,12 +161,18 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 
 	cfg := wcfg.GetConfig()
 
+	hlNode := hiddenlake_network.NewRawHiddenLakeNode(
+		node,
+		func() []string { return nil },
+		HandleServiceTCP(cfg, logger),
+	)
+
 	mux.HandleFunc(pkg_settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))
 	mux.HandleFunc(pkg_settings.CHandleConfigConnectsPath, HandleConfigConnectsAPI(ctx, wcfg, logger, node))
 	mux.HandleFunc(pkg_settings.CHandleConfigFriendsPath, HandleConfigFriendsAPI(wcfg, logger, node))
 	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(logger, node))
-	mux.HandleFunc(pkg_settings.CHandleNetworkRequestPath, HandleNetworkRequestAPI(ctx, cfg, logger, node))
+	mux.HandleFunc(pkg_settings.CHandleNetworkRequestPath, HandleNetworkRequestAPI(ctx, cfg, logger, hlNode))
 	mux.HandleFunc(pkg_settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, node))
 
 	srv := &http.Server{
@@ -312,6 +320,37 @@ func (p *tsConfig) GetService(s string) (string, bool) {
 }
 
 var (
+	_ hiddenlake_network.IHiddenLakeNode = &tsHLNode{}
+)
+
+type tsHLNode struct {
+	tsNode *tsNode
+}
+
+func newTsHiddenLakeNode(tsNode *tsNode) *tsHLNode {
+	return &tsHLNode{tsNode: tsNode}
+}
+
+func (p *tsHLNode) Run(context.Context) error    { return nil }
+func (p *tsHLNode) GetOrigNode() anonymity.INode { return p.tsNode }
+
+func (p *tsHLNode) SendRequest(ctx context.Context, k asymmetric.IPubKey, r request.IRequest) error {
+	return p.tsNode.SendPayload(ctx, k, payload.NewPayload64(1, r.ToBytes()))
+}
+
+func (p *tsHLNode) FetchRequest(
+	ctx context.Context,
+	k asymmetric.IPubKey,
+	r request.IRequest,
+) (response.IResponse, error) {
+	b, err := p.tsNode.FetchPayload(ctx, k, payload.NewPayload32(1, r.ToBytes()))
+	if err != nil {
+		return nil, err
+	}
+	return response.LoadResponse(b)
+}
+
+var (
 	_ anonymity.INode = &tsNode{}
 )
 
@@ -342,7 +381,13 @@ func (p *tsNode) GetLogger() logger.ILogger {
 		},
 	)
 }
-func (p *tsNode) GetSettings() anonymity.ISettings    { return nil }
+func (p *tsNode) GetSettings() anonymity.ISettings {
+	return anonymity.NewSettings(&anonymity.SSettings{
+		FServiceName:  "_",
+		FNetworkMask:  0x1,
+		FFetchTimeout: time.Second,
+	})
+}
 func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
 func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{p.fConnectionsOK} }
 func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
@@ -388,7 +433,25 @@ func (p *tsNetworkNode) Close() error                                       { re
 func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
 func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
 
-func (p *tsNetworkNode) GetSettings() network.ISettings     { return nil }
+func (p *tsNetworkNode) GetSettings() network.ISettings {
+	return network.NewSettings(&network.SSettings{
+		FConnSettings: conn.NewSettings(&conn.SSettings{
+			FLimitMessageSizeBytes: 1,
+			FWaitReadTimeout:       time.Second,
+			FDialTimeout:           time.Second,
+			FReadTimeout:           time.Second,
+			FWriteTimeout:          time.Second,
+			FMessageSettings: net_message.NewSettings(&net_message.SSettings{
+				FWorkSizeBits: 1,
+				FNetworkKey:   "_",
+			}),
+		}),
+		FMaxConnects:  1,
+		FReadTimeout:  time.Second,
+		FWriteTimeout: time.Second,
+	})
+}
+
 func (p *tsNetworkNode) GetCacheSetter() cache.ICacheSetter { return nil }
 
 func (p *tsNetworkNode) GetConnections() map[string]conn.IConn {

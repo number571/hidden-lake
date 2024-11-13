@@ -44,7 +44,13 @@ func TestHandleRequestAPI2(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	handler := HandleNetworkRequestAPI(ctx, &tsConfig{}, httpLogger, newTsNode(true, true, true, true))
+
+	handler := HandleNetworkRequestAPI(
+		ctx,
+		&tsConfig{},
+		httpLogger,
+		newTsHiddenLakeNode(newTsNode(true, true, true, true)),
+	)
 	if err := requestAPIRequestPutOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -71,7 +77,12 @@ func TestHandleRequestAPI2(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleNetworkRequestAPI(ctx, &tsConfig{}, httpLogger, newTsNode(true, false, false, true))
+	handlerx := HandleNetworkRequestAPI(
+		ctx,
+		&tsConfig{},
+		httpLogger,
+		newTsHiddenLakeNode(newTsNode(true, false, false, true)),
+	)
 	if err := requestAPIRequestPutOK(handlerx); err == nil {
 		t.Error("request success with put error")
 		return
@@ -81,7 +92,12 @@ func TestHandleRequestAPI2(t *testing.T) {
 		return
 	}
 
-	handlery := HandleNetworkRequestAPI(ctx, &tsConfig{}, httpLogger, newTsNode(true, true, true, false))
+	handlery := HandleNetworkRequestAPI(
+		ctx,
+		&tsConfig{},
+		httpLogger,
+		newTsHiddenLakeNode(newTsNode(true, true, true, false)),
+	)
 	if err := requestAPIRequestPostOK(handlery); err == nil {
 		t.Error("request success with post error (load response)")
 		return
