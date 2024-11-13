@@ -21,7 +21,7 @@ type IHandlerF func(
 
 type IHiddenLakeNode interface {
 	types.IRunner
-	GetOrigNode() anonymity.INode
+	GetOriginNode() anonymity.INode
 
 	SendRequest(context.Context, asymmetric.IPubKey, request.IRequest) error
 	FetchRequest(context.Context, asymmetric.IPubKey, request.IRequest) (response.IResponse, error)

@@ -12,7 +12,7 @@ import (
 func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux := http.NewServeMux()
 	cfg := p.fCfgW.GetConfig()
-	origNode := p.fNode.GetOrigNode()
+	origNode := p.fNode.GetOriginNode()
 
 	mux.HandleFunc(hls_settings.CHandleIndexPath, handler.HandleIndexAPI(p.fHTTPLogger))
 	mux.HandleFunc(hls_settings.CHandleConfigSettingsPath, handler.HandleConfigSettingsAPI(p.fCfgW, p.fHTTPLogger, origNode))

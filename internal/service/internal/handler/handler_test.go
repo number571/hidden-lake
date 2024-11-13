@@ -331,8 +331,8 @@ func newTsHiddenLakeNode(tsNode *tsNode) *tsHLNode {
 	return &tsHLNode{tsNode: tsNode}
 }
 
-func (p *tsHLNode) Run(context.Context) error    { return nil }
-func (p *tsHLNode) GetOrigNode() anonymity.INode { return p.tsNode }
+func (p *tsHLNode) Run(context.Context) error      { return nil }
+func (p *tsHLNode) GetOriginNode() anonymity.INode { return p.tsNode }
 
 func (p *tsHLNode) SendRequest(ctx context.Context, k asymmetric.IPubKey, r request.IRequest) error {
 	return p.tsNode.SendPayload(ctx, k, payload.NewPayload64(1, r.ToBytes()))

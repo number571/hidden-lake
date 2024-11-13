@@ -49,7 +49,7 @@ func (p *sApp) initAnonNode() error {
 		handler.HandleServiceTCP(cfg, p.fAnonLogger),
 	)
 
-	originNode := p.fNode.GetOrigNode()
+	originNode := p.fNode.GetOriginNode()
 	for _, f := range cfg.GetFriends() {
 		originNode.GetMapPubKeys().SetPubKey(f)
 	}

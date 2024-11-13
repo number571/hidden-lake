@@ -67,8 +67,8 @@ func runNode(ctx context.Context, dbPath string) network.IHiddenLakeNode {
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
-	node1 := hlNode1.GetOrigNode()
-	node2 := hlNode2.GetOrigNode()
+	node1 := hlNode1.GetOriginNode()
+	node2 := hlNode2.GetOriginNode()
 
 	pubKey1 := node1.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
 	pubKey2 := node2.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()

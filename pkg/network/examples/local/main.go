@@ -67,13 +67,13 @@ func runNode(
 		},
 	)
 	go func() { _ = node.Run(ctx) }()
-	go func() { _ = node.GetOrigNode().GetNetworkNode().Listen(ctx) }()
+	go func() { _ = node.GetOriginNode().GetNetworkNode().Listen(ctx) }()
 	return node
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
-	node1 := hlNode1.GetOrigNode()
-	node2 := hlNode2.GetOrigNode()
+	node1 := hlNode1.GetOriginNode()
+	node2 := hlNode2.GetOriginNode()
 
 	pubKey1 := node1.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
 	pubKey2 := node2.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()

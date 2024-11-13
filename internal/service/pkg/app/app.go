@@ -118,7 +118,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_settings.CServiceName,
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(
 				p.fCfgW.GetConfig(),
-				p.fNode.GetOrigNode().GetMessageQueue().GetClient(),
+				p.fNode.GetOriginNode().GetMessageQueue().GetClient(),
 			)),
 		))
 		return nil
@@ -142,8 +142,8 @@ func (p *sApp) stop() error {
 	err := closer.CloseAll([]types.ICloser{
 		p.fServiceHTTP,
 		p.fServicePPROF,
-		p.fNode.GetOrigNode().GetKVDatabase(),
-		p.fNode.GetOrigNode().GetNetworkNode(),
+		p.fNode.GetOriginNode().GetKVDatabase(),
+		p.fNode.GetOriginNode().GetNetworkNode(),
 	})
 	if err != nil {
 		return errors.Join(ErrClose, err)
@@ -198,7 +198,7 @@ func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 
 	go func() {
 		// run node in server mode
-		err := p.fNode.GetOrigNode().GetNetworkNode().Listen(pCtx)
+		err := p.fNode.GetOriginNode().GetNetworkNode().Listen(pCtx)
 		if err != nil && !errors.Is(err, net.ErrClosed) {
 			pChErr <- err
 			return
