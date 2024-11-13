@@ -70,7 +70,7 @@ The `Hidden Lake` is an anonymous network built on a `micro-service` architectur
 
 ## Coverage map
 
-<p align="center"><img src="test/result/coverage.svg" alt="coverage.svg"/></p>
+<p align="center"><img width="100%" src="test/result/coverage.svg" alt="coverage.svg"/></p>
 
 ## Releases
 
@@ -89,29 +89,50 @@ There are a number of dependencies that represent separate applications for prov
 1. golangci-lint [github.com/golangci/golangci-lint/cmd/golangci-lintv1.60.0](https://github.com/golangci/golangci-lint/tree/v1.60.0)
 2. go-cover-treemap [github.com/nikolaydubina/go-cover-treemap@v1.4.2](https://github.com/nikolaydubina/go-cover-treemap/tree/v1.4.2)
 
-## List of applications
-
-Basic | Applied | Helpers
-:-----------------------------:|:-----------------------------:|:------------------------------:
-[HL Service](cmd/hls) | [HL Messenger](cmd/hlm) | [HL Traffic](cmd/hlt)
-[HL Composite](cmd/hlc) | [HL Filesharer](cmd/hlf) | [HL Loader](cmd/hll)
-[HL Adapters](cmd/hla) | [HL Remoter](cmd/hlr) | [HL Encryptor](cmd/hle)
-
 ## How it works
 
-The Hidden Lake anonymous network is based on the (queue-based) `QB-problem`, which can be described by the following list of actions:
+The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
-1. Each message `m` is encrypted with the recipient's key `k`: `c = Ek(m)`,
-2. Message `c` is sent during period `= T` to all network participants,
-3. The period `T` of one participant is independent of the periods `T1, T2, ..., Tn` of other participants,
-4. If there is no message for the period `T`, then a false message `v` is sent to the network without a recipient (with a random key `r`): `c = Er(v)`,   
-5. Each participant tries to decrypt the message they received from the network: `m = Dk(c)`.
+<table>
+<tr>
+  <th>Actions within the QB-problem</th>
+  <th>Figure QB-network with three nodes</th>
+</tr>
+<tr>
+<td>
+	<ol>
+	  <li>Each message <b>m</b> is encrypted with the recipient's key <b>k</b>: <b>c = Ek(m)</b></li>
+	  <li>Message <b>c</b> is sent during period <b>= T</b> to all network participants</li>
+	  <li>The period <b>T</b> of one participant is independent of the periods <b>T1, T2, ..., Tn</b> of other participants</li>
+	  <li>If there is no message for the period <b>T</b>, then a false message <b>v</b> is sent to the network without a recipient (with a random key <b>r</b>): <b>c = Er(v)</b></li>
+	  <li>Each participant tries to decrypt the message they received from the network: <b>m = Dk(c)</li>
+	</ol>
+</td>
+<td>
+	<p align="left">---------------------------------------------------------------------------------------</p>
+	<img src="images/hl_qbp.png" alt="hl_qbp.png"/>
+	<p align="right">---------------------------------------------------------------------------------------</p>
+</td>
+</tr>
+</table>
 
-<p align="center"><img src="images/hl_qbp.png" alt="hl_qbp.png"/></p>
-<p align="center">Figure 1. QB-network with three nodes {A,B,C}</p>
+> More information about Hidden Lake and QB-problem in research paper: [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf)
 
-> More information about Hidden Lake in research paper: [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf)
+## List of applications
 
+1. Basic
+   * [HLS](cmd/hls) - anonymizes traffic using the QB-problem
+   * [HLC](cmd/hlc) - runs many HL services
+   * [HLA](cmd/hla) - adapts HL traffic to external communication environments
+2. Applied
+   * [HLM](cmd/hlm) - messenger with a web interface
+   * [HLF](cmd/hlf) - file sharing with a web interface
+   * [HLR](cmd/hlr) - executes remote access commands
+3. Helpers: 
+   * [HLT](cmd/hlt) - retransmits and saves encrypted traffic
+   * [HLL](cmd/hll) - distributes the stored traffic between nodes
+   * [HLE](cmd/hle) - encrypts and decrypts messages
+   
 ## Build and run
 
 Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. 
@@ -140,9 +161,6 @@ $ hls -network=oi4r9NW9Le7fKF9d
 ```
 
 After such a launch, the hls.yml file will be created or overwritten (if it existed). The `settings` and `connections` fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
-
-<p align="center"><img src="cmd/hls/images/hls_request.gif" alt="hls_request.gif"/></p>
-<p align="center">Figure 2. Example of request to echo-service</p>
 
 > Examples of running HL applications in a production environment: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
 
