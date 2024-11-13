@@ -30,9 +30,11 @@ You can also commit your public key here: [number571/hidden-public-keys](https:/
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/network/anonymity"
+	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
@@ -48,14 +50,22 @@ func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
 			return kv
 		}(),
 	)
-	network := hiddenlake.GNetworks[networkKey]
-	for _, c := range network.FConnections {
-		_ = node.GetNetworkNode().AddConnection(
-			ctx,
-			fmt.Sprintf("%s:%d", c.FHost, c.FPort),
-		)
-	}
+	connKeeper := connkeeper.NewConnKeeper(
+		connkeeper.NewSettings(&connkeeper.SSettings{
+			FDuration: 10 * time.Second,
+			FConnections: func() []string {
+				network := hiddenlake.GNetworks[networkKey]
+				conns := make([]string, 0, len(network.FConnections))
+				for _, c := range network.FConnections {
+					conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+				}
+				return conns
+			},
+		}),
+		node.GetNetworkNode(),
+	)
 	go func() { _ = node.Run(ctx) }()
+	go func() { _ = connKeeper.Run(ctx) }()
 	return node
 }
 ```
