@@ -160,6 +160,8 @@ The HLS node is easily connected to the production environment. To do this, you 
 $ hls -network=oi4r9NW9Le7fKF9d
 ```
 
+<p align="center"><img src="cmd/hls/images/hls_logger.gif" alt="hls_logger.gif"/></p>
+
 After such a launch, the hls.yml file will be created or overwritten (if it existed). The `settings` and `connections` fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
 > Examples of running HL applications in a production environment: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
