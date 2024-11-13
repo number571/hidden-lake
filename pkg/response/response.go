@@ -21,11 +21,9 @@ type SResponseBlock struct {
 	FHead map[string]string `json:"head"`
 }
 
-func NewResponse(pCode int) IResponse {
+func NewResponse() IResponse {
 	return &SResponse{
-		SResponseBlock: SResponseBlock{
-			FCode: pCode,
-		},
+		SResponseBlock: SResponseBlock{},
 	}
 }
 
@@ -60,6 +58,11 @@ func (p *SResponse) ToBytes() []byte {
 
 func (p *SResponse) ToString() string {
 	return string(encoding.SerializeJSON(p))
+}
+
+func (p *SResponse) WithCode(pCode int) IResponse {
+	p.FCode = pCode
+	return p
 }
 
 func (p *SResponse) WithHead(pHead map[string]string) IResponse {

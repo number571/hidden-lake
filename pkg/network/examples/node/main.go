@@ -3,15 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/connkeeper"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 const (
@@ -25,25 +23,20 @@ func main() {
 
 	var (
 		node1 = runNode(ctx, "node1", networkKey)
-		node2 = runNode(ctx, "node2", networkKey).HandleFunc(
-			serviceMask,
-			func(_ context.Context, _ anonymity.INode, _ asymmetric.IPubKey, b []byte) ([]byte, error) {
-				return []byte(fmt.Sprintf("echo: %s", string(b))), nil
-			},
-		)
+		node2 = runNode(ctx, "node2", networkKey)
 	)
 
 	_, pubKey := exchangeKeys(node1, node2)
-	rsp, _ := node1.FetchPayload(
+	rsp, _ := node1.FetchRequest(
 		ctx,
 		pubKey,
-		payload.NewPayload32(serviceMask, []byte("hello, world!")),
+		request.NewRequest().WithBody([]byte("hello, world!")),
 	)
 
-	fmt.Println(string(rsp))
+	fmt.Println(string(rsp.GetBody()))
 }
 
-func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
+func runNode(ctx context.Context, dbPath, networkKey string) network.IHiddenLakeNode {
 	node := network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(networkKey, nil),
 		asymmetric.NewPrivKey(),
@@ -51,27 +44,27 @@ func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
 			kv, _ := database.NewKVDatabase(dbPath + ".db")
 			return kv
 		}(),
-	)
-	connKeeper := connkeeper.NewConnKeeper(
-		connkeeper.NewSettings(&connkeeper.SSettings{
-			FDuration: 10 * time.Second,
-			FConnections: func() []string {
-				network := hiddenlake.GNetworks[networkKey]
-				conns := make([]string, 0, len(network.FConnections))
-				for _, c := range network.FConnections {
-					conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
-				}
-				return conns
-			},
-		}),
-		node.GetNetworkNode(),
+		func() []string {
+			network := hiddenlake.GNetworks[networkKey]
+			conns := make([]string, 0, len(network.FConnections))
+			for _, c := range network.FConnections {
+				conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+			}
+			return conns
+		},
+		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
+			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
+			return response.NewResponse().WithBody(rsp), nil
+		},
 	)
 	go func() { _ = node.Run(ctx) }()
-	go func() { _ = connKeeper.Run(ctx) }()
 	return node
 }
 
-func exchangeKeys(node1, node2 anonymity.INode) (asymmetric.IPubKey, asymmetric.IPubKey) {
+func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
+	node1 := hlNode1.GetOrigNode()
+	node2 := hlNode2.GetOrigNode()
+
 	pubKey1 := node1.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
 	pubKey2 := node2.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
 

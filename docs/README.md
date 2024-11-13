@@ -41,7 +41,7 @@ import (
     ...
 )
 
-func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
+func runNode(ctx context.Context, dbPath, networkKey string) network.IHiddenLakeNode {
 	node := network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(networkKey, nil),
 		asymmetric.NewPrivKey(),
@@ -49,23 +49,20 @@ func runNode(ctx context.Context, dbPath, networkKey string) anonymity.INode {
 			kv, _ := database.NewKVDatabase(dbPath + ".db")
 			return kv
 		}(),
-	)
-	connKeeper := connkeeper.NewConnKeeper(
-		connkeeper.NewSettings(&connkeeper.SSettings{
-			FDuration: 10 * time.Second,
-			FConnections: func() []string {
-				network := hiddenlake.GNetworks[networkKey]
-				conns := make([]string, 0, len(network.FConnections))
-				for _, c := range network.FConnections {
-					conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
-				}
-				return conns
-			},
-		}),
-		node.GetNetworkNode(),
+		func() []string {
+			network := hiddenlake.GNetworks[networkKey]
+			conns := make([]string, 0, len(network.FConnections))
+			for _, c := range network.FConnections {
+				conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+			}
+			return conns
+		},
+		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
+			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
+			return response.NewResponse().WithBody(rsp), nil
+		},
 	)
 	go func() { _ = node.Run(ctx) }()
-	go func() { _ = connKeeper.Run(ctx) }()
 	return node
 }
 ```

@@ -5,14 +5,15 @@ import (
 	"errors"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	hls_response "github.com/number571/hidden-lake/internal/service/pkg/response"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	hls_response "github.com/number571/hidden-lake/pkg/response"
 )
 
 var (
 	gRespSize = uint64(len(
-		hls_response.NewResponse(200).
+		hls_response.NewResponse().
+			WithCode(200).
 			WithHead(map[string]string{
 				"Content-Type":                   api.CApplicationOctetStream,
 				hls_settings.CHeaderResponseMode: hls_settings.CHeaderResponseModeON,

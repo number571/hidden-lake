@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `pkg`: add pkg/network
+- `pkg`: move internal/service/pkg/request|response -> pkg/request|response
 - `pkg/internal/utils/flag`: add key aliases
 - `cmd/hls,cmd/hle`: rename parallel -> threads
 - `cmd/*`: add 'help' arg

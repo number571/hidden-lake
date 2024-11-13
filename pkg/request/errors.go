@@ -1,7 +1,7 @@
 package request
 
 const (
-	errPrefix = "internal/service/pkg/request = "
+	errPrefix = "pkg/request = "
 )
 
 type SRequestError struct {

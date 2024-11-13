@@ -6,8 +6,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 var (

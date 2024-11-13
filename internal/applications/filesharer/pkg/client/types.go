@@ -4,7 +4,7 @@ import (
 	"context"
 
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
-	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
+	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 type IClient interface {

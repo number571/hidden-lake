@@ -66,7 +66,10 @@ func TestInvalidRequest(t *testing.T) {
 func TestRequest(t *testing.T) {
 	t.Parallel()
 
-	request := NewRequest(tcMethod, tcHost, tcPath).
+	request := NewRequest().
+		WithMethod(tcMethod).
+		WithHost(tcHost).
+		WithPath(tcPath).
 		WithHead(tgHead).
 		WithBody(tgBody)
 
@@ -106,7 +109,10 @@ func TestRequest(t *testing.T) {
 func TestLoadRequest(t *testing.T) {
 	t.Parallel()
 
-	brequest := NewRequest(tcMethod, tcHost, tcPath).
+	brequest := NewRequest().
+		WithMethod(tcMethod).
+		WithHost(tcHost).
+		WithPath(tcPath).
 		WithHead(tgHead).
 		WithBody(tgBody).ToBytes()
 

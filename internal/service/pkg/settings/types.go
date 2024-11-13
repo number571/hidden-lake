@@ -1,6 +1,6 @@
 package settings
 
-import "github.com/number571/hidden-lake/internal/service/pkg/request"
+import "github.com/number571/hidden-lake/pkg/request"
 
 type SFriend struct {
 	FAliasName string `json:"alias_name"`

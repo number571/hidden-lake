@@ -11,12 +11,11 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	"github.com/number571/hidden-lake/pkg/network"
 
 	pkg_config "github.com/number571/hidden-lake/internal/service/pkg/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -35,10 +34,9 @@ type sApp struct {
 	fPathTo   string
 	fParallel uint64
 
-	fCfgW       config.IWrapper
-	fNode       anonymity.INode
-	fConnKeeper connkeeper.IConnKeeper
-	fPrivKey    asymmetric.IPrivKey
+	fCfgW    config.IWrapper
+	fNode    network.IHiddenLakeNode
+	fPrivKey asymmetric.IPrivKey
 
 	fAnonLogger logger.ILogger
 	fHTTPLogger logger.ILogger
@@ -79,7 +77,6 @@ func (p *sApp) Run(pCtx context.Context) error {
 		p.runListenerPPROF,
 		p.runListenerHTTP,
 		p.runListenerNode,
-		p.runConnKeeper,
 		p.runNode,
 	}
 
@@ -113,10 +110,6 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrCreateAnonNode, err)
 		}
 
-		p.initConnKeeper(
-			p.fNode.GetNetworkNode(),
-		)
-
 		p.initServicePPROF()
 		p.initServiceHTTP(pCtx)
 
@@ -125,7 +118,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_settings.CServiceName,
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(
 				p.fCfgW.GetConfig(),
-				p.fNode.GetMessageQueue().GetClient(),
+				p.fNode.GetOrigNode().GetMessageQueue().GetClient(),
 			)),
 		))
 		return nil
@@ -149,8 +142,8 @@ func (p *sApp) stop() error {
 	err := closer.CloseAll([]types.ICloser{
 		p.fServiceHTTP,
 		p.fServicePPROF,
-		p.fNode.GetKVDatabase(),
-		p.fNode.GetNetworkNode(),
+		p.fNode.GetOrigNode().GetKVDatabase(),
+		p.fNode.GetOrigNode().GetNetworkNode(),
 	})
 	if err != nil {
 		return errors.Join(ErrClose, err)
@@ -205,7 +198,7 @@ func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 
 	go func() {
 		// run node in server mode
-		err := p.fNode.GetNetworkNode().Listen(pCtx)
+		err := p.fNode.GetOrigNode().GetNetworkNode().Listen(pCtx)
 		if err != nil && !errors.Is(err, net.ErrClosed) {
 			pChErr <- err
 			return
@@ -213,15 +206,6 @@ func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 	}()
 
 	<-pCtx.Done()
-}
-
-func (p *sApp) runConnKeeper(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-
-	if err := p.fConnKeeper.Run(pCtx); err != nil {
-		pChErr <- err
-		return
-	}
 }
 
 func (p *sApp) runNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {

@@ -23,13 +23,9 @@ type SRequestBlock struct {
 	FHead   map[string]string `json:"head"`
 }
 
-func NewRequest(pMethod, pHost, pPath string) IRequest {
+func NewRequest() IRequest {
 	return &SRequest{
-		SRequestBlock: SRequestBlock{
-			FMethod: pMethod,
-			FHost:   pHost,
-			FPath:   pPath,
-		},
+		SRequestBlock: SRequestBlock{},
 	}
 }
 
@@ -64,6 +60,21 @@ func (p *SRequest) ToBytes() []byte {
 
 func (p *SRequest) ToString() string {
 	return string(encoding.SerializeJSON(p))
+}
+
+func (p *SRequest) WithMethod(pMethod string) IRequest {
+	p.FMethod = pMethod
+	return p
+}
+
+func (p *SRequest) WithHost(pHost string) IRequest {
+	p.FHost = pHost
+	return p
+}
+
+func (p *SRequest) WithPath(pPath string) IRequest {
+	p.FPath = pPath
+	return p
 }
 
 func (p *SRequest) WithHead(pHead map[string]string) IRequest {

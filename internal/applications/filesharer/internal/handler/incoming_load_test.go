@@ -12,9 +12,9 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 func TestHandleIncomingLoadHTTP(t *testing.T) {
@@ -206,5 +206,5 @@ func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (r
 	if !p.fFetchOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
-	return response.NewResponse(200).WithBody([]byte(`[{"name":"file.txt","hash":"114a856f792c4c292599dba6fa41adba45ef4f851b1d17707e2729651968ff64be375af9cff6f9547b878d5c73c16a11","size":500}]`)), nil
+	return response.NewResponse().WithCode(200).WithBody([]byte(`[{"name":"file.txt","hash":"114a856f792c4c292599dba6fa41adba45ef4f851b1d17707e2729651968ff64be375af9cff6f9547b878d5c73c16a11","size":500}]`)), nil
 }

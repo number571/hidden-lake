@@ -12,9 +12,9 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -49,12 +49,12 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if err := client.BroadcastRequest(context.Background(), "", request.NewRequest("", "", "")); err == nil {
+	if err := client.BroadcastRequest(context.Background(), "", request.NewRequest()); err == nil {
 		t.Error("success broadcast request with unknown host")
 		return
 	}
 
-	if _, err := client.FetchRequest(context.Background(), "", request.NewRequest("", "", "")); err == nil {
+	if _, err := client.FetchRequest(context.Background(), "", request.NewRequest()); err == nil {
 		t.Error("success fetch request with unknown host")
 		return
 	}

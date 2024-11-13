@@ -1,6 +1,8 @@
 package network
 
 import (
+	"context"
+
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -8,18 +10,33 @@ import (
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/network/anonymity/queue"
 	"github.com/number571/go-peer/pkg/network/conn"
+	"github.com/number571/go-peer/pkg/network/connkeeper"
 	net_message "github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
+
+var (
+	_ IHiddenLakeNode = &sHiddenLakeNode{}
+)
+
+type sHiddenLakeNode struct {
+	fAnonNode   anonymity.INode
+	fConnKeeper connkeeper.IConnKeeper
+}
 
 func NewHiddenLakeNode(
 	pSettings ISettings,
 	pPrivKey asymmetric.IPrivKey,
 	pKVDatabase database.IKVDatabase,
-) anonymity.INode {
-	return anonymity.NewNode(
+	pConnsGetter func() []string,
+	pHandlerF IHandlerF,
+) IHiddenLakeNode {
+	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
 			FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
 			FServiceName:  pSettings.GetServiceName(),
@@ -69,4 +86,67 @@ func NewHiddenLakeNode(
 		),
 		asymmetric.NewMapPubKeys(),
 	)
+	return &sHiddenLakeNode{
+		fAnonNode: node.HandleFunc(
+			hiddenlake.GSettings.FProtoMask.FService,
+			RequestHandler(pHandlerF),
+		),
+		fConnKeeper: connkeeper.NewConnKeeper(
+			connkeeper.NewSettings(&connkeeper.SSettings{
+				FDuration:    hiddenlake.GSettings.GetKeeperPeriod(),
+				FConnections: pConnsGetter,
+			}),
+			node.GetNetworkNode(),
+		),
+	}
+}
+
+func (p *sHiddenLakeNode) Run(ctx context.Context) error {
+	chErr := make(chan error, 1)
+	go func() { chErr <- p.fConnKeeper.Run(ctx) }()
+	go func() { chErr <- p.fAnonNode.Run(ctx) }()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case err := <-chErr:
+		return err
+	}
+}
+
+func (p *sHiddenLakeNode) SendRequest(
+	pCtx context.Context,
+	pPubKey asymmetric.IPubKey,
+	pRequest request.IRequest,
+) error {
+	return p.fAnonNode.SendPayload(
+		pCtx,
+		pPubKey,
+		payload.NewPayload64(
+			uint64(hiddenlake.GSettings.FProtoMask.FService),
+			pRequest.ToBytes(),
+		),
+	)
+}
+
+func (p *sHiddenLakeNode) FetchRequest(
+	pCtx context.Context,
+	pPubKey asymmetric.IPubKey,
+	pRequest request.IRequest,
+) (response.IResponse, error) {
+	rspBytes, err := p.fAnonNode.FetchPayload(
+		pCtx,
+		pPubKey,
+		payload.NewPayload32(
+			hiddenlake.GSettings.FProtoMask.FService,
+			pRequest.ToBytes(),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.LoadResponse(rspBytes)
+}
+
+func (p *sHiddenLakeNode) GetOrigNode() anonymity.INode {
+	return p.fAnonNode
 }

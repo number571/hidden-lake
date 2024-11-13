@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
+	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 type IClient interface {

@@ -2,8 +2,8 @@ package client
 
 import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/pkg/request"
 )
 
 var (

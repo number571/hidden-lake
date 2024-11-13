@@ -24,10 +24,10 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 const (
@@ -373,7 +373,7 @@ func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayl
 	if !p.fLoadResponseOK {
 		return []byte{123}, nil
 	}
-	return response.NewResponse(200).ToBytes(), nil
+	return response.NewResponse().WithCode(200).ToBytes(), nil
 }
 
 var (

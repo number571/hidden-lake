@@ -15,10 +15,10 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 func TestHandleIncomingPushHTTP(t *testing.T) {
@@ -198,7 +198,7 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return response.NewResponse(200), nil
+	return response.NewResponse().WithCode(200), nil
 }
 
 type tsDatabase struct {

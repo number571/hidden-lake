@@ -1,11 +1,14 @@
 package network
 
 import (
+	"context"
 	"testing"
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 func TestPanicNode(t *testing.T) {
@@ -26,6 +29,10 @@ func TestPanicNode(t *testing.T) {
 		}),
 		asymmetric.NewPrivKey(),
 		&tsDatabase{},
+		func() []string { return nil },
+		func(_ context.Context, _ asymmetric.IPubKey, _ request.IRequest) (response.IResponse, error) {
+			return nil, nil
+		},
 	)
 }
 

@@ -9,7 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
+	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (

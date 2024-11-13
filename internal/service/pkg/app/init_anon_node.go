@@ -7,7 +7,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
-	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
 
 	"github.com/number571/go-peer/pkg/client"
@@ -46,13 +45,13 @@ func (p *sApp) initAnonNode() error {
 		}),
 		p.fPrivKey,
 		kvDatabase,
-	).HandleFunc(
-		hiddenlake.GSettings.FProtoMask.FService,
-		handler.HandleServiceTCP(cfg),
+		func() []string { return p.fCfgW.GetConfig().GetConnections() },
+		handler.HandleServiceTCP(cfg, p.fAnonLogger),
 	)
 
+	originNode := p.fNode.GetOrigNode()
 	for _, f := range cfg.GetFriends() {
-		p.fNode.GetMapPubKeys().SetPubKey(f)
+		originNode.GetMapPubKeys().SetPubKey(f)
 	}
 
 	return nil

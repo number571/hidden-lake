@@ -20,6 +20,7 @@ import (
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -222,9 +223,14 @@ func testOnlinePushNode(cfgPath, dbPath string) (anonymity.INode, context.Cancel
 		return nil, cancel
 	}
 
+	logger := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
+
 	node.HandleFunc(
 		hiddenlake.GSettings.FProtoMask.FService,
-		HandleServiceTCP(cfg),
+		hiddenlake_network.RequestHandler(HandleServiceTCP(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 

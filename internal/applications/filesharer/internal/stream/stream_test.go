@@ -11,8 +11,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 func TestError(t *testing.T) {
@@ -123,7 +123,7 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	resp := response.NewResponse(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
+	resp := response.NewResponse().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
 	p.fCounter++
 	return resp, nil
 }

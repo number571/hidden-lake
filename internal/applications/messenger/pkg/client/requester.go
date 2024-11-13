@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
+	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (

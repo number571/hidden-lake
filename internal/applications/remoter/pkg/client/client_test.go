@@ -6,8 +6,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 )
 
 func TestError(t *testing.T) {
@@ -74,5 +74,5 @@ func (p *tsHLSClient) BroadcastRequest(context.Context, string, request.IRequest
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return response.NewResponse(200), nil
+	return response.NewResponse().WithCode(200), nil
 }

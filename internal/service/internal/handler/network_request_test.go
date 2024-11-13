@@ -19,10 +19,11 @@ import (
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -262,7 +263,10 @@ func testBroadcast(t *testing.T, client hls_client.IClient) {
 	err := client.BroadcastRequest(
 		context.Background(),
 		"test_recvr",
-		request.NewRequest(http.MethodGet, tcServiceAddressInHLS, "/echo").
+		request.NewRequest().
+			WithMethod(http.MethodGet).
+			WithHost(tcServiceAddressInHLS).
+			WithPath("/echo").
 			WithHead(map[string]string{
 				"Content-Type": "application/json",
 			}).
@@ -278,7 +282,10 @@ func testFetch(t *testing.T, client hls_client.IClient) {
 	res, err := client.FetchRequest(
 		context.Background(),
 		"test_recvr",
-		request.NewRequest(http.MethodGet, tcServiceAddressInHLS, "/echo").
+		request.NewRequest().
+			WithMethod(http.MethodGet).
+			WithHost(tcServiceAddressInHLS).
+			WithPath("/echo").
 			WithHead(map[string]string{
 				"Content-Type": "application/json",
 			}).
@@ -342,9 +349,14 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 		return nil, cancel
 	}
 
+	logger := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
+
 	node.HandleFunc(
 		hiddenlake.GSettings.FProtoMask.FService,
-		HandleServiceTCP(cfg),
+		hiddenlake_network.RequestHandler(HandleServiceTCP(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 

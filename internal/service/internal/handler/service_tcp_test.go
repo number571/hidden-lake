@@ -12,12 +12,14 @@ import (
 
 	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/service/pkg/request"
-	"github.com/number571/hidden-lake/internal/service/pkg/response"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/response"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/types"
@@ -53,37 +55,42 @@ func TestHandleServiceTCP(t *testing.T) {
 
 	time.Sleep(200 * time.Millisecond)
 
+	logger := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
+
 	ctx := context.Background()
 	cfg := &tsConfig{fServiceAddr: addr}
-	node := newTsNode(true, true, true, true)
 	pubKey := tgPrivKey2.GetPubKey()
-	handler := HandleServiceTCP(cfg)
+	handler := HandleServiceTCP(cfg, logger)
 
-	if _, err := handler(ctx, node, pubKey, []byte{1}); err == nil {
-		t.Error("success handle request with invalid request")
-		return
-	}
+	reqx := request.NewRequest().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-not-found").
+		WithPath("/rsp-mode-on")
 
-	reqx := request.NewRequest(http.MethodGet, "hidden-some-host-not-found", "/rsp-mode-on")
-	if _, err := handler(ctx, node, pubKey, reqx.ToBytes()); err == nil {
+	if _, err := handler(ctx, pubKey, reqx); err == nil {
 		t.Error("success handle request with invalid service")
 		return
 	}
 
-	reqy := request.NewRequest(http.MethodGet, "hidden-some-host-failed", "/rsp-mode-on")
-	if _, err := handler(ctx, node, pubKey, reqy.ToBytes()); err == nil {
+	reqy := request.NewRequest().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-failed").
+		WithPath("/rsp-mode-on")
+
+	if _, err := handler(ctx, pubKey, reqy); err == nil {
 		t.Error("success handle request with invalid do request")
 		return
 	}
 
-	req := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-on")
-	rspBytes, err := handler(ctx, node, pubKey, req.ToBytes())
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	req := request.NewRequest().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-ok").
+		WithPath("/rsp-mode-on")
 
-	rsp, err := response.LoadResponse(rspBytes)
+	rsp, err := handler(ctx, pubKey, req)
 	if err != nil {
 		t.Error(err)
 		return
@@ -94,8 +101,12 @@ func TestHandleServiceTCP(t *testing.T) {
 		return
 	}
 
-	req2 := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-off")
-	rsp2Bytes, err := handler(ctx, node, pubKey, req2.ToBytes())
+	req2 := request.NewRequest().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-ok").
+		WithPath("/rsp-mode-off")
+
+	rsp2Bytes, err := handler(ctx, pubKey, req2)
 	if err != nil {
 		t.Error(err)
 		return
@@ -105,8 +116,12 @@ func TestHandleServiceTCP(t *testing.T) {
 		return
 	}
 
-	req3 := request.NewRequest(http.MethodGet, "hidden-some-host-ok", "/rsp-mode-unknown")
-	if _, err := handler(ctx, node, pubKey, req3.ToBytes()); err == nil {
+	req3 := request.NewRequest().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-ok").
+		WithPath("/rsp-mode-unknown")
+
+	if _, err := handler(ctx, pubKey, req3); err == nil {
 		t.Error("success response with unknown response mode")
 		return
 	}
@@ -185,9 +200,14 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 		return nil, nil, errors.New("node is not running")
 	}
 
+	logger := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
+
 	node.HandleFunc(
 		hiddenlake.GSettings.FProtoMask.FService,
-		HandleServiceTCP(cfg),
+		hiddenlake_network.RequestHandler(HandleServiceTCP(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
@@ -215,7 +235,10 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 
 	pld := payload.NewPayload32(
 		hiddenlake.GSettings.FProtoMask.FService,
-		request.NewRequest(http.MethodGet, tcServiceAddressInHLS, "/echo").
+		request.NewRequest().
+			WithMethod(http.MethodGet).
+			WithHost(tcServiceAddressInHLS).
+			WithPath("/echo").
 			WithHead(map[string]string{
 				"Content-Type": "application/json",
 			}).

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
-	hls_request "github.com/number571/hidden-lake/internal/service/pkg/request"
+	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (
@@ -23,11 +23,10 @@ func NewBuilder(pPassword string) IBuilder {
 }
 
 func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
-	return hls_request.NewRequest(
-		http.MethodPost,
-		hlr_settings.CServiceFullName,
-		hlr_settings.CExecPath,
-	).
+	return hls_request.NewRequest().
+		WithMethod(http.MethodPost).
+		WithHost(hlr_settings.CServiceFullName).
+		WithPath(hlr_settings.CExecPath).
 		WithHead(map[string]string{
 			hlr_settings.CHeaderPassword: p.fPassword,
 		}).
