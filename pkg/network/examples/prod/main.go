@@ -3,13 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/storage/database"
-	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
+
+	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+	hiddenlake "github.com/number571/hidden-lake"
 )
 
 const (
@@ -41,12 +46,18 @@ func main() {
 	}
 }
 
-func runNode(ctx context.Context, dbPath string) network.IHiddenLakeNode {
+func runNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	node := network.NewHiddenLakeNode(
-		network.NewSettingsByNetworkKey(networkKey, nil),
+		network.NewSettingsByNetworkKey(
+			networkKey,
+			&network.SSubSettings{
+				FServiceName: name,
+				FLogger:      getLogger(),
+			},
+		),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {
-			kv, err := database.NewKVDatabase(dbPath + ".db")
+			kv, err := database.NewKVDatabase(name + ".db")
 			if err != nil {
 				panic(err)
 			}
@@ -80,4 +91,33 @@ func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey,
 	node2.GetMapPubKeys().SetPubKey(pubKey1)
 
 	return pubKey1, pubKey2
+}
+
+func getLogger() logger.ILogger {
+	return logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{
+			FInfo: os.Stdout,
+			FWarn: os.Stdout,
+			FErro: os.Stderr,
+		}),
+		func(ia logger.ILogArg) string {
+			logGetterFactory, ok := ia.(anon_logger.ILogGetterFactory)
+			if !ok {
+				panic("got invalid log arg")
+			}
+			logGetter := logGetterFactory.Get()
+			hash := make([]byte, hashing.CHasherSize)
+			if x := logGetter.GetHash(); x != nil {
+				copy(hash, x)
+			}
+			return fmt.Sprintf(
+				"name=%s code=%02x hash=%X proof=%08d bytes=%d",
+				logGetter.GetService(),
+				logGetter.GetType(),
+				hash[:16],
+				logGetter.GetProof(),
+				logGetter.GetSize(),
+			)
+		},
+	)
 }
