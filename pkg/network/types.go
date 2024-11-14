@@ -13,12 +13,6 @@ import (
 	"github.com/number571/hidden-lake/pkg/response"
 )
 
-type IHandlerF func(
-	context.Context,
-	asymmetric.IPubKey,
-	request.IRequest,
-) (response.IResponse, error)
-
 type IHiddenLakeNode interface {
 	types.IRunner
 	GetOriginNode() anonymity.INode

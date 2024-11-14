@@ -22,7 +22,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -372,7 +372,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 
 	node.HandleFunc(
 		hiddenlake.GSettings.FProtoMask.FService,
-		hiddenlake_network.RequestHandler(HandleServiceTCP(cfg, logger)),
+		handler.RequestHandler(HandleServiceTCP(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 

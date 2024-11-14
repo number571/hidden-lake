@@ -17,6 +17,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -35,7 +36,7 @@ func NewHiddenLakeNode(
 	pPrivKey asymmetric.IPrivKey,
 	pKVDatabase database.IKVDatabase,
 	pConnsGetter func() []string,
-	pHandlerF IHandlerF,
+	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
@@ -93,12 +94,12 @@ func NewHiddenLakeNode(
 func NewRawHiddenLakeNode(
 	pOriginNode anonymity.INode,
 	pConnsGetter func() []string,
-	pHandlerF IHandlerF,
+	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
 	return &sHiddenLakeNode{
 		fAnonNode: pOriginNode.HandleFunc(
 			hiddenlake.GSettings.FProtoMask.FService,
-			RequestHandler(pHandlerF),
+			handler.RequestHandler(pHandlerF),
 		),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{

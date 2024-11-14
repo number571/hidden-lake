@@ -11,7 +11,7 @@ import (
 
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
-	"github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
@@ -21,7 +21,7 @@ import (
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
-func HandleServiceTCP(pCfg config.IConfig, pLogger logger.ILogger) network.IHandlerF {
+func HandleServiceTCP(pCfg config.IConfig, pLogger logger.ILogger) handler.IHandlerF {
 	return func(
 		pCtx context.Context,
 		pSender asymmetric.IPubKey,

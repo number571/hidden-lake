@@ -1,7 +1,7 @@
-package network
+package handler
 
 const (
-	errPrefix = "pkg/network = "
+	errPrefix = "pkg/handler = "
 )
 
 type SHandlerError struct {
