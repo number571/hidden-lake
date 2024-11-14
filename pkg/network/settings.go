@@ -28,26 +28,6 @@ type SSubSettings struct {
 	FServiceName string
 }
 
-func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
-	network, ok := hiddenlake.GNetworks[pNetworkKey]
-	if !ok {
-		panic("network not found")
-	}
-	if pSubSettings == nil {
-		pSubSettings = &SSubSettings{}
-	}
-	return (&sSettings{
-		FMessageSettings: gopeer_message.NewSettings(&gopeer_message.SSettings{
-			FWorkSizeBits: network.FWorkSizeBits,
-			FNetworkKey:   pNetworkKey,
-		}),
-		FMessageSizeBytes: network.FMessageSizeBytes,
-		FQueuePeriod:      network.GetQueuePeriod(),
-		FFetchTimeout:     network.GetFetchTimeout(),
-		SSubSettings:      *pSubSettings,
-	}).useDefault()
-}
-
 func NewSettings(pSett *SSettings) ISettings {
 	return (&sSettings{
 		FMessageSettings:  pSett.FMessageSettings,
@@ -56,6 +36,28 @@ func NewSettings(pSett *SSettings) ISettings {
 		FFetchTimeout:     pSett.FFetchTimeout,
 		SSubSettings:      pSett.SSubSettings,
 	}).useDefault()
+}
+
+func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
+	network, ok := hiddenlake.GNetworks[pNetworkKey]
+	if !ok {
+		panic("network not found")
+	}
+	return NewSettings(&SSettings{
+		FMessageSettings: gopeer_message.NewSettings(&gopeer_message.SSettings{
+			FWorkSizeBits: network.FWorkSizeBits,
+			FNetworkKey:   pNetworkKey,
+		}),
+		FMessageSizeBytes: network.FMessageSizeBytes,
+		FQueuePeriod:      network.GetQueuePeriod(),
+		FFetchTimeout:     network.GetFetchTimeout(),
+		SSubSettings: func() SSubSettings {
+			if pSubSettings == nil {
+				return SSubSettings{}
+			}
+			return *pSubSettings
+		}(),
+	})
 }
 
 func (p *sSettings) useDefault() *sSettings {
