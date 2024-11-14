@@ -12,6 +12,10 @@ import (
 	"github.com/number571/hidden-lake/pkg/response"
 )
 
+const (
+	networkKey = "oi4r9NW9Le7fKF9d"
+)
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -38,7 +42,6 @@ func main() {
 }
 
 func runNode(ctx context.Context, dbPath string) network.IHiddenLakeNode {
-	const networkKey = "oi4r9NW9Le7fKF9d"
 	node := network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(networkKey, nil),
 		asymmetric.NewPrivKey(),

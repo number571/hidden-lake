@@ -27,13 +27,19 @@ func main() {
 	)
 
 	_, pubKey := exchangeKeys(node1, node2)
-	rsp, _ := node1.FetchRequest(
-		ctx,
-		pubKey,
-		request.NewRequest().WithBody([]byte("hello, world!")),
-	)
 
-	fmt.Println(string(rsp.GetBody()))
+	for {
+		rsp, err := node1.FetchRequest(
+			ctx,
+			pubKey,
+			request.NewRequest().WithBody([]byte("hello, world!")),
+		)
+		if err != nil {
+			fmt.Printf("error:(%s)\n", err.Error())
+			continue
+		}
+		fmt.Printf("response:(%s)\n", string(rsp.GetBody()))
+	}
 }
 
 func runNode(
@@ -41,12 +47,11 @@ func runNode(
 	dbPath, tcpAddr string,
 	connsF func() []string,
 ) network.IHiddenLakeNode {
-	const networkKey = "custom_network_key"
 	node := network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FMessageSettings: message.NewSettings(&message.SSettings{
 				FWorkSizeBits: 10,
-				FNetworkKey:   networkKey,
+				FNetworkKey:   "custom_network_key",
 			}),
 			FQueuePeriod:      time.Second,
 			FFetchTimeout:     time.Minute,

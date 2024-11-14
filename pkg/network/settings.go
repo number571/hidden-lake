@@ -44,12 +44,7 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		FMessageSizeBytes: network.FMessageSizeBytes,
 		FQueuePeriod:      network.GetQueuePeriod(),
 		FFetchTimeout:     network.GetFetchTimeout(),
-		SSubSettings: SSubSettings{
-			FParallel:    pSubSettings.FParallel,
-			FLogger:      pSubSettings.FLogger,
-			FTCPAddress:  pSubSettings.FTCPAddress,
-			FServiceName: pSubSettings.FServiceName,
-		},
+		SSubSettings:      *pSubSettings,
 	}).useDefault()
 }
 
@@ -59,12 +54,7 @@ func NewSettings(pSett *SSettings) ISettings {
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
 		FQueuePeriod:      pSett.FQueuePeriod,
 		FFetchTimeout:     pSett.FFetchTimeout,
-		SSubSettings: SSubSettings{
-			FParallel:    pSett.FParallel,
-			FLogger:      pSett.FLogger,
-			FTCPAddress:  pSett.FTCPAddress,
-			FServiceName: pSett.FServiceName,
-		},
+		SSubSettings:      pSett.SSubSettings,
 	}).useDefault()
 }
 
