@@ -27,9 +27,13 @@ func main() {
 	defer cancel()
 
 	var (
-		node1 = runNode(ctx, "node1", nodeTCPAddress, func() []string { return nil })
-		node2 = runNode(ctx, "node2", "", func() []string { return []string{nodeTCPAddress} })
+		node1 = newNode(ctx, "node1", nodeTCPAddress, func() []string { return nil })
+		node2 = newNode(ctx, "node2", "", func() []string { return []string{nodeTCPAddress} })
 	)
+
+	go func() { _ = node1.Run(ctx) }()
+	go func() { _ = node2.Run(ctx) }()
+	go func() { _ = node1.GetOriginNode().GetNetworkNode().Listen(ctx) }()
 
 	_, pubKey := exchangeKeys(node1, node2)
 
@@ -47,12 +51,12 @@ func main() {
 	}
 }
 
-func runNode(
+func newNode(
 	ctx context.Context,
 	name, tcpAddr string,
 	connsF func() []string,
 ) network.IHiddenLakeNode {
-	node := network.NewHiddenLakeNode(
+	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FMessageSettings: message.NewSettings(&message.SSettings{
 				FWorkSizeBits: 10,
@@ -78,9 +82,6 @@ func runNode(
 			return response.NewResponse().WithBody(rsp), nil
 		},
 	)
-	go func() { _ = node.Run(ctx) }()
-	go func() { _ = node.GetOriginNode().GetNetworkNode().Listen(ctx) }()
-	return node
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {

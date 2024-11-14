@@ -26,9 +26,12 @@ func main() {
 	defer cancel()
 
 	var (
-		node1 = runNode(ctx, "node1")
-		node2 = runNode(ctx, "node2")
+		node1 = newNode(ctx, "node1")
+		node2 = newNode(ctx, "node2")
 	)
+
+	go func() { _ = node1.Run(ctx) }()
+	go func() { _ = node2.Run(ctx) }()
 
 	_, pubKey := exchangeKeys(node1, node2)
 
@@ -46,8 +49,8 @@ func main() {
 	}
 }
 
-func runNode(ctx context.Context, name string) network.IHiddenLakeNode {
-	node := network.NewHiddenLakeNode(
+func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
+	return network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(
 			networkKey,
 			&network.SSubSettings{
@@ -76,8 +79,6 @@ func runNode(ctx context.Context, name string) network.IHiddenLakeNode {
 			return response.NewResponse().WithBody(rsp), nil
 		},
 	)
-	go func() { _ = node.Run(ctx) }()
-	return node
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
