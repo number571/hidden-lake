@@ -34,7 +34,7 @@ func (p *sApp) initAnonNode() error {
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 		FQueuePeriod:      cfgSettings.GetQueuePeriod(),
 		FFetchTimeout:     cfgSettings.GetFetchTimeout(),
-		SSubSettings: network.SSubSettings{
+		SSubSettings: &network.SSubSettings{
 			FServiceName: hls_settings.CServiceName,
 			FTCPAddress:  cfg.GetAddress().GetTCP(),
 			FParallel:    p.fParallel,

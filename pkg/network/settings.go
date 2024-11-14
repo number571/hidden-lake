@@ -14,7 +14,7 @@ var (
 
 type SSettings sSettings
 type sSettings struct {
-	SSubSettings
+	*SSubSettings
 	FMessageSettings  gopeer_message.ISettings
 	FQueuePeriod      time.Duration
 	FFetchTimeout     time.Duration
@@ -29,6 +29,9 @@ type SSubSettings struct {
 }
 
 func NewSettings(pSett *SSettings) ISettings {
+	if pSett == nil {
+		pSett = &SSettings{}
+	}
 	return (&sSettings{
 		FMessageSettings:  pSett.FMessageSettings,
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
@@ -51,12 +54,7 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		FMessageSizeBytes: network.FMessageSizeBytes,
 		FQueuePeriod:      network.GetQueuePeriod(),
 		FFetchTimeout:     network.GetFetchTimeout(),
-		SSubSettings: func() SSubSettings {
-			if pSubSettings == nil {
-				return SSubSettings{}
-			}
-			return *pSubSettings
-		}(),
+		SSubSettings:      pSubSettings,
 	})
 }
 
@@ -66,9 +64,11 @@ func (p *sSettings) useDefault() *sSettings {
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
 	}
+
 	if p.FQueuePeriod == 0 {
 		p.FQueuePeriod = defaultNetwork.GetQueuePeriod()
 	}
+
 	if p.FFetchTimeout == 0 {
 		p.FFetchTimeout = defaultNetwork.GetFetchTimeout()
 	}
@@ -77,6 +77,10 @@ func (p *sSettings) useDefault() *sSettings {
 		p.FMessageSettings = gopeer_message.NewSettings(&gopeer_message.SSettings{
 			FWorkSizeBits: defaultNetwork.FWorkSizeBits,
 		})
+	}
+
+	if p.SSubSettings == nil {
+		p.SSubSettings = &SSubSettings{}
 	}
 
 	if p.FServiceName == "" {
