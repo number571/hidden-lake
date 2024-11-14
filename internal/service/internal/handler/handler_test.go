@@ -211,7 +211,6 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
 			FServiceName:  "TEST",
-			FNetworkMask:  networkMask,
 			FFetchTimeout: time.Minute,
 		}),
 		logger.NewLogger(
@@ -384,7 +383,6 @@ func (p *tsNode) GetLogger() logger.ILogger {
 func (p *tsNode) GetSettings() anonymity.ISettings {
 	return anonymity.NewSettings(&anonymity.SSettings{
 		FServiceName:  "_",
-		FNetworkMask:  0x1,
 		FFetchTimeout: time.Second,
 	})
 }

@@ -40,7 +40,6 @@ func NewHiddenLakeNode(
 ) IHiddenLakeNode {
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
-			FNetworkMask:  hiddenlake.GSettings.FProtoMask.FNetwork,
 			FServiceName:  pSettings.GetServiceName(),
 			FFetchTimeout: pSettings.GetFetchTimeout(),
 		}),
