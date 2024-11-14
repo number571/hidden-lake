@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"path/filepath"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
@@ -30,29 +29,32 @@ func (p *sApp) initAnonNode() error {
 		return errors.Join(ErrMessageSizeLimit, err)
 	}
 
-	p.fNode = network.NewHiddenLakeNode(
-		network.NewSettings(&network.SSettings{
-			FMessageSettings:  cfg.GetSettings(),
-			FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
-			FQueuePeriod:      time.Duration(cfgSettings.GetQueuePeriodMS()) * time.Millisecond,
-			FFetchTimeout:     time.Duration(cfgSettings.GetFetchTimeoutMS()) * time.Millisecond,
-			SSubSettings: network.SSubSettings{
-				FServiceName: hls_settings.CServiceName,
-				FTCPAddress:  cfg.GetAddress().GetTCP(),
-				FParallel:    p.fParallel,
-				FLogger:      p.fAnonLogger,
-			},
-		}),
+	settings := network.NewSettings(&network.SSettings{
+		FMessageSettings:  cfg.GetSettings(),
+		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+		FQueuePeriod:      cfgSettings.GetQueuePeriod(),
+		FFetchTimeout:     cfgSettings.GetFetchTimeout(),
+		SSubSettings: network.SSubSettings{
+			FServiceName: hls_settings.CServiceName,
+			FTCPAddress:  cfg.GetAddress().GetTCP(),
+			FParallel:    p.fParallel,
+			FLogger:      p.fAnonLogger,
+		},
+	})
+
+	node := network.NewHiddenLakeNode(
+		settings,
 		p.fPrivKey,
 		kvDatabase,
 		func() []string { return p.fCfgW.GetConfig().GetConnections() },
 		handler.HandleServiceTCP(cfg, p.fAnonLogger),
 	)
 
-	originNode := p.fNode.GetOriginNode()
+	originNode := node.GetOriginNode()
 	for _, f := range cfg.GetFriends() {
 		originNode.GetMapPubKeys().SetPubKey(f)
 	}
 
+	p.fNode = node
 	return nil
 }

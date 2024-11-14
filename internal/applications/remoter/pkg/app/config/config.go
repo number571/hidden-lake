@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -108,8 +109,8 @@ func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
 }
 
-func (p *SConfigSettings) GetExecTimeoutMS() uint64 {
-	return p.FExecTimeoutMS
+func (p *SConfigSettings) GetExecTimeout() time.Duration {
+	return time.Duration(p.FExecTimeoutMS) * time.Millisecond
 }
 
 func (p *SConfigSettings) GetPassword() string {

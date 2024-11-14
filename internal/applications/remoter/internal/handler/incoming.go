@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
@@ -50,8 +49,7 @@ func HandleIncomingExecHTTP(pCtx context.Context, pConfig config.IConfig, pLogge
 			return
 		}
 
-		execTimeout := time.Duration(sett.GetExecTimeoutMS()) * time.Millisecond
-		ctx, cancel := context.WithTimeout(pCtx, execTimeout)
+		ctx, cancel := context.WithTimeout(pCtx, sett.GetExecTimeout())
 		defer cancel()
 
 		cmdSplited := strings.Split(cmdStr, hlr_settings.CExecSeparator)

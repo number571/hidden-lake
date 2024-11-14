@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
+
 <!-- ... -->
 
 ## v1.7.6

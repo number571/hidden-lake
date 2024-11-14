@@ -36,7 +36,7 @@ func NewApp(pCfg config.IConfig) types.IRunner {
 		fHltAddr:     pCfg.GetConnection().GetHLTHost(),
 		fServiceAddr: pCfg.GetConnection().GetSrvHost(),
 		fSettings:    pCfg.GetSettings(),
-		fWaitTime:    time.Duration(pCfg.GetSettings().GetWaitTimeMS()) * time.Millisecond,
+		fWaitTime:    pCfg.GetSettings().GetWaitTime(),
 	}
 }
 

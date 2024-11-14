@@ -42,15 +42,15 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 			FNetworkKey:   pNetworkKey,
 		}),
 		FMessageSizeBytes: network.FMessageSizeBytes,
-		FQueuePeriod:      time.Duration(network.FQueuePeriodMS) * time.Millisecond,
-		FFetchTimeout:     time.Duration(network.FFetchTimeoutMS) * time.Millisecond,
+		FQueuePeriod:      network.GetQueuePeriod(),
+		FFetchTimeout:     network.GetFetchTimeout(),
 		SSubSettings: SSubSettings{
 			FParallel:    pSubSettings.FParallel,
 			FLogger:      pSubSettings.FLogger,
 			FTCPAddress:  pSubSettings.FTCPAddress,
 			FServiceName: pSubSettings.FServiceName,
 		},
-	}).defaultValue().mustNotNull()
+	}).useDefault()
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -65,35 +65,39 @@ func NewSettings(pSett *SSettings) ISettings {
 			FTCPAddress:  pSett.FTCPAddress,
 			FServiceName: pSett.FServiceName,
 		},
-	}).defaultValue().mustNotNull()
+	}).useDefault()
 }
 
-func (p *sSettings) defaultValue() *sSettings {
-	if p.FMessageSettings == nil {
-		p.FMessageSettings = gopeer_message.NewSettings(&gopeer_message.SSettings{})
+func (p *sSettings) useDefault() *sSettings {
+	defaultNetwork := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
+
+	if p.FMessageSizeBytes == 0 {
+		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
 	}
+	if p.FQueuePeriod == 0 {
+		p.FQueuePeriod = defaultNetwork.GetQueuePeriod()
+	}
+	if p.FFetchTimeout == 0 {
+		p.FFetchTimeout = defaultNetwork.GetFetchTimeout()
+	}
+
+	if p.FMessageSettings == nil {
+		p.FMessageSettings = gopeer_message.NewSettings(&gopeer_message.SSettings{
+			FWorkSizeBits: defaultNetwork.FWorkSizeBits,
+		})
+	}
+
+	if p.FServiceName == "" {
+		p.FServiceName = "_"
+	}
+
 	if p.FLogger == nil {
 		p.FLogger = gopeer_logger.NewLogger(
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
 			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
 	}
-	if p.FServiceName == "" {
-		p.FServiceName = "_"
-	}
-	return p
-}
 
-func (p *sSettings) mustNotNull() *sSettings {
-	if p.FMessageSizeBytes == 0 {
-		panic(`p.FMessageSizeBytes == 0`)
-	}
-	if p.FQueuePeriod == 0 {
-		panic(`p.FQueuePeriod == 0`)
-	}
-	if p.FFetchTimeout == 0 {
-		panic(`p.FFetchTimeout == 0`)
-	}
 	return p
 }
 

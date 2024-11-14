@@ -106,7 +106,7 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 		return
 	}
 
-	if sett.GetQueuePeriodMS() != 1000 {
+	if sett.GetQueuePeriod() != time.Second {
 		t.Error("invalid queue period")
 		return
 	}

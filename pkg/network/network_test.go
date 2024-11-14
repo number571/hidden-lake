@@ -39,37 +39,14 @@ func TestPanicNode(t *testing.T) {
 func TestPanicSettings(t *testing.T) {
 	t.Parallel()
 
-	for i := 0; i < 4; i++ {
-		testPanicSettings(t, i)
-	}
-}
-
-func testPanicSettings(t *testing.T, n int) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Error("nothing panics")
 			return
 		}
 	}()
-	switch n {
-	case 0:
-		_ = NewSettingsByNetworkKey("__test_unknown__", nil)
-	case 1:
-		_ = NewSettings(&SSettings{
-			FMessageSizeBytes: 8192,
-			FQueuePeriod:      time.Second,
-		})
-	case 2:
-		_ = NewSettings(&SSettings{
-			FMessageSizeBytes: 8192,
-			FFetchTimeout:     time.Second,
-		})
-	case 3:
-		_ = NewSettings(&SSettings{
-			FQueuePeriod:  time.Second,
-			FFetchTimeout: time.Second,
-		})
-	}
+
+	_ = NewSettingsByNetworkKey("__test_unknown__", nil)
 }
 
 func TestSettings(t *testing.T) {

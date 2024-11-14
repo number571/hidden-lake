@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -20,8 +22,8 @@ type IConfigSettings interface {
 	net_message.ISettings
 
 	GetMessageSizeBytes() uint64
-	GetFetchTimeoutMS() uint64
-	GetQueuePeriodMS() uint64
+	GetFetchTimeout() time.Duration
+	GetQueuePeriod() time.Duration
 }
 
 type IConfig interface {

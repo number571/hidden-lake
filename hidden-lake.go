@@ -121,6 +121,14 @@ func (p SSettings) validate() error {
 	return nil
 }
 
+func (p SNetwork) GetFetchTimeout() time.Duration {
+	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond
+}
+
+func (p SNetwork) GetQueuePeriod() time.Duration {
+	return time.Duration(p.FQueuePeriodMS) * time.Millisecond
+}
+
 func (p SSettings) GetKeeperPeriod() time.Duration {
 	return time.Duration(p.FNetworkManager.FKeeperPeriodMS) * time.Millisecond
 }

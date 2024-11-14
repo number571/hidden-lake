@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -96,12 +97,12 @@ func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
 	return asymmetric.CKEMCiphertextSize
 }
 
-func (p *SConfigSettings) GetFetchTimeoutMS() uint64 {
-	return p.FFetchTimeoutMS
+func (p *SConfigSettings) GetFetchTimeout() time.Duration {
+	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond
 }
 
-func (p *SConfigSettings) GetQueuePeriodMS() uint64 {
-	return p.FQueuePeriodMS
+func (p *SConfigSettings) GetQueuePeriod() time.Duration {
+	return time.Duration(p.FQueuePeriodMS) * time.Millisecond
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -16,7 +18,7 @@ type IConfig interface {
 type IConfigSettings interface {
 	net_message.ISettings
 
-	GetWaitTimeMS() uint64
+	GetWaitTime() time.Duration
 }
 
 type IConnection interface {

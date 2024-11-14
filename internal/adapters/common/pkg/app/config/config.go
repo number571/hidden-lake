@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -118,8 +119,8 @@ func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
 }
 
-func (p *SConfigSettings) GetWaitTimeMS() uint64 {
-	return p.FWaitTimeMS
+func (p *SConfigSettings) GetWaitTime() time.Duration {
+	return time.Duration(p.FWaitTimeMS) * time.Millisecond
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

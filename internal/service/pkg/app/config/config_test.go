@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 )
@@ -228,12 +229,12 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetSettings().GetFetchTimeoutMS() != tcFetchTimeout {
+	if cfg.GetSettings().GetFetchTimeout() != time.Duration(tcFetchTimeout)*time.Millisecond {
 		t.Error("settings fetch timeout is invalid")
 		return
 	}
 
-	if cfg.GetSettings().GetQueuePeriodMS() != tcQueuePeriod {
+	if cfg.GetSettings().GetQueuePeriod() != time.Duration(tcQueuePeriod)*time.Millisecond {
 		t.Error("settings queue period is invalid")
 		return
 	}

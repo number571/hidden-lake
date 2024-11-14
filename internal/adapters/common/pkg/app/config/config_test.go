@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 const (
@@ -53,7 +54,7 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetSettings().GetWaitTimeMS() != tcWaitTimeMS {
+	if cfg.GetSettings().GetWaitTime() != time.Duration(tcWaitTimeMS)*time.Millisecond {
 		t.Error("settings wait_time_ms is invalid")
 		return
 	}

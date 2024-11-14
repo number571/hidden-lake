@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 const (
@@ -74,7 +75,7 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetSettings().GetExecTimeoutMS() != tcExecTimeout {
+	if cfg.GetSettings().GetExecTimeout() != time.Duration(tcExecTimeout)*time.Millisecond {
 		t.Error("settings.exec_timeout_ms is invalid")
 		return
 	}

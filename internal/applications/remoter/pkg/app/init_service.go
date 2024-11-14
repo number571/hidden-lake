@@ -16,7 +16,7 @@ func (p *sApp) initIncomingServiceHTTP(pCtx context.Context) {
 		handler.HandleIncomingExecHTTP(pCtx, p.fConfig, p.fHTTPLogger),
 	) // POST
 
-	execTimeout := time.Duration(p.fConfig.GetSettings().GetExecTimeoutMS()) * time.Millisecond
+	execTimeout := p.fConfig.GetSettings().GetExecTimeout()
 	p.fIncServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetIncoming(),
 		Handler:     http.TimeoutHandler(mux, 2*execTimeout, "timeout"),

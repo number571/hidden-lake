@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -11,7 +13,7 @@ type IConfig interface {
 }
 
 type IConfigSettings interface {
-	GetExecTimeoutMS() uint64
+	GetExecTimeout() time.Duration
 	GetPassword() string
 }
 
