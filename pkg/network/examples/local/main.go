@@ -65,7 +65,7 @@ func newNode(
 			FQueuePeriod:      time.Second,
 			FFetchTimeout:     time.Minute,
 			FMessageSizeBytes: (8 << 10),
-			SSubSettings: &network.SSubSettings{
+			FSubSettings: &network.SSubSettings{
 				FTCPAddress:  tcpAddr,
 				FLogger:      getLogger(),
 				FServiceName: name,

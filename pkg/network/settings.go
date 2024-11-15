@@ -14,7 +14,7 @@ var (
 
 type SSettings sSettings
 type sSettings struct {
-	*SSubSettings
+	FSubSettings      *SSubSettings
 	FMessageSettings  gopeer_message.ISettings
 	FQueuePeriod      time.Duration
 	FFetchTimeout     time.Duration
@@ -37,7 +37,7 @@ func NewSettings(pSett *SSettings) ISettings {
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
 		FQueuePeriod:      pSett.FQueuePeriod,
 		FFetchTimeout:     pSett.FFetchTimeout,
-		SSubSettings:      pSett.SSubSettings,
+		FSubSettings:      pSett.FSubSettings,
 	}).useDefault()
 }
 
@@ -54,7 +54,7 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		FMessageSizeBytes: network.FMessageSizeBytes,
 		FQueuePeriod:      network.GetQueuePeriod(),
 		FFetchTimeout:     network.GetFetchTimeout(),
-		SSubSettings:      pSubSettings,
+		FSubSettings:      pSubSettings,
 	})
 }
 
@@ -79,16 +79,16 @@ func (p *sSettings) useDefault() *sSettings {
 		})
 	}
 
-	if p.SSubSettings == nil {
-		p.SSubSettings = &SSubSettings{}
+	if p.FSubSettings == nil {
+		p.FSubSettings = &SSubSettings{}
 	}
 
-	if p.FServiceName == "" {
-		p.FServiceName = "_"
+	if p.FSubSettings.FServiceName == "" {
+		p.FSubSettings.FServiceName = "_"
 	}
 
-	if p.FLogger == nil {
-		p.FLogger = gopeer_logger.NewLogger(
+	if p.FSubSettings.FLogger == nil {
+		p.FSubSettings.FLogger = gopeer_logger.NewLogger(
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
 			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
@@ -105,26 +105,26 @@ func (p *sSettings) GetMessageSizeBytes() uint64 {
 	return p.FMessageSizeBytes
 }
 
-func (p *sSettings) GetParallel() uint64 {
-	return p.FParallel
-}
-
-func (p *sSettings) GetServiceName() string {
-	return p.FServiceName
-}
-
-func (p *sSettings) GetTCPAddress() string {
-	return p.FTCPAddress
-}
-
-func (p *sSettings) GetLogger() gopeer_logger.ILogger {
-	return p.FLogger
-}
-
 func (p *sSettings) GetQueuePeriod() time.Duration {
 	return p.FQueuePeriod
 }
 
 func (p *sSettings) GetFetchTimeout() time.Duration {
 	return p.FFetchTimeout
+}
+
+func (p *sSettings) GetParallel() uint64 {
+	return p.FSubSettings.FParallel
+}
+
+func (p *sSettings) GetServiceName() string {
+	return p.FSubSettings.FServiceName
+}
+
+func (p *sSettings) GetTCPAddress() string {
+	return p.FSubSettings.FTCPAddress
+}
+
+func (p *sSettings) GetLogger() gopeer_logger.ILogger {
+	return p.FSubSettings.FLogger
 }
