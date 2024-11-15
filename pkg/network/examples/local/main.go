@@ -9,17 +9,29 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
+	hiddenlake "github.com/number571/hidden-lake"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
+	gopeer_network "github.com/number571/go-peer/pkg/network"
 	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 )
 
 const (
-	nodeTCPAddress = "localhost:9999"
+	relayerTCPAddress = "localhost:9999"
+)
+
+var (
+	msgSizeBytes = uint64(8 << 10)
+	msgSettings  = message.NewSettings(&message.SSettings{
+		FWorkSizeBits: 10,
+		FNetworkKey:   "custom_network_key",
+	})
 )
 
 func main() {
@@ -27,13 +39,14 @@ func main() {
 	defer cancel()
 
 	var (
-		node1 = newNode(ctx, "node1", nodeTCPAddress, func() []string { return nil })
-		node2 = newNode(ctx, "node2", "", func() []string { return []string{nodeTCPAddress} })
+		node1   = newNode(ctx, "node1")
+		node2   = newNode(ctx, "node2")
+		relayer = newRelayer()
 	)
 
 	go func() { _ = node1.Run(ctx) }()
 	go func() { _ = node2.Run(ctx) }()
-	go func() { _ = node1.GetOriginNode().GetNetworkNode().Listen(ctx) }()
+	go func() { _ = relayer.Listen(ctx) }()
 
 	_, pubKey := exchangeKeys(node1, node2)
 
@@ -51,22 +64,14 @@ func main() {
 	}
 }
 
-func newNode(
-	ctx context.Context,
-	name, tcpAddr string,
-	connsF func() []string,
-) network.IHiddenLakeNode {
+func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
-			FMessageSettings: message.NewSettings(&message.SSettings{
-				FWorkSizeBits: 10,
-				FNetworkKey:   "custom_network_key",
-			}),
+			FMessageSettings:  msgSettings,
 			FQueuePeriod:      time.Second,
 			FFetchTimeout:     time.Minute,
-			FMessageSizeBytes: (8 << 10),
+			FMessageSizeBytes: msgSizeBytes,
 			FSubSettings: &network.SSubSettings{
-				FTCPAddress:  tcpAddr,
 				FLogger:      getLogger(),
 				FServiceName: name,
 			},
@@ -76,10 +81,37 @@ func newNode(
 			kv, _ := database.NewKVDatabase(name + ".db")
 			return kv
 		}(),
-		connsF,
+		func() []string { return []string{relayerTCPAddress} },
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
 			return response.NewResponse().WithBody(rsp), nil
+		},
+	)
+}
+
+func newRelayer() gopeer_network.INode {
+	timeout := 5 * time.Second
+	return gopeer_network.NewNode(
+		gopeer_network.NewSettings(&gopeer_network.SSettings{
+			FAddress:      relayerTCPAddress,
+			FMaxConnects:  256,
+			FReadTimeout:  timeout,
+			FWriteTimeout: timeout,
+			FConnSettings: conn.NewSettings(&conn.SSettings{
+				FMessageSettings:       msgSettings,
+				FLimitMessageSizeBytes: msgSizeBytes,
+				FWaitReadTimeout:       time.Hour,
+				FDialTimeout:           timeout,
+				FReadTimeout:           timeout,
+				FWriteTimeout:          timeout,
+			}),
+		}),
+		cache.NewLRUCache(2048),
+	).HandleFunc(
+		hiddenlake.GSettings.FProtoMask.FNetwork,
+		func(ctx context.Context, node gopeer_network.INode, _ conn.IConn, msg message.IMessage) error {
+			node.BroadcastMessage(ctx, msg)
+			return nil
 		},
 	)
 }
