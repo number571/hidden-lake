@@ -9,7 +9,7 @@
 ### CHANGES
 
 - `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
-- `go.mod`: update go-peer version: v1.7.3 -> v1.7.4
+- `go.mod` [!]: update go-peer version: v1.7.3 -> v1.7.4
 
 <!-- ... -->
 
