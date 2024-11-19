@@ -13,9 +13,9 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
 	"github.com/number571/hidden-lake/internal/utils/language"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/webui"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 )
@@ -106,7 +106,7 @@ func SettingsPage(
 		}
 
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
 			"settings.html",
 		)

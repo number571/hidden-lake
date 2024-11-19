@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/number571/hidden-lake/internal/applications/messenger/web"
+	"github.com/number571/hidden-lake/internal/webui"
 )
 
 type sEmojis struct {
@@ -20,12 +20,12 @@ var (
 
 func init() {
 	emojiSimple := new(sEmojis)
-	if err := json.Unmarshal(web.GEmojiSimpleJSON, emojiSimple); err != nil {
+	if err := json.Unmarshal(webui.GEmojiSimpleJSON, emojiSimple); err != nil {
 		panic(err)
 	}
 
 	emoji := new(sEmojis)
-	if err := json.Unmarshal(web.GEmojiJSON, emoji); err != nil {
+	if err := json.Unmarshal(webui.GEmojiJSON, emoji); err != nil {
 		panic(err)
 	}
 

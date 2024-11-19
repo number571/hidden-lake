@@ -11,14 +11,15 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/webui"
 )
 
 type sFriends struct {
 	*sTemplate
-	FFriends []string
+	FFriends       []string
+	FFriendBaseURL string
 }
 
 func FriendsPage(
@@ -87,6 +88,7 @@ func FriendsPage(
 		result := new(sFriends)
 		result.sTemplate = getTemplate(pCfg)
 		result.FFriends = make([]string, 0, len(friends))
+		result.FFriendBaseURL = "/friends/storage"
 
 		friendsList := make([]string, 0, len(friends))
 		for aliasName := range friends {
@@ -97,7 +99,7 @@ func FriendsPage(
 		result.FFriends = append(result.FFriends, friendsList...)
 
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
 			"friends.html",
 		)

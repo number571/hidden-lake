@@ -8,9 +8,9 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/applications/messenger/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/webui"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 )
@@ -42,9 +42,9 @@ func FriendsUploadPage(
 		}
 
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
-			"upload.html",
+			"messenger/upload.html",
 		)
 		if err != nil {
 			panic("can't load hmtl files")

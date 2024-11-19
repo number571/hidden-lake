@@ -14,10 +14,10 @@ import (
 	internal_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_client "github.com/number571/hidden-lake/internal/applications/messenger/pkg/client"
-	"github.com/number571/hidden-lake/internal/applications/messenger/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/webui"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 )
@@ -151,9 +151,9 @@ func FriendsChatPage(
 		}
 
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
-			"chat.html",
+			"messenger/chat.html",
 		)
 		if err != nil {
 			panic(err)

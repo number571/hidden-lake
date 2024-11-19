@@ -13,9 +13,9 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_client "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/client"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/webui"
 )
 
 type sStorage struct {
@@ -75,9 +75,9 @@ func StoragePage(
 		}
 
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
-			"storage.html",
+			"filesharer/storage.html",
 		)
 		if err != nil {
 			panic("can't load hmtl files")

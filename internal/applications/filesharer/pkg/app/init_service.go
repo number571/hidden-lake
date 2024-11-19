@@ -10,8 +10,8 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/handler"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/applications/filesharer/web"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	"github.com/number571/hidden-lake/internal/webui"
 )
 
 func (p *sApp) initIncomingServiceHTTP(pCtx context.Context, pHlsClient hls_client.IClient) {
@@ -37,7 +37,7 @@ func (p *sApp) initInterfaceServiceHTTP(pCtx context.Context, pHlsClient hls_cli
 	mux := http.NewServeMux()
 	mux.Handle(hlf_settings.CStaticPath, http.StripPrefix(
 		hlf_settings.CStaticPath,
-		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(web.GetStaticPath()))),
+		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(webui.GetStaticPath()))),
 	)
 
 	cfgWrapper := config.NewWrapper(p.fConfig)

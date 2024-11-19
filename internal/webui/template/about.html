@@ -15,7 +15,7 @@ Pri la projekto
 
 {{define "main"}}
 <div class="my-lg-4 p-3 col-md-10 mx-auto text-center">
-    <h1 class="col-md-10 mb-3 mx-auto h3 text-white">Hidden Lake Filesharer</h1>
+    <h1 class="col-md-10 mb-3 mx-auto h3 text-white">{{.FAppFullName}}</h1>
     <div class="card mb-3 bg-dark">
         <ul class="nav nav-pills bg-secondary mb-3" id="pills-tab" role="tablist">
             <li class="nav-item">
@@ -60,19 +60,11 @@ Pri la projekto
                 aria-labelledby="pills-project-tab">
                 <p class="text-left">
                     {{if (eq .FLanguage 0)}}
-                    The HLF is a file sharing service based on the Anonymous Network Core (HLS) with theoretically
-                    provable anonymity.
-                    A feature of this file sharing service is the anonymity of the fact of transactions (file
-                    downloads), taking into account the existence of a global observer.
+                        {{ index .FDescription 0 }}
                     {{else if (eq .FLanguage 1)}}
-                    HLF - это служба обмена файлами, основанная на ядре анонимной сети (HLS) с теоретически
-                    доказуемой анонимностью.
-                    Особенностью данного файлообменного сервиса является анонимность факта транзакций (скачиваний файла), принимая во внимание существование глобального наблюдателя.
+                        {{ index .FDescription 1 }}
                     {{else if (eq .FLanguage 2)}}
-                    HLF estas dosierpartumado servo bazita sur La Anonima Reto Kerno (hls) kun teorie pruvebla
-                    anonimeco.
-                    Karakterizaĵo de ĉi tiu dosierpartuma servo estas la anonimeco de la fakto de transakcioj (dosieraj
-                    elŝutoj), konsiderante la ekziston de tutmonda observanto.
+                        {{ index .FDescription 2 }}
                     {{end}}
                 </p>
                 <p class="text-left">

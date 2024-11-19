@@ -7,7 +7,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/applications/messenger/web"
+	"github.com/number571/hidden-lake/internal/webui"
 
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
@@ -24,7 +24,7 @@ func ErrorPage(pLogger logger.ILogger, pCfg config.IConfig, pTitle, pMessage str
 
 		pW.WriteHeader(http.StatusNotFound)
 		t, err := template.ParseFS(
-			web.GetTemplatePath(),
+			webui.GetTemplatePath(),
 			"index.html",
 			"error.html",
 		)
