@@ -5,6 +5,7 @@ import (
 )
 
 func TestPath(_ *testing.T) {
-	_ = GetTemplatePath()
 	_ = GetStaticPath()
+	_ = GetTemplatePath()
+	_ = MustParseTemplate("index.html")
 }

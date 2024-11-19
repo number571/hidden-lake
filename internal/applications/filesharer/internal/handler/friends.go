@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 	"sort"
 	"strings"
@@ -98,16 +97,7 @@ func FriendsPage(
 
 		result.FFriends = append(result.FFriends, friendsList...)
 
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"friends.html",
-		)
-		if err != nil {
-			panic("can't load hmtl files")
-		}
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = t.Execute(pW, result)
+		_ = webui.MustParseTemplate("index.html", "friends.html").Execute(pW, result)
 	}
 }

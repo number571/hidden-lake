@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"crypto/sha512"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -74,17 +73,8 @@ func StoragePage(
 			FFilesList: filesList,
 		}
 
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"filesharer/storage.html",
-		)
-		if err != nil {
-			panic("can't load hmtl files")
-		}
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = t.Execute(pW, result)
+		_ = webui.MustParseTemplate("index.html", "filesharer/storage.html").Execute(pW, result)
 	}
 }
 

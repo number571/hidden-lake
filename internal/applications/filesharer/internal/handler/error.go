@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"html/template"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -23,17 +22,9 @@ func ErrorPage(pLogger logger.ILogger, pCfg config.IConfig, pTitle, pMessage str
 		logBuilder := http_logger.NewLogBuilder(hlf_settings.CServiceName, pR)
 
 		pW.WriteHeader(http.StatusNotFound)
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"error.html",
-		)
-		if err != nil {
-			panic("can't load hmtl files")
-		}
 
 		pLogger.PushWarn(logBuilder.WithMessage(pTitle))
-		_ = t.Execute(pW, &sError{
+		_ = webui.MustParseTemplate("index.html", "error.html").Execute(pW, &sError{
 			sTemplate: getTemplate(pCfg),
 			FTitle:    pTitle,
 			FMessage:  pMessage,

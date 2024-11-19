@@ -2,6 +2,7 @@ package webui
 
 import (
 	"embed"
+	"html/template"
 	"io/fs"
 )
 
@@ -18,6 +19,14 @@ var (
 	//go:embed template
 	gEmbededTemplate embed.FS
 )
+
+func MustParseTemplate(pPatters ...string) *template.Template {
+	t, err := template.ParseFS(GetTemplatePath(), pPatters...)
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
 
 func GetStaticPath() fs.FS {
 	fsys, err := fs.Sub(gEmbededStatic, "static")

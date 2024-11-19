@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -41,15 +40,6 @@ func FriendsUploadPage(
 			return
 		}
 
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"messenger/upload.html",
-		)
-		if err != nil {
-			panic("can't load hmtl files")
-		}
-
 		msgLimit, err := utils.GetMessageLimit(pCtx, pHlsClient)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_message_size", "get message size (limit)")(pW, pR)
@@ -63,6 +53,6 @@ func FriendsUploadPage(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = t.Execute(pW, res)
+		_ = webui.MustParseTemplate("index.html", "messenger/upload.html").Execute(pW, res)
 	}
 }

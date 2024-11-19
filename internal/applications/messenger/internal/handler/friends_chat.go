@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"html/template"
 	"io"
 	"net/http"
 	"strings"
@@ -150,17 +149,8 @@ func FriendsChatPage(
 			}(),
 		}
 
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"messenger/chat.html",
-		)
-		if err != nil {
-			panic(err)
-		}
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = t.Execute(pW, res)
+		_ = webui.MustParseTemplate("index.html", "messenger/chat.html").Execute(pW, res)
 	}
 }
 

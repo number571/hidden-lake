@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
@@ -105,17 +104,8 @@ func SettingsPage(
 			return
 		}
 
-		t, err := template.ParseFS(
-			webui.GetTemplatePath(),
-			"index.html",
-			"settings.html",
-		)
-		if err != nil {
-			panic("can't load hmtl files")
-		}
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = t.Execute(pW, result)
+		_ = webui.MustParseTemplate("index.html", "settings.html").Execute(pW, result)
 	}
 }
 
