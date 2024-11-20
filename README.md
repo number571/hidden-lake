@@ -174,4 +174,4 @@ After such a launch, the hls.yml file will be created or overwritten (if it exis
 
 Licensed under the MIT License. See [LICENSE](LICENSE) for the full license text.
 
-**[⬆ back to top](#releases)**
+**[⬆ back to top](#theoretically-provable-anonymous-network)**
