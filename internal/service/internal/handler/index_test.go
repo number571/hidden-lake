@@ -49,12 +49,12 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if err := client.SendRequest(context.Background(), "", request.NewRequest()); err == nil {
+	if err := client.SendRequest(context.Background(), "", request.NewRequestBuilder().Build()); err == nil {
 		t.Error("success send request with unknown host")
 		return
 	}
 
-	if _, err := client.FetchRequest(context.Background(), "", request.NewRequest()); err == nil {
+	if _, err := client.FetchRequest(context.Background(), "", request.NewRequestBuilder().Build()); err == nil {
 		t.Error("success fetch request with unknown host")
 		return
 	}

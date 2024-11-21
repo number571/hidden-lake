@@ -279,14 +279,15 @@ func testSend(t *testing.T, client hls_client.IClient) {
 	err := client.SendRequest(
 		context.Background(),
 		"test_recvr",
-		request.NewRequest().
+		request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(tcServiceAddressInHLS).
 			WithPath("/echo").
 			WithHead(map[string]string{
 				"Content-Type": "application/json",
 			}).
-			WithBody([]byte(`{"message": "hello, world!"}`)),
+			WithBody([]byte(`{"message": "hello, world!"}`)).
+			Build(),
 	)
 	if err != nil {
 		t.Error(err)
@@ -298,14 +299,15 @@ func testFetch(t *testing.T, client hls_client.IClient) {
 	res, err := client.FetchRequest(
 		context.Background(),
 		"test_recvr",
-		request.NewRequest().
+		request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(tcServiceAddressInHLS).
 			WithPath("/echo").
 			WithHead(map[string]string{
 				"Content-Type": "application/json",
 			}).
-			WithBody([]byte(`{"message": "hello, world!"}`)),
+			WithBody([]byte(`{"message": "hello, world!"}`)).
+			Build(),
 	)
 	if err != nil {
 		t.Error(err)

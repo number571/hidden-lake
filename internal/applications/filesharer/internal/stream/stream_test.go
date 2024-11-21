@@ -123,7 +123,7 @@ func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) err
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	resp := response.NewResponse().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
+	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
 	p.fCounter++
-	return resp, nil
+	return resp.Build(), nil
 }

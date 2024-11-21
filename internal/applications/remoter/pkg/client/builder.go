@@ -23,12 +23,13 @@ func NewBuilder(pPassword string) IBuilder {
 }
 
 func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
-	return hls_request.NewRequest().
+	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
 		WithHost(hlr_settings.CServiceFullName).
 		WithPath(hlr_settings.CExecPath).
 		WithHead(map[string]string{
 			hlr_settings.CHeaderPassword: p.fPassword,
 		}).
-		WithBody([]byte(strings.Join(pCmd, hlr_settings.CExecSeparator)))
+		WithBody([]byte(strings.Join(pCmd, hlr_settings.CExecSeparator))).
+		Build()
 }

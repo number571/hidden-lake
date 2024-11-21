@@ -2,14 +2,18 @@ package request
 
 import "github.com/number571/go-peer/pkg/types"
 
+type IRequestBuilder interface {
+	Build() IRequest
+
+	WithMethod(string) IRequestBuilder
+	WithHost(string) IRequestBuilder
+	WithPath(string) IRequestBuilder
+	WithHead(map[string]string) IRequestBuilder
+	WithBody([]byte) IRequestBuilder
+}
+
 type IRequest interface {
 	types.IConverter
-
-	WithMethod(string) IRequest
-	WithHost(string) IRequest
-	WithPath(string) IRequest
-	WithHead(map[string]string) IRequest
-	WithBody([]byte) IRequest
 
 	GetMethod() string
 	GetHost() string

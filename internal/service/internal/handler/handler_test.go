@@ -416,7 +416,7 @@ func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayl
 	if !p.fLoadResponseOK {
 		return []byte{123}, nil
 	}
-	return response.NewResponse().WithCode(200).ToBytes(), nil
+	return response.NewResponseBuilder().WithCode(200).Build().ToBytes(), nil
 }
 
 var (

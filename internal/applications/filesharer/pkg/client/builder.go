@@ -20,15 +20,17 @@ func NewBuilder() IBuilder {
 }
 
 func (p *sBuilder) GetListFiles(pPage uint64) hls_request.IRequest {
-	return hls_request.NewRequest().
+	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hlf_settings.CServiceFullName).
-		WithPath(fmt.Sprintf("%s?page=%d", hlf_settings.CListPath, pPage))
+		WithPath(fmt.Sprintf("%s?page=%d", hlf_settings.CListPath, pPage)).
+		Build()
 }
 
 func (p *sBuilder) LoadFileChunk(pName string, pChunk uint64) hls_request.IRequest {
-	return hls_request.NewRequest().
+	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hlf_settings.CServiceFullName).
-		WithPath(fmt.Sprintf("%s?name=%s&chunk=%d", hlf_settings.CLoadPath, pName, pChunk))
+		WithPath(fmt.Sprintf("%s?name=%s&chunk=%d", hlf_settings.CLoadPath, pName, pChunk)).
+		Build()
 }

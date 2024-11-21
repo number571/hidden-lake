@@ -54,7 +54,7 @@ func main() {
 		rsp, err := node1.FetchRequest(
 			ctx,
 			pubKey,
-			request.NewRequest().WithBody([]byte("hello, world!")),
+			request.NewRequestBuilder().WithBody([]byte("hello, world!")).Build(),
 		)
 		if err != nil {
 			fmt.Printf("error:(%s)\n", err.Error())
@@ -84,7 +84,7 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 		func() []string { return []string{relayerTCPAddress} },
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
-			return response.NewResponse().WithBody(rsp), nil
+			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
 		},
 	)
 }

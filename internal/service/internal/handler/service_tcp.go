@@ -69,10 +69,11 @@ func HandleServiceTCP(pCfg config.IConfig, pLogger logger.ILogger) handler.IHand
 		case "", hls_settings.CHeaderResponseModeON:
 			// send response to the client
 			pLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoResponseFromService))
-			return response.NewResponse().
+			return response.NewResponseBuilder().
 					WithCode(resp.StatusCode).
 					WithHead(getResponseHead(resp)).
-					WithBody(getResponseBody(resp)),
+					WithBody(getResponseBody(resp)).
+					Build(),
 				nil
 		case hls_settings.CHeaderResponseModeOFF:
 			// response is not required by the client side

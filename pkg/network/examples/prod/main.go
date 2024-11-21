@@ -39,7 +39,7 @@ func main() {
 		rsp, err := node1.FetchRequest(
 			ctx,
 			pubKey,
-			request.NewRequest().WithBody([]byte("hello, world!")),
+			request.NewRequestBuilder().WithBody([]byte("hello, world!")).Build(),
 		)
 		if err != nil {
 			fmt.Printf("error:(%s)\n", err.Error())
@@ -50,6 +50,11 @@ func main() {
 }
 
 func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
+	hostPorts := hiddenlake.GNetworks[networkKey].FConnections
+	connects := make([]string, 0, len(hostPorts))
+	for _, c := range hostPorts {
+		connects = append(connects, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+	}
 	return network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(
 			networkKey,
@@ -66,17 +71,10 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 			}
 			return kv
 		}(),
-		func() []string {
-			network := hiddenlake.GNetworks[networkKey]
-			conns := make([]string, 0, len(network.FConnections))
-			for _, c := range network.FConnections {
-				conns = append(conns, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
-			}
-			return conns
-		},
+		func() []string { return connects },
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
-			return response.NewResponse().WithBody(rsp), nil
+			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
 		},
 	)
 }

@@ -12,13 +12,14 @@ import (
 
 var (
 	gRespSize = uint64(len(
-		hls_response.NewResponse().
+		hls_response.NewResponseBuilder().
 			WithCode(200).
 			WithHead(map[string]string{
 				"Content-Type":                   api.CApplicationOctetStream,
 				hls_settings.CHeaderResponseMode: hls_settings.CHeaderResponseModeON,
 			}).
 			WithBody([]byte{}).
+			Build().
 			ToBytes(),
 	))
 )

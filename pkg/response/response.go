@@ -21,7 +21,7 @@ type SResponseBlock struct {
 	FHead map[string]string `json:"head"`
 }
 
-func NewResponse() IResponse {
+func NewResponseBuilder() IResponseBuilder {
 	return &SResponse{
 		SResponseBlock: SResponseBlock{},
 	}
@@ -49,6 +49,28 @@ func LoadResponse(pData interface{}) (IResponse, error) {
 	return response, nil
 }
 
+func (p *SResponse) Build() IResponse {
+	return p
+}
+
+func (p *SResponse) WithCode(pCode int) IResponseBuilder {
+	p.FCode = pCode
+	return p
+}
+
+func (p *SResponse) WithHead(pHead map[string]string) IResponseBuilder {
+	p.FHead = make(map[string]string, len(pHead))
+	for k, v := range pHead {
+		p.FHead[k] = v
+	}
+	return p
+}
+
+func (p *SResponse) WithBody(pBody []byte) IResponseBuilder {
+	p.FBody = pBody
+	return p
+}
+
 func (p *SResponse) ToBytes() []byte {
 	return joiner.NewBytesJoiner32([][]byte{
 		encoding.SerializeJSON(p.SResponseBlock),
@@ -58,24 +80,6 @@ func (p *SResponse) ToBytes() []byte {
 
 func (p *SResponse) ToString() string {
 	return string(encoding.SerializeJSON(p))
-}
-
-func (p *SResponse) WithCode(pCode int) IResponse {
-	p.FCode = pCode
-	return p
-}
-
-func (p *SResponse) WithHead(pHead map[string]string) IResponse {
-	p.FHead = make(map[string]string, len(pHead))
-	for k, v := range pHead {
-		p.FHead[k] = v
-	}
-	return p
-}
-
-func (p *SResponse) WithBody(pBody []byte) IResponse {
-	p.FBody = pBody
-	return p
 }
 
 func (p *SResponse) GetCode() int {

@@ -66,12 +66,13 @@ func TestInvalidRequest(t *testing.T) {
 func TestRequest(t *testing.T) {
 	t.Parallel()
 
-	request := NewRequest().
+	request := NewRequestBuilder().
 		WithMethod(tcMethod).
 		WithHost(tcHost).
 		WithPath(tcPath).
 		WithHead(tgHead).
-		WithBody(tgBody)
+		WithBody(tgBody).
+		Build()
 
 	if request.GetHost() != tcHost {
 		t.Error("host is not equals")
@@ -109,12 +110,14 @@ func TestRequest(t *testing.T) {
 func TestLoadRequest(t *testing.T) {
 	t.Parallel()
 
-	brequest := NewRequest().
+	brequest := NewRequestBuilder().
 		WithMethod(tcMethod).
 		WithHost(tcHost).
 		WithPath(tcPath).
 		WithHead(tgHead).
-		WithBody(tgBody).ToBytes()
+		WithBody(tgBody).
+		Build().
+		ToBytes()
 
 	request1, err := LoadRequest(brequest)
 	if err != nil {

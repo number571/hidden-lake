@@ -78,5 +78,5 @@ func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) err
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return response.NewResponse().WithCode(200), nil
+	return response.NewResponseBuilder().WithCode(200).Build(), nil
 }

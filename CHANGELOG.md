@@ -11,6 +11,7 @@
 - `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
 - `go.mod` [!]: update go-peer version: v1.7.3 -> v1.7.4
 - `cmd/hlm,cmd/hlf`: move webui static, template paths to internal/webui
+- `pkg/request,pkg/response`: update interfaces: IRequestBuilder, IResponseBuilder
 
 <!-- ... -->
 

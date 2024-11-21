@@ -23,7 +23,7 @@ type SRequestBlock struct {
 	FHead   map[string]string `json:"head"`
 }
 
-func NewRequest() IRequest {
+func NewRequestBuilder() IRequestBuilder {
 	return &SRequest{
 		SRequestBlock: SRequestBlock{},
 	}
@@ -51,6 +51,38 @@ func LoadRequest(pData interface{}) (IRequest, error) {
 	return request, nil
 }
 
+func (p *SRequest) Build() IRequest {
+	return p
+}
+
+func (p *SRequest) WithMethod(pMethod string) IRequestBuilder {
+	p.FMethod = pMethod
+	return p
+}
+
+func (p *SRequest) WithHost(pHost string) IRequestBuilder {
+	p.FHost = pHost
+	return p
+}
+
+func (p *SRequest) WithPath(pPath string) IRequestBuilder {
+	p.FPath = pPath
+	return p
+}
+
+func (p *SRequest) WithHead(pHead map[string]string) IRequestBuilder {
+	p.FHead = make(map[string]string, len(pHead))
+	for k, v := range pHead {
+		p.FHead[k] = v
+	}
+	return p
+}
+
+func (p *SRequest) WithBody(pBody []byte) IRequestBuilder {
+	p.FBody = pBody
+	return p
+}
+
 func (p *SRequest) ToBytes() []byte {
 	return joiner.NewBytesJoiner32([][]byte{
 		encoding.SerializeJSON(p.SRequestBlock),
@@ -60,34 +92,6 @@ func (p *SRequest) ToBytes() []byte {
 
 func (p *SRequest) ToString() string {
 	return string(encoding.SerializeJSON(p))
-}
-
-func (p *SRequest) WithMethod(pMethod string) IRequest {
-	p.FMethod = pMethod
-	return p
-}
-
-func (p *SRequest) WithHost(pHost string) IRequest {
-	p.FHost = pHost
-	return p
-}
-
-func (p *SRequest) WithPath(pPath string) IRequest {
-	p.FPath = pPath
-	return p
-}
-
-func (p *SRequest) WithHead(pHead map[string]string) IRequest {
-	p.FHead = make(map[string]string, len(pHead))
-	for k, v := range pHead {
-		p.FHead[k] = v
-	}
-	return p
-}
-
-func (p *SRequest) WithBody(pBody []byte) IRequest {
-	p.FBody = pBody
-	return p
 }
 
 func (p *SRequest) GetHost() string {

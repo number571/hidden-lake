@@ -65,30 +65,33 @@ func TestHandleServiceTCP(t *testing.T) {
 	pubKey := tgPrivKey2.GetPubKey()
 	handler := HandleServiceTCP(cfg, logger)
 
-	reqx := request.NewRequest().
+	reqx := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost("hidden-some-host-not-found").
-		WithPath("/rsp-mode-on")
+		WithPath("/rsp-mode-on").
+		Build()
 
 	if _, err := handler(ctx, pubKey, reqx); err == nil {
 		t.Error("success handle request with invalid service")
 		return
 	}
 
-	reqy := request.NewRequest().
+	reqy := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost("hidden-some-host-failed").
-		WithPath("/rsp-mode-on")
+		WithPath("/rsp-mode-on").
+		Build()
 
 	if _, err := handler(ctx, pubKey, reqy); err == nil {
 		t.Error("success handle request with invalid do request")
 		return
 	}
 
-	req := request.NewRequest().
+	req := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost("hidden-some-host-ok").
-		WithPath("/rsp-mode-on")
+		WithPath("/rsp-mode-on").
+		Build()
 
 	rsp, err := handler(ctx, pubKey, req)
 	if err != nil {
@@ -101,10 +104,11 @@ func TestHandleServiceTCP(t *testing.T) {
 		return
 	}
 
-	req2 := request.NewRequest().
+	req2 := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost("hidden-some-host-ok").
-		WithPath("/rsp-mode-off")
+		WithPath("/rsp-mode-off").
+		Build()
 
 	rsp2Bytes, err := handler(ctx, pubKey, req2)
 	if err != nil {
@@ -116,10 +120,11 @@ func TestHandleServiceTCP(t *testing.T) {
 		return
 	}
 
-	req3 := request.NewRequest().
+	req3 := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost("hidden-some-host-ok").
-		WithPath("/rsp-mode-unknown")
+		WithPath("/rsp-mode-unknown").
+		Build()
 
 	if _, err := handler(ctx, pubKey, req3); err == nil {
 		t.Error("success response with unknown response mode")
@@ -235,7 +240,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 
 	pld := payload.NewPayload32(
 		hiddenlake.GSettings.FProtoMask.FService,
-		request.NewRequest().
+		request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(tcServiceAddressInHLS).
 			WithPath("/echo").
@@ -243,6 +248,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 				"Content-Type": "application/json",
 			}).
 			WithBody([]byte(`{"message": "hello, world!"}`)).
+			Build().
 			ToBytes(),
 	)
 

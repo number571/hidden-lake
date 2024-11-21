@@ -62,10 +62,11 @@ func TestInvalidResponse(t *testing.T) {
 func TestResponse(t *testing.T) {
 	t.Parallel()
 
-	resp := NewResponse().
+	resp := NewResponseBuilder().
 		WithCode(200).
 		WithHead(tgHead).
-		WithBody([]byte(tcBody))
+		WithBody([]byte(tcBody)).
+		Build()
 
 	resp1, err := LoadResponse(resp.ToBytes())
 	if err != nil {

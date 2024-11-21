@@ -19,16 +19,18 @@ func NewBuilder() IBuilder {
 }
 
 func (p *sBuilder) PingMessage() hls_request.IRequest {
-	return hls_request.NewRequest().
+	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hlm_settings.CServiceFullName).
-		WithPath(hlm_settings.CPingPath)
+		WithPath(hlm_settings.CPingPath).
+		Build()
 }
 
 func (p *sBuilder) PushMessage(pBody []byte) hls_request.IRequest {
-	return hls_request.NewRequest().
+	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
 		WithHost(hlm_settings.CServiceFullName).
 		WithPath(hlm_settings.CPushPath).
-		WithBody(pBody)
+		WithBody(pBody).
+		Build()
 }
