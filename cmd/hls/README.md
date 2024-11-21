@@ -196,10 +196,11 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 ## Cryptographic algorithms and functions
 
 1. AES-256-CFB (data encryption)
-2. ML-KEM-768 (key encryption)
+2. ML-KEM-768 (key encapsulation)
 3. ML-DSA-65 (hash signing)
 4. SHA-384, HMAC-SHA-384 (data hashing)
-5. PoW-22 (hash proof)
+5. PBKDF2(SHA-512) (password KDF)
+6. PoW(SHA-384) (proof of work)
 
 ## Config structure
 
