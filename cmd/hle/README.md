@@ -95,20 +95,6 @@ address:
   http: 127.0.0.1:9551
 ```
 
-## Response structure from HLE API
-
-```
-"result" is string
-"return" is int; 1 = success
-```
-
-```json
-{
-	"result":"hidden-lake-encryptor",
-	"return":1
-}
-```
-
 ## HLE API
 
 ```

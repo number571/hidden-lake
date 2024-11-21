@@ -118,20 +118,6 @@ consumers:
   - localhost:8082/adapter
 ```
 
-## Response structure from HLT API
-
-```
-"result" is string
-"return" is int; 1 = success
-```
-
-```json
-{
-	"result":"hidden-lake-traffic",
-	"return":1
-}
-```
-
 ## HLT API
 
 ```

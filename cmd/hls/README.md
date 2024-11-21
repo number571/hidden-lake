@@ -258,20 +258,6 @@ and put result to "hex_data" HLS API
 }
 ```
 
-## Response structure from HLS API
-
-```
-"result" is string
-"return" is int; 1 = success
-```
-
-```json
-{
-	"result":"hidden-lake-service",
-	"return":1
-}
-```
-
 ## HLS API
 
 ```

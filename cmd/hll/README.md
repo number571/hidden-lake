@@ -110,20 +110,6 @@ consumers:
   - localhost:7582
 ```
 
-## Response structure from HLL API
-
-```
-"result" is string
-"return" is int; 1 = success
-```
-
-```json
-{
-	"result":"hidden-lake-loader",
-	"return":1
-}
-```
-
 ## HLL API
 
 ```
