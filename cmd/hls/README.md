@@ -239,17 +239,10 @@ friends:
 
 ## Request structure in HLS for internal services
 
-```
-Need encode this json to hex format
-and put result to "hex_data" HLS API
-
-"body" is base64 string
-```
-
 ```json
 {
 	"method":"GET",
-	"host":"hidden-default-service",
+	"host":"hidden-some-service",
 	"path":"/",
 	"head":{
 		"Accept":"application/json"
