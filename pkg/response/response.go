@@ -13,12 +13,12 @@ var (
 
 type SResponse struct {
 	SResponseBlock
-	FBody []byte `json:"body"`
+	FBody []byte `json:"body,omitempty"`
 }
 
 type SResponseBlock struct {
-	FCode int               `json:"code"`
-	FHead map[string]string `json:"head"`
+	FCode int               `json:"code,omitempty"`
+	FHead map[string]string `json:"head,omitempty"`
 }
 
 func NewResponseBuilder() IResponseBuilder {

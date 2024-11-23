@@ -13,14 +13,14 @@ var (
 
 type SRequest struct {
 	SRequestBlock
-	FBody []byte `json:"body"`
+	FBody []byte `json:"body,omitempty"`
 }
 
 type SRequestBlock struct {
-	FMethod string            `json:"method"`
-	FHost   string            `json:"host"`
-	FPath   string            `json:"path"`
-	FHead   map[string]string `json:"head"`
+	FMethod string            `json:"method,omitempty"`
+	FHost   string            `json:"host,omitempty"`
+	FPath   string            `json:"path,omitempty"`
+	FHead   map[string]string `json:"head,omitempty"`
 }
 
 func NewRequestBuilder() IRequestBuilder {
