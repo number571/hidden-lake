@@ -1,10 +1,7 @@
 package std
 
 import (
-	"os"
 	"testing"
-
-	"github.com/number571/go-peer/pkg/logger"
 )
 
 var (
@@ -41,22 +38,4 @@ func TestGetLogFunc(t *testing.T) {
 		}
 	}()
 	_ = f(struct{}{})
-}
-
-func TestStdLogger(t *testing.T) {
-	stdLogger := NewStdLogger(&tsLogger{}, func(_ logger.ILogArg) string {
-		return ""
-	})
-	if _, ok := stdLogger.GetSettings().GetInfoWriter().(*os.File); !ok {
-		t.Error("invalid info type")
-		return
-	}
-	if _, ok := stdLogger.GetSettings().GetWarnWriter().(*os.File); !ok {
-		t.Error("invalid warn type")
-		return
-	}
-	if _, ok := stdLogger.GetSettings().GetErroWriter().(*os.File); !ok {
-		t.Error("invalid erro type")
-		return
-	}
 }

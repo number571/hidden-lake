@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/message"
@@ -129,20 +128,15 @@ func getLogger() logger.ILogger {
 			FErro: os.Stderr,
 		}),
 		func(ia logger.ILogArg) string {
-			logGetterFactory, ok := ia.(anon_logger.ILogGetterFactory)
+			logGetter, ok := ia.(anon_logger.ILogGetter)
 			if !ok {
 				panic("got invalid log arg")
-			}
-			logGetter := logGetterFactory.Get()
-			hash := make([]byte, hashing.CHasherSize)
-			if x := logGetter.GetHash(); x != nil {
-				copy(hash, x)
 			}
 			return fmt.Sprintf(
 				"name=%s code=%02x hash=%X proof=%08d bytes=%d",
 				logGetter.GetService(),
 				logGetter.GetType(),
-				hash[:16],
+				logGetter.GetHash()[:16],
 				logGetter.GetProof(),
 				logGetter.GetSize(),
 			)
