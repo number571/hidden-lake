@@ -5,7 +5,7 @@ import (
 
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	gopeer_message "github.com/number571/go-peer/pkg/network/message"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 )
 
 var (
@@ -42,7 +42,7 @@ func NewSettings(pSett *SSettings) ISettings {
 }
 
 func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
-	network, ok := hiddenlake.GNetworks[pNetworkKey]
+	network, ok := build.GNetworks[pNetworkKey]
 	if !ok {
 		panic("network not found")
 	}
@@ -59,7 +59,7 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 }
 
 func (p *sSettings) useDefault() *sSettings {
-	defaultNetwork := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes

@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -108,7 +108,7 @@ func newRelayer() gopeer_network.INode {
 		}),
 		cache.NewLRUCache(2048),
 	).HandleFunc(
-		hiddenlake.GSettings.FProtoMask.FNetwork,
+		build.GSettings.FProtoMask.FNetwork,
 		func(ctx context.Context, node gopeer_network.INode, _ conn.IConn, msg message.IMessage) error {
 			node.BroadcastMessage(ctx, msg)
 			return nil

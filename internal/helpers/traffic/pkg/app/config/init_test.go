@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 )
 
@@ -27,7 +27,7 @@ func TestRebuild(t *testing.T) {
 	}
 
 	network := ""
-	for k := range hiddenlake.GNetworks {
+	for k := range build.GNetworks {
 		network = k
 		break
 	}

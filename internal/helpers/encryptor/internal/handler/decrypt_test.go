@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -47,7 +47,7 @@ func TestHandleMessageDecryptAPI(t *testing.T) {
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{}),
 		}),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, encMsg),
+		payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, encMsg),
 	).ToString()
 
 	mapKeys := asymmetric.NewMapPubKeys()
@@ -92,7 +92,7 @@ func TestHandleMessageDecryptAPI(t *testing.T) {
 		net_message.NewConstructSettings(&net_message.SConstructSettings{
 			FSettings: net_message.NewSettings(&net_message.SSettings{}),
 		}),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, encMsgNotFayload),
+		payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, encMsgNotFayload),
 	).ToString()
 	if err := decryptAPIRequestOK(handler, netMsgNotPayload); err == nil {
 		t.Error("request success with invalid decrypted payload")

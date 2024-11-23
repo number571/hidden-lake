@@ -14,7 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 )
 
@@ -34,9 +34,9 @@ func main() {
 	privKey := asymmetric.LoadPrivKey(string(readPrivKey))
 
 	i := 0
-	for key, network := range hiddenlake.GNetworks {
+	for key, network := range build.GNetworks {
 		i++
-		if key == hiddenlake.CDefaultNetwork {
+		if key == build.CDefaultNetwork {
 			continue
 		}
 
@@ -69,7 +69,7 @@ func main() {
 
 		netMsg := net_message.NewMessage(
 			netSett,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
+			payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, msg),
 		)
 
 		start1 := time.Now()

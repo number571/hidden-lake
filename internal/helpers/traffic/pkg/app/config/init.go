@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hlt_settings "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/conn"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -36,7 +36,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	cfg := pCfg.(*SConfig)
-	network, ok := hiddenlake.GNetworks[pUseNetwork]
+	network, ok := build.GNetworks[pUseNetwork]
 	if !ok {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
@@ -66,7 +66,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func initConfig() *SConfig {
-	defaultNetwork := hiddenlake.GNetworks[hiddenlake.CDefaultNetwork]
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,

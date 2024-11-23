@@ -4,14 +4,14 @@ import (
 	"strconv"
 	"strings"
 
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 )
 
 type IAddress interface {
 	GetTCP() string
 }
 
-func IsAmI(pAddr IAddress, conn hiddenlake.SConnection) bool {
+func IsAmI(pAddr IAddress, conn build.SConnection) bool {
 	splited := strings.Split(pAddr.GetTCP(), ":")
 	if len(splited) < 2 {
 		return false

@@ -9,7 +9,7 @@ import (
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hle_client "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 )
 
@@ -43,7 +43,7 @@ func main() {
 		netMsg, err := hleClient.EncryptMessage(
 			ctx,
 			"IAM",
-			payload.NewPayload64(uint64(hiddenlake.GSettings.FProtoMask.FService), []byte(os.Args[2])),
+			payload.NewPayload64(uint64(build.GSettings.FProtoMask.FService), []byte(os.Args[2])),
 		)
 		if err != nil {
 			panic(err)
@@ -61,7 +61,7 @@ func main() {
 			panic(err)
 		}
 
-		if data.GetHead() != uint64(hiddenlake.GSettings.FProtoMask.FService) {
+		if data.GetHead() != uint64(build.GSettings.FProtoMask.FService) {
 			panic("service mask error")
 		}
 

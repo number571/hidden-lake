@@ -1,5 +1,5 @@
 // nolint: err113
-package hiddenlake
+package build
 
 import (
 	_ "embed"
@@ -15,15 +15,15 @@ const (
 )
 
 var (
-	//go:embed build/networks.yml
+	//go:embed networks.yml
 	gNetworks []byte
 	GNetworks map[string]SNetwork
 
-	//go:embed build/settings.yml
+	//go:embed settings.yml
 	gSettings []byte
 	GSettings SSettings
 
-	//go:embed build/version.yml
+	//go:embed version.yml
 	gVersion []byte
 	GVersion string
 )

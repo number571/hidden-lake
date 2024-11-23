@@ -12,7 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 )
 
@@ -74,7 +74,7 @@ func main() {
 
 		netMsg := net_message.NewMessage(
 			netSett,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
+			payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, msg),
 		)
 
 		if err := hltClient.PutMessage(ctx, netMsg); err != nil {
@@ -92,7 +92,7 @@ func main() {
 			panic(err)
 		}
 
-		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
+		if netMsg.GetPayload().GetHead() != build.GSettings.FProtoMask.FNetwork {
 			panic("net.payload.head is invalid")
 		}
 

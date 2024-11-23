@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
@@ -18,7 +18,7 @@ func main() {
 	args := os.Args[1:]
 
 	if flag.GetBoolFlagValue(args, []string{"v", "version"}) {
-		fmt.Println(hiddenlake.GVersion)
+		fmt.Println(build.GVersion)
 		return
 	}
 

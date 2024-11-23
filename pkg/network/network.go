@@ -16,7 +16,7 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -50,19 +50,19 @@ func NewHiddenLakeNode(
 		network.NewNode(
 			network.NewSettings(&network.SSettings{
 				FAddress:      pSettings.GetTCPAddress(),
-				FMaxConnects:  hiddenlake.GSettings.FNetworkManager.FConnectsLimiter,
-				FReadTimeout:  hiddenlake.GSettings.GetReadTimeout(),
-				FWriteTimeout: hiddenlake.GSettings.GetWriteTimeout(),
+				FMaxConnects:  build.GSettings.FNetworkManager.FConnectsLimiter,
+				FReadTimeout:  build.GSettings.GetReadTimeout(),
+				FWriteTimeout: build.GSettings.GetWriteTimeout(),
 				FConnSettings: conn.NewSettings(&conn.SSettings{
 					FMessageSettings:       pSettings.GetMessageSettings(),
 					FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
-					FWaitReadTimeout:       hiddenlake.GSettings.GetWaitTimeout(),
-					FDialTimeout:           hiddenlake.GSettings.GetDialTimeout(),
-					FReadTimeout:           hiddenlake.GSettings.GetReadTimeout(),
-					FWriteTimeout:          hiddenlake.GSettings.GetWriteTimeout(),
+					FWaitReadTimeout:       build.GSettings.GetWaitTimeout(),
+					FDialTimeout:           build.GSettings.GetDialTimeout(),
+					FReadTimeout:           build.GSettings.GetReadTimeout(),
+					FWriteTimeout:          build.GSettings.GetWriteTimeout(),
 				}),
 			}),
-			cache.NewLRUCache(hiddenlake.GSettings.FNetworkManager.FCacheHashesCap),
+			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
 		),
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
@@ -70,11 +70,11 @@ func NewHiddenLakeNode(
 					FSettings: pSettings.GetMessageSettings(),
 					FParallel: pSettings.GetParallel(),
 				}),
-				FNetworkMask: hiddenlake.GSettings.FProtoMask.FNetwork,
+				FNetworkMask: build.GSettings.FProtoMask.FNetwork,
 				FQueuePeriod: pSettings.GetQueuePeriod(),
 				FPoolCapacity: [2]uint64{
-					hiddenlake.GSettings.FQueueCapacity.FMain,
-					hiddenlake.GSettings.FQueueCapacity.FRand,
+					build.GSettings.FQueueCapacity.FMain,
+					build.GSettings.FQueueCapacity.FRand,
 				},
 			}),
 			func() client.IClient {
@@ -97,12 +97,12 @@ func NewRawHiddenLakeNode(
 ) IHiddenLakeNode {
 	return &sHiddenLakeNode{
 		fAnonNode: pOriginNode.HandleFunc(
-			hiddenlake.GSettings.FProtoMask.FService,
+			build.GSettings.FProtoMask.FService,
 			handler.RequestHandler(pHandlerF),
 		),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{
-				FDuration:    hiddenlake.GSettings.GetKeeperPeriod(),
+				FDuration:    build.GSettings.GetKeeperPeriod(),
 				FConnections: pConnsGetter,
 			}),
 			pOriginNode.GetNetworkNode(),
@@ -153,7 +153,7 @@ func (p *sHiddenLakeNode) SendRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
-			uint64(hiddenlake.GSettings.FProtoMask.FService),
+			uint64(build.GSettings.FProtoMask.FService),
 			pRequest.ToBytes(),
 		),
 	)
@@ -168,7 +168,7 @@ func (p *sHiddenLakeNode) FetchRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
-			hiddenlake.GSettings.FProtoMask.FService,
+			build.GSettings.FProtoMask.FService,
 			pRequest.ToBytes(),
 		),
 	)

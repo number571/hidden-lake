@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -211,7 +211,7 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 	)
 
 	node.HandleFunc(
-		hiddenlake.GSettings.FProtoMask.FService,
+		build.GSettings.FProtoMask.FService,
 		handler.RequestHandler(HandleServiceTCP(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
@@ -239,7 +239,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	}
 
 	pld := payload.NewPayload32(
-		hiddenlake.GSettings.FProtoMask.FService,
+		build.GSettings.FProtoMask.FService,
 		request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(tcServiceAddressInHLS).

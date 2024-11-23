@@ -9,7 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
@@ -48,7 +48,7 @@ func HandleMessageDecryptAPI(
 		}
 
 		netPld := netMsg.GetPayload()
-		if netPld.GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
+		if netPld.GetHead() != build.GSettings.FProtoMask.FNetwork {
 			pLogger.PushWarn(logBuilder.WithMessage("invalid_net_mask"))
 			_ = api.Response(pW, http.StatusUnsupportedMediaType, "failed: invalid network mask")
 			return

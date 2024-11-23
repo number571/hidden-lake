@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -52,7 +52,7 @@ func TestPanicSettings(t *testing.T) {
 func TestSettings(t *testing.T) {
 	t.Parallel()
 
-	_ = NewSettingsByNetworkKey(hiddenlake.CDefaultNetwork, nil)
+	_ = NewSettingsByNetworkKey(build.CDefaultNetwork, nil)
 }
 
 type tsDatabase struct{}

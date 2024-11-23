@@ -9,12 +9,12 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
 	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
-	hiddenlake "github.com/number571/hidden-lake"
 )
 
 const (
@@ -50,7 +50,7 @@ func main() {
 }
 
 func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
-	hostPorts := hiddenlake.GNetworks[networkKey].FConnections
+	hostPorts := build.GNetworks[networkKey].FConnections
 	connects := make([]string, 0, len(hostPorts))
 	for _, c := range hostPorts {
 		connects = append(connects, fmt.Sprintf("%s:%d", c.FHost, c.FPort))

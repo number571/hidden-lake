@@ -14,7 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
 )
@@ -105,7 +105,7 @@ func pushMessages(ctx context.Context, netMsgSettings net_message.IConstructSett
 
 		netMsg := net_message.NewMessage(
 			netMsgSettings,
-			payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
+			payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, msg),
 		)
 		if err := hltClient.PutMessage(ctx, netMsg); err != nil {
 			return err
@@ -150,7 +150,7 @@ func checkMessages(ctx context.Context, netMsgSettings net_message.ISettings, ms
 			return err
 		}
 
-		if netMsg.GetPayload().GetHead() != hiddenlake.GSettings.FProtoMask.FNetwork {
+		if netMsg.GetPayload().GetHead() != build.GSettings.FProtoMask.FNetwork {
 			return errors.New("network mask is invalid")
 		}
 

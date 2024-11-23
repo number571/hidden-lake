@@ -14,7 +14,7 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	hiddenlake "github.com/number571/hidden-lake"
+	"github.com/number571/hidden-lake/build"
 	hlt_database "github.com/number571/hidden-lake/internal/helpers/traffic/internal/database"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -114,7 +114,7 @@ func TestHandlePointerAPI(t *testing.T) {
 
 	netMsg := net_message.NewMessage(
 		testNetworkMessageSettings(),
-		payload.NewPayload32(hiddenlake.GSettings.FProtoMask.FNetwork, msg),
+		payload.NewPayload32(build.GSettings.FProtoMask.FNetwork, msg),
 	)
 	if err := hltClient.PutMessage(context.Background(), netMsg); err != nil {
 		t.Error(err)
