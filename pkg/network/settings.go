@@ -4,7 +4,6 @@ import (
 	"time"
 
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
-	gopeer_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/build"
 )
 
@@ -15,10 +14,11 @@ var (
 type SSettings sSettings
 type sSettings struct {
 	FSubSettings      *SSubSettings
-	FMessageSettings  gopeer_message.ISettings
 	FQueuePeriod      time.Duration
 	FFetchTimeout     time.Duration
 	FMessageSizeBytes uint64
+	FWorkSizeBits     uint64
+	FNetworkKey       string
 }
 
 type SSubSettings struct {
@@ -33,11 +33,12 @@ func NewSettings(pSett *SSettings) ISettings {
 		pSett = &SSettings{}
 	}
 	return (&sSettings{
-		FMessageSettings:  pSett.FMessageSettings,
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
 		FQueuePeriod:      pSett.FQueuePeriod,
 		FFetchTimeout:     pSett.FFetchTimeout,
 		FSubSettings:      pSett.FSubSettings,
+		FWorkSizeBits:     pSett.FWorkSizeBits,
+		FNetworkKey:       pSett.FNetworkKey,
 	}).useDefault()
 }
 
@@ -47,10 +48,8 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		panic("network not found")
 	}
 	return NewSettings(&SSettings{
-		FMessageSettings: gopeer_message.NewSettings(&gopeer_message.SSettings{
-			FWorkSizeBits: network.FWorkSizeBits,
-			FNetworkKey:   pNetworkKey,
-		}),
+		FWorkSizeBits:     network.FWorkSizeBits,
+		FNetworkKey:       pNetworkKey,
 		FMessageSizeBytes: network.FMessageSizeBytes,
 		FQueuePeriod:      network.GetQueuePeriod(),
 		FFetchTimeout:     network.GetFetchTimeout(),
@@ -73,12 +72,6 @@ func (p *sSettings) useDefault() *sSettings {
 		p.FFetchTimeout = defaultNetwork.GetFetchTimeout()
 	}
 
-	if p.FMessageSettings == nil {
-		p.FMessageSettings = gopeer_message.NewSettings(&gopeer_message.SSettings{
-			FWorkSizeBits: defaultNetwork.FWorkSizeBits,
-		})
-	}
-
 	if p.FSubSettings == nil {
 		p.FSubSettings = &SSubSettings{}
 	}
@@ -97,8 +90,12 @@ func (p *sSettings) useDefault() *sSettings {
 	return p
 }
 
-func (p *sSettings) GetMessageSettings() gopeer_message.ISettings {
-	return p.FMessageSettings
+func (p *sSettings) GetNetworkKey() string {
+	return p.FNetworkKey
+}
+
+func (p *sSettings) GetWorkSizeBits() uint64 {
+	return p.FWorkSizeBits
 }
 
 func (p *sSettings) GetMessageSizeBytes() uint64 {

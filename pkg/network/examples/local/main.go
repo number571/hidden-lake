@@ -24,14 +24,7 @@ import (
 
 const (
 	relayerTCPAddress = "localhost:9999"
-)
-
-var (
-	msgSizeBytes = uint64(8 << 10)
-	msgSettings  = message.NewSettings(&message.SSettings{
-		FWorkSizeBits: 10,
-		FNetworkKey:   "custom_network_key",
-	})
+	msgSizeBytes      = uint64(8 << 10)
 )
 
 func main() {
@@ -67,7 +60,6 @@ func main() {
 func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
-			FMessageSettings:  msgSettings,
 			FQueuePeriod:      time.Second,
 			FFetchTimeout:     time.Minute,
 			FMessageSizeBytes: msgSizeBytes,
@@ -98,7 +90,7 @@ func newRelayer() gopeer_network.INode {
 			FReadTimeout:  timeout,
 			FWriteTimeout: timeout,
 			FConnSettings: conn.NewSettings(&conn.SSettings{
-				FMessageSettings:       msgSettings,
+				FMessageSettings:       message.NewSettings(&message.SSettings{}),
 				FLimitMessageSizeBytes: msgSizeBytes,
 				FWaitReadTimeout:       time.Hour,
 				FDialTimeout:           timeout,

@@ -38,6 +38,10 @@ func NewHiddenLakeNode(
 	pConnsGetter func() []string,
 	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
+	msgSettings := net_message.NewSettings(&net_message.SSettings{
+		FWorkSizeBits: pSettings.GetWorkSizeBits(),
+		FNetworkKey:   pSettings.GetNetworkKey(),
+	})
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
 			FServiceName:  pSettings.GetServiceName(),
@@ -54,7 +58,7 @@ func NewHiddenLakeNode(
 				FReadTimeout:  build.GSettings.GetReadTimeout(),
 				FWriteTimeout: build.GSettings.GetWriteTimeout(),
 				FConnSettings: conn.NewSettings(&conn.SSettings{
-					FMessageSettings:       pSettings.GetMessageSettings(),
+					FMessageSettings:       msgSettings,
 					FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
 					FWaitReadTimeout:       build.GSettings.GetWaitTimeout(),
 					FDialTimeout:           build.GSettings.GetDialTimeout(),
@@ -67,7 +71,7 @@ func NewHiddenLakeNode(
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
 				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-					FSettings: pSettings.GetMessageSettings(),
+					FSettings: msgSettings,
 					FParallel: pSettings.GetParallel(),
 				}),
 				FNetworkMask: build.GSettings.FProtoMask.FNetwork,

@@ -30,7 +30,8 @@ func (p *sApp) initAnonNode() error {
 	}
 
 	settings := network.NewSettings(&network.SSettings{
-		FMessageSettings:  cfg.GetSettings(),
+		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
+		FNetworkKey:       cfgSettings.GetNetworkKey(),
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 		FQueuePeriod:      cfgSettings.GetQueuePeriod(),
 		FFetchTimeout:     cfgSettings.GetFetchTimeout(),

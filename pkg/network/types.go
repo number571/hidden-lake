@@ -7,7 +7,6 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	gopeer_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -23,7 +22,8 @@ type IHiddenLakeNode interface {
 
 type ISettings interface {
 	ISubSettings
-	GetMessageSettings() gopeer_message.ISettings
+	GetNetworkKey() string
+	GetWorkSizeBits() uint64
 	GetMessageSizeBytes() uint64
 	GetQueuePeriod() time.Duration
 	GetFetchTimeout() time.Duration
