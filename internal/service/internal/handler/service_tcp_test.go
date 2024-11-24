@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -22,7 +23,6 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/payload"
-	"github.com/number571/go-peer/pkg/types"
 )
 
 func TestHandleServiceTCP(t *testing.T) {
@@ -159,7 +159,7 @@ func TestHLS(t *testing.T) {
 	}
 	defer func() {
 		nodeCancel()
-		_ = closer.CloseAll([]types.ICloser{
+		_ = closer.CloseAll([]io.Closer{
 			nodeService.GetKVDatabase(),
 			nodeService.GetNetworkNode(),
 		})
@@ -173,7 +173,7 @@ func TestHLS(t *testing.T) {
 	}
 	defer func() {
 		clientCancel()
-		_ = closer.CloseAll([]types.ICloser{
+		_ = closer.CloseAll([]io.Closer{
 			nodeClient.GetKVDatabase(),
 			nodeClient.GetNetworkNode(),
 		})

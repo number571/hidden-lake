@@ -3,9 +3,8 @@ package closer
 
 import (
 	"errors"
+	"io"
 	"testing"
-
-	"github.com/number571/go-peer/pkg/types"
 )
 
 type tsCloser struct {
@@ -15,7 +14,7 @@ type tsCloser struct {
 func TestCloser(t *testing.T) {
 	t.Parallel()
 
-	err := CloseAll([]types.ICloser{
+	err := CloseAll([]io.Closer{
 		testNewCloser(false),
 		testNewCloser(false),
 		testNewCloser(false),
@@ -25,13 +24,13 @@ func TestCloser(t *testing.T) {
 		return
 	}
 
-	if err := CloseAll([]types.ICloser{testNewCloser(true)}); err == nil {
+	if err := CloseAll([]io.Closer{testNewCloser(true)}); err == nil {
 		t.Error("nothing error?")
 		return
 	}
 }
 
-func testNewCloser(flag bool) types.ICloser {
+func testNewCloser(flag bool) io.Closer {
 	return &tsCloser{flag}
 }
 

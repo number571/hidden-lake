@@ -14,7 +14,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -202,7 +201,7 @@ func testAllOnlineFree(node anonymity.INode, cancel context.CancelFunc, pathCfg,
 		os.RemoveAll(pathDB + "_push2")
 	}()
 	cancel()
-	_ = closer.CloseAll([]types.ICloser{
+	_ = closer.CloseAll([]io.Closer{
 		node.GetKVDatabase(),
 		node.GetNetworkNode(),
 	})

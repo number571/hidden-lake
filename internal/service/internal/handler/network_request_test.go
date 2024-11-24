@@ -15,7 +15,6 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -341,7 +340,7 @@ func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.
 		os.RemoveAll(pathDB + "_push1")
 	}()
 	cancel()
-	_ = closer.CloseAll([]types.ICloser{
+	_ = closer.CloseAll([]io.Closer{
 		srv,
 		node.GetKVDatabase(),
 		node.GetNetworkNode(),

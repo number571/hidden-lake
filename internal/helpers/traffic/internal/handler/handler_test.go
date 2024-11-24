@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -17,7 +18,6 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/internal/storage"
 	"github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app/config"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
@@ -92,7 +92,7 @@ func testAllFree(addr string, srv *http.Server, cancel context.CancelFunc, db st
 	defer func() {
 		os.RemoveAll(fmt.Sprintf(databaseTemplate, addr))
 	}()
-	_ = closer.CloseAll([]types.ICloser{srv, db.GetKVDatabase()})
+	_ = closer.CloseAll([]io.Closer{srv, db.GetKVDatabase()})
 }
 
 func testRunService(stg storage.IMessageStorage, addr string, addrNode string) (*http.Server, connkeeper.IConnKeeper, context.CancelFunc) {

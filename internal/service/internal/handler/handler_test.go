@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -21,7 +22,6 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -144,7 +144,7 @@ func testAllFree(node anonymity.INode, cancel context.CancelFunc, srv *http.Serv
 		os.RemoveAll(pathCfg)
 	}()
 	cancel()
-	_ = closer.CloseAll([]types.ICloser{
+	_ = closer.CloseAll([]io.Closer{
 		srv,
 		node.GetKVDatabase(),
 		node.GetNetworkNode(),

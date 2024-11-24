@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"sync"
 
@@ -143,7 +144,7 @@ func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 	<-pCtx.Done()
 }
 func (p *sApp) stop() error {
-	err := closer.CloseAll([]types.ICloser{
+	err := closer.CloseAll([]io.Closer{
 		p.fServiceHTTP,
 		p.fServicePPROF,
 	})

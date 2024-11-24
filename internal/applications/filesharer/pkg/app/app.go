@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"sync"
@@ -176,7 +177,7 @@ func (p *sApp) runIncomingListenerHTTP(pCtx context.Context, wg *sync.WaitGroup,
 }
 
 func (p *sApp) stop() error {
-	err := closer.CloseAll([]types.ICloser{
+	err := closer.CloseAll([]io.Closer{
 		p.fIntServiceHTTP,
 		p.fIncServiceHTTP,
 		p.fServicePPROF,
