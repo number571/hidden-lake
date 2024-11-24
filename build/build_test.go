@@ -20,11 +20,6 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		return
 	}
 
-	if network.FWorkSizeBits != 22 {
-		t.Error("network.FWorkSizeBits != 22")
-		return
-	}
-
 	if network.FFetchTimeoutMS != 60_000 {
 		t.Error("network.FFetchTimeoutMS != 60_000")
 		return
@@ -32,6 +27,11 @@ func TestHiddenLakeNetworks(t *testing.T) {
 
 	if network.FQueuePeriodMS != 5_000 {
 		t.Error("network.FQueuePeriodMS != 5_000")
+		return
+	}
+
+	if network.FWorkSizeBits != 0 {
+		t.Error("network.FWorkSizeBits != 0")
 		return
 	}
 

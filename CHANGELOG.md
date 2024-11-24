@@ -13,6 +13,7 @@
 - `cmd/hlm,cmd/hlf`: move webui static, template paths to internal/webui
 - `pkg/request,pkg/response`: update interfaces: IRequestBuilder, IResponseBuilder
 - `hidden-lake`: move GVersion, GSettings, GNetworks from root dir -> to build/ dir
+- `build`: default work_size_bits=22 -> work_size_bits=0
 
 <!-- ... -->
 

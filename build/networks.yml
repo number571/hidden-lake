@@ -1,11 +1,11 @@
 settings: &default_settings
   message_size_bytes: 8192
-  work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
 networks:
   8Jkl93Mdk93md1bz:
     <<: *default_settings
+    work_size_bits: 22 # custom
     connections: 
       # provider=vdsina.ru
       - host: 94.103.91.81 
