@@ -4,6 +4,7 @@ proto_mask:
 queue_capacity:
   main: 256
   rand: 32
+  consumers: 1
 network_manager:
   cache_hashes_cap: 2048
   connects_limiter: 256

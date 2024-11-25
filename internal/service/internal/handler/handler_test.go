@@ -228,7 +228,8 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 				}),
 				FNetworkMask:  networkMask,
 				FQueuePeriod:  500 * time.Millisecond,
-				FPoolCapacity: [2]uint64{tcQueueCapacity, tcQueueCapacity},
+				FConsumersCap: 1,
+				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
 			}),
 			client.NewClient(
 				tgPrivKey1,
@@ -395,7 +396,8 @@ func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
 				FSettings: net_message.NewSettings(&net_message.SSettings{}),
 			}),
 			FQueuePeriod:  5_000,
-			FPoolCapacity: [2]uint64{16, 16},
+			FConsumersCap: 1,
+			FQueuePoolCap: [2]uint64{16, 16},
 		}),
 		client.NewClient(asymmetric.NewPrivKey(), 8192),
 	)

@@ -84,8 +84,9 @@ type SSettings struct {
 		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
 	FQueueCapacity struct {
-		FMain uint64 `yaml:"main"`
-		FRand uint64 `yaml:"rand"`
+		FMain      uint64 `yaml:"main"`
+		FRand      uint64 `yaml:"rand"`
+		FConsumers uint64 `yaml:"consumers"`
 	} `yaml:"queue_capacity"`
 	FNetworkManager struct {
 		FConnectsLimiter uint64 `yaml:"connects_limiter"`
