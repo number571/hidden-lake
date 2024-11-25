@@ -76,10 +76,10 @@ func NewHiddenLakeNode(
 				}),
 				FQueuePeriod:  pSettings.GetQueuePeriod(),
 				FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
-				FConsumersCap: build.GSettings.FQueueCapacity.FCons,
+				FConsumersCap: build.GSettings.FQueueCapacity.FConsumers,
 				FQueuePoolCap: [2]uint64{
-					build.GSettings.FQueueCapacity.FMain,
-					build.GSettings.FQueueCapacity.FRand,
+					build.GSettings.FQueueCapacity.FMainPool,
+					build.GSettings.FQueueCapacity.FRandPool,
 				},
 			}),
 			func() client.IClient {

@@ -2,9 +2,9 @@ proto_mask:
   network: 0x5f67705f
   service: 0x5f686c5f
 queue_capacity:
-  main: 256
-  rand: 32
-  cons: 1
+  main_pool: 256
+  rand_pool: 32
+  consumers: 1
 network_manager:
   cache_hashes_cap: 2048
   connects_limiter: 256
