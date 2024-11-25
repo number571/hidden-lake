@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLA=common"
-	CServiceFullName = "hidden-lake-adapter=common"
+	CServiceName        = "HLA=common"
+	CServiceFullName    = "hidden-lake-adapter=common"
+	CServiceDescription = "adapts HL traffic to a custom HTTP server"
 )
 
 const (

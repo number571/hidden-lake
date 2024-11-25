@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLS"
-	CServiceFullName = "hidden-lake-service"
+	CServiceName        = "HLS"
+	CServiceFullName    = "hidden-lake-service"
+	CServiceDescription = "anonymizes traffic using the QB-problem"
 )
 
 const (

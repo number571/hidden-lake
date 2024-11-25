@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLT"
-	CServiceFullName = "hidden-lake-traffic"
+	CServiceName        = "HLT"
+	CServiceFullName    = "hidden-lake-traffic"
+	CServiceDescription = "retransmits and saves encrypted traffic"
 )
 
 const (

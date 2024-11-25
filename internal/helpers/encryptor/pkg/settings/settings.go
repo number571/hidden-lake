@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLE"
-	CServiceFullName = "hidden-lake-encryptor"
+	CServiceName        = "HLE"
+	CServiceFullName    = "hidden-lake-encryptor"
+	CServiceDescription = "encrypts and decrypts messages"
 )
 
 const (

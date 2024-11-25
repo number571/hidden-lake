@@ -13,6 +13,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app"
+	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -43,11 +44,7 @@ func main() {
 	}
 
 	if gFlags.Get("help").GetBoolValue(args) {
-		help.Println(
-			"Hidden Lake Messenger (HLM)",
-			"messenger with a web interface",
-			gFlags,
-		)
+		help.Println(settings.CServiceFullName, settings.CServiceDescription, gFlags)
 		return
 	}
 

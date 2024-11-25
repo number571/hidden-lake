@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLL"
-	CServiceFullName = "hidden-lake-loader"
+	CServiceName        = "HLL"
+	CServiceFullName    = "hidden-lake-loader"
+	CServiceDescription = "distributes the stored traffic between nodes"
 )
 
 const (

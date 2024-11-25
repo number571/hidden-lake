@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/common/pkg/app"
+	"github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -44,11 +45,7 @@ func main() {
 	}
 
 	if gFlags.Get("help").GetBoolValue(args) {
-		help.Println(
-			"Hidden Lake Adapter = Common (HLA=common)",
-			"adapts HL traffic to a custom HTTP server",
-			gFlags,
-		)
+		help.Println(settings.CServiceFullName, settings.CServiceDescription, gFlags)
 		return
 	}
 

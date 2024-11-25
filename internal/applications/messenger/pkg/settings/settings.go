@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLM"
-	CServiceFullName = "hidden-lake-messenger"
+	CServiceName        = "HLM"
+	CServiceFullName    = "hidden-lake-messenger"
+	CServiceDescription = "messenger with a web interface"
 )
 
 const (

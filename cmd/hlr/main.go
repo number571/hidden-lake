@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app"
+	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -41,11 +42,7 @@ func main() {
 	}
 
 	if gFlags.Get("help").GetBoolValue(args) {
-		help.Println(
-			"Hidden Lake Remoter (HLR)",
-			"executes remote access commands",
-			gFlags,
-		)
+		help.Println(settings.CServiceFullName, settings.CServiceDescription, gFlags)
 		return
 	}
 

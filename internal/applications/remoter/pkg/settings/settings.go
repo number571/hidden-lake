@@ -1,8 +1,9 @@
 package settings
 
 const (
-	CServiceName     = "HLR"
-	CServiceFullName = "hidden-lake-remoter"
+	CServiceName        = "HLR"
+	CServiceFullName    = "hidden-lake-remoter"
+	CServiceDescription = "executes remote access commands"
 )
 
 const (

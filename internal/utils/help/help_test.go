@@ -6,8 +6,8 @@ import (
 
 func ExamplePrintln() {
 	Println(
-		"Hidden Lake Service (HLS)",
-		"anonymizes traffic using the QB-problem",
+		"hidden-lake-adapter=common",
+		"adapts HL traffic to a custom HTTP server",
 		flag.NewFlagsBuilder(
 			flag.NewFlagBuilder("v", "version").
 				WithDescription("print information about service"),
@@ -25,8 +25,8 @@ func ExamplePrintln() {
 		).Build(),
 	)
 	// Output:
-	// <Hidden Lake Service (HLS)>
-	// Description: anonymizes traffic using the QB-problem
+	// <Hidden Lake Adapter = Common (HLA=common)>
+	// Description: adapts HL traffic to a custom HTTP server
 	// Arguments:
 	// [ -v, -version ] = print information about service
 	// [ -h, -help ] = print version of service

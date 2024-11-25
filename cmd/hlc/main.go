@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/composite/pkg/app"
+	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -47,11 +48,7 @@ func main() {
 	}
 
 	if gFlags.Get("help").GetBoolValue(args) {
-		help.Println(
-			"Hidden Lake Composite (HLC)",
-			"runs many HL services as one application",
-			gFlags,
-		)
+		help.Println(settings.CServiceFullName, settings.CServiceDescription, gFlags)
 		return
 	}
 
