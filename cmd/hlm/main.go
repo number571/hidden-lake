@@ -18,18 +18,15 @@ import (
 )
 
 var (
-	gFlags = flag.NewFlags(
+	gFlags = flag.NewFlagsBuilder(
 		flag.NewFlagBuilder("v", "version").
-			WithDescription("print information about service").
-			Build(),
+			WithDescription("print information about service"),
 		flag.NewFlagBuilder("h", "help").
-			WithDescription("print version of service").
-			Build(),
+			WithDescription("print version of service"),
 		flag.NewFlagBuilder("p", "path").
 			WithDescription("set path to config, database files").
-			WithDefaultValue(".").
-			Build(),
-	)
+			WithDefaultValue("."),
+	).Build()
 )
 
 func main() {

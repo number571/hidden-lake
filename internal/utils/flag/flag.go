@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	_ IFlag        = &sFlag{}
 	_ IFlagBuilder = &sFlag{}
+	_ IFlag        = &sFlag{}
 )
 
 type sFlag struct {

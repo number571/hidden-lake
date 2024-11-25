@@ -5,15 +5,13 @@ import (
 )
 
 var (
-	tgFlags = NewFlags(
+	tgFlags = NewFlagsBuilder(
 		NewFlagBuilder("v", "version").
-			WithDescription("print information about service").
-			Build(),
+			WithDescription("print information about service"),
 		NewFlagBuilder("p", "path").
 			WithDescription("set path to config, database files").
-			WithDefaultValue(".").
-			Build(),
-	)
+			WithDefaultValue("."),
+	).Build()
 )
 
 func TestFlagsValidate(t *testing.T) {

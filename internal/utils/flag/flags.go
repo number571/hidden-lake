@@ -3,13 +3,28 @@ package flag
 import "strings"
 
 var (
-	_ IFlags = &sFlags{}
+	_ IFlagsBuilder = &sFlagsBuilder{}
+	_ IFlags        = &sFlags{}
 )
 
 type sFlags []IFlag
+type sFlagsBuilder []IFlagBuilder
 
-func NewFlags(pArgs ...IFlag) IFlags {
-	v := sFlags(pArgs)
+func NewFlagsBuilder(pArgs ...IFlagBuilder) IFlagsBuilder {
+	v := sFlagsBuilder(pArgs)
+	return &v
+}
+
+func (p *sFlagsBuilder) Build() IFlags {
+	flags := make([]IFlag, 0, len(*p))
+	for _, v := range *p {
+		flags = append(flags, v.Build())
+	}
+	return NewFlags(flags...)
+}
+
+func NewFlags(pFlags ...IFlag) IFlags {
+	v := sFlags(pFlags)
 	return &v
 }
 

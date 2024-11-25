@@ -21,22 +21,18 @@ import (
 )
 
 var (
-	tgFlags = flag.NewFlags(
+	tgFlags = flag.NewFlagsBuilder(
 		flag.NewFlagBuilder("v", "version").
-			WithDescription("print information about service").
-			Build(),
+			WithDescription("print information about service"),
 		flag.NewFlagBuilder("h", "help").
-			WithDescription("print version of service").
-			Build(),
+			WithDescription("print version of service"),
 		flag.NewFlagBuilder("p", "path").
 			WithDescription("set path to config, database files").
-			WithDefaultValue(".").
-			Build(),
+			WithDefaultValue("."),
 		flag.NewFlagBuilder("n", "network").
 			WithDescription("set network key for connections").
-			WithDefaultValue("").
-			Build(),
-	)
+			WithDefaultValue(""),
+	).Build()
 )
 
 const (
