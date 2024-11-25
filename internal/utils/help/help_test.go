@@ -1,5 +1,7 @@
 package help
 
+import "testing"
+
 const (
 	yamlString = `name: Hidden Lake Service (HLS)
 desc: anonymizes traffic using the QB-problem
@@ -10,6 +12,19 @@ args: |
   [ -n, --network ] - set network key for connections
   [ -t, --threads ] - set num of parallel functions to calculate PoW`
 )
+
+func TestPanicPrintln(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("nothing panics")
+			return
+		}
+	}()
+
+	Println([]byte("="))
+}
 
 func ExamplePrintln() {
 	Println([]byte(yamlString))
