@@ -14,7 +14,7 @@ func TestPanicFlagValue(t *testing.T) {
 	argsSlice := []string{
 		"--key",
 	}
-	_ = GetFlagValue(argsSlice, []string{"key"}, "_")
+	_ = GetStringFlagValue(argsSlice, []string{"key"}, "_")
 }
 
 func TestBoolFlagValue(t *testing.T) {
@@ -70,37 +70,37 @@ func TestFlagValue(t *testing.T) {
 		"--zxcvb=!@#$%",
 	}
 
-	if GetFlagValue(argsSlice, []string{"key"}, "1") != "123" {
+	if GetStringFlagValue(argsSlice, []string{"key"}, "1") != "123" {
 		t.Error("key != 123")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"name"}, "2") != "number" {
+	if GetStringFlagValue(argsSlice, []string{"name"}, "2") != "number" {
 		t.Error("name != number")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"value"}, "3") != "571" {
+	if GetStringFlagValue(argsSlice, []string{"value"}, "3") != "571" {
 		t.Error("value != 571")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"asdfg"}, "4") != "12345" {
+	if GetStringFlagValue(argsSlice, []string{"asdfg"}, "4") != "12345" {
 		t.Error("asdfg != 12345")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"qwerty"}, "5") != "67890" {
+	if GetStringFlagValue(argsSlice, []string{"qwerty"}, "5") != "67890" {
 		t.Error("qwerty != 67890")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"zxcvb"}, "6") != "!@#$%" {
+	if GetStringFlagValue(argsSlice, []string{"zxcvb"}, "6") != "!@#$%" {
 		t.Error("zxcvb != !@#$%")
 		return
 	}
 
-	if GetFlagValue(argsSlice, []string{"unknown"}, "7") != "7" {
+	if GetStringFlagValue(argsSlice, []string{"unknown"}, "7") != "7" {
 		t.Error("unknown != 7")
 		return
 	}

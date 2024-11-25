@@ -15,7 +15,7 @@ func GetBoolFlagValue(pArgs, pKeyAliases []string) bool {
 	return false
 }
 
-func GetFlagValue(pArgs, pKeyAliases []string, pDefault string) string {
+func GetStringFlagValue(pArgs, pKeyAliases []string, pDefault string) string {
 	isNextValue := false
 	for _, arg := range pArgs {
 		if isNextValue {

@@ -13,10 +13,10 @@ import (
 )
 
 func InitApp(pArgs []string) (types.IRunner, error) {
-	inputPath := strings.TrimSuffix(flag.GetFlagValue(pArgs, []string{"p", "path"}, "."), "/")
+	inputPath := strings.TrimSuffix(flag.GetStringFlagValue(pArgs, []string{"p", "path"}, "."), "/")
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
-	cfg, err := config.InitConfig(cfgPath, nil, flag.GetFlagValue(pArgs, []string{"n", "network"}, ""))
+	cfg, err := config.InitConfig(cfgPath, nil, flag.GetStringFlagValue(pArgs, []string{"n", "network"}, ""))
 	if err != nil {
 		return nil, fmt.Errorf("init config: %w", err)
 	}
