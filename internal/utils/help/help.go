@@ -23,7 +23,7 @@ func Println(pFullName, pDescription string, pArgs flag.IFlags) {
 		))
 	}
 	fmt.Printf(
-		"%s\n%s\n%s\n",
+		"<%s>\nDescription: %s\nArguments:\n%s\n",
 		pFullName,
 		pDescription,
 		strings.TrimSpace(args.String()),
