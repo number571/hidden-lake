@@ -48,7 +48,7 @@ func (p *sFlags) Validate(pArgs []string) bool {
 	mapArgs := make(map[string]bool, 2*len(appArgs))
 	for _, v := range appArgs {
 		for _, n := range v.GetAliases() {
-			mapArgs[n] = v.GetHasValue()
+			mapArgs[n] = v.(*sFlag).fHasValue
 		}
 	}
 	isNextValue := false

@@ -25,16 +25,8 @@ func (p *sFlag) GetAliases() []string {
 	return p.fAliases
 }
 
-func (p *sFlag) GetHasValue() bool {
-	return p.fHasValue
-}
-
 func (p *sFlag) GetDescription() string {
 	return p.fDescription
-}
-
-func (p *sFlag) GetDefaultValue() string {
-	return p.fDefaultValue
 }
 
 func (p *sFlag) WithDescription(pDescription string) IFlagBuilder {
@@ -84,5 +76,5 @@ func (p *sFlag) GetStringValue(pArgs []string) string {
 	if isNextValue {
 		panic("args has key but value is not found")
 	}
-	return p.GetDefaultValue()
+	return p.fDefaultValue
 }
