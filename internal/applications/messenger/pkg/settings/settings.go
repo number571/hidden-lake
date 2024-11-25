@@ -1,7 +1,12 @@
 package settings
 
+import "github.com/number571/hidden-lake/internal/utils/name"
+
+var (
+	GServiceName = name.LoadServiceName(CServiceFullName)
+)
+
 const (
-	CServiceName        = "HLM"
 	CServiceFullName    = "hidden-lake-messenger"
 	CServiceDescription = "messenger with a web interface"
 )

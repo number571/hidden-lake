@@ -74,7 +74,7 @@ func (p *sApp) enable(_ context.Context) state.IStateF {
 	return func() error {
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is started",
-			hla_settings.CServiceName,
+			hla_settings.GServiceName.Short(),
 		))
 		return nil
 	}
@@ -87,7 +87,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hla_settings.CServiceName,
+			hla_settings.GServiceName.Short(),
 		))
 		return nil
 	}

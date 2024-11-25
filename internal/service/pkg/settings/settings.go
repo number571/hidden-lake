@@ -1,7 +1,10 @@
 package settings
 
+import "github.com/number571/hidden-lake/internal/utils/name"
+
+var GServiceName = name.LoadServiceName(CServiceFullName)
+
 const (
-	CServiceName        = "HLS"
 	CServiceFullName    = "hidden-lake-service"
 	CServiceDescription = "anonymizes traffic using the QB-problem"
 )

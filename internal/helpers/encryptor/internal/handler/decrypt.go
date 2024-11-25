@@ -8,14 +8,13 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/utils/api"
-	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-
-	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleMessageDecryptAPI(
@@ -25,7 +24,7 @@ func HandleMessageDecryptAPI(
 	pMapKeys asymmetric.IMapPubKeys,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hle_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hle_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

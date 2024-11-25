@@ -20,7 +20,7 @@ func HandleIncomingExecHTTP(pCtx context.Context, pConfig config.IConfig, pLogge
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hlr_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hlr_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

@@ -12,7 +12,7 @@ import (
 
 func HandleServicePubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

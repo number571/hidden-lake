@@ -28,7 +28,7 @@ func HandleServiceTCP(
 	httpClient := &http.Client{Timeout: time.Minute}
 
 	return func(pCtx context.Context, pNode network.INode, pConn conn.IConn, pNetMsg net_message.IMessage) error {
-		logBuilder := anon_logger.NewLogBuilder(hlt_settings.CServiceName)
+		logBuilder := anon_logger.NewLogBuilder(hlt_settings.GServiceName.Short())
 
 		// enrich logger
 		logBuilder.

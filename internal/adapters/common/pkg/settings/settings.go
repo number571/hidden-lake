@@ -1,7 +1,12 @@
 package settings
 
+import "github.com/number571/hidden-lake/internal/utils/name"
+
+var (
+	GServiceName = name.LoadServiceName(CServiceFullName)
+)
+
 const (
-	CServiceName        = "HLA=common"
 	CServiceFullName    = "hidden-lake-adapter=common"
 	CServiceDescription = "adapts HL traffic to a custom HTTP server"
 )

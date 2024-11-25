@@ -14,7 +14,12 @@
 - `pkg/request,pkg/response`: update interfaces: IRequestBuilder, IResponseBuilder
 - `hidden-lake`: move GVersion, GSettings, GNetworks from root dir -> to build/ dir
 - `build`: default work_size_bits=22 -> work_size_bits=0
-- `cmd/*`: change flag getters
+- `internal/utils/help`: create Println
+- `internal/utils/name`: create IServiceName
+
+### BUG FIXES
+
+- `cmd/hle, cmd/hlt, cmd/hll`: fix serviceName in handlers
 
 <!-- ... -->
 

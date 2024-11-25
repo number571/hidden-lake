@@ -30,7 +30,7 @@ func HandleNetworkTransferAPI(pConfig config.IConfig, pLogger logger.ILogger) ht
 	transfer := &sTransfer{fConfig: pConfig, fState: state.NewBoolState()}
 
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hll_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hll_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

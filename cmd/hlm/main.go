@@ -44,7 +44,7 @@ func main() {
 	}
 
 	if gFlags.Get("help").GetBoolValue(args) {
-		help.Println(settings.CServiceFullName, settings.CServiceDescription, gFlags)
+		help.Println(settings.GServiceName, settings.CServiceDescription, gFlags)
 		return
 	}
 

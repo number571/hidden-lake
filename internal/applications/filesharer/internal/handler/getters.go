@@ -13,7 +13,7 @@ type sTemplate struct {
 
 func getTemplate(pCfg config.IConfig) *sTemplate {
 	return &sTemplate{
-		FAppName:  settings.CServiceName,
+		FAppName:  settings.GServiceName.Short(),
 		FLanguage: pCfg.GetSettings().GetLanguage(),
 	}
 }

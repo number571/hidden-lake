@@ -27,7 +27,7 @@ func HandleMessageAPI(
 	tcpHandler := HandleServiceTCP(pCfg, pStorage, pAnonLogger)
 
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hlt_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hlt_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost {
 			pHTTPLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

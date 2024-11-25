@@ -24,7 +24,7 @@ func HandleMessageEncryptAPI(
 	pParallel uint64,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hle_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hle_settings.GServiceName.Short(), pR)
 
 		var vContainer hle_settings.SContainer
 

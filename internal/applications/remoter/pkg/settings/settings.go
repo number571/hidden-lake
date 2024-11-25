@@ -1,7 +1,12 @@
 package settings
 
+import "github.com/number571/hidden-lake/internal/utils/name"
+
+var (
+	GServiceName = name.LoadServiceName(CServiceFullName)
+)
+
 const (
-	CServiceName        = "HLR"
 	CServiceFullName    = "hidden-lake-remoter"
 	CServiceDescription = "executes remote access commands"
 )

@@ -1,7 +1,12 @@
 package settings
 
+import "github.com/number571/hidden-lake/internal/utils/name"
+
+var (
+	GServiceName = name.LoadServiceName(CServiceFullName)
+)
+
 const (
-	CServiceName        = "HLT"
 	CServiceFullName    = "hidden-lake-traffic"
 	CServiceDescription = "retransmits and saves encrypted traffic"
 )

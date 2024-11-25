@@ -8,6 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
+	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -15,7 +16,7 @@ import (
 
 func HandleConfigFriendsAPI(pWrapper config.IWrapper, pLogger logger.ILogger, pMapKeys asymmetric.IMapPubKeys) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hle_settings.GServiceName.Short(), pR)
 
 		var vFriend pkg_settings.SFriend
 

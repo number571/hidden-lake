@@ -2,11 +2,12 @@ package help
 
 import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/name"
 )
 
 func ExamplePrintln() {
 	Println(
-		"hidden-lake-adapter=common",
+		name.LoadServiceName("hidden-lake-adapter=common"),
 		"adapts HL traffic to a custom HTTP server",
 		flag.NewFlagsBuilder(
 			flag.NewFlagBuilder("v", "version").

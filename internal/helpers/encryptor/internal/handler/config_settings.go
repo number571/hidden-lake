@@ -6,14 +6,14 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/config"
-	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleConfigSettingsAPI(pCfg config.IConfig, pLogger logger.ILogger) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hle_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

@@ -11,7 +11,7 @@ import (
 
 func HandleIndexAPI(pLogger logger.ILogger) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hlt_settings.CServiceName, pR)
+		logBuilder := http_logger.NewLogBuilder(hlt_settings.GServiceName.Short(), pR)
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hlt_settings.CServiceFullName)
 	}
