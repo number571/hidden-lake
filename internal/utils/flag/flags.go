@@ -63,11 +63,8 @@ func (p *sFlags) Validate(pArgs []string) bool {
 		if !ok {
 			return false
 		}
-		if withValue {
-			if len(splited) == 1 {
-				isNextValue = true
-			}
-			continue
+		if withValue && len(splited) == 1 {
+			isNextValue = true
 		}
 		continue
 	}
