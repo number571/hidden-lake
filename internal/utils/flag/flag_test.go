@@ -1,6 +1,8 @@
 package flag
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestPanicFlagValue(t *testing.T) {
 	t.Parallel()
@@ -14,7 +16,7 @@ func TestPanicFlagValue(t *testing.T) {
 	argsSlice := []string{
 		"--key",
 	}
-	_ = GetStringFlagValue(argsSlice, []string{"key"}, "_")
+	_ = NewFlagBuilder("key").Build().GetStringValue(argsSlice)
 }
 
 func TestBoolFlagValue(t *testing.T) {
@@ -26,38 +28,38 @@ func TestBoolFlagValue(t *testing.T) {
 		"value", "571",
 	}
 
-	if !GetBoolFlagValue(argsSlice, []string{"key"}) {
+	if !NewFlagBuilder("key").Build().GetBoolValue(argsSlice) {
 		t.Error("!key")
 		return
 	}
 
-	if !GetBoolFlagValue(argsSlice, []string{"123"}) {
+	if !NewFlagBuilder("123").Build().GetBoolValue(argsSlice) {
 		t.Error("!123")
 		return
 	}
 
-	if !GetBoolFlagValue(argsSlice, []string{"name"}) {
+	if !NewFlagBuilder("name").Build().GetBoolValue(argsSlice) {
 		t.Error("!name")
 		return
 	}
 
-	if !GetBoolFlagValue(argsSlice, []string{"value"}) {
+	if !NewFlagBuilder("value").Build().GetBoolValue(argsSlice) {
 		t.Error("!value")
 		return
 	}
 
-	if !GetBoolFlagValue(argsSlice, []string{"571"}) {
+	if !NewFlagBuilder("571").Build().GetBoolValue(argsSlice) {
 		t.Error("!571")
 		return
 	}
 
-	if GetBoolFlagValue(argsSlice, []string{"undefined"}) {
+	if NewFlagBuilder("undefined").Build().GetBoolValue(argsSlice) {
 		t.Error("success get undefined value")
 		return
 	}
 }
 
-func TestFlagValue(t *testing.T) {
+func TestStringFlagValue(t *testing.T) {
 	t.Parallel()
 
 	argsSlice := []string{
@@ -70,37 +72,37 @@ func TestFlagValue(t *testing.T) {
 		"--zxcvb=!@#$%",
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"key"}, "1") != "123" {
+	if NewFlagBuilder("key").Build().GetStringValue(argsSlice) != "123" {
 		t.Error("key != 123")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"name"}, "2") != "number" {
+	if NewFlagBuilder("name").Build().GetStringValue(argsSlice) != "number" {
 		t.Error("name != number")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"value"}, "3") != "571" {
+	if NewFlagBuilder("value").Build().GetStringValue(argsSlice) != "571" {
 		t.Error("value != 571")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"asdfg"}, "4") != "12345" {
+	if NewFlagBuilder("asdfg").Build().GetStringValue(argsSlice) != "12345" {
 		t.Error("asdfg != 12345")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"qwerty"}, "5") != "67890" {
+	if NewFlagBuilder("qwerty").Build().GetStringValue(argsSlice) != "67890" {
 		t.Error("qwerty != 67890")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"zxcvb"}, "6") != "!@#$%" {
+	if NewFlagBuilder("zxcvb").Build().GetStringValue(argsSlice) != "!@#$%" {
 		t.Error("zxcvb != !@#$%")
 		return
 	}
 
-	if GetStringFlagValue(argsSlice, []string{"unknown"}, "7") != "7" {
+	if NewFlagBuilder("unknown").WithDefaultValue("7").Build().GetStringValue(argsSlice) != "7" {
 		t.Error("unknown != 7")
 		return
 	}

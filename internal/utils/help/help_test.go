@@ -1,39 +1,40 @@
 package help
 
-import "testing"
-
-const (
-	yamlString = `name: Hidden Lake Service (HLS)
-desc: anonymizes traffic using the QB-problem
-args: |
-  [ -h, --help    ] - print information about service
-  [ -v, --version ] - print version of service
-  [ -p, --path    ] - set path to config, database files
-  [ -n, --network ] - set network key for connections
-  [ -t, --threads ] - set num of parallel functions to calculate PoW`
+import (
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
-func TestPanicPrintln(t *testing.T) {
-	t.Parallel()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
-		}
-	}()
-
-	Println([]byte("="))
-}
-
 func ExamplePrintln() {
-	Println([]byte(yamlString))
+	Println(
+		"Hidden Lake Service (HLS)",
+		"anonymizes traffic using the QB-problem",
+		flag.NewFlags(
+			flag.NewFlagBuilder("v", "version").
+				WithDescription("print information about service").
+				Build(),
+			flag.NewFlagBuilder("h", "help").
+				WithDescription("print version of service").
+				Build(),
+			flag.NewFlagBuilder("p", "path").
+				WithDescription("set path to config, database files").
+				WithDefaultValue(".").
+				Build(),
+			flag.NewFlagBuilder("n", "network").
+				WithDescription("set network key for connections").
+				WithDefaultValue("").
+				Build(),
+			flag.NewFlagBuilder("t", "threads").
+				WithDescription("set num of parallel functions to calculate PoW").
+				WithDefaultValue("1").
+				Build(),
+		),
+	)
 	// Output:
 	// Hidden Lake Service (HLS)
 	// anonymizes traffic using the QB-problem
-	// [ -h, --help    ] - print information about service
-	// [ -v, --version ] - print version of service
-	// [ -p, --path    ] - set path to config, database files
-	// [ -n, --network ] - set network key for connections
-	// [ -t, --threads ] - set num of parallel functions to calculate PoW
+	// [-v, --version] - print information about service
+	// [-h, --help] - print version of service
+	// [-p, --path] - set path to config, database files
+	// [-n, --network] - set network key for connections
+	// [-t, --threads] - set num of parallel functions to calculate PoW
 }

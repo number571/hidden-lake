@@ -4,24 +4,25 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
-type sHelp struct {
-	Name string `yaml:"name"`
-	Desc string `yaml:"desc"`
-	Args string `yaml:"args"`
-}
-
-func Println(yamlBytes []byte) {
-	help := &sHelp{}
-	if err := encoding.DeserializeYAML(yamlBytes, help); err != nil {
-		panic(err)
+func Println(pFullName, pDescription string, pArgs flag.IFlags) {
+	args := strings.Builder{}
+	args.Grow(1 << 10)
+	for _, arg := range pArgs.List() {
+		aliases := arg.GetAliases()
+		args.WriteString(fmt.Sprintf(
+			"[-%s, --%s] - %s\n",
+			aliases[0],
+			aliases[1],
+			arg.GetDescription(),
+		))
 	}
 	fmt.Printf(
 		"%s\n%s\n%s\n",
-		strings.TrimSpace(help.Name),
-		strings.TrimSpace(help.Desc),
-		strings.TrimSpace(help.Args),
+		pFullName,
+		pDescription,
+		strings.TrimSpace(args.String()),
 	)
 }

@@ -11,7 +11,27 @@ import (
 	producer_app "github.com/number571/hidden-lake/internal/adapters/common/internal/producer/pkg/app"
 	"github.com/number571/hidden-lake/internal/adapters/common/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
+)
+
+var (
+	tgFlags = flag.NewFlags(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service").
+			Build(),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service").
+			Build(),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue(".").
+			Build(),
+		flag.NewFlagBuilder("n", "network").
+			WithDescription("set network key for connections").
+			WithDefaultValue("").
+			Build(),
+	)
 )
 
 const (
@@ -35,7 +55,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcPathConfig)
 	defer testDeleteFiles(tcPathConfig)
 
-	if _, err := InitApp([]string{"path", tcPathConfig}); err != nil {
+	if _, err := InitApp([]string{"path", tcPathConfig}, tgFlags); err != nil {
 		t.Error(err)
 		return
 	}

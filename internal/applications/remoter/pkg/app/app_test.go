@@ -9,7 +9,23 @@ import (
 
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
+)
+
+var (
+	tgFlags = flag.NewFlags(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service").
+			Build(),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service").
+			Build(),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue(".").
+			Build(),
+	)
 )
 
 const (
@@ -97,7 +113,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcTestdataPath)
 	defer testDeleteFiles(tcTestdataPath)
 
-	if _, err := InitApp([]string{"path", tcTestdataPath}); err != nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath}, tgFlags); err != nil {
 		t.Error(err)
 		return
 	}

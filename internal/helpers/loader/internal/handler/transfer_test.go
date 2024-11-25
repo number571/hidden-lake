@@ -17,6 +17,26 @@ import (
 	hll_client "github.com/number571/hidden-lake/internal/helpers/loader/pkg/client"
 	hls_app "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/app"
 	hlt_client "github.com/number571/hidden-lake/internal/helpers/traffic/pkg/client"
+	"github.com/number571/hidden-lake/internal/utils/flag"
+)
+
+var (
+	tgFlags = flag.NewFlags(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service").
+			Build(),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service").
+			Build(),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue(".").
+			Build(),
+		flag.NewFlagBuilder("n", "network").
+			WithDescription("set network key for connections").
+			WithDefaultValue("").
+			Build(),
+	)
 )
 
 const (
@@ -36,7 +56,7 @@ func testCreateHLT(
 		return cancel, nil, err
 	}
 
-	app1, err := hls_app.InitApp([]string{"path", path})
+	app1, err := hls_app.InitApp([]string{"path", path}, tgFlags)
 	if err != nil {
 		return cancel, nil, err
 	}

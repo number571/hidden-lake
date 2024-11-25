@@ -13,29 +13,54 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
-
-	_ "embed"
 )
 
 var (
-	//go:embed help.yml
-	gHelpYaml []byte
+	gFlags = flag.NewFlags(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service").
+			Build(),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service").
+			Build(),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue(".").
+			Build(),
+		flag.NewFlagBuilder("n", "network").
+			WithDescription("set network key for connections").
+			WithDefaultValue("").
+			Build(),
+		flag.NewFlagBuilder("t", "threads").
+			WithDescription("set num of parallel functions to calculate PoW").
+			WithDefaultValue("1").
+			Build(),
+	)
 )
 
 func main() {
 	args := os.Args[1:]
 
-	if flag.GetBoolFlagValue(args, []string{"v", "version"}) {
+	if ok := gFlags.Validate(args); !ok {
+		log.Fatal("args invalid")
+		return
+	}
+
+	if gFlags.Get("version").GetBoolValue(args) {
 		fmt.Println(build.GVersion)
 		return
 	}
 
-	if flag.GetBoolFlagValue(args, []string{"h", "help"}) {
-		help.Println(gHelpYaml)
+	if gFlags.Get("help").GetBoolValue(args) {
+		help.Println(
+			"Hidden Lake Encryptor (HLE)",
+			"encrypts and decrypts messages",
+			gFlags,
+		)
 		return
 	}
 
-	app, err := app.InitApp(args)
+	app, err := app.InitApp(args, gFlags)
 	if err != nil {
 		panic(err)
 	}

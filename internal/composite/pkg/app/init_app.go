@@ -35,8 +35,8 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
-func InitApp(pArgs []string) (types.IRunner, error) {
-	inputPath := strings.TrimSuffix(flag.GetStringFlagValue(pArgs, []string{"p", "path"}, "."), "/")
+func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
+	inputPath := strings.TrimSuffix(pFlags.Get("path").GetStringValue(pArgs), "/")
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
 	cfg, err := config.InitConfig(cfgPath, nil)
@@ -44,7 +44,7 @@ func InitApp(pArgs []string) (types.IRunner, error) {
 		return nil, errors.Join(ErrInitConfig, err)
 	}
 
-	runners, err := getRunners(cfg, pArgs)
+	runners, err := getRunners(cfg, pArgs, pFlags)
 	if err != nil {
 		return nil, errors.Join(ErrGetRunners, err)
 	}
@@ -52,7 +52,7 @@ func InitApp(pArgs []string) (types.IRunner, error) {
 	return NewApp(cfg, runners), nil
 }
 
-func getRunners(pCfg config.IConfig, pArgs []string) ([]types.IRunner, error) {
+func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]types.IRunner, error) {
 	var (
 		services = pCfg.GetServices()
 		runners  = make([]types.IRunner, 0, len(services))
@@ -72,21 +72,21 @@ func getRunners(pCfg config.IConfig, pArgs []string) ([]types.IRunner, error) {
 
 		switch sName {
 		case hls_settings.CServiceFullName:
-			runner, err = hls_app.InitApp(pArgs)
+			runner, err = hls_app.InitApp(pArgs, pFlags)
 		case hle_settings.CServiceFullName:
-			runner, err = hle_app.InitApp(pArgs)
+			runner, err = hle_app.InitApp(pArgs, pFlags)
 		case hlt_settings.CServiceFullName:
-			runner, err = hlt_app.InitApp(pArgs)
+			runner, err = hlt_app.InitApp(pArgs, pFlags)
 		case hll_settings.CServiceFullName:
-			runner, err = hll_app.InitApp(pArgs)
+			runner, err = hll_app.InitApp(pArgs, pFlags)
 		case hlm_settings.CServiceFullName:
-			runner, err = hlm_app.InitApp(pArgs)
+			runner, err = hlm_app.InitApp(pArgs, pFlags)
 		case hlf_settings.CServiceFullName:
-			runner, err = hlf_app.InitApp(pArgs)
+			runner, err = hlf_app.InitApp(pArgs, pFlags)
 		case hlr_settings.CServiceFullName:
-			runner, err = hlr_app.InitApp(pArgs)
+			runner, err = hlr_app.InitApp(pArgs, pFlags)
 		case hla_common_settings.CServiceFullName:
-			runner, err = hla_common_app.InitApp(pArgs)
+			runner, err = hla_common_app.InitApp(pArgs, pFlags)
 		default:
 			return nil, ErrUnknownService
 		}

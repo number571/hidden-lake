@@ -13,7 +13,31 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
+)
+
+var (
+	tgFlags = flag.NewFlags(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service").
+			Build(),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service").
+			Build(),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue(".").
+			Build(),
+		flag.NewFlagBuilder("n", "network").
+			WithDescription("set network key for connections").
+			WithDefaultValue("").
+			Build(),
+		flag.NewFlagBuilder("t", "threads").
+			WithDescription("set num of parallel functions to calculate PoW").
+			WithDefaultValue("1").
+			Build(),
+	)
 )
 
 const (
@@ -126,17 +150,17 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcTestdataPath)
 	defer testDeleteFiles(tcTestdataPath)
 
-	if _, err := InitApp([]string{"path", tcTestdataPath}); err != nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath}, tgFlags); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if _, err := InitApp([]string{"path", tcTestdataPath, "threads", "abc"}); err == nil {
+	if _, err := InitApp([]string{"path", tcTestdataPath, "threads", "abc"}, tgFlags); err == nil {
 		t.Error("success init app with threads=abc")
 		return
 	}
 
-	if _, err := InitApp([]string{"path", "./not_exist/path/to/hle"}); err == nil {
+	if _, err := InitApp([]string{"path", "./not_exist/path/to/hle"}, tgFlags); err == nil {
 		t.Error("success init app with undefined dir key")
 		return
 	}
