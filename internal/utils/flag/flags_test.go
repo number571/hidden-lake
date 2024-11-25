@@ -14,6 +14,24 @@ var (
 	).Build()
 )
 
+func TestPanicFlagsBuilder(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("nothing panics")
+			return
+		}
+	}()
+
+	_ = NewFlagsBuilder(
+		NewFlagBuilder("v", "version").
+			WithDescription("print information about service"),
+		NewFlagBuilder("v", "version").
+			WithDescription("print information about service"),
+	).Build()
+}
+
 func TestFlagsValidate(t *testing.T) {
 	t.Parallel()
 

@@ -1,6 +1,8 @@
 package flag
 
-import "strings"
+import (
+	"strings"
+)
 
 var (
 	_ IFlagsBuilder = &sFlagsBuilder{}
@@ -24,6 +26,15 @@ func (p *sFlagsBuilder) Build() IFlags {
 }
 
 func NewFlags(pFlags ...IFlag) IFlags {
+	mapAliases := make(map[string]struct{}, len(pFlags))
+	for _, v := range pFlags {
+		for _, a := range v.GetAliases() {
+			if _, ok := mapAliases[a]; ok {
+				panic("alias_name duplicated")
+			}
+			mapAliases[a] = struct{}{}
+		}
+	}
 	v := sFlags(pFlags)
 	return &v
 }
