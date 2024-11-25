@@ -27,9 +27,9 @@ func ExamplePrintln() {
 	// Output:
 	// Hidden Lake Service (HLS)
 	// anonymizes traffic using the QB-problem
-	// [-v, --version] - print information about service
-	// [-h, --help] - print version of service
-	// [-p, --path] - set path to config, database files
-	// [-n, --network] - set network key for connections
-	// [-t, --threads] - set num of parallel functions to calculate PoW
+	// [ -v, -version ] = print information about service
+	// [ -h, -help ] = print version of service
+	// [ -p, -path ] = set path to config, database files
+	// [ -n, -network ] = set network key for connections
+	// [ -t, -threads ] = set num of parallel functions to calculate PoW
 }
