@@ -21,7 +21,7 @@ func (p *sFlags) Get(pName string) IFlag {
 			}
 		}
 	}
-	return nil
+	panic("undefined alias_name")
 }
 
 func (p *sFlags) List() []IFlag {
