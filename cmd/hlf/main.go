@@ -12,6 +12,14 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/help"
+
+	_ "embed"
+)
+
+var (
+	//go:embed help.yml
+	gHelpYaml []byte
 )
 
 func main() {
@@ -23,14 +31,7 @@ func main() {
 	}
 
 	if flag.GetBoolFlagValue(args, []string{"h", "help"}) {
-		fmt.Print(
-			"Hidden Lake Filesharer (HLF)\n" +
-				"Description: file sharing with a web interface\n" +
-				"Arguments:\n" +
-				"[ -h, --help    ] - print information about service\n" +
-				"[ -v, --version ] - print version of service\n" +
-				"[ -p, --path    ] - set path to config, database files\n",
-		)
+		help.Println(gHelpYaml)
 		return
 	}
 

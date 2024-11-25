@@ -1,0 +1,6 @@
+name: Hidden Lake Filesharer (HLF)
+desc: file sharing with a web interface
+args: |
+  [ -h, --help    ] - print information about service
+  [ -v, --version ] - print version of service
+  [ -p, --path    ] - set path to config, database files

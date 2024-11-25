@@ -1,0 +1,7 @@
+name: Hidden Lake Traffic (HLT)
+desc: retransmits and saves encrypted traffic
+args: |
+  [ -h, --help    ] - print information about service
+  [ -v, --version ] - print version of service
+  [ -p, --path    ] - set path to config, database files
+  [ -n, --network ] - set network key for connections
