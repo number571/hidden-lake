@@ -48,7 +48,7 @@ func TestLogger(t *testing.T) {
 		return
 	}
 
-	logGetter := logBuilder.Get()
+	logGetter := logBuilder.Build()
 	if logGetter.GetConn() != "127.0.0.1:55555" {
 		t.Error("got conn != conn")
 		return
