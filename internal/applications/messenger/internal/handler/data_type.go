@@ -71,7 +71,7 @@ func unwrapFile(pBytes []byte) (template.HTML, string) {
 	if len(fileBytes) == 0 {
 		return "", ""
 	}
-	escapedFilename := html.EscapeString(strings.TrimSpace(filename))
+	escapedFilename := utils.FilenameEscape(strings.TrimSpace(filename))
 	base64FileBytes := base64.StdEncoding.EncodeToString(fileBytes)
 	return template.HTML(escapedFilename), base64FileBytes // nolint: gosec
 }
