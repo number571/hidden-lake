@@ -66,8 +66,7 @@ func ReplaceTextToURLs(pS string) string {
 		if err != nil {
 			continue
 		}
-		url := u.String()
-		splited[i] = fmt.Sprintf(tagTemplate, url, html.EscapeString(url))
+		splited[i] = fmt.Sprintf(tagTemplate, u.String(), html.EscapeString(s))
 	}
 	return strings.Join(splited, " ")
 }
