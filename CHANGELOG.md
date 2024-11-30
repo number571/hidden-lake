@@ -30,7 +30,6 @@
 ### BUG FIXES
 
 - `cmd/hle, cmd/hlt, cmd/hll`: fix serviceName in handlers
-- `cmd/hlm` [!]: fix xss downloadBase64File vulnerability
 
 <!-- ... -->
 
