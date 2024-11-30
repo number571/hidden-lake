@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
@@ -12,7 +11,6 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	hlm_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -52,7 +50,9 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		if err := isValidMsgBytes(rawMsgBytes); err != nil {
+		dbMsg := database.NewMessage(true, rawMsgBytes)
+		msg, err := getMessage(dbMsg)
+		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("recv_message"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: get message bytes")
 			return
@@ -66,72 +66,43 @@ func HandleIncomingPushHTTP(
 		}
 
 		rel := database.NewRelation(myPubKey, fPubKey)
-		dbMsg := database.NewMessage(true, rawMsgBytes)
-
 		if err := pDB.Push(rel, dbMsg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return
 		}
 
-		pBroker.Produce(
-			fPubKey.GetHasher().ToString(),
-			getMessage(
-				true,
-				dbMsg.GetMessage(),
-				dbMsg.GetTimestamp(),
-			),
-		)
+		pBroker.Produce(fPubKey.GetHasher().ToString(), msg)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hlm_settings.CServiceFullName)
 	}
 }
 
-func isValidMsgBytes(rawMsgBytes []byte) error {
+func getMessage(pDBMsg database.IMessage) (hlm_utils.SMessage, error) {
+	rawMsgBytes := pDBMsg.GetMessage()
+	timestamp := pDBMsg.GetTimestamp()
 	switch {
 	case isText(rawMsgBytes):
-		strMsg := strings.TrimSpace(unwrapText(rawMsgBytes, true))
-		if strMsg == "" {
-			return ErrMessageNull
+		textdata := unwrapText(rawMsgBytes)
+		if textdata == "" {
+			return hlm_utils.SMessage{}, ErrMessageNull
 		}
-		if chars.HasNotGraphicCharacters(strMsg) {
-			return ErrHasNotWritableChars
-		}
-		return nil
+		return hlm_utils.SMessage{
+			FTimestamp: timestamp,
+			FTextData:  textdata,
+		}, nil
 	case isFile(rawMsgBytes):
-		filename, msgBytes := unwrapFile(rawMsgBytes, true)
-		if filename == "" || len(msgBytes) == 0 {
-			return ErrUnwrapFile
-		}
-		return nil
-	default:
-		return ErrUnknownMessageType
-	}
-}
-
-func getMessage(pEscape bool, pRawMsgBytes []byte, pTimestamp string) hlm_utils.SMessage {
-	switch {
-	case isText(pRawMsgBytes):
-		msgData := unwrapText(pRawMsgBytes, pEscape)
-		if msgData == "" {
-			panic("message data = nil")
+		filename, filedata := unwrapFile(rawMsgBytes)
+		if filename == "" || filedata == "" {
+			return hlm_utils.SMessage{}, ErrUnwrapFile
 		}
 		return hlm_utils.SMessage{
-			FTimestamp: pTimestamp,
-			FMainData:  msgData,
-		}
-	case isFile(pRawMsgBytes):
-		filename, msgData := unwrapFile(pRawMsgBytes, pEscape)
-		if filename == "" || msgData == "" {
-			panic("filename = nil OR message data = nil")
-		}
-		return hlm_utils.SMessage{
+			FTimestamp: timestamp,
 			FFileName:  filename,
-			FTimestamp: pTimestamp,
-			FMainData:  msgData,
-		}
+			FFileData:  filedata,
+		}, nil
 	default:
-		panic("got unknown message type")
+		return hlm_utils.SMessage{}, ErrUnknownMessageType
 	}
 }

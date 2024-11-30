@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hlm`: add support URL links
+
 ### CHANGES
 
 - `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
@@ -20,6 +24,7 @@
 ### BUG FIXES
 
 - `cmd/hle, cmd/hlt, cmd/hll`: fix serviceName in handlers
+- `cmd/hlm` [!]: fix xss downloadBase64File vulnerability
 
 <!-- ... -->
 

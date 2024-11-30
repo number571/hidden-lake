@@ -123,7 +123,7 @@ func FriendsChatPage(
 			start = size - messagesCap
 		}
 
-		msgs, err := pDB.Load(rel, start, size)
+		dbMsgs, err := pDB.Load(rel, start, size)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "read_database", "read database")(pW, pR)
 			return
@@ -138,14 +138,18 @@ func FriendsChatPage(
 				FPubKeyHash: recvPubKey.GetHasher().ToString(),
 			},
 			FMessages: func() []sChatMessage {
-				resMsgs := make([]sChatMessage, 0, len(msgs))
-				for _, msg := range msgs {
-					resMsgs = append(resMsgs, sChatMessage{
-						FIsIncoming: msg.IsIncoming(),
-						SMessage:    getMessage(false, msg.GetMessage(), msg.GetTimestamp()),
+				msgs := make([]sChatMessage, 0, len(dbMsgs))
+				for _, dbMsg := range dbMsgs {
+					msg, err := getMessage(dbMsg)
+					if err != nil {
+						panic(err)
+					}
+					msgs = append(msgs, sChatMessage{
+						FIsIncoming: dbMsg.IsIncoming(),
+						SMessage:    msg,
 					})
 				}
-				return resMsgs
+				return msgs
 			}(),
 		}
 

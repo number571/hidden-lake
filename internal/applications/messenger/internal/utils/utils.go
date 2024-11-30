@@ -2,7 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/url"
 	"strings"
+	"unicode"
 
 	"github.com/number571/hidden-lake/internal/webui"
 )
@@ -49,4 +52,38 @@ func ReplaceTextToEmoji(pS string) string {
 		splited[i] = v
 	}
 	return strings.Join(splited, " ")
+}
+
+func ReplaceTextToURLs(pS string) string {
+	tagTemplate := "<a style='background-color:#b9cdcf;color:black;' target='_blank' href='%[1]s'>%[1]s</a>"
+	splited := strings.Split(pS, " ")
+	for i, s := range splited {
+		if _, err := url.ParseRequestURI(s); err != nil {
+			continue
+		}
+		u, err := url.Parse(s)
+		if err != nil {
+			continue
+		}
+		splited[i] = fmt.Sprintf(tagTemplate, u.String())
+	}
+	return strings.Join(splited, " ")
+}
+
+func FilenameEscape(pFilename string) string {
+	s := strings.Builder{}
+	s.Grow(len(pFilename))
+	for _, c := range pFilename {
+		switch {
+		case unicode.IsLetter(c):
+			fallthrough
+		case unicode.IsDigit(c):
+			fallthrough
+		case c == '.' || c == '-' || c == '_' || c == ' ' || c == '(' || c == ')':
+			s.WriteRune(c)
+		default:
+			s.WriteByte('_')
+		}
+	}
+	return s.String()
 }

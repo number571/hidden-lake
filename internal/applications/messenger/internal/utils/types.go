@@ -1,11 +1,14 @@
 package utils
 
+import "html/template"
+
 type SSubscribe struct {
 	FAddress string `json:"address"`
 }
 
 type SMessage struct {
-	FFileName  string `json:"filename"` // can be ""
-	FTimestamp string `json:"timestamp"`
-	FMainData  string `json:"maindata"`
+	FTimestamp string        `json:"timestamp"`
+	FTextData  template.HTML `json:"textdata"`
+	FFileName  template.HTML `json:"filename"`
+	FFileData  string        `json:"filedata"`
 }

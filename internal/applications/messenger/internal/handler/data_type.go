@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/base64"
 	"html"
+	"html/template"
+	"strings"
 
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -40,20 +42,22 @@ func wrapFile(filename string, pBytes []byte) []byte {
 	}, []byte{})
 }
 
-func unwrapText(pBytes []byte, pEscape bool) string {
-	if len(pBytes) == 0 { // need use first isText
-		panic("length of bytes = 0")
+func unwrapText(pBytes []byte) template.HTML {
+	if !isText(pBytes) {
+		return ""
 	}
-	text := utils.ReplaceTextToEmoji(string(pBytes[1:]))
-	if pEscape {
-		return html.EscapeString(text)
+	text := string(pBytes[1:])
+	if chars.HasNotGraphicCharacters(text) {
+		return ""
 	}
-	return text
+	text = utils.ReplaceTextToEmoji(strings.TrimSpace(text))
+	text = utils.ReplaceTextToURLs(html.EscapeString(text))
+	return template.HTML(text) // nolint: gosec
 }
 
-func unwrapFile(pBytes []byte, pEscape bool) (string, string) {
-	if len(pBytes) == 0 { // need use first isFile
-		panic("length of bytes = 0")
+func unwrapFile(pBytes []byte) (template.HTML, string) {
+	if !isFile(pBytes) {
+		return "", ""
 	}
 	splited := bytes.Split(pBytes[1:], []byte{hlm_settings.CIsFile})
 	if len(splited) < 2 {
@@ -67,9 +71,7 @@ func unwrapFile(pBytes []byte, pEscape bool) (string, string) {
 	if len(fileBytes) == 0 {
 		return "", ""
 	}
+	escapedFilename := utils.FilenameEscape(strings.TrimSpace(filename))
 	base64FileBytes := base64.StdEncoding.EncodeToString(fileBytes)
-	if pEscape {
-		return html.EscapeString(filename), base64FileBytes
-	}
-	return filename, base64FileBytes
+	return template.HTML(escapedFilename), base64FileBytes // nolint: gosec
 }

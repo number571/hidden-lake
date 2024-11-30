@@ -46,7 +46,7 @@ func TestFriendsChatWS(t *testing.T) {
 
 	pMsg := utils.SMessage{
 		FFileName:  "file.txt",
-		FMainData:  "hello, world!",
+		FFileData:  "hello, world!",
 		FTimestamp: time.Now().String(),
 	}
 	msgBroker.Produce(subAddr, pMsg)
@@ -61,8 +61,8 @@ func TestFriendsChatWS(t *testing.T) {
 		t.Error(`pMsg.FFileName != cMsg.FFileName`)
 		return
 	}
-	if pMsg.FMainData != cMsg.FMainData {
-		t.Error(`pMsg.FMainData != cMsg.FMainData`)
+	if pMsg.FFileData != cMsg.FFileData {
+		t.Error(`pMsg.FFileData != cMsg.FFileData`)
 		return
 	}
 	if pMsg.FTimestamp != cMsg.FTimestamp {

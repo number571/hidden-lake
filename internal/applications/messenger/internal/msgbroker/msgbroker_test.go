@@ -1,6 +1,7 @@
 package msgbroker
 
 import (
+	"html/template"
 	"testing"
 	"time"
 
@@ -11,13 +12,13 @@ func TestMessageBroker(t *testing.T) {
 	t.Parallel()
 
 	addr := "address"
-	msgData := "msg_data"
+	msgData := template.HTML("msg_data")
 
 	msgReceiver := NewMessageBroker()
 
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		msgReceiver.Produce(addr, utils.SMessage{FMainData: msgData})
+		msgReceiver.Produce(addr, utils.SMessage{FTextData: msgData})
 	}()
 
 	msg, ok := msgReceiver.Consume(addr)
@@ -26,8 +27,8 @@ func TestMessageBroker(t *testing.T) {
 		return
 	}
 
-	if msg.FMainData != msgData {
-		t.Error("msg.FMainData != msgData")
+	if msg.FTextData != msgData {
+		t.Error("msg.FTextData != msgData")
 		return
 	}
 }

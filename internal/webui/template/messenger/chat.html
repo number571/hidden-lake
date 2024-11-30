@@ -49,7 +49,7 @@ Babilejo
 </script>
 
 <script type="text/javascript" defer>
-    function downloadBase64File(contentBase64, fileName) {
+    function downloadBase64File(fileName, contentBase64) {
         const linkSource = `data:application/octet-stream;base64,${contentBase64}`;
         const downloadLink = document.createElement('a');
         document.body.appendChild(downloadLink);
@@ -95,19 +95,18 @@ Babilejo
           <div class="need-break-text d-flex flex-row justify-content-start mb-2 pt-1">
             <div>
               <p class="border border-secondary rounded text-center p-2 me-3 mb-1 text-white bg-dark">`+aliasName+`</p>
-              <p class="rounded text-center p-2 ms-3 mb-1 text-white bg-secondary">` + obj.maindata + `</p>
+              <p class="rounded text-center p-2 ms-3 mb-1 text-white bg-secondary">` + obj.textdata + `</p>
               <p class="small ms-3 mb-3 text-muted">` + obj.timestamp + `</p>
             </div>
           </div>
         `
             } else { // got file message
-                let filename = obj.filename;
                 insertHTML = `
           <div class="need-break-text d-flex flex-row justify-content-start mb-2 pt-1">
             <div>
               <p class="border border-secondary rounded text-center p-2 me-3 mb-1 text-white bg-dark">`+aliasName+`</p>
-              <button class="btn btn-muted text-dark w-100" onclick="downloadBase64File('` + obj.maindata + `', '` + filename + `')">
-                ` + filename + `
+              <button class="btn btn-muted text-dark w-100" onclick="downloadBase64File('` + obj.filename + `', '` + obj.filedata + `')">
+                ` + obj.filename + `
               </button>
               <p class="small ms-3 mb-3 text-muted">` + obj.timestamp + `</p>
             </div>
@@ -162,10 +161,10 @@ Babilejo
                 {{$x.FAliasName}}
             </p>
             {{if (eq .FFileName "")}}
-            <p class="rounded text-center p-2 ms-3 mb-1 text-white bg-secondary">{{.FMainData}}</p>
+            <p class="rounded text-center p-2 ms-3 mb-1 text-white bg-secondary">{{.FTextData}}</p>
             {{else}}
             <button class="btn btn-muted text-center text-dark w-100"
-                onclick="downloadBase64File('{{.FMainData}}', '{{.FFileName}}')">
+                onclick="downloadBase64File('{{.FFileName}}', '{{.FFileData}}')">
                 {{.FFileName}}
             </button>
             {{end}}
@@ -179,10 +178,10 @@ Babilejo
                 ___
             </p>
             {{if (eq .FFileName "")}}
-            <p class="rounded text-center p-2 me-3 mb-1 text-white bg-info">{{.FMainData}}</p>
+            <p class="rounded text-center p-2 me-3 mb-1 text-white bg-info">{{.FTextData}}</p>
             {{else}}
             <button class="btn btn-primary text-center text-white w-100"
-                onclick="downloadBase64File('{{.FMainData}}', '{{.FFileName}}')">
+                onclick="downloadBase64File('{{.FFileName}}', '{{.FFileData}}')">
                 {{.FFileName}}
             </button>
             {{end}}
