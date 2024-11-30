@@ -6,7 +6,6 @@ import (
 	"html"
 	"net/url"
 	"strings"
-	"unicode"
 
 	"github.com/number571/hidden-lake/internal/webui"
 )
@@ -69,22 +68,4 @@ func ReplaceTextToURLs(pS string) string {
 		splited[i] = fmt.Sprintf(tagTemplate, u.String(), html.EscapeString(s))
 	}
 	return strings.Join(splited, " ")
-}
-
-func FilenameEscape(pFilename string) string {
-	s := strings.Builder{}
-	s.Grow(len(pFilename))
-	for _, c := range pFilename {
-		switch {
-		case unicode.IsLetter(c):
-			fallthrough
-		case unicode.IsDigit(c):
-			fallthrough
-		case c == '.' || c == '-' || c == '_' || c == ' ' || c == '(' || c == ')':
-			s.WriteRune(c)
-		default:
-			s.WriteByte('_')
-		}
-	}
-	return s.String()
 }

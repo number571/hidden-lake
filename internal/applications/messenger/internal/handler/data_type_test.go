@@ -9,7 +9,7 @@ import (
 
 const (
 	tcFile        = "file10.txt"
-	tcFileEscaped = "file10.txt_b_some__b_.txt"
+	tcFileEscaped = "file10.txt&lt;b&gt;some&lt;/b&gt;.txt"
 	tcText        = "<a href='xxx'>hello</a>"
 	tcTextEscaped = "&lt;a href=&#39;xxx&#39;&gt;hello&lt;/a&gt;"
 )
