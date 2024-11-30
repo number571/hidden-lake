@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/url"
 	"strings"
 	"unicode"
@@ -55,7 +56,7 @@ func ReplaceTextToEmoji(pS string) string {
 }
 
 func ReplaceTextToURLs(pS string) string {
-	tagTemplate := "<a style='background-color:#b9cdcf;color:black;' target='_blank' href='%[1]s'>%[1]s</a>"
+	tagTemplate := "<a style='background-color:#b9cdcf;color:black;' target='_blank' href='%[1]s'>%[2]s</a>"
 	splited := strings.Split(pS, " ")
 	for i, s := range splited {
 		if _, err := url.ParseRequestURI(s); err != nil {
@@ -65,7 +66,8 @@ func ReplaceTextToURLs(pS string) string {
 		if err != nil {
 			continue
 		}
-		splited[i] = fmt.Sprintf(tagTemplate, u.String())
+		url := u.String()
+		splited[i] = fmt.Sprintf(tagTemplate, url, html.EscapeString(url))
 	}
 	return strings.Join(splited, " ")
 }
