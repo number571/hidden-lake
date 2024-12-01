@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/*`: change log.Fatal -> panic (args validate)
+
 <!-- ... -->
 
 ## v1.7.7

@@ -33,10 +33,8 @@ var (
 
 func main() {
 	args := os.Args[1:]
-
 	if ok := gFlags.Validate(args); !ok {
-		log.Fatal("args invalid")
-		return
+		panic("args invalid")
 	}
 
 	if gFlags.Get("version").GetBoolValue(args) {
