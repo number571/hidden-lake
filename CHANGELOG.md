@@ -11,6 +11,7 @@
 - `cmd/*`: change log.Fatal -> panic (args validate)
 - `cmd/*`: add *.yml default configs
 - `cmd/hlt`: delete default config connection 127.0.0.1:9571
+- `cmd/hls,cmd/hlc`: delete default config service hidden-lake-filesharer
 
 <!-- ... -->
 

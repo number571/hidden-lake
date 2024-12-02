@@ -7,7 +7,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/conn"
@@ -85,7 +84,6 @@ func initConfig() *SConfig {
 		},
 		FServices: map[string]string{
 			hlm_settings.CServiceFullName: hlm_settings.CDefaultIncomingAddress,
-			hlf_settings.CServiceFullName: hlf_settings.CDefaultIncomingAddress,
 		},
 		FConnections: []string{},
 		FFriends:     map[string]string{},

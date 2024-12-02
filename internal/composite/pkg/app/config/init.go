@@ -3,7 +3,6 @@ package config
 import (
 	"os"
 
-	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -19,7 +18,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			FServices: []string{
 				hls_settings.CServiceFullName,
 				hlm_settings.CServiceFullName,
-				hlf_settings.CServiceFullName,
 			},
 		}
 	}
