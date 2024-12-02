@@ -34,20 +34,7 @@ $ go run ./cmd/hle
 ```
 
 Open ports `9551` (HTTP).
-Creates `./hle.yml` file.
-
-Default config `hle.yml`
-
-```yaml
-settings:
-  message_size_bytes: 8192
-logging:
-- info
-- warn
-- erro
-address:
-  http: 127.0.0.1:9551
-```
+Creates [`./hle.yml`](./hle.yml) file.
 
 ## Running options
 
@@ -73,26 +60,6 @@ $ go run ./main.go e 'hello, world!'
 > 264412546dc14805...1802b47342f074d
 $ go run ./main.go d '264412546dc14805...1802b47342f074d'
 > hello, world!
-```
-
-## Config structure
-
-```
-"logging"    Enable loggins in/out actions in the network
-"address"    API addresses for HLT functions
-```
-
-```yaml
-settings:
-  message_size_bytes: 8192
-  work_size_bits: 22
-  network_key: hle-network-key
-logging:
-  - info
-  - warn
-  - erro
-address:
-  http: 127.0.0.1:9551
 ```
 
 ## HLE API

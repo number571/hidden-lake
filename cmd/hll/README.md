@@ -37,20 +37,7 @@ $ go run ./cmd/hll
 ```
 
 Open ports `9561` (HTTP).
-Creates `./hll.yml` file.
-
-Default config `hll.yml`
-
-```yaml
-settings:
-  messages_capacity: 2048
-logging:
-- info
-- warn
-- erro
-address:
-  http: 127.0.0.1:9561
-```
+Creates [`./hll.yml`](./hll.yml) file.
 
 ## Running options
 
@@ -82,32 +69,6 @@ $ go run ./main.go
 Get valid response
 ```
 messages have been successfully transported
-```
-
-## Config structure
-
-```
-"logging"    Enable loggins in/out actions in the network
-"address"    API addresses for HLT functions
-"consumers"  A list of the HLT consumers
-"producers"  A list of the HLTs producers
-```
-
-```yaml
-settings:
-  messages_capacity: 2048
-  work_size_bits: 22
-  network_key: hlt-network-key
-logging:
-  - info
-  - warn
-  - erro
-address:
-  http: 127.0.0.1:9561
-producers:
-  - localhost:8582
-consumers:
-  - localhost:7582
 ```
 
 ## HLL API

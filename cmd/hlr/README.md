@@ -49,21 +49,7 @@ $ go run ./cmd/hlr
 ```
 
 Open port `9532` (HTTP, incoming).
-Creates `./hlr.yml` file.
-
-Default config `hlr.yml`
-
-```yaml
-settings:
-  exec_timeout_ms: 5000
-  password: 4otg9sohTw8Lv8PheDZ7fOD5j5v5sU
-logging:
-- info
-- warn
-- erro
-address:
-  incoming: 127.0.0.1:9532
-```
+Creates [`./hlr.yml`](./hlr.yml) file.
 
 ## Running options
 

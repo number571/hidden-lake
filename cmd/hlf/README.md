@@ -45,24 +45,8 @@ $ go run ./cmd/hlf
 ```
 
 Open ports `9541` (HTTP, interface) and `9542` (HTTP, incoming).
-Creates `./hlf.yml` and `./hlf.stg` files.
+Creates [`./hlf.yml`](./hlf.yml) and `./hlf.stg` files.
 The directory `hlf.stg` stores all shared/loaded files. 
-
-Default config `hlf.yml`
-
-```yaml
-settings:
-  retry_num: 2
-  page_offset: 10
-logging:
-- info
-- warn
-- erro
-address:
-  interface: 127.0.0.1:9541
-  incoming: 127.0.0.1:9542
-connection: 127.0.0.1:9572
-```
 
 ## Running options
 

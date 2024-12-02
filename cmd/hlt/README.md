@@ -45,24 +45,8 @@ $ go run ./cmd/hlt
 ```
 
 Open ports `9581`, `9582` (TCP, HTTP).
-Creates `./hlt.yml`, `./hlt.db` files.
+Creates [`./hlt.yml`](hlt.yml), `./hlt.db` files.
 The file `hlm.db` stores all sent/received messages as structure `ring` from network HL. 
-
-Default config `hlt.yml`
-
-```yaml
-settings:
-  message_size_bytes: 8192
-logging:
-  - info
-  - warn
-  - erro
-address:
-  tcp: 127.0.0.1:9581
-  http: 127.0.0.1:9582
-connections:
-  - 127.0.0.1:9571
-```
 
 ## Running options
 
@@ -86,36 +70,6 @@ $ cd client
 $ go run ./main.go w 'hello, world!'
 $ go run ./main.go h
 $ go run ./main.go r cb3c6558fe0cb64d0d2bad42dffc0f0d9b0f144bc24bb8f2ba06313af9297be4 # hash get by 'h' option
-```
-
-## Config structure
-
-```
-"logging"      Enable loggins in/out actions in the network
-"address"      API addresses for HLT functions
-"network_key"  A network key created to encapsulate connections
-"connections"  Connections to HLS's
-"consumers"    HTTP consumers of raw messages
-```
-
-```yaml
-settings:
-  message_size_bytes: 8192
-  work_size_bits: 22
-  messages_capacity: 2048
-  database_enabled: true
-  network_key: hlt-network-key
-logging:
-  - info
-  - warn
-  - erro
-address:
-  tcp: 127.0.0.1:9581
-  http: 127.0.0.1:9582
-connections:
-  - service:9571
-consumers:
-  - localhost:8082/adapter
 ```
 
 ## HLT API
