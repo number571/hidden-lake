@@ -78,9 +78,7 @@ func initConfig() *SConfig {
 			FHTTP:  hlt_settings.CDefaultHTTPAddress,
 			FPPROF: "",
 		},
-		FConnections: []string{
-			hlt_settings.CDefaultConnectionAddress,
-		},
-		FConsumers: []string{},
+		FConnections: []string{},
+		FConsumers:   []string{},
 	}
 }

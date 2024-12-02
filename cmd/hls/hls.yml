@@ -16,6 +16,6 @@ services:
   hidden-lake-filesharer: 127.0.0.1:9542
   hidden-lake-messenger: 127.0.0.1:9592
 # friends:
-#   _: ""
+#   <friend-name>: <public-key>
 # connections:
-# - ""
+# - <tcp-address>

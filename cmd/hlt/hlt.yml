@@ -12,5 +12,5 @@ address:
   tcp: 127.0.0.1:9581
   http: 127.0.0.1:9582
   # pprof: ""
-connections:
-- 127.0.0.1:9571
+# connections:
+# - <tcp-address>
