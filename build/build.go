@@ -78,7 +78,6 @@ type SConnection struct {
 }
 
 type SSettings struct {
-	FVersion   string `yaml:"version"`
 	FProtoMask struct {
 		FNetwork uint32 `yaml:"network"`
 		FService uint32 `yaml:"service"`
