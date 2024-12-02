@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `cmd/*`: change log.Fatal -> panic (args validate)
+- `cmd/*`: add *.yml default configs
 
 <!-- ... -->
 

@@ -1,0 +1,12 @@
+settings:
+  wait_time_ms: 1000
+  # work_size_bits: 0
+  # network_key: ""
+logging:
+- info
+- warn
+- erro
+address: 127.0.0.1:9531
+connection:
+  hlt_host: 127.0.0.1:9582
+  srv_host: http://127.0.0.1:6060

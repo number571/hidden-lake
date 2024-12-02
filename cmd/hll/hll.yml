@@ -1,0 +1,11 @@
+settings:
+  messages_capacity: 8192
+  # work_size_bits: 0
+  # network_key: ""
+logging:
+- info
+- warn
+- erro
+address:
+  http: 127.0.0.1:9561
+  # pprof: ""

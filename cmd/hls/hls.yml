@@ -1,0 +1,21 @@
+settings:
+  message_size_bytes: 8192
+  fetch_timeout_ms: 60000
+  queue_period_ms: 5000
+  # work_size_bits: 0
+  # network_key: ""
+logging:
+- info
+- warn
+- erro
+address:
+  tcp: 127.0.0.1:9571
+  http: 127.0.0.1:9572
+  # pprof: ""
+services:
+  hidden-lake-filesharer: 127.0.0.1:9542
+  hidden-lake-messenger: 127.0.0.1:9592
+# friends:
+#   _: ""
+# connections:
+# - ""
