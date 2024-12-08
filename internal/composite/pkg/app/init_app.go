@@ -10,8 +10,8 @@ import (
 	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 
-	hla_common_app "github.com/number571/hidden-lake/internal/adapters/common/pkg/app"
-	hla_common_settings "github.com/number571/hidden-lake/internal/adapters/common/pkg/settings"
+	hla_tcp_app "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 
 	hlm_app "github.com/number571/hidden-lake/internal/applications/messenger/pkg/app"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -85,8 +85,8 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 			runner, err = hlf_app.InitApp(pArgs, pFlags)
 		case hlr_settings.CServiceFullName:
 			runner, err = hlr_app.InitApp(pArgs, pFlags)
-		case hla_common_settings.CServiceFullName:
-			runner, err = hla_common_app.InitApp(pArgs, pFlags)
+		case hla_tcp_settings.CServiceFullName:
+			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
 		default:
 			return nil, ErrUnknownService
 		}

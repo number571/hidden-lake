@@ -6,15 +6,17 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
+	"time"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/helpers/loader/pkg/app/config"
-	pkg_config "github.com/number571/hidden-lake/internal/helpers/loader/pkg/config"
-	hll_settings "github.com/number571/hidden-lake/internal/helpers/loader/pkg/settings"
+	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
+
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -26,39 +28,41 @@ var (
 )
 
 type sApp struct {
-	fState state.IState
-
+	fState  state.IState
 	fConfig config.IConfig
 
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
+	fTCPAdapter   tcp.ITCPAdapter
 	fServiceHTTP  *http.Server
 	fServicePPROF *http.Server
 }
 
-func NewApp(
-	pCfg config.IConfig,
-) types.IRunner {
-	logging := pCfg.GetLogging()
-
-	var (
-		httpLogger = std_logger.NewStdLogger(logging, http_logger.GetLogFunc())
-		stdfLogger = std_logger.NewStdLogger(logging, std_logger.GetLogFunc())
-	)
-
+func NewApp(pCfg config.IConfig) types.IRunner {
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fConfig:     pCfg,
-		fHTTPLogger: httpLogger,
-		fStdfLogger: stdfLogger,
+		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
+		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
+		fTCPAdapter: tcp.NewTCPAdapter(
+			tcp.NewSettings(&tcp.SSettings{
+				FAddress:          pCfg.GetAddress().GetTCP(),
+				FMessageSizeBytes: pCfg.GetSettings().GetWorkSizeBits(),
+				FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
+				FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
+			}),
+			func() []string { return nil }, // TODO:
+		),
 	}
 }
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
-		p.runListenerPPROF,
+		p.runTCPAdapter,
+		p.runAdaptedRelayer,
 		p.runListenerHTTP,
+		p.runListenerPPROF,
 	}
 
 	ctx, cancel := context.WithCancel(pCtx)
@@ -90,10 +94,9 @@ func (p *sApp) enable(_ context.Context) state.IStateF {
 		p.initServiceHTTP()
 		p.initServicePPROF()
 
-		p.fStdfLogger.PushInfo(fmt.Sprintf(
-			"%s is started; %s",
-			hll_settings.GServiceName.Short(),
-			encoding.SerializeJSON(pkg_config.GetConfigSettings(p.fConfig)),
+		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
+			"%s is started",
+			hla_settings.GServiceName.Short(),
 		))
 		return nil
 	}
@@ -106,9 +109,53 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hll_settings.GServiceName.Short(),
+			hla_settings.GServiceName.Short(),
 		))
 		return p.stop()
+	}
+}
+
+func (p *sApp) runTCPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	if err := p.fTCPAdapter.Run(pCtx); err != nil {
+		pChErr <- err
+		return
+	}
+}
+
+func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	for {
+		select {
+		case <-pCtx.Done():
+			pChErr <- pCtx.Err()
+			return
+		default:
+			msg, err := p.fTCPAdapter.Consume(pCtx)
+			if err != nil {
+				continue
+			}
+			_ = p.fTCPAdapter.Produce(pCtx, msg)
+
+			req, err := http.NewRequestWithContext(
+				pCtx,
+				http.MethodPost,
+				"http://"+p.fConfig.GetConnection(),
+				strings.NewReader(msg.ToString()),
+			)
+			if err != nil {
+				continue
+			}
+
+			client := &http.Client{Timeout: 5 * time.Second}
+			rsp, err := client.Do(req)
+			if err != nil {
+				continue
+			}
+			rsp.Body.Close()
+		}
 	}
 }
 

@@ -1,0 +1,9 @@
+settings: {}
+logging:
+- info
+- warn
+- erro
+address:
+  tcp: 127.0.0.1:9531
+  http: 127.0.0.1:9532
+connection: 127.0.0.1:9572

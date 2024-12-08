@@ -76,7 +76,6 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 		<-pCtx.Done()
 		p.fHTTPServer.Close()
 	}()
-	defer p.fHTTPServer.Close()
 	return p.fHTTPServer.ListenAndServe()
 }
 
@@ -104,6 +103,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 			rsp, err := client.Do(req)
 			if err != nil {
 				errs[i] = err
+				return
 			}
 			rsp.Body.Close()
 		}(i, url)

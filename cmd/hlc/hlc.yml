@@ -10,4 +10,4 @@ services:
 # - hidden-lake-traffic
 # - hidden-lake-encryptor
 # - hidden-lake-loader
-# - hidden-lake-adapter=common
+# - hidden-lake-adapter=tcp
