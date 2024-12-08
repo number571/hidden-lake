@@ -40,7 +40,7 @@ func initConfig() *SConfig {
 			FTCP:  hla_settings.CDefaultTCPAddress,
 			FHTTP: hla_settings.CDefaultHTTPAddress,
 		},
-		FConnection: hls_settings.CDefaultHTTPAddress,
+		FEndpoint: hls_settings.CDefaultHTTPAddress,
 	}
 }
 

@@ -28,8 +28,8 @@ var (
 )
 
 type sApp struct {
-	fState  state.IState
-	fConfig config.IConfig
+	fState   state.IState
+	fWrapper config.IWrapper
 
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
@@ -42,17 +42,17 @@ type sApp struct {
 func NewApp(pCfg config.IConfig) types.IRunner {
 	return &sApp{
 		fState:      state.NewBoolState(),
-		fConfig:     pCfg,
+		fWrapper:    config.NewWrapper(pCfg),
 		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
 		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
 		fTCPAdapter: tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
 				FAddress:          pCfg.GetAddress().GetTCP(),
-				FMessageSizeBytes: pCfg.GetSettings().GetWorkSizeBits(),
+				FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
 				FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
 				FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
 			}),
-			func() []string { return nil }, // TODO:
+			func() []string { return pCfg.GetConnections() },
 		),
 	}
 }
@@ -89,9 +89,9 @@ func (p *sApp) Run(pCtx context.Context) error {
 	}
 }
 
-func (p *sApp) enable(_ context.Context) state.IStateF {
+func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
-		p.initServiceHTTP()
+		p.initServiceHTTP(pCtx)
 		p.initServicePPROF()
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
@@ -142,7 +142,7 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			req, err := http.NewRequestWithContext(
 				pCtx,
 				http.MethodPost,
-				"http://"+p.fConfig.GetConnection(),
+				"http://"+p.fWrapper.GetConfig().GetEndpoint(),
 				strings.NewReader(msg.ToString()),
 			)
 			if err != nil {
@@ -162,7 +162,7 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if p.fConfig.GetAddress().GetPPROF() == "" {
+	if p.fWrapper.GetConfig().GetAddress().GetPPROF() == "" {
 		return
 	}
 

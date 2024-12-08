@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -14,18 +15,21 @@ var (
 )
 
 type SConfigSettings struct {
-	FWorkSizeBits uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FNetworkKey   string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
+	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 }
 
 type SConfig struct {
 	fFilepath string
+	fMutex    sync.RWMutex
 	fLogging  logger.ILogging
 
-	FSettings   *SConfigSettings `yaml:"settings"`
-	FLogging    []string         `yaml:"logging,omitempty"`
-	FAddress    *SAddress        `yaml:"address"`
-	FConnection string           `yaml:"connection"`
+	FSettings    *SConfigSettings `yaml:"settings"`
+	FLogging     []string         `yaml:"logging,omitempty"`
+	FAddress     *SAddress        `yaml:"address"`
+	FEndpoint    string           `yaml:"endpoint"`
+	FConnections []string         `yaml:"connections,omitempty"`
 }
 
 type SAddress struct {
@@ -77,7 +81,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FAddress.FHTTP != "" &&
-		p.FConnection != ""
+		p.FEndpoint != ""
 }
 
 func (p *SConfig) initConfig() error {
@@ -117,8 +121,19 @@ func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
 }
 
-func (p *SConfig) GetConnection() string {
-	return p.FConnection
+func (p *SConfig) GetEndpoint() string {
+	return p.FEndpoint
+}
+
+func (p *SConfig) GetConnections() []string {
+	p.fMutex.RLock()
+	defer p.fMutex.RUnlock()
+
+	return p.FConnections
+}
+
+func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
+	return p.FMessageSizeBytes
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

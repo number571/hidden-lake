@@ -16,7 +16,8 @@ const (
 )
 
 const (
-	CHandleIndexPath = "/"
+	CHandleNetworkProducePath = "/api/network/produce"
+	CHandleConfigConnectsPath = "/api/config/connects"
 )
 
 const (

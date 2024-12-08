@@ -14,8 +14,12 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
-func HandleIndexAPI(pConfig config.IConfig, pLogger logger.ILogger, pProducer adapters.IProducer) http.HandlerFunc {
-	ctx := context.Background()
+func HandleNetworkProduceAPI(
+	pCtx context.Context,
+	pConfig config.IConfig,
+	pLogger logger.ILogger,
+	pProducer adapters.IProducer,
+) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hla_settings.GServiceName.Short(), pR)
 
@@ -39,7 +43,7 @@ func HandleIndexAPI(pConfig config.IConfig, pLogger logger.ILogger, pProducer ad
 			return
 		}
 
-		_ = pProducer.Produce(ctx, msg)
+		_ = pProducer.Produce(pCtx, msg)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hla_settings.CServiceFullName)

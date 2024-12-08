@@ -6,4 +6,4 @@ logging:
 address:
   tcp: 127.0.0.1:9531
   http: 127.0.0.1:9532
-connection: 127.0.0.1:9572
+endpoint: 127.0.0.1:9572
