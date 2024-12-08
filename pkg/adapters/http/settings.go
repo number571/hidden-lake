@@ -11,6 +11,7 @@ var (
 type SSettings sSettings
 type sSettings struct {
 	FAddress          string
+	FProducePath      string
 	FMessageSizeBytes uint64
 	FWorkSizeBits     uint64
 	FNetworkKey       string
@@ -22,6 +23,7 @@ func NewSettings(pSett *SSettings) ISettings {
 	}
 	return (&sSettings{
 		FAddress:          pSett.FAddress,
+		FProducePath:      pSett.FProducePath,
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
 		FWorkSizeBits:     pSett.FWorkSizeBits,
 		FNetworkKey:       pSett.FNetworkKey,
@@ -33,11 +35,18 @@ func (p *sSettings) useDefault() *sSettings {
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
 	}
+	if p.FProducePath == "" {
+		p.FProducePath = "/"
+	}
 	return p
 }
 
 func (p *sSettings) GetAddress() string {
 	return p.FAddress
+}
+
+func (p *sSettings) GetProducePath() string {
+	return p.FProducePath
 }
 
 func (p *sSettings) GetNetworkKey() string {

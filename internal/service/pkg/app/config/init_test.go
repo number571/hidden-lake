@@ -48,7 +48,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config1.GetAddress().GetTCP() != tcAddressTCP {
+	if config1.GetAddress().GetExternal() != tcAddressExternal {
 		t.Error("got invalid field with exist config (1)")
 		return
 	}
@@ -79,7 +79,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config2.GetAddress().GetTCP() != tcAddressTCP {
+	if config2.GetAddress().GetExternal() != tcAddressExternal {
 		t.Error("got invalid field with exist config (2)")
 		return
 	}
@@ -92,7 +92,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetTCP() != hls_settings.CDefaultTCPAddress {
+	if config3.GetAddress().GetExternal() != hls_settings.CDefaultExternalAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

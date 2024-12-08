@@ -6,10 +6,11 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/hidden-lake/pkg/adapters/tcp"
+	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
 
 	"github.com/number571/go-peer/pkg/client"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -47,14 +48,15 @@ func (p *sApp) initAnonNode() error {
 		settings,
 		p.fPrivKey,
 		kvDatabase,
-		tcp.NewTCPAdapter(
-			tcp.NewSettings(&tcp.SSettings{
-				FAddress:          cfg.GetAddress().GetTCP(),
+		http.NewHTTPAdapter(
+			http.NewSettings(&http.SSettings{
+				FProducePath:      hla_settings.CHandleNetworkAdapterPath, // TODO: delete
+				FAddress:          cfg.GetAddress().GetExternal(),
 				FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
 				FNetworkKey:       cfgSettings.GetNetworkKey(),
 				FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 			}),
-			func() []string { return p.fCfgW.GetConfig().GetConnections() },
+			func() []string { return p.fCfgW.GetConfig().GetAdapters() },
 		),
 		handler.HandleServiceTCP(cfg, p.fAnonLogger),
 	)

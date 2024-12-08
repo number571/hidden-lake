@@ -291,7 +291,7 @@ func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
 		"abc": tgPrivKey2.GetPubKey(),
 	}
 }
-func (p *tsConfig) GetConnections() []string { return nil }
+func (p *tsConfig) GetAdapters() []string { return nil }
 func (p *tsConfig) GetService(s string) (string, bool) {
 	if s == "hidden-some-host-ok" {
 		return p.fServiceAddr, true

@@ -21,7 +21,7 @@ import (
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
-func HandleServiceTCP(pCfg config.IConfig, pLogger logger.ILogger) handler.IHandlerF {
+func HandleServiceTCP(pCfg config.IConfig, pLogger logger.ILogger) handler.IHandlerF { // TODO: rename
 	return func(
 		pCtx context.Context,
 		pSender asymmetric.IPubKey,

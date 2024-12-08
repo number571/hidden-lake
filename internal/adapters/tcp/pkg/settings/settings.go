@@ -16,11 +16,17 @@ const (
 )
 
 const (
-	CHandleNetworkProducePath = "/api/network/produce"
+	CHandleIndexPath          = "/api/index"
+	CHandleConfigSettingsPath = "/api/config/settings"
 	CHandleConfigConnectsPath = "/api/config/connects"
+	CHandleNetworkOnlinePath  = "/api/network/online"
 )
 
 const (
-	CDefaultTCPAddress  = "127.0.0.1:9521"
-	CDefaultHTTPAddress = "127.0.0.1:9522"
+	CHandleNetworkAdapterPath = "/api/network/adapter"
+)
+
+const (
+	CDefaultHTTPAddress = "127.0.0.1:9521"
+	CDefaultTCPAddress  = "127.0.0.1:9522"
 )

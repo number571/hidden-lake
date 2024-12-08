@@ -24,9 +24,16 @@ var (
 )
 
 type sHTTPAdapter struct {
+	fSettings    ISettings
 	fNetMsgChan  chan net_message.IMessage
 	fHTTPServer  *http.Server
 	fConnsGetter func() []string
+	fOnlines     *sOnlines
+}
+
+type sOnlines struct {
+	fMutex sync.RWMutex
+	fSlice []string
 }
 
 func NewHTTPAdapter(pSettings ISettings, pConnsGetter func() []string) IHTTPAdapter {
@@ -34,7 +41,7 @@ func NewHTTPAdapter(pSettings ISettings, pConnsGetter func() []string) IHTTPAdap
 	cache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(pSettings.GetProducePath(), func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
@@ -61,6 +68,7 @@ func NewHTTPAdapter(pSettings ISettings, pConnsGetter func() []string) IHTTPAdap
 	})
 
 	return &sHTTPAdapter{
+		fSettings:   pSettings,
 		fNetMsgChan: msgChan,
 		fHTTPServer: &http.Server{
 			Addr:        pSettings.GetAddress(),
@@ -68,6 +76,7 @@ func NewHTTPAdapter(pSettings ISettings, pConnsGetter func() []string) IHTTPAdap
 			ReadTimeout: (5 * time.Second),
 		},
 		fConnsGetter: pConnsGetter,
+		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 	}
 }
 
@@ -92,7 +101,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 			req, err := http.NewRequestWithContext(
 				pCtx,
 				http.MethodPost,
-				"http://"+url,
+				"http://"+url+p.fSettings.GetProducePath(),
 				strings.NewReader(pNetMsg.ToString()),
 			)
 			if err != nil {
@@ -110,6 +119,17 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 	}
 	wg.Wait()
 
+	onlines := make([]string, 0, N)
+	for i := range errs {
+		if errs[i] == nil {
+			onlines = append(onlines, connects[i])
+		}
+	}
+
+	p.fOnlines.fMutex.Lock()
+	p.fOnlines.fSlice = onlines
+	p.fOnlines.fMutex.Unlock()
+
 	return errors.Join(errs...)
 }
 
@@ -120,4 +140,11 @@ func (p *sHTTPAdapter) Consume(pCtx context.Context) (net_message.IMessage, erro
 	case msg := <-p.fNetMsgChan:
 		return msg, nil
 	}
+}
+
+func (p *sHTTPAdapter) GetOnlines() []string {
+	p.fOnlines.fMutex.RLock()
+	defer p.fOnlines.fMutex.RUnlock()
+
+	return p.fOnlines.fSlice
 }

@@ -17,25 +17,25 @@ const (
 )
 
 const (
-	tcLogging      = true
-	tcNetwork      = "test_network_key"
-	tcDownloader   = "test_downloader"
-	tcUploader     = "test_uploader"
-	tcAddressTCP   = "test_address_tcp"
-	tcAddressHTTP  = "test_address_http"
-	tcAddressPPROF = "test_address_pprof"
-	tcPubKeyAlias1 = "test_alias1"
-	tcPubKeyAlias2 = "test_alias2"
-	tcServiceName1 = "test_service1"
-	tcServiceName2 = "test_service2"
-	tcMessageSize  = (1 << 20)
-	tcWorkSize     = 22
-	tcFetchTimeout = 5000
-	tcQueuePeriod  = 1000
+	tcLogging         = true
+	tcNetwork         = "test_network_key"
+	tcDownloader      = "test_downloader"
+	tcUploader        = "test_uploader"
+	tcAddressExternal = "test_address_external"
+	tcAddressHTTP     = "test_address_http"
+	tcAddressPPROF    = "test_address_pprof"
+	tcPubKeyAlias1    = "test_alias1"
+	tcPubKeyAlias2    = "test_alias2"
+	tcServiceName1    = "test_service1"
+	tcServiceName2    = "test_service2"
+	tcMessageSize     = (1 << 20)
+	tcWorkSize        = 22
+	tcFetchTimeout    = 5000
+	tcQueuePeriod     = 1000
 )
 
 var (
-	tgConnects = []string{
+	tgAdapters = []string{
 		"test_connect1",
 		"test_connect2",
 	}
@@ -60,10 +60,10 @@ logging:
   - info
   - erro
 address:
-  tcp: %s
+  external: %s
   http: %s
   pprof: %s
-connections:
+adapters:
   - %s
   - %s
 friends:
@@ -83,11 +83,11 @@ func testNewConfigString() string {
 		tcFetchTimeout,
 		tcQueuePeriod,
 		tcNetwork,
-		tcAddressTCP,
+		tcAddressExternal,
 		tcAddressHTTP,
 		tcAddressPPROF,
-		tgConnects[0],
-		tgConnects[1],
+		tgAdapters[0],
+		tgAdapters[1],
 		tcPubKeyAlias1,
 		tgPubKeys[tcPubKeyAlias1],
 		tcPubKeyAlias2,
@@ -259,8 +259,8 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetAddress().GetTCP() != tcAddressTCP {
-		t.Error("address_tcp is invalid")
+	if cfg.GetAddress().GetExternal() != tcAddressExternal {
+		t.Error("address_external is invalid")
 		return
 	}
 
@@ -274,12 +274,12 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if len(cfg.GetConnections()) != 2 {
+	if len(cfg.GetAdapters()) != 2 {
 		t.Error("len connections != 2")
 		return
 	}
-	for i, v := range cfg.GetConnections() {
-		if v != tgConnects[i] {
+	for i, v := range cfg.GetAdapters() {
+		if v != tgAdapters[i] {
 			t.Errorf("connection '%d' is invalid", i)
 			return
 		}

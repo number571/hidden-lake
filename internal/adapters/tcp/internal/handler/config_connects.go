@@ -63,10 +63,8 @@ func HandleConfigConnectsAPI(
 				return
 			}
 
-			if adapter, ok := pAdapter.(tcp.ITCPAdapter); ok {
-				networkNode := adapter.GetConnKeeper().GetNetworkNode()
-				_ = networkNode.AddConnection(pCtx, connect) // connection may be refused (closed)
-			}
+			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+			_ = networkNode.AddConnection(pCtx, connect) // connection may be refused (closed)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update connections")
@@ -83,10 +81,8 @@ func HandleConfigConnectsAPI(
 				return
 			}
 
-			if adapter, ok := pAdapter.(tcp.ITCPAdapter); ok {
-				networkNode := adapter.GetConnKeeper().GetNetworkNode()
-				_ = networkNode.DelConnection(connect) // connection may be refused (closed)
-			}
+			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+			_ = networkNode.DelConnection(connect) // connection may be refused (closed)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete connection")

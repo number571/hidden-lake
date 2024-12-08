@@ -142,7 +142,7 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			req, err := http.NewRequestWithContext(
 				pCtx,
 				http.MethodPost,
-				"http://"+p.fWrapper.GetConfig().GetEndpoint(),
+				"http://"+p.fWrapper.GetConfig().GetEndpoint()+hla_settings.CHandleNetworkAdapterPath,
 				strings.NewReader(msg.ToString()),
 			)
 			if err != nil {

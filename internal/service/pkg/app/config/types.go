@@ -14,7 +14,6 @@ type IWrapper interface {
 }
 
 type IEditor interface {
-	UpdateConnections([]string) error
 	UpdateFriends(map[string]asymmetric.IPubKey) error
 }
 
@@ -31,12 +30,12 @@ type IConfig interface {
 	GetLogging() logger.ILogging
 	GetAddress() IAddress
 	GetFriends() map[string]asymmetric.IPubKey
-	GetConnections() []string
+	GetAdapters() []string
 	GetService(string) (string, bool)
 }
 
 type IAddress interface {
-	GetTCP() string
+	GetExternal() string
 	GetHTTP() string
 	GetPPROF() string
 }

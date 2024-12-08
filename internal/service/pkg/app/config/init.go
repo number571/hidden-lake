@@ -2,14 +2,13 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/conn"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -48,14 +47,6 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
 
-	cfg.FConnections = make([]string, 0, len(network.FConnections))
-	for _, c := range network.FConnections {
-		if conn.IsAmI(pCfg.GetAddress(), c) {
-			continue
-		}
-		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
-	}
-
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)
 	}
@@ -79,13 +70,15 @@ func initConfig() *SConfig {
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
-			FTCP:  hls_settings.CDefaultTCPAddress,
-			FHTTP: hls_settings.CDefaultHTTPAddress,
+			FExternal: hls_settings.CDefaultExternalAddress,
+			FHTTP:     hls_settings.CDefaultHTTPAddress,
 		},
 		FServices: map[string]string{
 			hlm_settings.CServiceFullName: hlm_settings.CDefaultIncomingAddress,
 		},
-		FConnections: []string{},
-		FFriends:     map[string]string{},
+		FAdapters: []string{
+			hla_settings.CDefaultHTTPAddress,
+		},
+		FFriends: map[string]string{},
 	}
 }

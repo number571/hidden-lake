@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"slices"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
@@ -17,8 +16,8 @@ var (
 )
 
 var (
-	tgNewConnections = []string{"a", "b", "c", "b"}
-	tgNewFriends     = map[string]asymmetric.IPubKey{
+	// tgNewConnections = []string{"a", "b", "c", "b"}
+	tgNewFriends = map[string]asymmetric.IPubKey{
 		"a": tgPubKey1,
 		"b": tgPubKey2,
 	}
@@ -41,7 +40,7 @@ func (p *tsConfig) GetLogging() logger.ILogging               { return nil }
 func (p *tsConfig) GetShare() bool                            { return false }
 func (p *tsConfig) GetAddress() IAddress                      { return nil }
 func (p *tsConfig) GetNetworkKey() string                     { return "" }
-func (p *tsConfig) GetConnections() []string                  { return nil }
+func (p *tsConfig) GetAdapters() []string                     { return nil }
 func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey { return nil }
 func (p *tsConfig) GetService(_ string) (string, bool)        { return "", false }
 
@@ -86,35 +85,7 @@ func TestEditor(t *testing.T) {
 	config := wrapper.GetConfig()
 	editor := wrapper.GetEditor()
 
-	beforeConnections := config.GetConnections()
 	beforeFriends := config.GetFriends()
-
-	if err := editor.UpdateConnections(tgNewConnections); err != nil {
-		t.Error(err)
-		return
-	}
-	afterConnections := config.GetConnections()
-	if len(afterConnections) != 3 {
-		t.Error("failed deduplicate strings (connections)")
-		return
-	}
-	hasNewConn := false
-	for _, ac := range afterConnections {
-		if !slices.Contains(beforeConnections, ac) {
-			hasNewConn = true
-			break
-		}
-	}
-	if !hasNewConn {
-		t.Error("beforeConnections == afterConnections")
-		return
-	}
-	for _, nc := range tgNewConnections {
-		if !slices.Contains(afterConnections, nc) {
-			t.Error("afterConnections != tgNewConnections")
-			return
-		}
-	}
 
 	if err := editor.UpdateFriends(tgNewFriends); err != nil {
 		t.Error(err)
@@ -163,11 +134,6 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 	editor := wrapper.GetEditor()
 
 	config.fFilepath = random.NewRandom().GetString(32)
-
-	if err := editor.UpdateConnections(tgNewConnections); err == nil {
-		t.Error("success update connections with incorrect filepath")
-		return
-	}
 
 	if err := editor.UpdateFriends(tgNewFriends); err == nil {
 		t.Error("success update friends with incorrect filepath")

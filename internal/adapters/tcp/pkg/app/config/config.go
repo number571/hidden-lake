@@ -81,7 +81,8 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FAddress.FHTTP != "" &&
-		p.FEndpoint != ""
+		p.FEndpoint != "" &&
+		p.FSettings.FMessageSizeBytes != 0
 }
 
 func (p *SConfig) initConfig() error {
