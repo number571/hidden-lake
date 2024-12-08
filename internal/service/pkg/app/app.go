@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"sync"
 
@@ -77,7 +76,6 @@ func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
 		p.runListenerPPROF,
 		p.runListenerHTTP,
-		p.runListenerNode,
 		p.runAnonymityNode,
 	}
 
@@ -119,7 +117,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_settings.GServiceName.Short(),
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(
 				p.fCfgW.GetConfig(),
-				p.fNode.GetOriginNode().GetMessageQueue().GetClient(),
+				p.fNode.GetAnonymityNode().GetQBProcessor().GetClient(),
 			)),
 		))
 		return nil
@@ -143,8 +141,7 @@ func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fServiceHTTP,
 		p.fServicePPROF,
-		p.fNode.GetOriginNode().GetKVDatabase(),
-		p.fNode.GetOriginNode().GetNetworkNode(),
+		p.fNode.GetAnonymityNode().GetKVDatabase(),
 	})
 	if err != nil {
 		return errors.Join(ErrClose, err)
@@ -180,27 +177,6 @@ func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 	go func() {
 		err := p.fServiceHTTP.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			pChErr <- err
-			return
-		}
-	}()
-
-	<-pCtx.Done()
-}
-
-func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-
-	// if node in client mode
-	tcpAddress := p.fCfgW.GetConfig().GetAddress().GetTCP()
-	if tcpAddress == "" {
-		return
-	}
-
-	go func() {
-		// run node in server mode
-		err := p.fNode.GetOriginNode().GetNetworkNode().Listen(pCtx)
-		if err != nil && !errors.Is(err, net.ErrClosed) {
 			pChErr <- err
 			return
 		}

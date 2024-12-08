@@ -105,7 +105,7 @@ func TestHandlePubKeyAPI(t *testing.T) {
 		return
 	}
 
-	if pubKey.ToString() != node.GetMessageQueue().GetClient().GetPrivKey().GetPubKey().ToString() {
+	if pubKey.ToString() != node.GetQBProcessor().GetClient().GetPrivKey().GetPubKey().ToString() {
 		t.Error("public keys not equals")
 		return
 	}

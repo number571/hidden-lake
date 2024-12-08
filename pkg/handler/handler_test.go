@@ -7,12 +7,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/anonymity"
+	"github.com/number571/go-peer/pkg/anonymity/adapters"
+	"github.com/number571/go-peer/pkg/anonymity/queue"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/anonymity/queue"
 	"github.com/number571/go-peer/pkg/network/conn"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
@@ -113,7 +114,7 @@ func (p *tsNode) GetSettings() anonymity.ISettings {
 }
 func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
 func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{} }
-func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
+func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 	return queue.NewQBProblemProcessor(
 		queue.NewSettings(&queue.SSettings{
 			FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
@@ -127,6 +128,7 @@ func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
 	)
 }
 
+func (p *tsNode) GetAdapter() adapters.IAdapter         { return nil }
 func (p *tsNode) GetMapPubKeys() asymmetric.IMapPubKeys { return asymmetric.NewMapPubKeys() }
 
 func (p *tsNode) SendPayload(context.Context, asymmetric.IPubKey, payload.IPayload64) error {
@@ -144,7 +146,7 @@ type tsNetworkNode struct {
 }
 
 func (p *tsNetworkNode) Close() error                                       { return nil }
-func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
+func (p *tsNetworkNode) Run(context.Context) error                          { return nil }
 func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
 
 func (p *tsNetworkNode) GetSettings() network.ISettings {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network"
 
 	"github.com/number571/go-peer/pkg/client"
@@ -37,7 +38,6 @@ func (p *sApp) initAnonNode() error {
 		FFetchTimeout:     cfgSettings.GetFetchTimeout(),
 		FSubSettings: &network.SSubSettings{
 			FServiceName: hls_settings.GServiceName.Short(),
-			FTCPAddress:  cfg.GetAddress().GetTCP(),
 			FParallel:    p.fParallel,
 			FLogger:      p.fAnonLogger,
 		},
@@ -47,11 +47,19 @@ func (p *sApp) initAnonNode() error {
 		settings,
 		p.fPrivKey,
 		kvDatabase,
-		func() []string { return p.fCfgW.GetConfig().GetConnections() },
+		tcp.NewTCPAdapter(
+			tcp.NewSettings(&tcp.SSettings{
+				FAddress:          cfg.GetAddress().GetTCP(),
+				FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
+				FNetworkKey:       cfgSettings.GetNetworkKey(),
+				FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+			}),
+			func() []string { return p.fCfgW.GetConfig().GetConnections() },
+		),
 		handler.HandleServiceTCP(cfg, p.fAnonLogger),
 	)
 
-	originNode := node.GetOriginNode()
+	originNode := node.GetAnonymityNode()
 	for _, f := range cfg.GetFriends() {
 		originNode.GetMapPubKeys().SetPubKey(f)
 	}

@@ -7,12 +7,13 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 )
 
 func HandleConfigConnectsAPI(
@@ -62,7 +63,10 @@ func HandleConfigConnectsAPI(
 				return
 			}
 
-			_ = pNode.GetNetworkNode().AddConnection(pCtx, connect) // connection may be refused (closed)
+			if adapter, ok := pNode.GetAdapter().(tcp.ITCPAdapter); ok {
+				networkNode := adapter.GetConnKeeper().GetNetworkNode()
+				_ = networkNode.AddConnection(pCtx, connect) // connection may be refused (closed)
+			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update connections")
@@ -79,7 +83,10 @@ func HandleConfigConnectsAPI(
 				return
 			}
 
-			_ = pNode.GetNetworkNode().DelConnection(connect) // connection may be refused (closed)
+			if adapter, ok := pNode.GetAdapter().(tcp.ITCPAdapter); ok {
+				networkNode := adapter.GetConnKeeper().GetNetworkNode()
+				_ = networkNode.DelConnection(connect) // connection may be refused (closed)
+			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete connection")

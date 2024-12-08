@@ -1,6 +1,6 @@
 package anon
 
-import anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+import anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 
 var gLogMap = map[anon_logger.ILogType]string{
 	0: "", // invalid log

@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -20,7 +20,7 @@ func HandleServicePubKeyAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 			return
 		}
 
-		client := pNode.GetMessageQueue().GetClient()
+		client := pNode.GetQBProcessor().GetClient()
 		pubKey := client.GetPrivKey().GetPubKey()
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

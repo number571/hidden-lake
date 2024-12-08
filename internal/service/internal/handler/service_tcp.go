@@ -15,9 +15,9 @@ import (
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 

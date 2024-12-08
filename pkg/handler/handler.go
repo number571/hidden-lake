@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/number571/go-peer/pkg/anonymity"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/pkg/request"
 )

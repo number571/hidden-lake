@@ -140,7 +140,6 @@ func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fServiceHTTP,
 		p.fServicePPROF,
-		p.fNode,
 		p.fDatabase,
 	})
 	if err != nil {
@@ -196,7 +195,7 @@ func (p *sApp) runListenerNode(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 
 	go func() {
 		// run node in server mode
-		err := p.fNode.Listen(pCtx)
+		err := p.fNode.Run(pCtx)
 		if err != nil && !errors.Is(err, net.ErrClosed) {
 			pChErr <- err
 			return

@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/client/message"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	"github.com/number571/go-peer/pkg/network/conn"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/utils/api"

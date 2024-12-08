@@ -6,7 +6,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 )
 
 const (

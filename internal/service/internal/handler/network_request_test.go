@@ -12,15 +12,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
@@ -267,7 +268,8 @@ func TestHandleRequestAPI(t *testing.T) {
 		),
 	)
 
-	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[11])
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	_ = networkNode.AddConnection(ctx, testutils.TgAddrs[11])
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
 	testSend(t, client)
@@ -343,7 +345,6 @@ func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.
 	_ = closer.CloseAll([]io.Closer{
 		srv,
 		node.GetKVDatabase(),
-		node.GetNetworkNode(),
 	})
 }
 
@@ -377,7 +378,8 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	go func() { _ = node.GetNetworkNode().Listen(ctx) }()
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	go func() { _ = networkNode.Run(ctx) }()
 
 	return node, cancel
 }

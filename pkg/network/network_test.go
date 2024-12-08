@@ -5,8 +5,11 @@ import (
 	"testing"
 	"time"
 
+	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/adapters"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -29,7 +32,13 @@ func TestPanicNode(t *testing.T) {
 		}),
 		asymmetric.NewPrivKey(),
 		&tsDatabase{},
-		func() []string { return nil },
+		adapters.NewRunnerAdapter(
+			gopeer_adapters.NewAdapterByFuncs(
+				func(context.Context, net_message.IMessage) error { return nil },
+				func(context.Context) (net_message.IMessage, error) { return nil, nil },
+			),
+			func(context.Context) error { return nil },
+		),
 		func(_ context.Context, _ asymmetric.IPubKey, _ request.IRequest) (response.IResponse, error) {
 			return nil, nil
 		},

@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"sort"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
+	"github.com/number571/go-peer/pkg/network/conn"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 )
 
 func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
@@ -24,7 +26,11 @@ func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 
 		switch pR.Method {
 		case http.MethodGet:
-			conns := pNode.GetNetworkNode().GetConnections()
+			conns := make(map[string]conn.IConn)
+			if adapter, ok := pNode.GetAdapter().(tcp.ITCPAdapter); ok {
+				networkNode := adapter.GetConnKeeper().GetNetworkNode()
+				conns = networkNode.GetConnections()
+			}
 
 			inOnline := make([]string, 0, len(conns))
 			for addr := range conns {
@@ -44,10 +50,13 @@ func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 				return
 			}
 
-			if err := pNode.GetNetworkNode().DelConnection(string(connectBytes)); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete online connection")
-				return
+			if adapter, ok := pNode.GetAdapter().(tcp.ITCPAdapter); ok {
+				networkNode := adapter.GetConnKeeper().GetNetworkNode()
+				if err := networkNode.DelConnection(string(connectBytes)); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: delete online connection")
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

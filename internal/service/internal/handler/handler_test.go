@@ -11,13 +11,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/anonymity"
+	"github.com/number571/go-peer/pkg/anonymity/adapters"
+	"github.com/number571/go-peer/pkg/anonymity/queue"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/anonymity/queue"
 	"github.com/number571/go-peer/pkg/network/conn"
+	"github.com/number571/go-peer/pkg/network/connkeeper"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
@@ -27,6 +29,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -147,7 +150,6 @@ func testAllFree(node anonymity.INode, cancel context.CancelFunc, srv *http.Serv
 	_ = closer.CloseAll([]io.Closer{
 		srv,
 		node.GetKVDatabase(),
-		node.GetNetworkNode(),
 	})
 }
 
@@ -161,11 +163,7 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 
 	cfg := wcfg.GetConfig()
 
-	hlNode := hiddenlake_network.NewRawHiddenLakeNode(
-		node,
-		func() []string { return nil },
-		HandleServiceTCP(cfg, logger),
-	)
+	hlNode := hiddenlake_network.NewRawHiddenLakeNode(node)
 
 	mux.HandleFunc(pkg_settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))
@@ -203,11 +201,6 @@ func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, cont
 }
 
 func testNewNode(dbPath, addr string) anonymity.INode {
-	db, err := database.NewKVDatabase(dbPath)
-	if err != nil {
-		panic(err)
-	}
-	networkMask := uint32(1)
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
 			FServiceName:  "TEST",
@@ -217,8 +210,21 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
 		),
-		db,
-		testNewNetworkNode(addr),
+		tcp.NewTCPAdapter(
+			tcp.NewSettings(&tcp.SSettings{
+				FAddress:          addr,
+				FWorkSizeBits:     tcWorkSize,
+				FMessageSizeBytes: tcMessageSize,
+			}),
+			func() []string { return nil },
+		),
+		func() database.IKVDatabase {
+			db, err := database.NewKVDatabase(dbPath)
+			if err != nil {
+				panic(err)
+			}
+			return db
+		}(),
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
 				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
@@ -226,7 +232,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 						FWorkSizeBits: tcWorkSize,
 					}),
 				}),
-				FNetworkMask:  networkMask,
+				FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
 				FQueuePeriod:  500 * time.Millisecond,
 				FConsumersCap: 1,
 				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
@@ -236,31 +242,8 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 				tcMessageSize,
 			),
 		),
-		asymmetric.NewMapPubKeys(),
 	)
 	return node
-}
-
-func testNewNetworkNode(addr string) network.INode {
-	return network.NewNode(
-		network.NewSettings(&network.SSettings{
-			FAddress:      addr,
-			FMaxConnects:  tcMaxConnects,
-			FReadTimeout:  time.Minute,
-			FWriteTimeout: time.Minute,
-			FConnSettings: conn.NewSettings(&conn.SSettings{
-				FMessageSettings: net_message.NewSettings(&net_message.SSettings{
-					FWorkSizeBits: tcWorkSize,
-				}),
-				FLimitMessageSizeBytes: tcMessageSize,
-				FWaitReadTimeout:       time.Hour,
-				FDialTimeout:           time.Minute,
-				FReadTimeout:           time.Minute,
-				FWriteTimeout:          time.Minute,
-			}),
-		}),
-		cache.NewLRUCache(tcCapacity),
-	)
 }
 
 type tsWrapper struct {
@@ -331,8 +314,8 @@ func newTsHiddenLakeNode(tsNode *tsNode) *tsHLNode {
 	return &tsHLNode{tsNode: tsNode}
 }
 
-func (p *tsHLNode) Run(context.Context) error      { return nil }
-func (p *tsHLNode) GetOriginNode() anonymity.INode { return p.tsNode }
+func (p *tsHLNode) Run(context.Context) error         { return nil }
+func (p *tsHLNode) GetAnonymityNode() anonymity.INode { return p.tsNode }
 
 func (p *tsHLNode) SendRequest(ctx context.Context, k asymmetric.IPubKey, r request.IRequest) error {
 	return p.tsNode.SendPayload(ctx, k, payload.NewPayload64(1, r.ToBytes()))
@@ -363,6 +346,31 @@ func newTsNode(pConnectionsOK, pFetchOK, pSendOK, pLoadResponseOK bool) *tsNode 
 	}
 }
 
+var (
+	_ tcp.ITCPAdapter        = &tsTCPAdapter{}
+	_ connkeeper.IConnKeeper = &tsConnKeeper{}
+)
+
+type tsTCPAdapter struct {
+	fConnectionsOK bool
+}
+type tsConnKeeper struct {
+	fConnectionsOK bool
+}
+
+func (p *tsTCPAdapter) Produce(context.Context, net_message.IMessage) error   { return nil }
+func (p *tsTCPAdapter) Consume(context.Context) (net_message.IMessage, error) { return nil, nil }
+func (p *tsTCPAdapter) GetConnKeeper() connkeeper.IConnKeeper {
+	return &tsConnKeeper{p.fConnectionsOK}
+}
+func (p *tsTCPAdapter) Run(context.Context) error { return nil }
+
+func (p *tsConnKeeper) GetSettings() connkeeper.ISettings { return nil }
+func (p *tsConnKeeper) GetNetworkNode() network.INode {
+	return &tsNetworkNode{fConnectionsOK: p.fConnectionsOK}
+}
+func (p *tsConnKeeper) Run(context.Context) error { return nil }
+
 type tsNode struct {
 	fConnectionsOK  bool
 	fFetchOK        bool
@@ -372,6 +380,9 @@ type tsNode struct {
 
 func (p *tsNode) Run(context.Context) error                              { return nil }
 func (p *tsNode) HandleFunc(uint32, anonymity.IHandlerF) anonymity.INode { return p }
+func (p *tsNode) GetAdapter() adapters.IAdapter {
+	return &tsTCPAdapter{p.fConnectionsOK}
+}
 
 func (p *tsNode) GetLogger() logger.ILogger {
 	return logger.NewLogger(
@@ -389,7 +400,7 @@ func (p *tsNode) GetSettings() anonymity.ISettings {
 }
 func (p *tsNode) GetKVDatabase() database.IKVDatabase { return nil }
 func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{p.fConnectionsOK} }
-func (p *tsNode) GetMessageQueue() queue.IQBProblemProcessor {
+func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 	return queue.NewQBProblemProcessor(
 		queue.NewSettings(&queue.SSettings{
 			FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
@@ -430,7 +441,7 @@ type tsNetworkNode struct {
 }
 
 func (p *tsNetworkNode) Close() error                                       { return nil }
-func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
+func (p *tsNetworkNode) Run(context.Context) error                          { return nil }
 func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
 
 func (p *tsNetworkNode) GetSettings() network.ISettings {

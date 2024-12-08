@@ -15,13 +15,14 @@ import (
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/go-peer/pkg/payload"
 )
 
@@ -161,7 +162,6 @@ func TestHLS(t *testing.T) {
 		nodeCancel()
 		_ = closer.CloseAll([]io.Closer{
 			nodeService.GetKVDatabase(),
-			nodeService.GetNetworkNode(),
 		})
 	}()
 
@@ -175,7 +175,6 @@ func TestHLS(t *testing.T) {
 		clientCancel()
 		_ = closer.CloseAll([]io.Closer{
 			nodeClient.GetKVDatabase(),
-			nodeClient.GetNetworkNode(),
 		})
 	}()
 }
@@ -216,9 +215,8 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	go func() {
-		_ = node.GetNetworkNode().Listen(ctx)
-	}()
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	go func() { _ = networkNode.Run(ctx) }()
 
 	return node, cancel, nil
 }
@@ -234,7 +232,8 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	}
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	if err := node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[4]); err != nil {
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	if err := networkNode.AddConnection(ctx, testutils.TgAddrs[4]); err != nil {
 		return nil, cancel, err
 	}
 

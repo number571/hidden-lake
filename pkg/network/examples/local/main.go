@@ -8,22 +8,19 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/conn"
-	"github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
-	gopeer_network "github.com/number571/go-peer/pkg/network"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 )
 
 const (
-	relayerTCPAddress = "localhost:9999"
-	msgSizeBytes      = uint64(8 << 10)
+	relayerAddress = "localhost:9999"
+	msgSizeBytes   = uint64(8 << 10)
 )
 
 func main() {
@@ -33,12 +30,14 @@ func main() {
 	var (
 		node1   = newNode(ctx, "node1")
 		node2   = newNode(ctx, "node2")
-		relayer = newRelayer()
+		adapter = newTCPAdapter(relayerAddress, nil)
 	)
+
+	go func() { _ = adapter.Run(ctx) }()
+	go func() { _ = runAsRelayer(ctx, adapter) }()
 
 	go func() { _ = node1.Run(ctx) }()
 	go func() { _ = node2.Run(ctx) }()
-	go func() { _ = relayer.Listen(ctx) }()
 
 	_, pubKey := exchangeKeys(node1, node2)
 
@@ -72,7 +71,7 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 			kv, _ := database.NewKVDatabase(name + ".db")
 			return kv
 		}(),
-		func() []string { return []string{relayerTCPAddress} },
+		newTCPAdapter("", []string{relayerAddress}),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
 			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
@@ -80,39 +79,37 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	)
 }
 
-func newRelayer() gopeer_network.INode {
-	timeout := 5 * time.Second
-	return gopeer_network.NewNode(
-		gopeer_network.NewSettings(&gopeer_network.SSettings{
-			FAddress:      relayerTCPAddress,
-			FMaxConnects:  256,
-			FReadTimeout:  timeout,
-			FWriteTimeout: timeout,
-			FConnSettings: conn.NewSettings(&conn.SSettings{
-				FMessageSettings:       message.NewSettings(&message.SSettings{}),
-				FLimitMessageSizeBytes: msgSizeBytes,
-				FWaitReadTimeout:       time.Hour,
-				FDialTimeout:           timeout,
-				FReadTimeout:           timeout,
-				FWriteTimeout:          timeout,
-			}),
+func newTCPAdapter(addr string, conns []string) adapters.IRunnerAdapter {
+	return tcp.NewTCPAdapter(
+		tcp.NewSettings(&tcp.SSettings{
+			FAddress:          addr,
+			FMessageSizeBytes: msgSizeBytes,
 		}),
-		cache.NewLRUCache(2048),
-	).HandleFunc(
-		build.GSettings.FProtoMask.FNetwork,
-		func(ctx context.Context, node gopeer_network.INode, _ conn.IConn, msg message.IMessage) error {
-			node.BroadcastMessage(ctx, msg)
-			return nil
-		},
+		func() []string { return conns },
 	)
 }
 
-func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
-	node1 := hlNode1.GetOriginNode()
-	node2 := hlNode2.GetOriginNode()
+func runAsRelayer(ctx context.Context, adapter adapters.IRunnerAdapter) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			msg, err := adapter.Consume(ctx)
+			if err != nil {
+				continue
+			}
+			_ = adapter.Produce(ctx, msg)
+		}
+	}
+}
 
-	pubKey1 := node1.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
-	pubKey2 := node2.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
+func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
+	node1 := hlNode1.GetAnonymityNode()
+	node2 := hlNode2.GetAnonymityNode()
+
+	pubKey1 := node1.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
+	pubKey2 := node2.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
 
 	node1.GetMapPubKeys().SetPubKey(pubKey2)
 	node2.GetMapPubKeys().SetPubKey(pubKey1)

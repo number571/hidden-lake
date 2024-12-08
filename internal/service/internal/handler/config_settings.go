@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/service/pkg/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -29,7 +29,7 @@ func HandleConfigSettingsAPI(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, pkg_config.GetConfigSettings(
 			pWrapper.GetConfig(),
-			pNode.GetMessageQueue().GetClient(),
+			pNode.GetQBProcessor().GetClient(),
 		))
 	}
 }

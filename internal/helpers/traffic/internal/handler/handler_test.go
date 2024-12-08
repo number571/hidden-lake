@@ -211,7 +211,7 @@ type tsNetworkNode struct {
 }
 
 func (p *tsNetworkNode) Close() error                                       { return nil }
-func (p *tsNetworkNode) Listen(context.Context) error                       { return nil }
+func (p *tsNetworkNode) Run(context.Context) error                          { return nil }
 func (p *tsNetworkNode) HandleFunc(uint32, network.IHandlerF) network.INode { return nil }
 
 func (p *tsNetworkNode) GetSettings() network.ISettings {

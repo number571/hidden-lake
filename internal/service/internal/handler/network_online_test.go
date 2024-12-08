@@ -12,13 +12,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/handler"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -138,7 +139,8 @@ func TestHandleOnlineAPI(t *testing.T) {
 		),
 	)
 
-	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[13])
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	_ = networkNode.AddConnection(ctx, testutils.TgAddrs[13])
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
 	testGetOnlines(t, client, node)
@@ -157,7 +159,8 @@ func testGetOnlines(t *testing.T, client hls_client.IClient, node anonymity.INod
 		return
 	}
 
-	if _, ok := node.GetNetworkNode().GetConnections()[onlines[0]]; !ok {
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	if _, ok := networkNode.GetConnections()[onlines[0]]; !ok {
 		t.Error("online address is invalid")
 		return
 	}
@@ -203,7 +206,6 @@ func testAllOnlineFree(node anonymity.INode, cancel context.CancelFunc, pathCfg,
 	cancel()
 	_ = closer.CloseAll([]io.Closer{
 		node.GetKVDatabase(),
-		node.GetNetworkNode(),
 	})
 }
 
@@ -233,7 +235,7 @@ func testOnlinePushNode(cfgPath, dbPath string) (anonymity.INode, context.Cancel
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	go func() { _ = node.GetNetworkNode().Listen(ctx) }()
-
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	go func() { _ = networkNode.Run(ctx) }()
 	return node, cancel
 }

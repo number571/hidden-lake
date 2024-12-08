@@ -182,7 +182,7 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 <p align="center"><img src="images/hls_request.gif" alt="hls_request.gif"/></p>
 <p align="center">Figure 5. Example of running HLS with internal service.</p>
 
-> Simple examples of the `anonymity` package in the directory [github.com/number571/go-peer/pkg/network/anonymity/examples](https://github.com/number571/go-peer/tree/master/pkg/network/anonymity/examples "Package anonymity");
+> Simple examples of the `anonymity` package in the directory [github.com/number571/go-peer/pkg/anonymity/examples](https://github.com/number571/go-peer/tree/master/pkg/network/anonymity/examples "Package anonymity");
 
 ## HLS API
 

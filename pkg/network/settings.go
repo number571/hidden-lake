@@ -24,7 +24,6 @@ type sSettings struct {
 type SSubSettings struct {
 	FLogger      gopeer_logger.ILogger
 	FParallel    uint64
-	FTCPAddress  string
 	FServiceName string
 }
 
@@ -116,10 +115,6 @@ func (p *sSettings) GetParallel() uint64 {
 
 func (p *sSettings) GetServiceName() string {
 	return p.FSubSettings.FServiceName
-}
-
-func (p *sSettings) GetTCPAddress() string {
-	return p.FSubSettings.FTCPAddress
 }
 
 func (p *sSettings) GetLogger() gopeer_logger.ILogger {
