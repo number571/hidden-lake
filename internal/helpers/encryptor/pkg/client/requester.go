@@ -17,12 +17,12 @@ import (
 )
 
 const (
-	cHandleIndexTemplate          = "%s" + hle_settings.CHandleIndexPath
-	cHandleMessageEncryptTemplate = "%s" + hle_settings.CHandleMessageEncryptPath
-	cHandleMessageDecryptTemplate = "%s" + hle_settings.CHandleMessageDecryptPath
-	cHandleServicePubKeyTemplate  = "%s" + hle_settings.CHandleServicePubKeyPath
-	cHandleConfigSettingsTemplate = "%s" + hle_settings.CHandleConfigSettingsPath
-	cHandleConfigFriendsTemplate  = "%s" + hle_settings.CHandleConfigFriendsPath
+	cHandleIndexTemplate          = "http://" + "%s" + hle_settings.CHandleIndexPath
+	cHandleMessageEncryptTemplate = "http://" + "%s" + hle_settings.CHandleMessageEncryptPath
+	cHandleMessageDecryptTemplate = "http://" + "%s" + hle_settings.CHandleMessageDecryptPath
+	cHandleServicePubKeyTemplate  = "http://" + "%s" + hle_settings.CHandleServicePubKeyPath
+	cHandleConfigSettingsTemplate = "http://" + "%s" + hle_settings.CHandleConfigSettingsPath
+	cHandleConfigFriendsTemplate  = "http://" + "%s" + hle_settings.CHandleConfigFriendsPath
 )
 
 var (

@@ -32,7 +32,7 @@ func TestHandlePubKeyAPI2(t *testing.T) {
 		},
 	)
 
-	handler := HandleServicePubKeyAPI(httpLogger, newTsNode(true, true, true, true))
+	handler := HandleServicePubKeyAPI(httpLogger, newTsNode(true, true, true))
 	if err := pubkeyAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -94,7 +94,7 @@ func TestHandlePubKeyAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[8],
+			testutils.TgAddrs[8],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

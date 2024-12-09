@@ -18,10 +18,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	var hlaClient client.IClient
 	for _, a := range cfg.GetAdapters() {
 		hlaClient = client.NewClient(
-			client.NewRequester(
-				a, // TODO:
-				&http.Client{Timeout: 5 * time.Second},
-			),
+			client.NewRequester(a, &http.Client{Timeout: 5 * time.Second}),
 		)
 		break
 	}
@@ -30,7 +27,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux.HandleFunc(hls_settings.CHandleConfigSettingsPath, handler.HandleConfigSettingsAPI(p.fCfgW, p.fHTTPLogger, origNode))
 	mux.HandleFunc(hls_settings.CHandleConfigConnectsPath, handler.HandleConfigConnectsAPI(pCtx, p.fHTTPLogger, hlaClient))
 	mux.HandleFunc(hls_settings.CHandleConfigFriendsPath, handler.HandleConfigFriendsAPI(p.fCfgW, p.fHTTPLogger, origNode))
-	mux.HandleFunc(hls_settings.CHandleNetworkOnlinePath, handler.HandleNetworkOnlineAPI(p.fHTTPLogger, origNode))
+	mux.HandleFunc(hls_settings.CHandleNetworkOnlinePath, handler.HandleNetworkOnlineAPI(pCtx, p.fHTTPLogger, hlaClient))
 	mux.HandleFunc(hls_settings.CHandleServicePubKeyPath, handler.HandleServicePubKeyAPI(p.fHTTPLogger, origNode))
 	mux.HandleFunc(hls_settings.CHandleNetworkRequestPath, handler.HandleNetworkRequestAPI(pCtx, cfg, p.fHTTPLogger, p.fNode))
 

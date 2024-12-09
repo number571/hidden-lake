@@ -57,7 +57,7 @@ func (p *sApp) initAnonNode() error {
 			}),
 			func() []string { return p.fCfgW.GetConfig().GetAdapters() },
 		),
-		handler.HandleServiceTCP(cfg, p.fAnonLogger),
+		handler.HandleServiceFunc(cfg, p.fAnonLogger),
 	)
 
 	originNode := node.GetAnonymityNode()

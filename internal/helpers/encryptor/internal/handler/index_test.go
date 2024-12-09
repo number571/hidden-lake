@@ -68,7 +68,7 @@ func TestErrorsAPI(t *testing.T) {
 	client := hle_client.NewClient(
 		hle_client.NewBuilder(),
 		hle_client.NewRequester(
-			"http://"+testutils.TcUnknownHost,
+			testutils.TcUnknownHost,
 			&http.Client{Timeout: time.Second},
 			testNetworkMessageSettings(),
 		),
@@ -119,7 +119,7 @@ func TestHandleIndexAPI(t *testing.T) {
 	hleClient := hle_client.NewClient(
 		hle_client.NewBuilder(),
 		hle_client.NewRequester(
-			"http://"+testutils.TgAddrs[32],
+			testutils.TgAddrs[32],
 			&http.Client{Timeout: time.Second / 2},
 			testNetworkMessageSettings(),
 		),

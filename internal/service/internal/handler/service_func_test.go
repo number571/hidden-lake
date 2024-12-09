@@ -26,7 +26,7 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 )
 
-func TestHandleServiceTCP(t *testing.T) {
+func TestHandleServiceFunc(t *testing.T) {
 	t.Parallel()
 
 	rspMsg := "hello, world!"
@@ -64,7 +64,7 @@ func TestHandleServiceTCP(t *testing.T) {
 	ctx := context.Background()
 	cfg := &tsConfig{fServiceAddr: addr}
 	pubKey := tgPrivKey2.GetPubKey()
-	handler := HandleServiceTCP(cfg, logger)
+	handler := HandleServiceFunc(cfg, logger)
 
 	reqx := request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
@@ -211,7 +211,7 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 
 	node.HandleFunc(
 		build.GSettings.FProtoMask.FService,
-		handler.RequestHandler(HandleServiceTCP(cfg, logger)),
+		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 

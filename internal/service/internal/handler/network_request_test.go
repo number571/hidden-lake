@@ -49,7 +49,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, true, true, true)),
+		newTsHiddenLakeNode(newTsNode(true, true, true)),
 	)
 	if err := requestAPIRequestPutOK(handler); err != nil {
 		t.Error(err)
@@ -81,7 +81,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, false, false, true)),
+		newTsHiddenLakeNode(newTsNode(false, false, true)),
 	)
 	if err := requestAPIRequestPutOK(handlerx); err == nil {
 		t.Error("request success with put error")
@@ -96,7 +96,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, true, true, false)),
+		newTsHiddenLakeNode(newTsNode(true, true, false)),
 	)
 	if err := requestAPIRequestPostOK(handlery); err == nil {
 		t.Error("request success with post error (load response)")
@@ -263,7 +263,7 @@ func TestHandleRequestAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[9],
+			testutils.TgAddrs[9],
 			&http.Client{Timeout: time.Minute},
 		),
 	)
@@ -374,7 +374,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 
 	node.HandleFunc(
 		build.GSettings.FProtoMask.FService,
-		handler.RequestHandler(HandleServiceTCP(cfg, logger)),
+		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 

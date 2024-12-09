@@ -32,7 +32,7 @@ func main() {
 	hleClient := hle_client.NewClient(
 		hle_client.NewBuilder(),
 		hle_client.NewRequester(
-			"http://"+cLocalAddressHLE,
+			cLocalAddressHLE,
 			&http.Client{Timeout: time.Minute},
 			netSett,
 		),

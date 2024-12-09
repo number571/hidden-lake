@@ -124,7 +124,7 @@ func TestApp(t *testing.T) {
 	client := client.NewClient(
 		client.NewBuilder(),
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[3],
+			testutils.TgAddrs[3],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

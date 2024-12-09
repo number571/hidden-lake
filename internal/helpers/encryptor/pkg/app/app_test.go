@@ -97,7 +97,7 @@ func TestApp(t *testing.T) {
 	client := client.NewClient(
 		client.NewBuilder(),
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[30],
+			testutils.TgAddrs[30],
 			&http.Client{Timeout: time.Minute},
 			testNetworkMessageSettings(),
 		),

@@ -168,7 +168,7 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))
 	mux.HandleFunc(pkg_settings.CHandleConfigConnectsPath, HandleConfigConnectsAPI(ctx, logger, nil))
 	mux.HandleFunc(pkg_settings.CHandleConfigFriendsPath, HandleConfigFriendsAPI(wcfg, logger, node))
-	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(logger, node))
+	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(ctx, logger, nil))
 	mux.HandleFunc(pkg_settings.CHandleNetworkRequestPath, HandleNetworkRequestAPI(ctx, cfg, logger, hlNode))
 	mux.HandleFunc(pkg_settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, node))
 
@@ -336,9 +336,8 @@ var (
 	_ anonymity.INode = &tsNode{}
 )
 
-func newTsNode(pConnectionsOK, pFetchOK, pSendOK, pLoadResponseOK bool) *tsNode {
+func newTsNode(pFetchOK, pSendOK, pLoadResponseOK bool) *tsNode {
 	return &tsNode{
-		fConnectionsOK:  pConnectionsOK,
 		fFetchOK:        pFetchOK,
 		fSendOK:         pSendOK,
 		fLoadResponseOK: pLoadResponseOK,

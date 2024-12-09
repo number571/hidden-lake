@@ -96,7 +96,7 @@ func TestHandlePubKeyAPI(t *testing.T) {
 	hleClient := hle_client.NewClient(
 		hle_client.NewBuilder(),
 		hle_client.NewRequester(
-			"http://"+testutils.TgAddrs[31],
+			testutils.TgAddrs[31],
 			&http.Client{Timeout: time.Second / 2},
 			testNetworkMessageSettings(),
 		),

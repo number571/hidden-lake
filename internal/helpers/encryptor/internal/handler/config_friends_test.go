@@ -311,7 +311,7 @@ func TestHandleConfigFriendsAPI(t *testing.T) {
 	hleClient := hle_client.NewClient(
 		hle_client.NewBuilder(),
 		hle_client.NewRequester(
-			"http://"+testutils.TgAddrs[39],
+			testutils.TgAddrs[39],
 			&http.Client{Timeout: time.Second / 2},
 			testNetworkMessageSettings(),
 		),

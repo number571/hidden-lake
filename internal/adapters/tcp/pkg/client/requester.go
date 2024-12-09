@@ -18,11 +18,11 @@ var (
 )
 
 const (
-	cHandleIndexTemplate          = "%s" + hla_settings.CHandleIndexPath
-	cHandleConfigSettingsTemplate = "%s" + hla_settings.CHandleConfigSettingsPath
-	cHandleConfigConnectsTemplate = "%s" + hla_settings.CHandleConfigConnectsPath
-	cHandleNetworkOnlineTemplate  = "%s" + hla_settings.CHandleNetworkOnlinePath
-	cHandleNetworkAdapterTemplate = "%s" + hla_settings.CHandleNetworkAdapterPath
+	cHandleIndexTemplate          = "http://" + "%s" + hla_settings.CHandleIndexPath
+	cHandleConfigSettingsTemplate = "http://" + "%s" + hla_settings.CHandleConfigSettingsPath
+	cHandleConfigConnectsTemplate = "http://" + "%s" + hla_settings.CHandleConfigConnectsPath
+	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hla_settings.CHandleNetworkOnlinePath
+	cHandleNetworkAdapterTemplate = "http://" + "%s" + hla_settings.CHandleNetworkAdapterPath
 )
 
 type sRequester struct {
