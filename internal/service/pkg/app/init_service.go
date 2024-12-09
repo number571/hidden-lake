@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/number571/hidden-lake/internal/adapters/pkg/client"
-	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -17,10 +16,9 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	origNode := p.fNode.GetAnonymityNode()
 
 	var hlaClient client.IClient
-	for _, adapter := range cfg.GetAdapters() {
+	for _, adapter := range cfg.GetAdapters() { // TODO:
 		hlaClient = client.NewClient(
 			client.NewRequester(
-				settings.CServiceFullName,
 				adapter,
 				&http.Client{Timeout: 5 * time.Second},
 			),

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
 )
 
 var (
@@ -10,11 +10,8 @@ var (
 
 type SSettings sSettings
 type sSettings struct {
-	FAddress          string
-	FProducePath      string
-	FMessageSizeBytes uint64
-	FWorkSizeBits     uint64
-	FNetworkKey       string
+	FAddress         string
+	FAdapterSettings adapters.ISettings
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -22,22 +19,12 @@ func NewSettings(pSett *SSettings) ISettings {
 		pSett = &SSettings{}
 	}
 	return (&sSettings{
-		FAddress:          pSett.FAddress,
-		FProducePath:      pSett.FProducePath,
-		FMessageSizeBytes: pSett.FMessageSizeBytes,
-		FWorkSizeBits:     pSett.FWorkSizeBits,
-		FNetworkKey:       pSett.FNetworkKey,
+		FAddress:         pSett.FAddress,
+		FAdapterSettings: pSett.FAdapterSettings,
 	}).useDefault()
 }
 
 func (p *sSettings) useDefault() *sSettings {
-	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
-	if p.FMessageSizeBytes == 0 {
-		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
-	}
-	if p.FProducePath == "" {
-		p.FProducePath = "/"
-	}
 	return p
 }
 
@@ -45,18 +32,6 @@ func (p *sSettings) GetAddress() string {
 	return p.FAddress
 }
 
-func (p *sSettings) GetProducePath() string {
-	return p.FProducePath
-}
-
-func (p *sSettings) GetNetworkKey() string {
-	return p.FNetworkKey
-}
-
-func (p *sSettings) GetWorkSizeBits() uint64 {
-	return p.FWorkSizeBits
-}
-
-func (p *sSettings) GetMessageSizeBytes() uint64 {
-	return p.FMessageSizeBytes
+func (p *sSettings) GetAdapterSettings() adapters.ISettings {
+	return p.FAdapterSettings
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
 
@@ -30,30 +31,29 @@ func (p *sApp) initAnonNode() error {
 		return errors.Join(ErrMessageSizeLimit, err)
 	}
 
-	settings := network.NewSettings(&network.SSettings{
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{
 		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
 		FNetworkKey:       cfgSettings.GetNetworkKey(),
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
-		FQueuePeriod:      cfgSettings.GetQueuePeriod(),
-		FFetchTimeout:     cfgSettings.GetFetchTimeout(),
-		FSubSettings: &network.SSubSettings{
-			FServiceName: hls_settings.GServiceName.Short(),
-			FParallel:    p.fParallel,
-			FLogger:      p.fAnonLogger,
-		},
 	})
 
 	node := network.NewHiddenLakeNode(
-		settings,
+		network.NewSettings(&network.SSettings{
+			FAdapterSettings: adapterSettings,
+			FQueuePeriod:     cfgSettings.GetQueuePeriod(),
+			FFetchTimeout:    cfgSettings.GetFetchTimeout(),
+			FSubSettings: &network.SSubSettings{
+				FServiceName: hls_settings.GServiceName.Short(),
+				FParallel:    p.fParallel,
+				FLogger:      p.fAnonLogger,
+			},
+		}),
 		p.fPrivKey,
 		kvDatabase,
 		http.NewHTTPAdapter(
 			http.NewSettings(&http.SSettings{
-				FProducePath:      http.CHandleNetworkAdapterPath,
-				FAddress:          cfg.GetAddress().GetExternal(),
-				FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
-				FNetworkKey:       cfgSettings.GetNetworkKey(),
-				FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+				FAdapterSettings: adapterSettings,
+				FAddress:         cfg.GetAddress().GetExternal(),
 			}),
 			func() []string { return p.fCfgW.GetConfig().GetAdapters() },
 		),

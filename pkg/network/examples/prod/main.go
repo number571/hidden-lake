@@ -10,6 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
@@ -78,9 +79,11 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 		}(),
 		tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
-				FNetworkKey:       networkKey,
-				FMessageSizeBytes: networkByKey.FMessageSizeBytes,
-				FWorkSizeBits:     networkByKey.FWorkSizeBits,
+				FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+					FNetworkKey:       networkKey,
+					FMessageSizeBytes: networkByKey.FMessageSizeBytes,
+					FWorkSizeBits:     networkByKey.FWorkSizeBits,
+				}),
 			}),
 			func() []string { return connects },
 		),

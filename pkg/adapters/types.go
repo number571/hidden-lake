@@ -9,3 +9,9 @@ type IRunnerAdapter interface {
 	types.IRunner
 	adapters.IAdapter
 }
+
+type ISettings interface {
+	GetNetworkKey() string
+	GetWorkSizeBits() uint64
+	GetMessageSizeBytes() uint64
+}

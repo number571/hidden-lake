@@ -29,6 +29,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hl_adapters "github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
@@ -211,9 +212,11 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 		),
 		tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
-				FAddress:          addr,
-				FWorkSizeBits:     tcWorkSize,
-				FMessageSizeBytes: tcMessageSize,
+				FAddress: addr,
+				FAdapterSettings: hl_adapters.NewSettings(&hl_adapters.SSettings{
+					FWorkSizeBits:     tcWorkSize,
+					FMessageSizeBytes: tcMessageSize,
+				}),
 			}),
 			func() []string { return nil },
 		),

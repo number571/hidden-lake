@@ -28,6 +28,7 @@ type sTCPAdapter struct {
 }
 
 func NewTCPAdapter(pSettings ISettings, pConnsGetter func() []string) ITCPAdapter {
+	adapterSettings := pSettings.GetAdapterSettings()
 	tcpAdapter := &sTCPAdapter{
 		fNetMsgChan: make(chan net_message.IMessage, netMessageChanSize),
 		fConnKeeper: connkeeper.NewConnKeeper(
@@ -42,8 +43,8 @@ func NewTCPAdapter(pSettings ISettings, pConnsGetter func() []string) ITCPAdapte
 					FReadTimeout:  build.GSettings.GetReadTimeout(),
 					FWriteTimeout: build.GSettings.GetWriteTimeout(),
 					FConnSettings: conn.NewSettings(&conn.SSettings{
-						FMessageSettings:       pSettings,
-						FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
+						FMessageSettings:       adapterSettings,
+						FLimitMessageSizeBytes: adapterSettings.GetMessageSizeBytes(),
 						FWaitReadTimeout:       build.GSettings.GetWaitTimeout(),
 						FDialTimeout:           build.GSettings.GetDialTimeout(),
 						FReadTimeout:           build.GSettings.GetReadTimeout(),

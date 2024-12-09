@@ -3,16 +3,13 @@ package http
 import (
 	"context"
 	"errors"
-	"io"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/number571/hidden-lake/build"
-
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/go-peer/pkg/storage/cache"
+	hla_client "github.com/number571/hidden-lake/internal/adapters/pkg/client"
+	"github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 )
 
 const (
@@ -24,11 +21,11 @@ var (
 )
 
 type sHTTPAdapter struct {
-	fSettings    ISettings
-	fNetMsgChan  chan net_message.IMessage
-	fHTTPServer  *http.Server
-	fConnsGetter func() []string
-	fOnlines     *sOnlines
+	fSettings     ISettings
+	fNetMsgChan   chan net_message.IMessage
+	fConnsGetter  func() []string
+	fHandlerFuncs []IHandlerFunc
+	fOnlines      *sOnlines
 }
 
 type sOnlines struct {
@@ -36,56 +33,44 @@ type sOnlines struct {
 	fSlice []string
 }
 
-func NewHTTPAdapter(pSettings ISettings, pConnsGetter func() []string) IHTTPAdapter {
-	msgChan := make(chan net_message.IMessage, netMessageChanSize)
-	cache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc(pSettings.GetProducePath(), func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		msgLen := uint64(pSettings.GetMessageSizeBytes()+net_message.CMessageHeadSize) << 1 // nolint: unconvert
-		msgStr := make([]byte, msgLen)
-		n, err := io.ReadFull(r.Body, msgStr)
-		if err != nil || uint64(n) != msgLen {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		msg, err := net_message.LoadMessage(pSettings, string(msgStr))
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		hash := msg.GetHash()
-		if _, ok := cache.Get(hash); ok {
-			w.WriteHeader(http.StatusAlreadyReported)
-			return
-		}
-		_ = cache.Set(hash, []byte{})
-		msgChan <- msg
-	})
-
+func NewHTTPAdapter(
+	pSettings ISettings,
+	pConnsGetter func() []string,
+) IHTTPAdapter {
 	return &sHTTPAdapter{
-		fSettings:   pSettings,
-		fNetMsgChan: msgChan,
-		fHTTPServer: &http.Server{
-			Addr:        pSettings.GetAddress(),
-			Handler:     http.TimeoutHandler(mux, 5*time.Second, "timeout"),
-			ReadTimeout: (5 * time.Second),
-		},
+		fSettings:    pSettings,
+		fNetMsgChan:  make(chan net_message.IMessage, netMessageChanSize),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 	}
 }
 
+func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandlerFunc) IHTTPAdapter {
+	p.fHandlerFuncs = pHandlers
+	return p
+}
+
 func (p *sHTTPAdapter) Run(pCtx context.Context) error {
+	address := p.fSettings.GetAddress()
+	if address == "" {
+		<-pCtx.Done()
+		return pCtx.Err()
+	}
+	mux := http.NewServeMux()
+	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.produceHandler())
+	for _, hf := range p.fHandlerFuncs {
+		mux.HandleFunc(hf.GetPath(), hf.GetFunc())
+	}
+	httpServer := &http.Server{
+		Addr:        address,
+		Handler:     mux,
+		ReadTimeout: (5 * time.Second),
+	}
 	go func() {
 		<-pCtx.Done()
-		p.fHTTPServer.Close()
+		httpServer.Close()
 	}()
-	return p.fHTTPServer.ListenAndServe()
+	return httpServer.ListenAndServe()
 }
 
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
@@ -98,23 +83,9 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 	for i, url := range connects {
 		go func(i int, url string) {
 			defer wg.Done()
-			req, err := http.NewRequestWithContext(
-				pCtx,
-				http.MethodPost,
-				"http://"+url+p.fSettings.GetProducePath(),
-				strings.NewReader(pNetMsg.ToString()),
-			)
-			if err != nil {
-				errs[i] = err
-				return
-			}
-			client := &http.Client{Timeout: 5 * time.Second}
-			rsp, err := client.Do(req)
-			if err != nil {
-				errs[i] = err
-				return
-			}
-			rsp.Body.Close()
+			errs[i] = hla_client.NewClient(
+				hla_client.NewRequester(url, &http.Client{Timeout: 5 * time.Second}),
+			).ProduceMessage(pCtx, pNetMsg)
 		}(i, url)
 	}
 	wg.Wait()

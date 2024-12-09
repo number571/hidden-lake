@@ -26,20 +26,18 @@ const (
 )
 
 type sRequester struct {
-	fName   string
 	fHost   string
 	fClient *http.Client
 }
 
-func NewRequester(pName, pHost string, pClient *http.Client) IRequester {
+func NewRequester(pHost string, pClient *http.Client) IRequester {
 	return &sRequester{
-		fName:   pName,
 		fHost:   pHost,
 		fClient: pClient,
 	}
 }
 
-func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
+func (p *sRequester) GetIndex(pCtx context.Context, pName string) (string, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -52,7 +50,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	}
 
 	result := string(res)
-	if result != p.fName {
+	if result != pName {
 		return "", ErrInvalidTitle
 	}
 
@@ -165,7 +163,7 @@ func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg net_message.IM
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
-		http.MethodDelete,
+		http.MethodPost,
 		fmt.Sprintf(cHandleNetworkAdapterTemplate, p.fHost),
 		pNetMsg.ToString(),
 	)

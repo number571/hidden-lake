@@ -6,16 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"sync"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/internal/storage"
 	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
@@ -23,7 +19,9 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
-	"github.com/number571/hidden-lake/pkg/adapters/tcp"
+	"github.com/number571/hidden-lake/pkg/adapters"
+	hla_http "github.com/number571/hidden-lake/pkg/adapters/http"
+	hla_tcp "github.com/number571/hidden-lake/pkg/adapters/tcp"
 )
 
 var (
@@ -41,38 +39,49 @@ type sApp struct {
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
-	fTCPAdapter   tcp.ITCPAdapter
-	fServiceHTTP  *http.Server
+	fTCPAdapter    hla_tcp.ITCPAdapter
+	fHTTPAdapter   hla_http.IHTTPAdapter
+	fMergedAdapter adapters.IRunnerAdapter
+
 	fServicePPROF *http.Server
 }
 
-func NewApp(
-	pCfg config.IConfig,
-	pPathTo string,
-) types.IRunner {
+func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
+	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
+		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
+		FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
+		FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
+	})
+	tcpAdapter := hla_tcp.NewTCPAdapter(
+		hla_tcp.NewSettings(&hla_tcp.SSettings{
+			FAddress:         pCfg.GetAddress().GetExternal(),
+			FAdapterSettings: adaptersSettings,
+		}),
+		func() []string { return pCfg.GetConnections() },
+	)
+	httpAdapter := hla_http.NewHTTPAdapter(
+		hla_http.NewSettings(&hla_http.SSettings{
+			FAddress:         pCfg.GetAddress().GetInternal(),
+			FAdapterSettings: adaptersSettings,
+		}),
+		func() []string { return pCfg.GetEndpoints() },
+	)
 	return &sApp{
-		fState:      state.NewBoolState(),
-		fPathTo:     pPathTo,
-		fWrapper:    config.NewWrapper(pCfg),
-		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
-		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
-		fTCPAdapter: tcp.NewTCPAdapter(
-			tcp.NewSettings(&tcp.SSettings{
-				FAddress:          pCfg.GetAddress().GetExternal(),
-				FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
-				FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
-				FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
-			}),
-			func() []string { return pCfg.GetConnections() },
-		),
+		fState:         state.NewBoolState(),
+		fPathTo:        pPathTo,
+		fWrapper:       config.NewWrapper(pCfg),
+		fStdfLogger:    std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
+		fHTTPLogger:    std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
+		fTCPAdapter:    tcpAdapter,
+		fHTTPAdapter:   httpAdapter,
+		fMergedAdapter: adapters.NewMergedRunnerAdapter(tcpAdapter, httpAdapter),
 	}
 }
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
-		p.runTCPAdapter,
+		p.runMergedAdapter,
 		p.runAdaptedRelayer,
-		p.runListenerHTTP,
 		p.runListenerPPROF,
 	}
 
@@ -107,7 +116,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		}
 		p.initStorage(p.fDatabase)
 
-		p.initServiceHTTP(pCtx)
+		p.initHandlers(pCtx)
 		p.initServicePPROF()
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
@@ -131,10 +140,10 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 	}
 }
 
-func (p *sApp) runTCPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runMergedAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if err := p.fTCPAdapter.Run(pCtx); err != nil {
+	if err := p.fMergedAdapter.Run(pCtx); err != nil {
 		pChErr <- err
 		return
 	}
@@ -149,7 +158,7 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			pChErr <- pCtx.Err()
 			return
 		default:
-			msg, err := p.fTCPAdapter.Consume(pCtx)
+			msg, err := p.fMergedAdapter.Consume(pCtx)
 			if err != nil {
 				continue
 			}
@@ -157,42 +166,9 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			if err := p.fStorage.Push(msg); err != nil {
 				continue
 			}
-			_ = p.fTCPAdapter.Produce(pCtx, msg)
-
-			endpoints := p.fWrapper.GetConfig().GetEndpoints()
-
-			wg := &sync.WaitGroup{}
-			wg.Add(len(endpoints))
-
-			for _, ep := range endpoints {
-				ep := ep
-				go func() {
-					defer wg.Done()
-					produceToEndpoint(pCtx, ep, msg)
-				}()
-			}
-
-			wg.Wait()
+			_ = p.fMergedAdapter.Produce(pCtx, msg)
 		}
 	}
-}
-
-func produceToEndpoint(pCtx context.Context, pEndpoint string, pNetMsg net_message.IMessage) {
-	client := &http.Client{Timeout: 5 * time.Second}
-	req, err := http.NewRequestWithContext(
-		pCtx,
-		http.MethodPost,
-		"http://"+pEndpoint+hla_settings.CHandleNetworkAdapterPath,
-		strings.NewReader(pNetMsg.ToString()),
-	)
-	if err != nil {
-		return
-	}
-	rsp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	rsp.Body.Close()
 }
 
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
@@ -213,28 +189,9 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 	<-pCtx.Done()
 }
 
-func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-
-	if p.fWrapper.GetConfig().GetAddress().GetInternal() == "" {
-		return
-	}
-
-	go func() {
-		err := p.fServiceHTTP.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			pChErr <- err
-			return
-		}
-	}()
-
-	<-pCtx.Done()
-}
-
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fDatabase,
-		p.fServiceHTTP,
 		p.fServicePPROF,
 	})
 	if err != nil {

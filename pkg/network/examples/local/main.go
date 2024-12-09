@@ -58,9 +58,11 @@ func main() {
 func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
-			FQueuePeriod:      time.Second,
-			FFetchTimeout:     time.Minute,
-			FMessageSizeBytes: msgSizeBytes,
+			FQueuePeriod:  time.Second,
+			FFetchTimeout: time.Minute,
+			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: msgSizeBytes,
+			}),
 			FSubSettings: &network.SSubSettings{
 				FLogger:      getLogger(),
 				FServiceName: name,
@@ -82,8 +84,10 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 func newTCPAdapter(addr string, conns []string) adapters.IRunnerAdapter {
 	return tcp.NewTCPAdapter(
 		tcp.NewSettings(&tcp.SSettings{
-			FAddress:          addr,
-			FMessageSizeBytes: msgSizeBytes,
+			FAddress: addr,
+			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: msgSizeBytes,
+			}),
 		}),
 		func() []string { return conns },
 	)

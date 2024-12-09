@@ -5,6 +5,7 @@ import (
 
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
 )
 
 var (
@@ -13,12 +14,10 @@ var (
 
 type SSettings sSettings
 type sSettings struct {
-	FSubSettings      *SSubSettings
-	FQueuePeriod      time.Duration
-	FFetchTimeout     time.Duration
-	FMessageSizeBytes uint64
-	FWorkSizeBits     uint64
-	FNetworkKey       string
+	FSubSettings     *SSubSettings
+	FQueuePeriod     time.Duration
+	FFetchTimeout    time.Duration
+	FAdapterSettings adapters.ISettings
 }
 
 type SSubSettings struct {
@@ -32,12 +31,10 @@ func NewSettings(pSett *SSettings) ISettings {
 		pSett = &SSettings{}
 	}
 	return (&sSettings{
-		FMessageSizeBytes: pSett.FMessageSizeBytes,
-		FQueuePeriod:      pSett.FQueuePeriod,
-		FFetchTimeout:     pSett.FFetchTimeout,
-		FSubSettings:      pSett.FSubSettings,
-		FWorkSizeBits:     pSett.FWorkSizeBits,
-		FNetworkKey:       pSett.FNetworkKey,
+		FAdapterSettings: pSett.FAdapterSettings,
+		FQueuePeriod:     pSett.FQueuePeriod,
+		FFetchTimeout:    pSett.FFetchTimeout,
+		FSubSettings:     pSett.FSubSettings,
 	}).useDefault()
 }
 
@@ -47,21 +44,19 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 		panic("network not found")
 	}
 	return NewSettings(&SSettings{
-		FWorkSizeBits:     network.FWorkSizeBits,
-		FNetworkKey:       pNetworkKey,
-		FMessageSizeBytes: network.FMessageSizeBytes,
-		FQueuePeriod:      network.GetQueuePeriod(),
-		FFetchTimeout:     network.GetFetchTimeout(),
-		FSubSettings:      pSubSettings,
+		FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+			FNetworkKey:       pNetworkKey,
+			FWorkSizeBits:     network.FWorkSizeBits,
+			FMessageSizeBytes: network.FMessageSizeBytes,
+		}),
+		FQueuePeriod:  network.GetQueuePeriod(),
+		FFetchTimeout: network.GetFetchTimeout(),
+		FSubSettings:  pSubSettings,
 	})
 }
 
 func (p *sSettings) useDefault() *sSettings {
 	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
-
-	if p.FMessageSizeBytes == 0 {
-		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
-	}
 
 	if p.FQueuePeriod == 0 {
 		p.FQueuePeriod = defaultNetwork.GetQueuePeriod()
@@ -89,16 +84,8 @@ func (p *sSettings) useDefault() *sSettings {
 	return p
 }
 
-func (p *sSettings) GetNetworkKey() string {
-	return p.FNetworkKey
-}
-
-func (p *sSettings) GetWorkSizeBits() uint64 {
-	return p.FWorkSizeBits
-}
-
-func (p *sSettings) GetMessageSizeBytes() uint64 {
-	return p.FMessageSizeBytes
+func (p *sSettings) GetAdapterSettings() adapters.ISettings {
+	return p.FAdapterSettings
 }
 
 func (p *sSettings) GetQueuePeriod() time.Duration {

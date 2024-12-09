@@ -26,9 +26,11 @@ func TestPanicNode(t *testing.T) {
 
 	_ = NewHiddenLakeNode(
 		NewSettings(&SSettings{
-			FMessageSizeBytes: 4570,
-			FQueuePeriod:      time.Second,
-			FFetchTimeout:     time.Second,
+			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: 4570,
+			}),
+			FQueuePeriod:  time.Second,
+			FFetchTimeout: time.Second,
 		}),
 		asymmetric.NewPrivKey(),
 		&tsDatabase{},

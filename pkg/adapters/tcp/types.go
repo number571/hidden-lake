@@ -11,8 +11,6 @@ type ITCPAdapter interface {
 }
 
 type ISettings interface {
+	GetAdapterSettings() adapters.ISettings
 	GetAddress() string
-	GetNetworkKey() string
-	GetWorkSizeBits() uint64
-	GetMessageSizeBytes() uint64
 }

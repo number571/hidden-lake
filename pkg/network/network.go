@@ -39,6 +39,7 @@ func NewHiddenLakeNode(
 	pRunnerAdapter adapters.IRunnerAdapter,
 	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
+	adaptersSettings := pSettings.GetAdapterSettings()
 	return &sHiddenLakeNode{
 		anonymity.NewNode(
 			anonymity.NewSettings(&anonymity.SSettings{
@@ -51,10 +52,7 @@ func NewHiddenLakeNode(
 			queue.NewQBProblemProcessor(
 				queue.NewSettings(&queue.SSettings{
 					FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-						FSettings: net_message.NewSettings(&net_message.SSettings{
-							FWorkSizeBits: pSettings.GetWorkSizeBits(),
-							FNetworkKey:   pSettings.GetNetworkKey(),
-						}),
+						FSettings: adaptersSettings,
 						FParallel: pSettings.GetParallel(),
 					}),
 					FQueuePeriod:  pSettings.GetQueuePeriod(),
@@ -66,7 +64,7 @@ func NewHiddenLakeNode(
 					},
 				}),
 				func() client.IClient {
-					client := client.NewClient(pPrivKey, pSettings.GetMessageSizeBytes())
+					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())
 					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
 						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
 					}
