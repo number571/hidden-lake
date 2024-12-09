@@ -2,6 +2,10 @@ package http
 
 import "github.com/number571/hidden-lake/pkg/adapters"
 
+const (
+	CHandleNetworkAdapterPath = "/api/network/adapter"
+)
+
 type IHTTPAdapter interface {
 	GetOnlines() []string
 	adapters.IRunnerAdapter

@@ -1,6 +1,9 @@
 package settings
 
-import "github.com/number571/hidden-lake/internal/utils/name"
+import (
+	"github.com/number571/hidden-lake/internal/utils/name"
+	"github.com/number571/hidden-lake/pkg/adapters/http"
+)
 
 var (
 	GServiceName = name.LoadServiceName(CServiceFullName)
@@ -21,10 +24,7 @@ const (
 	CHandleConfigSettingsPath = "/api/config/settings"
 	CHandleConfigConnectsPath = "/api/config/connects"
 	CHandleNetworkOnlinePath  = "/api/network/online"
-)
-
-const (
-	CHandleNetworkAdapterPath = "/api/network/adapter"
+	CHandleNetworkAdapterPath = http.CHandleNetworkAdapterPath
 )
 
 const (

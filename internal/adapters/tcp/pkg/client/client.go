@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 )
 
@@ -70,6 +71,13 @@ func (p *sClient) AddConnection(pCtx context.Context, pConnect string) error {
 func (p *sClient) DelConnection(pCtx context.Context, pConnect string) error {
 	if err := p.fRequester.DelConnection(pCtx, pConnect); err != nil {
 		return fmt.Errorf("del connection (client): %w", err)
+	}
+	return nil
+}
+
+func (p *sClient) ProduceMessage(pCtx context.Context, pNetMsg net_message.IMessage) error {
+	if err := p.fRequester.ProduceMessage(pCtx, pNetMsg); err != nil {
+		return fmt.Errorf("produce message (client): %w", err)
 	}
 	return nil
 }

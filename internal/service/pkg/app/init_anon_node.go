@@ -10,7 +10,6 @@ import (
 	"github.com/number571/hidden-lake/pkg/network"
 
 	"github.com/number571/go-peer/pkg/client"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -50,7 +49,7 @@ func (p *sApp) initAnonNode() error {
 		kvDatabase,
 		http.NewHTTPAdapter(
 			http.NewSettings(&http.SSettings{
-				FProducePath:      hla_settings.CHandleNetworkAdapterPath, // TODO: delete
+				FProducePath:      http.CHandleNetworkAdapterPath,
 				FAddress:          cfg.GetAddress().GetExternal(),
 				FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
 				FNetworkKey:       cfgSettings.GetNetworkKey(),

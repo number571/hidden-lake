@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -21,6 +22,7 @@ const (
 	cHandleConfigSettingsTemplate = "%s" + hla_settings.CHandleConfigSettingsPath
 	cHandleConfigConnectsTemplate = "%s" + hla_settings.CHandleConfigConnectsPath
 	cHandleNetworkOnlineTemplate  = "%s" + hla_settings.CHandleNetworkOnlinePath
+	cHandleNetworkAdapterTemplate = "%s" + hla_settings.CHandleNetworkAdapterPath
 )
 
 type sRequester struct {
@@ -150,6 +152,20 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 		http.MethodDelete,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
 		pConnect,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
+}
+
+func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg net_message.IMessage) error {
+	_, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleNetworkAdapterTemplate, p.fHost),
+		pNetMsg.ToString(),
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
