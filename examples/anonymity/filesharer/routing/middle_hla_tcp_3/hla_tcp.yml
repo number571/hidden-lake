@@ -3,8 +3,10 @@ settings:
   work_size_bits: 22
   network_key: oMj49BD8he1n8bfq
 logging:
-  - info
-  - warn
-  - erro
+- info
+- warn
+- erro
 address:
-  tcp: :6581
+  external: :6581
+connections:
+  - middle_hla_tcp_2:6581

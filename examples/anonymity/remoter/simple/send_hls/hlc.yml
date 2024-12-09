@@ -4,5 +4,4 @@ logging:
   - erro
 services:
   - hidden-lake-service
-  - hidden-lake-filesharer
   - hidden-lake-adapter=tcp

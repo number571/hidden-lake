@@ -11,7 +11,7 @@ services:
   send_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/remoter/simple/send_hls
     ports:

@@ -34,20 +34,16 @@ func RequestHandler(pHandleF IHandlerF) anonymity.IHandlerF {
 		}
 
 		// handle request
-		rsp, err := pHandleF(pCtx, pSender, loadReq)
-		if err != nil {
-			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestHandle))
+		switch rsp, err := pHandleF(pCtx, pSender, loadReq); {
+		case err != nil:
+			// internal logger
 			return nil, ErrUndefinedService
-		}
-
-		// no need response
-		if rsp == nil {
-			logger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseResponseModeFromService))
+		case rsp == nil:
+			// no need response
 			return nil, nil
+		default:
+			// send response
+			return rsp.ToBytes(), nil
 		}
-
-		// send response
-		logger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoResponseFromService))
-		return rsp.ToBytes(), nil
 	}
 }

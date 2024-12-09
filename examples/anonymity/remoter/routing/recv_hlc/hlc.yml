@@ -5,3 +5,4 @@ logging:
 services:
   - hidden-lake-service
   - hidden-lake-remoter
+  - hidden-lake-adapter=tcp
