@@ -7,9 +7,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	hla_client "github.com/number571/hidden-lake/internal/adapters/pkg/client"
 	"github.com/number571/hidden-lake/internal/adapters/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/name"
 )
 
 const (
@@ -21,11 +23,15 @@ var (
 )
 
 type sHTTPAdapter struct {
-	fSettings    ISettings
-	fNetMsgChan  chan net_message.IMessage
+	fSettings   ISettings
+	fNetMsgChan chan net_message.IMessage
+
 	fConnsGetter func() []string
-	fHandlers    []IHandler
 	fOnlines     *sOnlines
+
+	fName     name.IServiceName
+	fLogger   logger.ILogger
+	fHandlers []IHandler
 }
 
 type sOnlines struct {
@@ -42,11 +48,21 @@ func NewHTTPAdapter(
 		fNetMsgChan:  make(chan net_message.IMessage, netMessageChanSize),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
+		fLogger: logger.NewLogger(
+			logger.NewSettings(&logger.SSettings{}),
+			func(_ logger.ILogArg) string { return "" },
+		),
 	}
 }
 
 func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandler) IHTTPAdapter {
 	p.fHandlers = pHandlers
+	return p
+}
+
+func (p *sHTTPAdapter) WithLogger(pName name.IServiceName, pLogger logger.ILogger) IHTTPAdapter {
+	p.fName = pName
+	p.fLogger = pLogger
 	return p
 }
 
@@ -74,6 +90,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
+
 	connects := p.fConnsGetter()
 	N := len(connects)
 	errs := make([]error, N)
