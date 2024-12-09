@@ -5,12 +5,15 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/internal/utils/name"
 
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 )
 
@@ -25,6 +28,9 @@ var (
 type sTCPAdapter struct {
 	fNetMsgChan chan net_message.IMessage
 	fConnKeeper connkeeper.IConnKeeper
+
+	fShortName string
+	fLogger    logger.ILogger
 }
 
 func NewTCPAdapter(
@@ -58,6 +64,10 @@ func NewTCPAdapter(
 				pCache,
 			),
 		),
+		fLogger: logger.NewLogger(
+			logger.NewSettings(&logger.SSettings{}),
+			func(_ logger.ILogArg) string { return "" },
+		),
 	}
 	tcpAdapter.fConnKeeper.GetNetworkNode().HandleFunc(
 		build.GSettings.FProtoMask.FNetwork,
@@ -67,6 +77,12 @@ func NewTCPAdapter(
 		},
 	)
 	return tcpAdapter
+}
+
+func (p *sTCPAdapter) WithLogger(pName name.IServiceName, pLogger logger.ILogger) ITCPAdapter {
+	p.fShortName = pName.Short()
+	p.fLogger = pLogger
+	return p
 }
 
 func (p *sTCPAdapter) GetConnKeeper() connkeeper.IConnKeeper {
@@ -104,8 +120,20 @@ func (p *sTCPAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
+	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
+	logBuilder.
+		WithHash(pNetMsg.GetHash()).
+		WithProof(pNetMsg.GetProof()).
+		WithSize(len(pNetMsg.ToBytes()))
+
 	networkNode := p.fConnKeeper.GetNetworkNode()
-	return networkNode.BroadcastMessage(pCtx, pNetMsg)
+	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+		return err
+	}
+
+	p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+	return nil
 }
 
 func (p *sTCPAdapter) Consume(pCtx context.Context) (net_message.IMessage, error) {

@@ -1,6 +1,12 @@
 package http
 
-import "net/http"
+import (
+	"net/http"
+)
+
+var (
+	_ IHandler = &sHandler{}
+)
 
 type sHandler struct {
 	fPath string

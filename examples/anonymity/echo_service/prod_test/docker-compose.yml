@@ -9,7 +9,7 @@ services:
   recv_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/anonymity/echo_service/prod_test/recv_hls
@@ -18,7 +18,7 @@ services:
   send_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/anonymity/echo_service/prod_test/send_hls
@@ -27,7 +27,7 @@ services:
   other_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     deploy:
         replicas: 3
     environment:

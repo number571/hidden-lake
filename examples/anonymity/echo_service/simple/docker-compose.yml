@@ -9,7 +9,7 @@ services:
   recv_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/echo_service/simple/recv_hls
     networks:
@@ -18,7 +18,7 @@ services:
   send_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hls/Dockerfile
+      dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/echo_service/simple/send_hls
     ports:

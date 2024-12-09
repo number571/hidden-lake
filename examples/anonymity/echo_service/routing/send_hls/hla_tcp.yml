@@ -3,10 +3,12 @@ settings:
   work_size_bits: 22
   network_key: oMj49BD8he1n8bfq
 logging:
-  - info
-  - warn
-  - erro
+- info
+- warn
+- erro
 address:
-  tcp: :6581
+  internal: 127.0.0.1:7522
+endpoints: 
+- 127.0.0.1:7571
 connections:
-  - middle_hlt_1:6581
+- middle_hla_tcp_1:6581

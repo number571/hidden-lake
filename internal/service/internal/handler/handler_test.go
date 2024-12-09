@@ -29,6 +29,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/name"
 	hl_adapters "github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
@@ -362,6 +363,9 @@ type tsConnKeeper struct {
 
 func (p *tsTCPAdapter) Produce(context.Context, net_message.IMessage) error   { return nil }
 func (p *tsTCPAdapter) Consume(context.Context) (net_message.IMessage, error) { return nil, nil }
+func (p *tsTCPAdapter) WithLogger(_ name.IServiceName, _ logger.ILogger) tcp.ITCPAdapter {
+	return p
+}
 func (p *tsTCPAdapter) GetConnKeeper() connkeeper.IConnKeeper {
 	return &tsConnKeeper{p.fConnectionsOK}
 }

@@ -6,3 +6,6 @@ services:
 - hidden-lake-service
 - hidden-lake-messenger
 - hidden-lake-adapter=tcp
+# - hidden-lake-filesharer
+# - hidden-lake-remoter
+# - hidden-lake-encryptor

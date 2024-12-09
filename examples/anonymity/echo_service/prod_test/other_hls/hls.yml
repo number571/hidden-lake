@@ -7,3 +7,7 @@ logging:
   - info
   - warn
   - erro
+address:
+  external: 127.0.0.1:6571
+adapters:
+  - 127.0.0.1:6522

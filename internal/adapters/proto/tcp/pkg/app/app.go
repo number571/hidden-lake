@@ -18,6 +18,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
+	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
@@ -37,6 +38,7 @@ type sApp struct {
 	fPathTo   string
 	fDatabase database.IKVDatabase
 
+	fAnonLogger logger.ILogger
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
@@ -47,6 +49,7 @@ type sApp struct {
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
+	logging := pCfg.GetLogging()
 	lruCache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
 		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
@@ -57,8 +60,9 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fState:      state.NewBoolState(),
 		fPathTo:     pPathTo,
 		fWrapper:    config.NewWrapper(pCfg),
-		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
-		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
+		fAnonLogger: std_logger.NewStdLogger(logging, anon_logger.GetLogFunc()),
+		fStdfLogger: std_logger.NewStdLogger(logging, std_logger.GetLogFunc()),
+		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
 		fTCPAdapter: hla_tcp.NewTCPAdapter(
 			hla_tcp.NewSettings(&hla_tcp.SSettings{
 				FAddress:         pCfg.GetAddress().GetExternal(),
@@ -117,6 +121,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrInitDB, err)
 		}
 
+		p.initLoggers()
 		p.initHandlers(pCtx)
 		p.initServicePPROF()
 
