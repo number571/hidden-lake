@@ -15,7 +15,7 @@ func (p *sHTTPAdapter) produceHandler() func(http.ResponseWriter, *http.Request)
 	cache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(p.fName.Short(), r)
+		logBuilder := http_logger.NewLogBuilder(p.fShortName, r)
 
 		if r.Method != http.MethodPost {
 			p.fLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

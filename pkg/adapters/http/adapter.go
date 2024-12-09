@@ -29,9 +29,9 @@ type sHTTPAdapter struct {
 	fConnsGetter func() []string
 	fOnlines     *sOnlines
 
-	fName     name.IServiceName
-	fLogger   logger.ILogger
-	fHandlers []IHandler
+	fShortName string
+	fLogger    logger.ILogger
+	fHandlers  []IHandler
 }
 
 type sOnlines struct {
@@ -61,7 +61,7 @@ func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandler) IHTTPAdapter {
 }
 
 func (p *sHTTPAdapter) WithLogger(pName name.IServiceName, pLogger logger.ILogger) IHTTPAdapter {
-	p.fName = pName
+	p.fShortName = pName.Short()
 	p.fLogger = pLogger
 	return p
 }
