@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -65,7 +65,11 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 
 	cfg.FConnections = make([]string, 0, len(network.FConnections))
 	for _, c := range network.FConnections {
-		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+		u, err := url.Parse(c)
+		if err != nil || u.Scheme != "tcp" {
+			continue
+		}
+		cfg.FConnections = append(cfg.FConnections, u.Host)
 	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {

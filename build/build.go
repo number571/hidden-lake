@@ -65,16 +65,11 @@ type SNetworksYAML struct {
 }
 
 type SNetwork struct {
-	FMessageSizeBytes uint64        `yaml:"message_size_bytes"`
-	FFetchTimeoutMS   uint64        `yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS    uint64        `yaml:"queue_period_ms"`
-	FWorkSizeBits     uint64        `yaml:"work_size_bits"`
-	FConnections      []SConnection `yaml:"connections"`
-}
-
-type SConnection struct {
-	FHost string `yaml:"host"`
-	FPort uint16 `yaml:"port"`
+	FMessageSizeBytes uint64   `yaml:"message_size_bytes"`
+	FFetchTimeoutMS   uint64   `yaml:"fetch_timeout_ms"`
+	FQueuePeriodMS    uint64   `yaml:"queue_period_ms"`
+	FWorkSizeBits     uint64   `yaml:"work_size_bits"`
+	FConnections      []string `yaml:"connections"`
 }
 
 type SSettings struct {
