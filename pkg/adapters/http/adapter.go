@@ -21,11 +21,11 @@ var (
 )
 
 type sHTTPAdapter struct {
-	fSettings     ISettings
-	fNetMsgChan   chan net_message.IMessage
-	fConnsGetter  func() []string
-	fHandlerFuncs []IHandlerFunc
-	fOnlines      *sOnlines
+	fSettings    ISettings
+	fNetMsgChan  chan net_message.IMessage
+	fConnsGetter func() []string
+	fHandlers    []IHandler
+	fOnlines     *sOnlines
 }
 
 type sOnlines struct {
@@ -45,8 +45,8 @@ func NewHTTPAdapter(
 	}
 }
 
-func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandlerFunc) IHTTPAdapter {
-	p.fHandlerFuncs = pHandlers
+func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandler) IHTTPAdapter {
+	p.fHandlers = pHandlers
 	return p
 }
 
@@ -58,8 +58,8 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.produceHandler())
-	for _, hf := range p.fHandlerFuncs {
-		mux.HandleFunc(hf.GetPath(), hf.GetFunc())
+	for _, handler := range p.fHandlers {
+		mux.HandleFunc(handler.GetPath(), handler.GetFunc())
 	}
 	httpServer := &http.Server{
 		Addr:        address,

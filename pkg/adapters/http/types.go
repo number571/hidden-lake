@@ -7,12 +7,12 @@ import (
 )
 
 type IHTTPAdapter interface {
-	WithHandlers(...IHandlerFunc) IHTTPAdapter
+	WithHandlers(...IHandler) IHTTPAdapter
 	GetOnlines() []string
 	adapters.IRunnerAdapter
 }
 
-type IHandlerFunc interface {
+type IHandler interface {
 	GetPath() string
 	GetFunc() func(http.ResponseWriter, *http.Request)
 }

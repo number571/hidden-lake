@@ -2,22 +2,22 @@ package http
 
 import "net/http"
 
-type sHandlerFunc struct {
+type sHandler struct {
 	fPath string
 	fFunc func(http.ResponseWriter, *http.Request)
 }
 
-func NewHandlerFunc(pPath string, pFunc func(http.ResponseWriter, *http.Request)) IHandlerFunc {
-	return &sHandlerFunc{
+func NewHandler(pPath string, pFunc func(http.ResponseWriter, *http.Request)) IHandler {
+	return &sHandler{
 		fPath: pPath,
 		fFunc: pFunc,
 	}
 }
 
-func (p *sHandlerFunc) GetPath() string {
+func (p *sHandler) GetPath() string {
 	return p.fPath
 }
 
-func (p *sHandlerFunc) GetFunc() func(http.ResponseWriter, *http.Request) {
+func (p *sHandler) GetFunc() func(http.ResponseWriter, *http.Request) {
 	return p.fFunc
 }

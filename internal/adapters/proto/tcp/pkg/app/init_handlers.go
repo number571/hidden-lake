@@ -11,19 +11,19 @@ import (
 func (p *sApp) initHandlers(pCtx context.Context) {
 	cfg := p.fWrapper.GetConfig()
 	p.fHTTPAdapter.WithHandlers(
-		hla_http.NewHandlerFunc(
+		hla_http.NewHandler(
 			hla_settings.CHandleIndexPath,
 			handler.HandleIndexAPI(p.fHTTPLogger),
 		),
-		hla_http.NewHandlerFunc(
+		hla_http.NewHandler(
 			hla_settings.CHandleConfigSettingsPath,
 			handler.HandleConfigSettingsAPI(cfg, p.fHTTPLogger),
 		),
-		hla_http.NewHandlerFunc(
+		hla_http.NewHandler(
 			hla_settings.CHandleConfigConnectsPath,
 			handler.HandleConfigConnectsAPI(pCtx, p.fWrapper, p.fHTTPLogger, p.fTCPAdapter),
 		),
-		hla_http.NewHandlerFunc(
+		hla_http.NewHandler(
 			hla_settings.CHandleNetworkOnlinePath,
 			handler.HandleNetworkOnlineAPI(p.fHTTPLogger, p.fTCPAdapter),
 		),
