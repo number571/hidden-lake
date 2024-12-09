@@ -9,6 +9,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	hla_client "github.com/number571/hidden-lake/internal/adapters/pkg/client"
 	"github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/name"
@@ -28,6 +29,7 @@ type sHTTPAdapter struct {
 
 	fConnsGetter func() []string
 	fOnlines     *sOnlines
+	fCache       cache.ICache
 
 	fShortName string
 	fLogger    logger.ILogger
@@ -41,10 +43,12 @@ type sOnlines struct {
 
 func NewHTTPAdapter(
 	pSettings ISettings,
+	pCache cache.ICache,
 	pConnsGetter func() []string,
 ) IHTTPAdapter {
 	return &sHTTPAdapter{
 		fSettings:    pSettings,
+		fCache:       pCache,
 		fNetMsgChan:  make(chan net_message.IMessage, netMessageChanSize),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
@@ -90,7 +94,6 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
-
 	connects := p.fConnsGetter()
 	N := len(connects)
 	errs := make([]error, N)

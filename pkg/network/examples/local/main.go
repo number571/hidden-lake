@@ -8,6 +8,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
@@ -89,6 +90,7 @@ func newTCPAdapter(addr string, conns []string) adapters.IRunnerAdapter {
 				FMessageSizeBytes: msgSizeBytes,
 			}),
 		}),
+		cache.NewLRUCache(1<<10),
 		func() []string { return conns },
 	)
 }

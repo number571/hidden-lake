@@ -27,7 +27,11 @@ type sTCPAdapter struct {
 	fConnKeeper connkeeper.IConnKeeper
 }
 
-func NewTCPAdapter(pSettings ISettings, pConnsGetter func() []string) ITCPAdapter {
+func NewTCPAdapter(
+	pSettings ISettings,
+	pCache cache.ICache,
+	pConnsGetter func() []string,
+) ITCPAdapter {
 	adapterSettings := pSettings.GetAdapterSettings()
 	tcpAdapter := &sTCPAdapter{
 		fNetMsgChan: make(chan net_message.IMessage, netMessageChanSize),
@@ -51,7 +55,7 @@ func NewTCPAdapter(pSettings ISettings, pConnsGetter func() []string) ITCPAdapte
 						FWriteTimeout:          build.GSettings.GetWriteTimeout(),
 					}),
 				}),
-				cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
+				pCache,
 			),
 		),
 	}

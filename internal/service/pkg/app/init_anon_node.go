@@ -5,7 +5,9 @@ import (
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
@@ -55,6 +57,7 @@ func (p *sApp) initAnonNode() error {
 				FAdapterSettings: adapterSettings,
 				FAddress:         cfg.GetAddress().GetExternal(),
 			}),
+			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
 			func() []string { return p.fCfgW.GetConfig().GetAdapters() },
 		),
 		handler.HandleServiceFunc(cfg, p.fAnonLogger),

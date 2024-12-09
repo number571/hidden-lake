@@ -218,6 +218,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 					FMessageSizeBytes: tcMessageSize,
 				}),
 			}),
+			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
 			func() []string { return nil },
 		),
 		func() database.IKVDatabase {

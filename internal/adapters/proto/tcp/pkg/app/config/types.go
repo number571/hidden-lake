@@ -27,7 +27,6 @@ type IConfigSettings interface {
 	net_message.ISettings
 
 	GetMessageSizeBytes() uint64
-	GetMessagesCapacity() uint64
 	GetDatabaseEnabled() bool
 }
 

@@ -7,14 +7,17 @@ networks:
     <<: *default_settings
     work_size_bits: 22 # custom
     connections: 
-      - tcp://94.103.91.81:9581 # provider=vdsina.ru
+      # provider=vdsina.ru
+      - tcp://94.103.91.81:9581
   kf92j74Nof92n9F4:
     <<: *default_settings
     work_size_bits: 20 # custom
     connections: 
-      - tcp://195.133.1.126:9581 # provider=ruvds.ru
+      # provider=ruvds.ru
+      - tcp://195.133.1.126:9581
   oi4r9NW9Le7fKF9d:
     <<: *default_settings
     work_size_bits: 18 # custom
     connections: 
-      - tcp://193.233.18.245:9581 # provider=4vps.su
+      # provider=4vps.su
+      - tcp://193.233.18.245:9581

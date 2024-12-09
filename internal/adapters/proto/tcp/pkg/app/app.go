@@ -9,10 +9,12 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/state"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/internal/storage"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -33,55 +35,55 @@ type sApp struct {
 	fWrapper config.IWrapper
 
 	fPathTo   string
-	fStorage  storage.IMessageStorage
 	fDatabase database.IKVDatabase
 
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
-	fTCPAdapter    hla_tcp.ITCPAdapter
-	fHTTPAdapter   hla_http.IHTTPAdapter
-	fMergedAdapter adapters.IRunnerAdapter
+	fTCPAdapter  hla_tcp.ITCPAdapter
+	fHTTPAdapter hla_http.IHTTPAdapter
 
 	fServicePPROF *http.Server
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
+	lruCache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
 		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
 		FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
 		FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
 	})
-	tcpAdapter := hla_tcp.NewTCPAdapter(
-		hla_tcp.NewSettings(&hla_tcp.SSettings{
-			FAddress:         pCfg.GetAddress().GetExternal(),
-			FAdapterSettings: adaptersSettings,
-		}),
-		func() []string { return pCfg.GetConnections() },
-	)
-	httpAdapter := hla_http.NewHTTPAdapter(
-		hla_http.NewSettings(&hla_http.SSettings{
-			FAddress:         pCfg.GetAddress().GetInternal(),
-			FAdapterSettings: adaptersSettings,
-		}),
-		func() []string { return pCfg.GetEndpoints() },
-	)
 	return &sApp{
-		fState:         state.NewBoolState(),
-		fPathTo:        pPathTo,
-		fWrapper:       config.NewWrapper(pCfg),
-		fStdfLogger:    std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
-		fHTTPLogger:    std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
-		fTCPAdapter:    tcpAdapter,
-		fHTTPAdapter:   httpAdapter,
-		fMergedAdapter: adapters.NewMergedRunnerAdapter(tcpAdapter, httpAdapter),
+		fState:      state.NewBoolState(),
+		fPathTo:     pPathTo,
+		fWrapper:    config.NewWrapper(pCfg),
+		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
+		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
+		fTCPAdapter: hla_tcp.NewTCPAdapter(
+			hla_tcp.NewSettings(&hla_tcp.SSettings{
+				FAddress:         pCfg.GetAddress().GetExternal(),
+				FAdapterSettings: adaptersSettings,
+			}),
+			lruCache,
+			func() []string { return pCfg.GetConnections() },
+		),
+		fHTTPAdapter: hla_http.NewHTTPAdapter(
+			hla_http.NewSettings(&hla_http.SSettings{
+				FAddress:         pCfg.GetAddress().GetInternal(),
+				FAdapterSettings: adaptersSettings,
+			}),
+			lruCache,
+			func() []string { return pCfg.GetEndpoints() },
+		),
 	}
 }
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
-		p.runMergedAdapter,
-		p.runAdaptedRelayer,
+		p.runTCPAdapter,
+		p.runTCPRelayer,
+		p.runHTTPAdapter,
+		p.runHTTPRelayer,
 		p.runListenerPPROF,
 	}
 
@@ -114,7 +116,6 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		if err := p.initDatabase(); err != nil {
 			return errors.Join(ErrInitDB, err)
 		}
-		p.initStorage(p.fDatabase)
 
 		p.initHandlers(pCtx)
 		p.initServicePPROF()
@@ -140,16 +141,25 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 	}
 }
 
-func (p *sApp) runMergedAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runTCPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if err := p.fMergedAdapter.Run(pCtx); err != nil {
+	if err := p.fTCPAdapter.Run(pCtx); err != nil {
 		pChErr <- err
 		return
 	}
 }
 
-func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runHTTPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	if err := p.fHTTPAdapter.Run(pCtx); err != nil {
+		pChErr <- err
+		return
+	}
+}
+
+func (p *sApp) runTCPRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	for {
@@ -158,17 +168,53 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			pChErr <- pCtx.Err()
 			return
 		default:
-			msg, err := p.fMergedAdapter.Consume(pCtx)
+			// TCP (connections) -> HTTP (endpoints), TCP (connections)
+			msg, err := p.fTCPAdapter.Consume(pCtx)
 			if err != nil {
 				continue
 			}
-
-			if err := p.fStorage.Push(msg); err != nil {
+			if err := p.setIntoDB(msg); err != nil {
 				continue
 			}
-			_ = p.fMergedAdapter.Produce(pCtx, msg)
+			if err := p.fHTTPAdapter.Produce(pCtx, msg); err != nil {
+				continue
+			}
+			_ = p.fTCPAdapter.Produce(pCtx, msg)
 		}
 	}
+}
+
+func (p *sApp) runHTTPRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	for {
+		select {
+		case <-pCtx.Done():
+			pChErr <- pCtx.Err()
+			return
+		default:
+			// HTTP (endpoints) -> TCP (connections)
+			msg, err := p.fHTTPAdapter.Consume(pCtx)
+			if err != nil {
+				continue
+			}
+			if err := p.setIntoDB(msg); err != nil {
+				continue
+			}
+			_ = p.fTCPAdapter.Produce(pCtx, msg)
+		}
+	}
+}
+
+func (p *sApp) setIntoDB(msg net_message.IMessage) error {
+	_, err := p.fDatabase.Get(msg.GetHash())
+	if err == nil {
+		return ErrExist
+	}
+	if !errors.Is(err, database.ErrNotFound) {
+		return err
+	}
+	return p.fDatabase.Set(msg.GetHash(), []byte{})
 }
 
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
