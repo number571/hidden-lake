@@ -1,7 +1,7 @@
 package storage
 
 const (
-	errPrefix = "internal/helpers/traffic/internal/storage = "
+	errPrefix = "internal/adapters/proto/tcp/internal/storage = "
 )
 
 type SStorageError struct {

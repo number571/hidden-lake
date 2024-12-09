@@ -1,7 +1,7 @@
 package client
 
 const (
-	errPrefix = "internal/service/pkg/client = "
+	errPrefix = "internal/adapters/pkg/client = "
 )
 
 type SClientError struct {

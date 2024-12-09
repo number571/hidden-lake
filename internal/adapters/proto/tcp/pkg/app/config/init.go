@@ -43,7 +43,7 @@ func initConfig() *SConfig {
 			FInternal: hla_settings.CDefaultInternalAddress,
 		},
 		FEndpoints: []string{
-			hls_settings.CDefaultInternalAddress,
+			hls_settings.CDefaultExternalAddress,
 		},
 	}
 }
