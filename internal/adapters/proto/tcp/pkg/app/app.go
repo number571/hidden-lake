@@ -11,19 +11,19 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-	"github.com/number571/hidden-lake/pkg/adapters/tcp"
-
-	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/internal/storage"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/pkg/settings"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/internal/storage"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app/config"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 )
 
 var (
@@ -112,7 +112,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is started",
-			hla_settings.GServiceName.Short(),
+			hla_tcp_settings.GServiceName.Short(),
 		))
 		return nil
 	}
@@ -125,7 +125,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hla_settings.GServiceName.Short(),
+			hla_tcp_settings.GServiceName.Short(),
 		))
 		return p.stop()
 	}

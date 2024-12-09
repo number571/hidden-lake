@@ -2,8 +2,8 @@ package app
 
 import (
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/internal/cache"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/internal/storage"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/internal/cache"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/internal/storage"
 )
 
 func (p *sApp) initStorage(pDatabase database.IKVDatabase) {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )

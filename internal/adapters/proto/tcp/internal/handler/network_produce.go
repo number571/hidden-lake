@@ -8,8 +8,8 @@ import (
 	"github.com/number571/go-peer/pkg/anonymity/adapters"
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app/config"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )

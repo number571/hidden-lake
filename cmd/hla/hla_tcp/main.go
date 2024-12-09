@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app"
+	"github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )

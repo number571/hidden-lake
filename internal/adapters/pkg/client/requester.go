@@ -8,7 +8,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	"github.com/number571/hidden-lake/internal/utils/api"
 )
@@ -26,12 +26,14 @@ const (
 )
 
 type sRequester struct {
+	fName   string
 	fHost   string
 	fClient *http.Client
 }
 
-func NewRequester(pHost string, pClient *http.Client) IRequester {
+func NewRequester(pName, pHost string, pClient *http.Client) IRequester {
 	return &sRequester{
+		fName:   pName,
 		fHost:   pHost,
 		fClient: pClient,
 	}
@@ -50,7 +52,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	}
 
 	result := string(res)
-	if result != hla_settings.CServiceFullName {
+	if result != p.fName {
 		return "", ErrInvalidTitle
 	}
 

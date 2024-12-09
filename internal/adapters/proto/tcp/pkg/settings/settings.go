@@ -2,7 +2,6 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/utils/name"
-	"github.com/number571/hidden-lake/pkg/adapters/http"
 )
 
 var (
@@ -17,14 +16,6 @@ const (
 const (
 	CPathYML = "hla_tcp.yml"
 	CPathDB  = "hla_tcp.db"
-)
-
-const (
-	CHandleIndexPath          = "/api/index"
-	CHandleConfigSettingsPath = "/api/config/settings"
-	CHandleConfigConnectsPath = "/api/config/connects"
-	CHandleNetworkOnlinePath  = "/api/network/online"
-	CHandleNetworkAdapterPath = http.CHandleNetworkAdapterPath
 )
 
 const (
