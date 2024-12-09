@@ -16,4 +16,5 @@ var (
 	ErrRunning = &SAppError{"app running"}
 	ErrService = &SAppError{"service"}
 	ErrClose   = &SAppError{"close"}
+	ErrInitDB  = &SAppError{"init database"}
 )

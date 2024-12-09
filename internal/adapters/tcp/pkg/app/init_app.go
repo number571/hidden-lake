@@ -20,5 +20,5 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 		return nil, fmt.Errorf("init config: %w", err)
 	}
 
-	return NewApp(cfg), nil
+	return NewApp(cfg, inputPath), nil
 }

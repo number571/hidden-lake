@@ -97,7 +97,7 @@ func TestApp(t *testing.T) {
 		},
 		FAddress: &config.SAddress{
 			FExternal: testutils.TgAddrs[2],
-			FHTTP:     testutils.TgAddrs[3],
+			FInternal: testutils.TgAddrs[3],
 		},
 		FFriends: map[string]string{
 			"Alice": asymmetric.NewPrivKey().GetPubKey().ToString(),

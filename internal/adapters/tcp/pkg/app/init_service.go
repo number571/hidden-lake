@@ -35,7 +35,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	)
 
 	p.fServiceHTTP = &http.Server{
-		Addr:        cfg.GetAddress().GetHTTP(),
+		Addr:        cfg.GetAddress().GetInternal(),
 		Handler:     http.TimeoutHandler(mux, time.Minute/2, "timeout"),
 		ReadTimeout: (5 * time.Second),
 	}

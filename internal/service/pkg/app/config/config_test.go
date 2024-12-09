@@ -22,7 +22,7 @@ const (
 	tcDownloader      = "test_downloader"
 	tcUploader        = "test_uploader"
 	tcAddressExternal = "test_address_external"
-	tcAddressHTTP     = "test_address_http"
+	tcAddressInternal = "test_address_internal"
 	tcAddressPPROF    = "test_address_pprof"
 	tcPubKeyAlias1    = "test_alias1"
 	tcPubKeyAlias2    = "test_alias2"
@@ -61,7 +61,7 @@ logging:
   - erro
 address:
   external: %s
-  http: %s
+  internal: %s
   pprof: %s
 adapters:
   - %s
@@ -84,7 +84,7 @@ func testNewConfigString() string {
 		tcQueuePeriod,
 		tcNetwork,
 		tcAddressExternal,
-		tcAddressHTTP,
+		tcAddressInternal,
 		tcAddressPPROF,
 		tgAdapters[0],
 		tgAdapters[1],
@@ -264,8 +264,8 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetAddress().GetHTTP() != tcAddressHTTP {
-		t.Error("address_http is invalid")
+	if cfg.GetAddress().GetInternal() != tcAddressInternal {
+		t.Error("address_internal is invalid")
 		return
 	}
 

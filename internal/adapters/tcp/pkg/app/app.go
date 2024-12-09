@@ -12,10 +12,12 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
+	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 
+	"github.com/number571/hidden-lake/internal/adapters/tcp/internal/storage"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -31,6 +33,10 @@ type sApp struct {
 	fState   state.IState
 	fWrapper config.IWrapper
 
+	fPathTo   string
+	fStorage  storage.IMessageStorage
+	fDatabase database.IKVDatabase
+
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
@@ -39,15 +45,19 @@ type sApp struct {
 	fServicePPROF *http.Server
 }
 
-func NewApp(pCfg config.IConfig) types.IRunner {
+func NewApp(
+	pCfg config.IConfig,
+	pPathTo string,
+) types.IRunner {
 	return &sApp{
 		fState:      state.NewBoolState(),
+		fPathTo:     pPathTo,
 		fWrapper:    config.NewWrapper(pCfg),
 		fStdfLogger: std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc()),
 		fHTTPLogger: std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc()),
 		fTCPAdapter: tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
-				FAddress:          pCfg.GetAddress().GetTCP(),
+				FAddress:          pCfg.GetAddress().GetExternal(),
 				FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
 				FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
 				FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
@@ -91,6 +101,11 @@ func (p *sApp) Run(pCtx context.Context) error {
 
 func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
+		if err := p.initDatabase(); err != nil {
+			return errors.Join(ErrInitDB, err)
+		}
+		p.initStorage(p.fDatabase)
+
 		p.initServiceHTTP(pCtx)
 		p.initServicePPROF()
 
@@ -137,12 +152,21 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			if err != nil {
 				continue
 			}
+
+			if err := p.fStorage.Push(msg); err != nil {
+				continue
+			}
 			_ = p.fTCPAdapter.Produce(pCtx, msg)
+
+			endpoint := p.fWrapper.GetConfig().GetEndpoint()
+			if endpoint == "" {
+				continue
+			}
 
 			req, err := http.NewRequestWithContext(
 				pCtx,
 				http.MethodPost,
-				"http://"+p.fWrapper.GetConfig().GetEndpoint()+hla_settings.CHandleNetworkAdapterPath,
+				"http://"+endpoint+hla_settings.CHandleNetworkAdapterPath,
 				strings.NewReader(msg.ToString()),
 			)
 			if err != nil {
@@ -180,6 +204,10 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
+	if p.fWrapper.GetConfig().GetAddress().GetInternal() == "" {
+		return
+	}
+
 	go func() {
 		err := p.fServiceHTTP.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -193,6 +221,7 @@ func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr 
 
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
+		p.fDatabase,
 		p.fServiceHTTP,
 		p.fServicePPROF,
 	})

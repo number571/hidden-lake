@@ -12,7 +12,7 @@ import (
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	hlt_database "github.com/number571/hidden-lake/internal/helpers/traffic/internal/database"
+	hlt_database "github.com/number571/hidden-lake/internal/adapters/tcp/internal/database"
 )
 
 const (

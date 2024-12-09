@@ -71,13 +71,13 @@ func initConfig() *SConfig {
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
 			FExternal: hls_settings.CDefaultExternalAddress,
-			FHTTP:     hls_settings.CDefaultHTTPAddress,
+			FInternal: hls_settings.CDefaultInternalAddress,
 		},
 		FServices: map[string]string{
 			hlm_settings.CServiceFullName: hlm_settings.CDefaultIncomingAddress,
 		},
 		FAdapters: []string{
-			hla_settings.CDefaultHTTPAddress,
+			hla_settings.CDefaultInternalAddress,
 		},
 		FFriends: map[string]string{},
 	}

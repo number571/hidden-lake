@@ -7,7 +7,7 @@ BINPATH=$(ROOPATH)/bin
 
 default: build
 build: 
-	for app in hls hlc hle hlt hll hlm hlf hlr; \
+	for app in hls hlc hle hlm hlf hlr hla/tcp; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

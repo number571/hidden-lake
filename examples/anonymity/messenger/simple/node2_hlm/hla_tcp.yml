@@ -5,6 +5,6 @@ logging:
 - warn
 - erro
 address:
-  tcp: :9522
-  http: 127.0.0.1:9521
+  external: :9522
+  internal: 127.0.0.1:9521
 endpoint: 127.0.0.1:7571

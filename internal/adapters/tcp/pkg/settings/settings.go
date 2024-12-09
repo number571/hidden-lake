@@ -13,6 +13,7 @@ const (
 
 const (
 	CPathYML = "hla_tcp.yml"
+	CPathDB  = "hla_tcp.db"
 )
 
 const (
@@ -27,6 +28,6 @@ const (
 )
 
 const (
-	CDefaultHTTPAddress = "127.0.0.1:9521"
-	CDefaultTCPAddress  = "127.0.0.1:9522"
+	CDefaultInternalAddress = "127.0.0.1:9521"
+	CDefaultExternalAddress = "127.0.0.1:9522"
 )

@@ -74,8 +74,8 @@ func NewApp(
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
+		p.runListenerInternal,
 		p.runListenerPPROF,
-		p.runListenerHTTP,
 		p.runAnonymityNode,
 	}
 
@@ -167,10 +167,10 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 	<-pCtx.Done()
 }
 
-func (p *sApp) runListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runListenerInternal(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if p.fCfgW.GetConfig().GetAddress().GetHTTP() == "" {
+	if p.fCfgW.GetConfig().GetAddress().GetInternal() == "" {
 		return
 	}
 

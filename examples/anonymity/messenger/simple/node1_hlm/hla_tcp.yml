@@ -5,8 +5,7 @@ logging:
 - warn
 - erro
 address:
-  tcp: 127.0.0.1:9522
-  http: 127.0.0.1:9521
+  internal: 127.0.0.1:9521
 endpoint: 127.0.0.1:8571
 connections:
   - node2_hlc:9522

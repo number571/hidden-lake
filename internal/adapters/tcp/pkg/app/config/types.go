@@ -27,10 +27,12 @@ type IConfigSettings interface {
 	net_message.ISettings
 
 	GetMessageSizeBytes() uint64
+	GetMessagesCapacity() uint64
+	GetDatabaseEnabled() bool
 }
 
 type IAddress interface {
-	GetTCP() string
-	GetHTTP() string
+	GetExternal() string
+	GetInternal() string
 	GetPPROF() string
 }

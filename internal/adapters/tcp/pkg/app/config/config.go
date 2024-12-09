@@ -17,7 +17,9 @@ var (
 type SConfigSettings struct {
 	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FMessagesCapacity uint64 `json:"messages_capacity,omitempty" yaml:"messages_capacity,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
 }
 
 type SConfig struct {
@@ -27,15 +29,15 @@ type SConfig struct {
 
 	FSettings    *SConfigSettings `yaml:"settings"`
 	FLogging     []string         `yaml:"logging,omitempty"`
-	FAddress     *SAddress        `yaml:"address"`
-	FEndpoint    string           `yaml:"endpoint"`
+	FAddress     *SAddress        `yaml:"address,omitempty"`
+	FEndpoint    string           `yaml:"endpoint,omitempty"`
 	FConnections []string         `yaml:"connections,omitempty"`
 }
 
 type SAddress struct {
-	FTCP   string `yaml:"tcp,omitempty"`
-	FHTTP  string `yaml:"http"`
-	FPPROF string `yaml:"pprof,omitempty"`
+	FInternal string `yaml:"internal,omitempty"`
+	FExternal string `yaml:"external,omitempty"`
+	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -80,8 +82,6 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 
 func (p *SConfig) isValid() bool {
 	return true &&
-		p.FAddress.FHTTP != "" &&
-		p.FEndpoint != "" &&
 		p.FSettings.FMessageSizeBytes != 0
 }
 
@@ -145,16 +145,24 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
 }
 
+func (p *SConfigSettings) GetDatabaseEnabled() bool {
+	return p.FDatabaseEnabled
+}
+
+func (p *SConfigSettings) GetMessagesCapacity() uint64 {
+	return p.FMessagesCapacity
+}
+
 func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
-func (p *SAddress) GetTCP() string {
-	return p.FTCP
+func (p *SAddress) GetExternal() string {
+	return p.FExternal
 }
 
-func (p *SAddress) GetHTTP() string {
-	return p.FHTTP
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
 }
 
 func (p *SAddress) GetPPROF() string {

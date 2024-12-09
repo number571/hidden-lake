@@ -41,7 +41,7 @@ type SConfig struct {
 
 type SAddress struct {
 	FExternal string `yaml:"external,omitempty"`
-	FHTTP     string `yaml:"http,omitempty"`
+	FInternal string `yaml:"internal,omitempty"`
 	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
@@ -213,8 +213,8 @@ func (p *SAddress) GetExternal() string {
 	return p.FExternal
 }
 
-func (p *SAddress) GetHTTP() string {
-	return p.FHTTP
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
 }
 
 func (p *SAddress) GetPPROF() string {

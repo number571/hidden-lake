@@ -9,7 +9,6 @@ import (
 	"github.com/number571/hidden-lake/build"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/conn"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -40,10 +39,10 @@ func initConfig() *SConfig {
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
-			FTCP:  hla_settings.CDefaultTCPAddress,
-			FHTTP: hla_settings.CDefaultHTTPAddress,
+			FInternal: hla_settings.CDefaultInternalAddress,
+			FExternal: hla_settings.CDefaultExternalAddress,
 		},
-		FEndpoint: hls_settings.CDefaultHTTPAddress,
+		FEndpoint: hls_settings.CDefaultInternalAddress,
 	}
 }
 
@@ -64,9 +63,6 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 
 	cfg.FConnections = make([]string, 0, len(network.FConnections))
 	for _, c := range network.FConnections {
-		if conn.IsAmI(pCfg.GetAddress(), c) {
-			continue
-		}
 		cfg.FConnections = append(cfg.FConnections, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
 	}
 
