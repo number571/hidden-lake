@@ -5,9 +5,4 @@ logging:
 services:
 - hidden-lake-service
 - hidden-lake-messenger
-# - hidden-lake-filesharer
-# - hidden-lake-remoter
-# - hidden-lake-traffic
-# - hidden-lake-encryptor
-# - hidden-lake-loader
-# - hidden-lake-adapter=tcp
+- hidden-lake-adapter=tcp

@@ -39,10 +39,12 @@ func initConfig() *SConfig {
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
-			FInternal: hla_settings.CDefaultInternalAddress,
 			FExternal: hla_settings.CDefaultExternalAddress,
+			FInternal: hla_settings.CDefaultInternalAddress,
 		},
-		FEndpoint: hls_settings.CDefaultInternalAddress,
+		FEndpoints: []string{
+			hls_settings.CDefaultInternalAddress,
+		},
 	}
 }
 

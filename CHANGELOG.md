@@ -9,6 +9,7 @@
 ### IMPROVEMENTS
 
 - `cmd/hla`: rethink adapter's concept
+- `cmd/hla_tcp`: create
 
 ### CHANGES
 
@@ -22,6 +23,10 @@
 - `cmd/hlt`
 - `cmd/hll`
 - `cmd/hla/common`
+
+### BUG FIXES
+
+- `cmd/hlm, cmd/hlf`: rename dir _daemon -> daemon
 
 <!-- ... -->
 

@@ -28,6 +28,6 @@ const (
 )
 
 const (
-	CDefaultInternalAddress = "127.0.0.1:9521"
-	CDefaultExternalAddress = "127.0.0.1:9522"
+	CDefaultExternalAddress = "127.0.0.1:9521"
+	CDefaultInternalAddress = "127.0.0.1:9522"
 )

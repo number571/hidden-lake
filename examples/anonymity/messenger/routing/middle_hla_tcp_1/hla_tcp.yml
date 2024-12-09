@@ -1,11 +1,10 @@
 settings:
   message_size_bytes: 8192
+  work_size_bits: 22
+  network_key: oMj49BD8he1n8bfq
 logging:
 - info
 - warn
 - erro
 address:
-  external: :9521
-  internal: 127.0.0.1:9522
-endpoints: 
-- 127.0.0.1:7571
+  external: :6581

@@ -17,6 +17,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/internal/storage"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -158,29 +159,40 @@ func (p *sApp) runAdaptedRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			}
 			_ = p.fTCPAdapter.Produce(pCtx, msg)
 
-			endpoint := p.fWrapper.GetConfig().GetEndpoint()
-			if endpoint == "" {
-				continue
+			endpoints := p.fWrapper.GetConfig().GetEndpoints()
+
+			wg := &sync.WaitGroup{}
+			wg.Add(len(endpoints))
+
+			for _, ep := range endpoints {
+				ep := ep
+				go func() {
+					defer wg.Done()
+					produceToEndpoint(pCtx, ep, msg)
+				}()
 			}
 
-			req, err := http.NewRequestWithContext(
-				pCtx,
-				http.MethodPost,
-				"http://"+endpoint+hla_settings.CHandleNetworkAdapterPath,
-				strings.NewReader(msg.ToString()),
-			)
-			if err != nil {
-				continue
-			}
-
-			client := &http.Client{Timeout: 5 * time.Second}
-			rsp, err := client.Do(req)
-			if err != nil {
-				continue
-			}
-			rsp.Body.Close()
+			wg.Wait()
 		}
 	}
+}
+
+func produceToEndpoint(pCtx context.Context, pEndpoint string, pNetMsg net_message.IMessage) {
+	client := &http.Client{Timeout: 5 * time.Second}
+	req, err := http.NewRequestWithContext(
+		pCtx,
+		http.MethodPost,
+		"http://"+pEndpoint+hla_settings.CHandleNetworkAdapterPath,
+		strings.NewReader(pNetMsg.ToString()),
+	)
+	if err != nil {
+		return
+	}
+	rsp, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	rsp.Body.Close()
 }
 
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {

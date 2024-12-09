@@ -1,12 +1,14 @@
 settings:
   message_size_bytes: 8192
+  work_size_bits: 22
+  network_key: oMj49BD8he1n8bfq
 logging:
 - info
 - warn
 - erro
 address:
-  internal: 127.0.0.1:9522
+  internal: 127.0.0.1:8522
 endpoints: 
 - 127.0.0.1:8571
 connections:
-- node2_hlc:9521
+- middle_hla_tcp_1:6581

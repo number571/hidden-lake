@@ -30,13 +30,13 @@ type SConfig struct {
 	FSettings    *SConfigSettings `yaml:"settings"`
 	FLogging     []string         `yaml:"logging,omitempty"`
 	FAddress     *SAddress        `yaml:"address,omitempty"`
-	FEndpoint    string           `yaml:"endpoint,omitempty"`
+	FEndpoints   []string         `yaml:"endpoints,omitempty"`
 	FConnections []string         `yaml:"connections,omitempty"`
 }
 
 type SAddress struct {
-	FInternal string `yaml:"internal,omitempty"`
 	FExternal string `yaml:"external,omitempty"`
+	FInternal string `yaml:"internal,omitempty"`
 	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
@@ -122,8 +122,8 @@ func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
 }
 
-func (p *SConfig) GetEndpoint() string {
-	return p.FEndpoint
+func (p *SConfig) GetEndpoints() []string {
+	return p.FEndpoints
 }
 
 func (p *SConfig) GetConnections() []string {

@@ -7,7 +7,7 @@ BINPATH=$(ROOPATH)/bin
 
 default: build
 build: 
-	for app in hls hlc hle hlm hlf hlr hla/tcp; \
+	for app in hls hlc hle hlm hlf hlr hla/hla_tcp; \ 
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \
@@ -24,5 +24,7 @@ build:
 			done; \
 		done; \
 	done;
+	mv $(BINPATH)/hla/* $(BINPATH)/
+	rm -r $(BINPATH)/hla
 clean:
 	make -C $(BINPATH) clean

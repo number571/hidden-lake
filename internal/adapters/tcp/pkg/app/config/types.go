@@ -19,7 +19,7 @@ type IConfig interface {
 	GetSettings() IConfigSettings
 
 	GetAddress() IAddress
-	GetEndpoint() string
+	GetEndpoints() []string
 	GetConnections() []string
 }
 
