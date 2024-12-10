@@ -12,7 +12,7 @@ The `Hidden Lake Adapters` are the main way to exchange data between multiple HL
 
 By default, [HLS](https://github.com/number571/hidden-lake/tree/master/cmd/hls) contains `HLA=http`, which allows you to produce and consume ciphertexts over the HTTP protocol. This method works ideally in a local microservice environment, where the main way of communication between services is via HTTP. However, in a global environment, HTTP is not a good fit, because it requires all participants to have a public IP address. Because of this, `HLA=tcp`, based on the TCP protocol, is becoming the most popular on the Hidden Lake network.
 
-<p align="center"><img src="images/hla_arch.jpg" alt="hla_arch.jpg"/></p>
+<p align="center"><img src="images/hla_arch.png" alt="hla_arch.png"/></p>
 <p align="center">Figure 1. Architecture of HLA.</p>
 
 ## Example 
