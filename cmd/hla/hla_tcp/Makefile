@@ -3,8 +3,8 @@ BINPATH=../../../bin
 .PHONY: default build run clean
 default: build run
 build:
-	$(GC) -o $(BINPATH)/tcp ./cmd/tcp
+	$(GC) -o $(BINPATH)/hla_tcp ./cmd/hla_tcp
 run:
-	./$(BINPATH)/tcp
+	./$(BINPATH)/hla_tcp
 clean:
-	rm -f hla_tcp.yml $(BINPATH)/tcp
+	rm -f hla_tcp.yml $(BINPATH)/hla_tcp
