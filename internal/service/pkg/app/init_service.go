@@ -16,7 +16,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	origNode := p.fNode.GetAnonymityNode()
 
 	var hlaClient client.IClient
-	for _, adapter := range cfg.GetAdapters() { // TODO:
+	for _, adapter := range cfg.GetEndpoints() { // TODO:
 		hlaClient = client.NewClient(
 			client.NewRequester(
 				adapter,

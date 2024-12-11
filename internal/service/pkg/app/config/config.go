@@ -31,12 +31,12 @@ type SConfig struct {
 	fLogging  logger.ILogging
 	fFriends  map[string]asymmetric.IPubKey
 
-	FSettings *SConfigSettings  `yaml:"settings"`
-	FLogging  []string          `yaml:"logging,omitempty"`
-	FAddress  *SAddress         `yaml:"address,omitempty"`
-	FServices map[string]string `yaml:"services,omitempty"`
-	FAdapters []string          `yaml:"adapters,omitempty"`
-	FFriends  map[string]string `yaml:"friends,omitempty"`
+	FSettings  *SConfigSettings  `yaml:"settings"`
+	FLogging   []string          `yaml:"logging,omitempty"`
+	FAddress   *SAddress         `yaml:"address,omitempty"`
+	FServices  map[string]string `yaml:"services,omitempty"`
+	FEndpoints []string          `yaml:"endpoints,omitempty"`
+	FFriends   map[string]string `yaml:"friends,omitempty"`
 }
 
 type SAddress struct {
@@ -197,8 +197,8 @@ func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
-func (p *SConfig) GetAdapters() []string {
-	return p.FAdapters
+func (p *SConfig) GetEndpoints() []string {
+	return p.FEndpoints
 }
 
 func (p *SConfig) GetService(name string) (string, bool) {

@@ -40,7 +40,7 @@ func (p *tsConfig) GetLogging() logger.ILogging               { return nil }
 func (p *tsConfig) GetShare() bool                            { return false }
 func (p *tsConfig) GetAddress() IAddress                      { return nil }
 func (p *tsConfig) GetNetworkKey() string                     { return "" }
-func (p *tsConfig) GetAdapters() []string                     { return nil }
+func (p *tsConfig) GetEndpoints() []string                    { return nil }
 func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey { return nil }
 func (p *tsConfig) GetService(_ string) (string, bool)        { return "", false }
 

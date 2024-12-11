@@ -9,5 +9,5 @@ logging:
   - erro
 address:
   external: 127.0.0.1:6571
-adapters:
+endpoints:
   - 127.0.0.1:6522

@@ -69,10 +69,6 @@ var (
 address:
   external: test_address_external
   internal: test_address_internal
-connections:
-  - test_connect1
-  - test_connect2
-  - test_connect3
 friends:
   test_recvr: %s
   test_name1: %s
@@ -295,7 +291,7 @@ func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
 		"abc": tgPrivKey2.GetPubKey(),
 	}
 }
-func (p *tsConfig) GetAdapters() []string { return nil }
+func (p *tsConfig) GetEndpoints() []string { return nil }
 func (p *tsConfig) GetService(s string) (string, bool) {
 	if s == "hidden-some-host-ok" {
 		return p.fServiceAddr, true

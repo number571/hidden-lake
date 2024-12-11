@@ -30,7 +30,7 @@ type IConfig interface {
 	GetLogging() logger.ILogging
 	GetAddress() IAddress
 	GetFriends() map[string]asymmetric.IPubKey
-	GetAdapters() []string
+	GetEndpoints() []string
 	GetService(string) (string, bool)
 }
 

@@ -10,7 +10,7 @@ address:
   external: 127.0.0.1:8571
 services:
   hidden-lake-remoter: 127.0.0.1:8532
-adapters:
+endpoints:
   - 127.0.0.1:8522
 friends:
   Alice: >-

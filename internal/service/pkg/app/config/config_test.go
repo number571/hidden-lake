@@ -63,7 +63,7 @@ address:
   external: %s
   internal: %s
   pprof: %s
-adapters:
+endpoints:
   - %s
   - %s
 friends:
@@ -274,11 +274,11 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if len(cfg.GetAdapters()) != 2 {
+	if len(cfg.GetEndpoints()) != 2 {
 		t.Error("len connections != 2")
 		return
 	}
-	for i, v := range cfg.GetAdapters() {
+	for i, v := range cfg.GetEndpoints() {
 		if v != tgAdapters[i] {
 			t.Errorf("connection '%d' is invalid", i)
 			return

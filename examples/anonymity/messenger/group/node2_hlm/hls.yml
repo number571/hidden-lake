@@ -12,7 +12,7 @@ address:
   internal: :7572
 services:
   hidden-lake-messenger: 127.0.0.1:7071
-adapters:
+endpoints:
 - 127.0.0.1:7522
 friends:
   # Alice = Group user

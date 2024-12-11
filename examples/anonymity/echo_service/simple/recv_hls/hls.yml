@@ -10,7 +10,7 @@ services:
   hidden-echo-service: recv_hls_service:8080
 address:
   external: 127.0.0.1:8571
-adapters:
+endpoints:
   - 127.0.0.1:8522
 friends:
   Alice: >-

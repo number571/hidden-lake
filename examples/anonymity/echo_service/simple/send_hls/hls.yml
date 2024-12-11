@@ -9,7 +9,7 @@ logging:
 address:
   external: :7571
   internal: :7572
-adapters:
+endpoints:
 - 127.0.0.1:7522
 friends:
   Bob: >-
