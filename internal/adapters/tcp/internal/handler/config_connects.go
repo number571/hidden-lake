@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"net/url"
 	"slices"
 	"strings"
 
@@ -32,8 +33,13 @@ func HandleConfigConnectsAPI(
 		}
 
 		if pR.Method == http.MethodGet {
+			connects := pWrapper.GetConfig().GetConnections()
+			result := make([]string, 0, len(connects))
+			for _, addr := range connects {
+				result = append(result, "tcp://"+addr)
+			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, pWrapper.GetConfig().GetConnections())
+			_ = api.Response(pW, http.StatusOK, result)
 			return
 		}
 
@@ -44,10 +50,15 @@ func HandleConfigConnectsAPI(
 			return
 		}
 
-		connect := strings.TrimSpace(string(connectBytes))
-		if connect == "" {
+		u, err := url.Parse(strings.TrimSpace(string(connectBytes)))
+		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("read_connect"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
+			return
+		}
+		if u.Scheme != "tcp" {
+			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
+			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return
 		}
 
@@ -55,7 +66,7 @@ func HandleConfigConnectsAPI(
 		case http.MethodPost:
 			connects := uniqAppendToSlice(
 				pWrapper.GetConfig().GetConnections(),
-				connect,
+				u.Host,
 			)
 			if err := pWrapper.GetEditor().UpdateConnections(connects); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("update_connections"))
@@ -64,7 +75,7 @@ func HandleConfigConnectsAPI(
 			}
 
 			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
-			_ = networkNode.AddConnection(pCtx, connect) // connection may be refused (closed)
+			_ = networkNode.AddConnection(pCtx, u.Host) // connection may be refused (closed)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update connections")
@@ -73,7 +84,7 @@ func HandleConfigConnectsAPI(
 		case http.MethodDelete:
 			connects := slices.DeleteFunc(
 				pWrapper.GetConfig().GetConnections(),
-				func(p string) bool { return p == connect },
+				func(p string) bool { return p == u.Host },
 			)
 			if err := pWrapper.GetEditor().UpdateConnections(connects); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("update_connections"))
@@ -82,7 +93,7 @@ func HandleConfigConnectsAPI(
 			}
 
 			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
-			_ = networkNode.DelConnection(connect) // connection may be refused (closed)
+			_ = networkNode.DelConnection(u.Host) // connection may be refused (closed)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete connection")

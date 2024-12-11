@@ -3,7 +3,9 @@ package handler
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"sort"
+	"strings"
 
 	"github.com/number571/go-peer/pkg/anonymity/adapters"
 	"github.com/number571/go-peer/pkg/logger"
@@ -29,11 +31,11 @@ func HandleNetworkOnlineAPI(
 		switch pR.Method {
 		case http.MethodGet:
 			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
-			conns := networkNode.GetConnections()
+			connects := networkNode.GetConnections()
 
-			inOnline := make([]string, 0, len(conns))
-			for addr := range conns {
-				inOnline = append(inOnline, addr)
+			inOnline := make([]string, 0, len(connects))
+			for addr := range connects {
+				inOnline = append(inOnline, "tcp://"+addr)
 			}
 			sort.SliceStable(inOnline, func(i, j int) bool {
 				return inOnline[i] < inOnline[j]
@@ -49,8 +51,20 @@ func HandleNetworkOnlineAPI(
 				return
 			}
 
+			u, err := url.Parse(strings.TrimSpace(string(connectBytes)))
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("read_connect"))
+				_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
+				return
+			}
+			if u.Scheme != "tcp" {
+				pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
+				_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
+				return
+			}
+
 			networkNode := pAdapter.(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
-			if err := networkNode.DelConnection(string(connectBytes)); err != nil {
+			if err := networkNode.DelConnection(u.Host); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete online connection")
 				return

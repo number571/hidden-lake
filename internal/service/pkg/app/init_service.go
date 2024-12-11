@@ -17,11 +17,9 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 
 	var hlaClient client.IClient
 	for _, adapter := range cfg.GetEndpoints() { // TODO:
+		httpClient := &http.Client{Timeout: 5 * time.Second}
 		hlaClient = client.NewClient(
-			client.NewRequester(
-				adapter,
-				&http.Client{Timeout: 5 * time.Second},
-			),
+			client.NewRequester(adapter, httpClient),
 		)
 		break
 	}
