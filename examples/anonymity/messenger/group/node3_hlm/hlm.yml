@@ -7,4 +7,4 @@ logging:
 address:
   interface: :6060
   incoming: :6061
-connection: node3_hlc:6572
+connection: 127.0.0.1:6572

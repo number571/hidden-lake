@@ -2,8 +2,8 @@ settings:
   message_size_bytes: 8192
   work_size_bits: 22
 logging:
-  - info
-  - warn
-  - erro
+- info
+- warn
+- erro
 address:
-  tcp: :5581
+  external: :5581

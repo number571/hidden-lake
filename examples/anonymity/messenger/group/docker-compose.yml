@@ -1,11 +1,11 @@
 version: "3"
 services:
-  middle_hlt:
+  middle_hla_tcp:
     build:
       context: ./../../../../
-      dockerfile: cmd/hlt/Dockerfile
+      dockerfile: cmd/hla_tcp/Dockerfile
     environment:
-      - SERVICE_PATH=examples/anonymity/messenger/group/middle_hlt
+      - SERVICE_PATH=examples/anonymity/messenger/group/middle_hla_tcp
     networks:
       - hidden-lake
   node1_hlc:
