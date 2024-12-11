@@ -46,8 +46,8 @@ func testConfigDefaultInit(configPath string) {
 		},
 		FLogging: []string{"info", "erro"},
 		FAddress: &SAddress{
-			FHTTP:  tcAddress1,
-			FPPROF: tcAddress2,
+			FInternal: tcAddress1,
+			FPPROF:    tcAddress2,
 		},
 		FFriends: map[string]string{
 			tcPubKeyAlias1: tgPubKey1.ToString(),
@@ -98,7 +98,7 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetAddress().GetHTTP() != tcAddress1 {
+	if cfg.GetAddress().GetInternal() != tcAddress1 {
 		t.Error("address http is invalid")
 		return
 	}

@@ -40,7 +40,7 @@ var (
   work_size_bits: %d
   network_key: %s
 address:
-  http: test_address_http
+  internal: test_address_http
 friends:
   test_recvr: %s
   test_name1: %s

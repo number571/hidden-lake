@@ -34,7 +34,7 @@ func (p *sApp) initServiceHTTP() {
 	mux.HandleFunc(hle_settings.CHandleConfigFriendsPath, handler.HandleConfigFriendsAPI(p.fCfgW, p.fHTTPLogger, mapKeys))
 
 	p.fServiceHTTP = &http.Server{
-		Addr:        cfg.GetAddress().GetHTTP(),
+		Addr:        cfg.GetAddress().GetInternal(),
 		Handler:     http.TimeoutHandler(mux, time.Minute, "timeout"),
 		ReadTimeout: (5 * time.Second),
 	}

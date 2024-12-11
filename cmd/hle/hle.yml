@@ -7,7 +7,7 @@ logging:
 - warn
 - erro
 address:
-  http: 127.0.0.1:9551
+  internal: 127.0.0.1:9551
   # pprof: ""
 # friends:
 #   <friend-name>: <public-key>

@@ -9,8 +9,8 @@ logging:
 - warn
 - erro
 address:
-  tcp: 127.0.0.1:9571
-  http: 127.0.0.1:9572
+  external: 127.0.0.1:9571
+  internal: 127.0.0.1:9572
   # pprof: ""
 services:
   hidden-lake-messenger: 127.0.0.1:9592

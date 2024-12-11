@@ -71,7 +71,7 @@ func TestApp(t *testing.T) {
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
-			FHTTP: testutils.TgAddrs[30],
+			FInternal: testutils.TgAddrs[30],
 		},
 	})
 	if err != nil {

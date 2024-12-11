@@ -52,7 +52,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config1.GetAddress().GetHTTP() != tcAddress1 {
+	if config1.GetAddress().GetInternal() != tcAddress1 {
 		t.Error("got invalid field with exist config (1)")
 		return
 	}
@@ -83,7 +83,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config2.GetAddress().GetHTTP() != tcAddress1 {
+	if config2.GetAddress().GetInternal() != tcAddress1 {
 		t.Error("got invalid field with exist config (2)")
 		return
 	}
@@ -96,7 +96,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetHTTP() != hle_settings.CDefaultHTTPAddress {
+	if config3.GetAddress().GetInternal() != hle_settings.CDefaultInternalAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

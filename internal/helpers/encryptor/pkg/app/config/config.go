@@ -34,8 +34,8 @@ type SConfig struct {
 }
 
 type SAddress struct {
-	FHTTP  string `yaml:"http"`
-	FPPROF string `yaml:"pprof,omitempty"`
+	FInternal string `yaml:"internal"`
+	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -81,7 +81,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FSettings.FMessageSizeBytes != 0 &&
-		p.FAddress.FHTTP != ""
+		p.FAddress.FInternal != ""
 }
 
 func (p *SConfig) initConfig() error {
@@ -145,8 +145,8 @@ func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
-func (p *SAddress) GetHTTP() string {
-	return p.FHTTP
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
 }
 
 func (p *SAddress) GetPPROF() string {

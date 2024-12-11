@@ -64,8 +64,8 @@ func initConfig() *SConfig {
 		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
-			FHTTP:  hle_settings.CDefaultHTTPAddress,
-			FPPROF: "",
+			FInternal: hle_settings.CDefaultInternalAddress,
+			FPPROF:    "",
 		},
 	}
 }

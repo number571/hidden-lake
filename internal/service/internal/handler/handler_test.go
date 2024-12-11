@@ -67,8 +67,8 @@ var (
   queue_period_ms: 1000
   network_key: test
 address:
-  tcp: test_address_tcp
-  http: test_address_http
+  external: test_address_external
+  internal: test_address_internal
 connections:
   - test_connect1
   - test_connect2

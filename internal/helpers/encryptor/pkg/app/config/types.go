@@ -30,6 +30,6 @@ type IConfigSettings interface {
 }
 
 type IAddress interface {
-	GetHTTP() string
+	GetInternal() string
 	GetPPROF() string
 }
