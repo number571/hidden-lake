@@ -11,10 +11,10 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	hla_client "github.com/number571/hidden-lake/internal/adapters/pkg/client"
-	"github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/name"
+	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
 )
 
 const (

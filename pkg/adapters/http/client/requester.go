@@ -8,9 +8,9 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/pkg/settings"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	hla_settings "github.com/number571/hidden-lake/pkg/adapters/http/settings"
 )
 
 var (

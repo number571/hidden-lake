@@ -10,8 +10,8 @@ import (
 	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 
-	hla_tcp_app "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/app"
-	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/proto/tcp/pkg/settings"
+	hla_tcp_app "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 
 	hlm_app "github.com/number571/hidden-lake/internal/applications/messenger/pkg/app"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
