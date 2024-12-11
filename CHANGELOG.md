@@ -28,6 +28,7 @@
 ### BUG FIXES
 
 - `cmd/hlm, cmd/hlf`: rename dir _daemon -> daemon
+- `cmd/hle`: fix daemon/install_hle.sh
 
 <!-- ... -->
 

@@ -14,7 +14,7 @@ $ go install github.com/number571/hidden-lake/cmd/hle@latest
 
 ## How it works
 
-HLE uses the `pkg/client` and `pkg/network/message` packages. Encrypted messages can then be sent to HLT for storage and distribution.
+HLE uses the `pkg/client` and `pkg/network/message` packages (from go-peer). Encrypted messages can then be sent to HLA for storage and distribution.
 
 ## Supported platforms
 

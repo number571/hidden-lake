@@ -129,16 +129,15 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 1. Basic:
    * [HLS](cmd/hls) - anonymizes traffic using the QB-problem
    * [HLC](cmd/hlc) - runs many HL services as one application
-   * [HLA](cmd/hla) - adapts HL traffic to external environments
 2. Applied:
    * [HLM](cmd/hlm) - messenger with a web interface
    * [HLF](cmd/hlf) - file sharing with a web interface
    * [HLR](cmd/hlr) - executes remote access commands
 3. Helpers: 
-   * [HLT](cmd/hlt) - retransmits and saves encrypted traffic
-   * [HLL](cmd/hll) - distributes the stored traffic between nodes
    * [HLE](cmd/hle) - encrypts and decrypts messages
-   
+4. Adapters:
+   * [HLA=tcp](cmd/hla_tcp) - adapts HL traffic to a custom TCP connection
+
 ## Build and run
 
 Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. 

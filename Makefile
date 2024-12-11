@@ -85,8 +85,6 @@ test-coverage-badge:
 
 ### PPROF
 # make pprof-run PPROF_NAME=hls PPROF_PORT=9573
-# make pprof-run PPROF_NAME=hlt PPROF_PORT=9583
-# make pprof-run PPROF_NAME=hlm PPROF_PORT=9593
 
 pprof-run:
 	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/threadcreate.png http://localhost:$(PPROF_PORT)/debug/pprof/threadcreate

@@ -105,7 +105,7 @@ $ hls -path=/root -network=xxx -threads=1
 
 ## Example
 
-There are five nodes in the network `send_hls`, `recv_hls` and `middle_hlt_1`, `middle_hlt_2`, `middle_hlt_3`. The `send_his` and `recv_hls` nodes connects to `middle_hlt_1`, `middle_hlt_3`. As a result, a link of the form `send_his <-> middle_hlt_1 <-> middle_hlt_2 <-> middle_hlt_3 <-> recv_hls` is created. Due to the specifics of HLS, the centralized `middle_hlt` nodes does not violate the security and anonymity of the `send_hls` and `recv_hls` subjects in any way. 
+There are five nodes in the network `send_hls`, `recv_hls` and `middle_hla_tcp_1`, `middle_hla_tcp_2`, `middle_hla_tcp_3`. The `send_his` and `recv_hls` nodes connects to `middle_hla_tcp_1`, `middle_hla_tcp_3`. As a result, a link of the form `send_his <-> middle_hla_tcp_1 <-> middle_hla_tcp_2 <-> middle_hla_tcp_3 <-> recv_hls` is created. Due to the specifics of HLS, the centralized `middle_hla_tcp` nodes does not violate the security and anonymity of the `send_hls` and `recv_hls` subjects in any way. 
 
 The `recv_hls` node contains its `echo_service`, which performs the role of redirecting the request body back to the client as a response. Access to this service is carried out by its alias `hidden-echo-service`, put forward by the recv_hls node.
 

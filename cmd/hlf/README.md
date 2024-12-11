@@ -20,7 +20,7 @@ $ go install github.com/number571/hidden-lake/cmd/hlf@latest
 
 Most of the code is a call to API functions from the HLS kernel. Thanks to this approach, implicit authorization of users is formed from the state of the anonymizing service.
 
-Unlike applications such as HLS, HLT, and HLM, the HLF application does not have a database. Instead, the storage is used, represented by the usual `hlf.stg` directory.
+Unlike applications such as HLS and HLM, the HLF application does not have a database. Instead, the storage is used, represented by the usual `hlf.stg` directory.
 
 <p align="center"><img src="images/hlf_download.gif" alt="hlf_download.gif"/></p>
 <p align="center">Figure 1. Example of download file in HLF (x2 speed).</p>
@@ -57,7 +57,7 @@ $ hlf -path=/root
 
 ## Example
 
-The example will involve two nodes `node1_hlf, node2_hlf` and three repeaters `middle_hlt_1, middle_hlt_2, middle_hlt3_`. Both nodes are a combination of HLS and HLF, where HLF plays the role of an application and services (as shown in `Figure 3` of the HLS readme). The three remaining nodes are used only for the successful connection of the two main nodes. In other words, HLT nodes are traffic relay nodes.
+The example will involve two nodes `node1_hlf, node2_hlf` and three repeaters `middle_hla_tcp_1, middle_hla_tcp_2, middle_hla_tcp_3`. Both nodes are a combination of HLS and HLF, where HLF plays the role of an application and services (as shown in `Figure 3` of the HLS readme). The three remaining nodes are used only for the successful connection of the two main nodes. In other words, `HLA=tcp` nodes are traffic relay nodes.
 
 Build and run nodes
 ```bash

@@ -60,7 +60,7 @@ $ hlr -path=/root
 
 ## Example
 
-The example will involve three nodes `recv_hlc, send_hls` and three repeaters `middle_hlt_1, middle_hlt_2, middle_hlt3_`. The three remaining nodes are used only for the successful connection of the two main nodes. In other words, HLT nodes are traffic relay nodes.
+The example will involve three nodes `recv_hlc, send_hls` and three repeaters `middle_hla_tcp_1, middle_hla_tcp_2, middle_hla_tcp_3`. The three remaining nodes are used only for the successful connection of the two main nodes. In other words, `HLA=tcp` nodes are traffic relay nodes.
 
 Build and run nodes
 ```bash
