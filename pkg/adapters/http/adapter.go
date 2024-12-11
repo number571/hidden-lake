@@ -154,9 +154,10 @@ func (p *sHTTPAdapter) adapterHandler() func(http.ResponseWriter, *http.Request)
 			return
 		}
 
-		msgSize := adapterSettings.GetMessageSizeBytes()
-		msgLen := uint64(msgSize+net_message.CMessageHeadSize) << 1 // nolint: unconvert
+		msgLen := adapterSettings.GetMessageSizeBytes() + net_message.CMessageHeadSize
+		msgLen <<= 1 // message hex_encoded
 		msgStr := make([]byte, msgLen)
+
 		n, err := io.ReadFull(r.Body, msgStr)
 		if err != nil || uint64(n) != msgLen {
 			p.fLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
