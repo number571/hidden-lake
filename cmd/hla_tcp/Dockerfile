@@ -7,7 +7,7 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
-RUN go build -o hla_tcp ./cmd/hla/hla_tcp
+RUN go build -o hla_tcp ./cmd/hla_tcp
 
 ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."

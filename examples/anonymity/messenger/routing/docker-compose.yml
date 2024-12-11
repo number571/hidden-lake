@@ -24,7 +24,7 @@ services:
   middle_hla_tcp_1:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla_tcp/Dockerfile
+      dockerfile: cmd/hla_tcp/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/routing/middle_hla_tcp_1
     networks:
@@ -32,7 +32,7 @@ services:
   middle_hla_tcp_2:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla_tcp/Dockerfile
+      dockerfile: cmd/hla_tcp/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/routing/middle_hla_tcp_2
     networks:
@@ -40,7 +40,7 @@ services:
   middle_hla_tcp_3:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla_tcp/Dockerfile
+      dockerfile: cmd/hla_tcp/Dockerfile
     environment:
       - SERVICE_PATH=examples/anonymity/messenger/routing/middle_hla_tcp_3
     networks:
