@@ -15,20 +15,18 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	cfg := p.fCfgW.GetConfig()
 	origNode := p.fNode.GetAnonymityNode()
 
-	var hlaClient client.IClient
-	for _, adapter := range cfg.GetEndpoints() { // TODO:
-		httpClient := &http.Client{Timeout: 5 * time.Second}
-		hlaClient = client.NewClient(
-			client.NewRequester(adapter, httpClient),
-		)
-		break
+	endpoints := cfg.GetEndpoints()
+	epClients := make([]client.IClient, 0, len(endpoints))
+	for _, ep := range endpoints {
+		requester := client.NewRequester(ep, &http.Client{Timeout: 5 * time.Second})
+		epClients = append(epClients, client.NewClient(requester))
 	}
 
 	mux.HandleFunc(hls_settings.CHandleIndexPath, handler.HandleIndexAPI(p.fHTTPLogger))
 	mux.HandleFunc(hls_settings.CHandleConfigSettingsPath, handler.HandleConfigSettingsAPI(p.fCfgW, p.fHTTPLogger, origNode))
-	mux.HandleFunc(hls_settings.CHandleConfigConnectsPath, handler.HandleConfigConnectsAPI(pCtx, p.fHTTPLogger, hlaClient))
+	mux.HandleFunc(hls_settings.CHandleConfigConnectsPath, handler.HandleConfigConnectsAPI(pCtx, p.fHTTPLogger, epClients))
 	mux.HandleFunc(hls_settings.CHandleConfigFriendsPath, handler.HandleConfigFriendsAPI(p.fCfgW, p.fHTTPLogger, origNode))
-	mux.HandleFunc(hls_settings.CHandleNetworkOnlinePath, handler.HandleNetworkOnlineAPI(pCtx, p.fHTTPLogger, hlaClient))
+	mux.HandleFunc(hls_settings.CHandleNetworkOnlinePath, handler.HandleNetworkOnlineAPI(pCtx, p.fHTTPLogger, epClients))
 	mux.HandleFunc(hls_settings.CHandleServicePubKeyPath, handler.HandleServicePubKeyAPI(p.fHTTPLogger, origNode))
 	mux.HandleFunc(hls_settings.CHandleNetworkRequestPath, handler.HandleNetworkRequestAPI(pCtx, cfg, p.fHTTPLogger, p.fNode))
 

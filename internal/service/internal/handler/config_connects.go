@@ -16,7 +16,7 @@ import (
 func HandleConfigConnectsAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
-	pHlaClient client.IClient,
+	pEPClients []client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
@@ -28,11 +28,15 @@ func HandleConfigConnectsAPI(
 		}
 
 		if pR.Method == http.MethodGet {
-			connects, err := pHlaClient.GetConnections(pCtx)
-			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
-				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get connections")
-				return
+			connects := make([]string, 0, 256)
+			for _, client := range pEPClients {
+				gotConns, err := client.GetConnections(pCtx)
+				if err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get connections")
+					return
+				}
+				connects = append(connects, gotConns...)
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, connects)
@@ -55,10 +59,12 @@ func HandleConfigConnectsAPI(
 
 		switch pR.Method {
 		case http.MethodPost:
-			if err := pHlaClient.AddConnection(pCtx, connect); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("add_connections"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: add connections")
-				return
+			for _, client := range pEPClients {
+				if err := client.AddConnection(pCtx, connect); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("add_connections"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: add connections")
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
@@ -66,10 +72,12 @@ func HandleConfigConnectsAPI(
 			return
 
 		case http.MethodDelete:
-			if err := pHlaClient.DelConnection(pCtx, connect); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: del connection")
-				return
+			for _, client := range pEPClients {
+				if err := client.DelConnection(pCtx, connect); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: del connection")
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

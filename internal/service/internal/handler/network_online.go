@@ -16,7 +16,7 @@ import (
 func HandleNetworkOnlineAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
-	pHlaClient client.IClient,
+	pEPClients []client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
@@ -29,11 +29,15 @@ func HandleNetworkOnlineAPI(
 
 		switch pR.Method {
 		case http.MethodGet:
-			inOnline, err := pHlaClient.GetOnlines(pCtx)
-			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
-				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
-				return
+			inOnline := make([]string, 0, 128)
+			for _, client := range pEPClients {
+				gotConns, err := client.GetOnlines(pCtx)
+				if err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
+					return
+				}
+				inOnline = append(inOnline, gotConns...)
 			}
 
 			sort.SliceStable(inOnline, func(i, j int) bool {
@@ -50,10 +54,12 @@ func HandleNetworkOnlineAPI(
 				return
 			}
 
-			if err := pHlaClient.DelOnline(pCtx, string(connectBytes)); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
-				return
+			for _, client := range pEPClients {
+				if err := client.DelOnline(pCtx, string(connectBytes)); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
