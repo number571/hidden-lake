@@ -18,12 +18,9 @@
 - `cmd/hlt`: delete default config connection 127.0.0.1:9571
 - `cmd/hls,cmd/hlc`: delete default config service hidden-lake-filesharer
 - `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
-
-### DELETED
-
-- `cmd/hlt`
-- `cmd/hll`
-- `cmd/hla/common`
+- `cmd/hlt`: deleted
+- `cmd/hll`: deleted
+- `cmd/hla/common`: deleted
 
 ### BUG FIXES
 
