@@ -17,6 +17,7 @@ type sSettings struct {
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
 		pSett = &SSettings{}
+		pSett.FAdapterSettings = adapters.NewSettings(&adapters.SSettings{})
 	}
 	return (&sSettings{
 		FAddress:         pSett.FAddress,
