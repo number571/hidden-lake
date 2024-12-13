@@ -3,7 +3,7 @@
 # root mode
 echo "
 [Unit]
-Description=HiddenLakeAdapterTcp
+Description=HiddenLakeAdapterTCP
 
 [Service]
 ExecStart=/root/hla_tcp_amd64_linux -path=/root -threads=1
