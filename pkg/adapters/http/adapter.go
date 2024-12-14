@@ -174,7 +174,7 @@ func (p *sHTTPAdapter) adapterHandler() func(http.ResponseWriter, *http.Request)
 
 		if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
 			p.fLogger.PushInfo(logBuilder.WithMessage("message_exist"))
-			w.WriteHeader(http.StatusAlreadyReported)
+			w.WriteHeader(http.StatusLocked)
 			return
 		}
 
