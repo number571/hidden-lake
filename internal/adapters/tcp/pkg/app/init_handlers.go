@@ -9,6 +9,7 @@ import (
 )
 
 func (p *sApp) initHandlers(pCtx context.Context) {
+	networkNode := p.fTCPAdapter.GetConnKeeper().GetNetworkNode()
 	p.fHTTPAdapter.
 		WithHandlers(
 			hla_http.NewHandler(
@@ -21,11 +22,11 @@ func (p *sApp) initHandlers(pCtx context.Context) {
 			),
 			hla_http.NewHandler(
 				hla_settings.CHandleConfigConnectsPath,
-				handler.HandleConfigConnectsAPI(pCtx, p.fWrapper, p.fHTTPLogger, p.fTCPAdapter),
+				handler.HandleConfigConnectsAPI(pCtx, p.fWrapper, p.fHTTPLogger, networkNode),
 			),
 			hla_http.NewHandler(
 				hla_settings.CHandleNetworkOnlinePath,
-				handler.HandleNetworkOnlineAPI(p.fHTTPLogger, p.fTCPAdapter),
+				handler.HandleNetworkOnlineAPI(p.fHTTPLogger, networkNode),
 			),
 		)
 }

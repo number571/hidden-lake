@@ -8,9 +8,10 @@ import (
 )
 
 type ITCPAdapter interface {
+	adapters.IRunnerAdapter
+
 	WithLogger(name.IServiceName, logger.ILogger) ITCPAdapter
 	GetConnKeeper() connkeeper.IConnKeeper
-	adapters.IRunnerAdapter
 }
 
 type ISettings interface {
