@@ -109,7 +109,7 @@ func TestApp(t *testing.T) {
 		50,
 		10*time.Millisecond,
 		func() error {
-			_, err := client.GetIndex(context.Background(), settings.CServiceFullName)
+			_, err := client.GetIndex(context.Background())
 			return err
 		},
 	)

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -39,7 +38,7 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if _, err := client.GetIndex(context.Background(), settings.CServiceFullName); err == nil {
+	if _, err := client.GetIndex(context.Background()); err == nil {
 		t.Error("success get index with unknown host")
 		return
 	}

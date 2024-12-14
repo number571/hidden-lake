@@ -8,7 +8,7 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context, string) (string, error)
+	GetIndex(context.Context) (string, error)
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetOnlines(context.Context) ([]string, error)
@@ -22,7 +22,7 @@ type IClient interface {
 }
 
 type IRequester interface {
-	GetIndex(context.Context, string) (string, error)
+	GetIndex(context.Context) (string, error)
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetOnlines(context.Context) ([]string, error)
