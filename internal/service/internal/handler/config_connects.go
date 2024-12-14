@@ -85,10 +85,3 @@ func HandleConfigConnectsAPI(
 		}
 	}
 }
-
-// func uniqAppendToSlice(pSlice []string, pStr string) []string {
-// 	if slices.Contains(pSlice, pStr) {
-// 		return pSlice
-// 	}
-// 	return append(pSlice, pStr)
-// }

@@ -1,123 +1,123 @@
 package handler
 
-// import (
-// 	"context"
-// 	"errors"
-// 	"fmt"
-// 	"io"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"os"
-// 	"strings"
-// 	"testing"
-// 	"time"
+import (
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 
-// 	"github.com/number571/go-peer/pkg/anonymity"
-// 	"github.com/number571/go-peer/pkg/logger"
-// 	"github.com/number571/hidden-lake/build"
-// 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
-// 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-// 	"github.com/number571/hidden-lake/internal/utils/closer"
-// 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-// 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
-// 	"github.com/number571/hidden-lake/pkg/handler"
-// 	testutils "github.com/number571/hidden-lake/test/utils"
-// )
+	"github.com/number571/go-peer/pkg/logger"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/http/client"
+)
 
-// func TestHandleOnlineAPI2(t *testing.T) {
-// 	t.Parallel()
+func TestHandleOnlineAPI2(t *testing.T) {
+	t.Parallel()
 
-// 	httpLogger := std_logger.NewStdLogger(
-// 		func() std_logger.ILogging {
-// 			logging, err := std_logger.LoadLogging([]string{})
-// 			if err != nil {
-// 				panic(err)
-// 			}
-// 			return logging
-// 		}(),
-// 		func(_ logger.ILogArg) string {
-// 			return ""
-// 		},
-// 	)
+	httpLogger := std_logger.NewStdLogger(
+		func() std_logger.ILogging {
+			logging, err := std_logger.LoadLogging([]string{})
+			if err != nil {
+				panic(err)
+			}
+			return logging
+		}(),
+		func(_ logger.ILogArg) string {
+			return ""
+		},
+	)
 
-// 	handler := HandleNetworkOnlineAPI(httpLogger, newTsNode(true, true, true, true))
-// 	if err := onlineAPIRequestOK(handler); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// 	if err := onlineAPIRequestDeleteOK(handler); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
+	ctx := context.Background()
 
-// 	if err := onlineAPIRequestMethod(handler); err == nil {
-// 		t.Error("request success with invalid method")
-// 		return
-// 	}
+	epClients := []client.IClient{
+		client.NewClient(&tsRequester{}),
+	}
 
-// 	handlerx := HandleNetworkOnlineAPI(httpLogger, newTsNode(false, true, true, true))
-// 	if err := onlineAPIRequestDeleteOK(handlerx); err == nil {
-// 		t.Error("request success with delete error")
-// 		return
-// 	}
-// }
+	handler := HandleNetworkOnlineAPI(ctx, httpLogger, epClients)
+	if err := onlineAPIRequestOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := onlineAPIRequestDeleteOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
 
-// func onlineAPIRequestOK(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	if err := onlineAPIRequestMethod(handler); err == nil {
+		t.Error("request success with invalid method")
+		return
+	}
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	epClientsx := []client.IClient{
+		client.NewClient(&tsRequester{fWithFail: true}),
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	handlerx := HandleNetworkOnlineAPI(ctx, httpLogger, epClientsx)
+	if err := onlineAPIRequestDeleteOK(handlerx); err == nil {
+		t.Error("request success with delete error")
+		return
+	}
+}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+func onlineAPIRequestOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-// 	return nil
-// }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func onlineAPIRequestDeleteOK(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodDelete, "/", strings.NewReader("127.0.0.1:9999"))
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	return nil
+}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+func onlineAPIRequestDeleteOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/", strings.NewReader("127.0.0.1:9999"))
 
-// 	return nil
-// }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func onlineAPIRequestMethod(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	return nil
+}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+func onlineAPIRequestMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
 
-// 	return nil
-// }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // func TestHandleOnlineAPI(t *testing.T) {
 // 	t.Parallel()
