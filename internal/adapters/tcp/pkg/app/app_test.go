@@ -1,128 +1,144 @@
 package app
 
-// import (
-// 	"context"
-// 	"errors"
-// 	"os"
-// 	"testing"
-// 	"time"
+import (
+	"context"
+	"errors"
+	"net/http"
+	"os"
+	"testing"
+	"time"
 
-// 	consumer_app "github.com/number571/hidden-lake/internal/adapters/tcp/internal/consumer/pkg/app"
-// 	producer_app "github.com/number571/hidden-lake/internal/adapters/tcp/internal/producer/pkg/app"
-// 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-// 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-// 	"github.com/number571/hidden-lake/internal/utils/flag"
-// 	testutils "github.com/number571/hidden-lake/test/utils"
-// )
+	testutils_gopeer "github.com/number571/go-peer/test/utils"
+	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/adapters/http/client"
+	testutils "github.com/number571/hidden-lake/test/utils"
+)
 
-// var (
-// 	tgFlags = flag.NewFlagsBuilder(
-// 		flag.NewFlagBuilder("v", "version").
-// 			WithDescription("print information about service"),
-// 		flag.NewFlagBuilder("h", "help").
-// 			WithDescription("print version of service"),
-// 		flag.NewFlagBuilder("p", "path").
-// 			WithDescription("set path to config, database files").
-// 			WithDefaultValue("."),
-// 		flag.NewFlagBuilder("n", "network").
-// 			WithDescription("set network key for connections").
-// 			WithDefaultValue(""),
-// 	).Build()
-// )
+var (
+	tgFlags = flag.NewFlagsBuilder(
+		flag.NewFlagBuilder("v", "version").
+			WithDescription("print information about service"),
+		flag.NewFlagBuilder("h", "help").
+			WithDescription("print version of service"),
+		flag.NewFlagBuilder("p", "path").
+			WithDescription("set path to config, database files").
+			WithDefaultValue("."),
+		flag.NewFlagBuilder("n", "network").
+			WithDescription("set network key for connections").
+			WithDefaultValue(""),
+	).Build()
+)
 
-// const (
-// 	tcPathConfig = "./testdata/"
-// )
+const (
+	tcPathConfig = "./testdata/"
+)
 
-// func TestError(t *testing.T) {
-// 	t.Parallel()
+func TestError(t *testing.T) {
+	t.Parallel()
 
-// 	str := "value"
-// 	err := &SAppError{str}
-// 	if err.Error() != errPrefix+str {
-// 		t.Error("incorrect err.Error()")
-// 		return
-// 	}
-// }
+	str := "value"
+	err := &SAppError{str}
+	if err.Error() != errPrefix+str {
+		t.Error("incorrect err.Error()")
+		return
+	}
+}
 
-// func TestInitApp(t *testing.T) {
-// 	t.Parallel()
+func TestInitApp(t *testing.T) {
+	t.Parallel()
 
-// 	testDeleteFiles(tcPathConfig)
-// 	defer testDeleteFiles(tcPathConfig)
+	testDeleteFiles(tcPathConfig)
+	defer testDeleteFiles(tcPathConfig)
 
-// 	if _, err := InitApp([]string{"path", tcPathConfig}, tgFlags); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// }
+	if _, err := InitApp([]string{"path", tcPathConfig}, tgFlags); err != nil {
+		t.Error(err)
+		return
+	}
+}
 
-// func testDeleteFiles(path string) {
-// 	os.RemoveAll(path + settings.CPathYML)
-// }
+func testDeleteFiles(path string) {
+	os.RemoveAll(path + settings.CPathYML)
+}
 
-// func TestApp(t *testing.T) {
-// 	t.Parallel()
+func TestApp(t *testing.T) {
+	t.Parallel()
 
-// 	testDeleteFiles("./")
-// 	defer testDeleteFiles("./")
+	testDeleteFiles("./")
+	defer testDeleteFiles("./")
 
-// 	// Run application
-// 	cfg, err := config.BuildConfig(settings.CPathYML, &config.SConfig{
-// 		FSettings: &config.SConfigSettings{
-// 			FWorkSizeBits: 10,
-// 			FNetworkKey:   "_",
-// 		},
-// 		FAddress: testutils.TgAddrs[45],
-// 		FConnection: &config.SConnection{
-// 			FHLTHost: "hlt",
-// 			FSrvHost: "srv",
-// 		},
-// 	})
-// 	if err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
+	// Run application
+	cfg, err := config.BuildConfig(settings.CPathYML, &config.SConfig{
+		FSettings: &config.SConfigSettings{
+			FMessageSizeBytes: 8192,
+			FWorkSizeBits:     10,
+			FNetworkKey:       "_",
+		},
+		FAddress: &config.SAddress{
+			FInternal: testutils.TgAddrs[17],
+		},
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	app := NewApp(
-// 		cfg,
-// 		consumer_app.NewApp(cfg),
-// 		producer_app.NewApp(cfg),
-// 	)
+	app := NewApp(cfg, ".")
 
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-// 	go func() {
-// 		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
-// 			t.Error(err)
-// 			return
-// 		}
-// 	}()
+	go func() {
+		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
+			t.Error(err)
+			return
+		}
+	}()
 
-// 	time.Sleep(100 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
-// 	// try twice running
-// 	go func() {
-// 		if err := app.Run(ctx); err == nil {
-// 			t.Error("success double run")
-// 			return
-// 		}
-// 	}()
+	client := client.NewClient(
+		client.NewRequester(
+			testutils.TgAddrs[17],
+			&http.Client{Timeout: time.Minute},
+		),
+	)
 
-// 	time.Sleep(100 * time.Millisecond)
-// 	cancel()
-// 	time.Sleep(100 * time.Millisecond)
+	err1 := testutils_gopeer.TryN(
+		50,
+		10*time.Millisecond,
+		func() error {
+			_, err := client.GetIndex(context.Background(), settings.CServiceFullName)
+			return err
+		},
+	)
+	if err1 != nil {
+		t.Error(err1)
+		return
+	}
 
-// 	ctx1, cancel1 := context.WithCancel(context.Background())
-// 	defer cancel1()
+	// try twice running
+	go func() {
+		if err := app.Run(ctx); err == nil {
+			t.Error("success double run")
+			return
+		}
+	}()
 
-// 	// try twice running
-// 	go func() {
-// 		if err := app.Run(ctx1); err != nil && !errors.Is(err, context.Canceled) {
-// 			t.Error(err)
-// 			return
-// 		}
-// 	}()
-// 	time.Sleep(100 * time.Millisecond)
-// }
+	time.Sleep(100 * time.Millisecond)
+	cancel()
+	time.Sleep(100 * time.Millisecond)
+
+	ctx1, cancel1 := context.WithCancel(context.Background())
+	defer cancel1()
+
+	// try twice running
+	go func() {
+		if err := app.Run(ctx1); err != nil && !errors.Is(err, context.Canceled) {
+			t.Error(err)
+			return
+		}
+	}()
+	time.Sleep(100 * time.Millisecond)
+}
