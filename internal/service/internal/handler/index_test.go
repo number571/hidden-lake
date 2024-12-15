@@ -24,7 +24,7 @@ func TestErrorsAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TcUnknownHost,
+			testutils.TcUnknownHost,
 			&http.Client{Timeout: time.Second},
 		),
 	)
@@ -150,7 +150,7 @@ func TestHandleIndexAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+addr,
+			addr,
 			&http.Client{Timeout: time.Minute},
 		),
 	)

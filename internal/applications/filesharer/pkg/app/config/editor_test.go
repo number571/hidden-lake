@@ -53,6 +53,33 @@ func testPanicEditor(t *testing.T, n int) {
 	}
 }
 
+func TestEditor(t *testing.T) {
+	t.Parallel()
+
+	configFile := fmt.Sprintf(tcConfigFileTemplate, 4)
+	defer os.Remove(configFile)
+
+	testConfigDefaultInit(configFile)
+	cfg, err := LoadConfig(configFile)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	wrapper := NewWrapper(cfg)
+	editor := wrapper.GetEditor()
+
+	res, err := language.ToILanguage("RUS")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if err := editor.UpdateLanguage(res); err != nil {
+		t.Error(err)
+		return
+	}
+}
+
 func TestIncorrectFilepathEditor(t *testing.T) {
 	t.Parallel()
 

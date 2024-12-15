@@ -22,4 +22,9 @@ var (
 	ErrConfigNotExist     = &SConfigError{"config not exist"}
 	ErrWriteConfig        = &SConfigError{"write config"}
 	ErrConfigAlreadyExist = &SConfigError{"config already exist"}
+	ErrBuildConfig        = &SConfigError{"build config"}
+	ErrRebuildConfig      = &SConfigError{"rebuild config"}
+	ErrNetworkNotFound    = &SConfigError{"network not found"}
+	ErrParseURL           = &SConfigError{"parse url"}
+	ErrLoadConfig         = &SConfigError{"load config"}
 )

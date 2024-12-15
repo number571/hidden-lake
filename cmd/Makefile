@@ -1,13 +1,13 @@
 N=1
 GC=go build
-ROOPATH=../
+ROOPATH=..
 BINPATH=$(ROOPATH)/bin
 
 .PHONY: default build clean 
 
-default: build
+default: build move_hla
 build: 
-	for app in hls hlc hle hlt hll hlm hlf hlr; \
+	for app in hls hlc hlm hlf hlr hla/hla_tcp; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \
@@ -24,5 +24,8 @@ build:
 			done; \
 		done; \
 	done;
+move_hla:
+	mv $(BINPATH)/hla/* $(BINPATH)/
+	rm -r $(BINPATH)/hla
 clean:
 	make -C $(BINPATH) clean

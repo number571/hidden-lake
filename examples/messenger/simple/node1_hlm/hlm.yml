@@ -1,0 +1,11 @@
+settings:
+  messages_capacity: 2048
+  work_size_bits: 20
+logging:
+- info
+- warn
+- erro
+address:
+  interface: :8080
+  incoming: 127.0.0.1:8081
+connection: 127.0.0.1:8572

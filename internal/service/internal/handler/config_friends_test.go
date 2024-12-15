@@ -36,7 +36,7 @@ func TestHandleFriendsAPI2(t *testing.T) {
 		},
 	)
 
-	handler := HandleConfigFriendsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true, true))
+	handler := HandleConfigFriendsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true))
 	if err := friendsAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -75,7 +75,7 @@ func TestHandleFriendsAPI2(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleConfigFriendsAPI(newTsWrapper(false), httpLogger, newTsNode(true, true, true, true))
+	handlerx := HandleConfigFriendsAPI(newTsWrapper(false), httpLogger, newTsNode(true, true, true))
 	if err := friendsAPIRequestPostOK(handlerx); err == nil {
 		t.Error("request success with invalid update editor (post)")
 		return
@@ -308,7 +308,7 @@ func TestHandleFriendsAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[7],
+			testutils.TgAddrs[7],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

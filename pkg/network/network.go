@@ -2,21 +2,19 @@ package network
 
 import (
 	"context"
+	"errors"
 	"sync"
 
+	"github.com/number571/go-peer/pkg/anonymity"
+	"github.com/number571/go-peer/pkg/anonymity/queue"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/network"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/go-peer/pkg/network/anonymity/queue"
-	"github.com/number571/go-peer/pkg/network/conn"
-	"github.com/number571/go-peer/pkg/network/connkeeper"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
-	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -27,125 +25,91 @@ var (
 )
 
 type sHiddenLakeNode struct {
-	fAnonNode   anonymity.INode
-	fConnKeeper connkeeper.IConnKeeper
+	fAnonymityNode anonymity.INode
+}
+
+func NewRawHiddenLakeNode(pAnonymityNode anonymity.INode) IHiddenLakeNode {
+	return &sHiddenLakeNode{fAnonymityNode: pAnonymityNode}
 }
 
 func NewHiddenLakeNode(
 	pSettings ISettings,
 	pPrivKey asymmetric.IPrivKey,
 	pKVDatabase database.IKVDatabase,
-	pConnsGetter func() []string,
+	pRunnerAdapter adapters.IRunnerAdapter,
 	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
-	msgSettings := net_message.NewSettings(&net_message.SSettings{
-		FWorkSizeBits: pSettings.GetWorkSizeBits(),
-		FNetworkKey:   pSettings.GetNetworkKey(),
-	})
-	node := anonymity.NewNode(
-		anonymity.NewSettings(&anonymity.SSettings{
-			FServiceName:  pSettings.GetServiceName(),
-			FFetchTimeout: pSettings.GetFetchTimeout(),
-		}),
-		// Insecure to use logging in real anonymity projects!
-		// Logging should only be used in overview or testing;
-		pSettings.GetLogger(),
-		pKVDatabase,
-		network.NewNode(
-			network.NewSettings(&network.SSettings{
-				FAddress:      pSettings.GetTCPAddress(),
-				FMaxConnects:  build.GSettings.FNetworkManager.FConnectsLimiter,
-				FReadTimeout:  build.GSettings.GetReadTimeout(),
-				FWriteTimeout: build.GSettings.GetWriteTimeout(),
-				FConnSettings: conn.NewSettings(&conn.SSettings{
-					FMessageSettings:       msgSettings,
-					FLimitMessageSizeBytes: pSettings.GetMessageSizeBytes(),
-					FWaitReadTimeout:       build.GSettings.GetWaitTimeout(),
-					FDialTimeout:           build.GSettings.GetDialTimeout(),
-					FReadTimeout:           build.GSettings.GetReadTimeout(),
-					FWriteTimeout:          build.GSettings.GetWriteTimeout(),
-				}),
-			}),
-			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
-		),
-		queue.NewQBProblemProcessor(
-			queue.NewSettings(&queue.SSettings{
-				FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-					FSettings: msgSettings,
-					FParallel: pSettings.GetParallel(),
-				}),
-				FQueuePeriod:  pSettings.GetQueuePeriod(),
-				FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
-				FConsumersCap: build.GSettings.FQueueProblem.FConsumersCap,
-				FQueuePoolCap: [2]uint64{
-					build.GSettings.FQueueProblem.FMainPoolCap,
-					build.GSettings.FQueueProblem.FRandPoolCap,
-				},
-			}),
-			func() client.IClient {
-				client := client.NewClient(pPrivKey, pSettings.GetMessageSizeBytes())
-				if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-					panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
-				}
-				return client
-			}(),
-		),
-		asymmetric.NewMapPubKeys(),
-	)
-	return NewRawHiddenLakeNode(node, pConnsGetter, pHandlerF)
-}
-
-func NewRawHiddenLakeNode(
-	pOriginNode anonymity.INode,
-	pConnsGetter func() []string,
-	pHandlerF handler.IHandlerF,
-) IHiddenLakeNode {
+	adaptersSettings := pSettings.GetAdapterSettings()
 	return &sHiddenLakeNode{
-		fAnonNode: pOriginNode.HandleFunc(
+		anonymity.NewNode(
+			anonymity.NewSettings(&anonymity.SSettings{
+				FServiceName:  pSettings.GetServiceName(),
+				FFetchTimeout: pSettings.GetFetchTimeout(),
+			}),
+			pSettings.GetLogger(),
+			pRunnerAdapter,
+			pKVDatabase,
+			queue.NewQBProblemProcessor(
+				queue.NewSettings(&queue.SSettings{
+					FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
+						FSettings: adaptersSettings,
+						FParallel: pSettings.GetParallel(),
+					}),
+					FQueuePeriod:  pSettings.GetQueuePeriod(),
+					FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
+					FConsumersCap: build.GSettings.FQueueProblem.FConsumersCap,
+					FQueuePoolCap: [2]uint64{
+						build.GSettings.FQueueProblem.FMainPoolCap,
+						build.GSettings.FQueueProblem.FRandPoolCap,
+					},
+				}),
+				func() client.IClient {
+					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())
+					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
+						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
+					}
+					return client
+				}(),
+			),
+		).HandleFunc(
 			build.GSettings.FProtoMask.FService,
 			handler.RequestHandler(pHandlerF),
-		),
-		fConnKeeper: connkeeper.NewConnKeeper(
-			connkeeper.NewSettings(&connkeeper.SSettings{
-				FDuration:    build.GSettings.GetKeeperPeriod(),
-				FConnections: pConnsGetter,
-			}),
-			pOriginNode.GetNetworkNode(),
 		),
 	}
 }
 
-func (p *sHiddenLakeNode) Run(ctx context.Context) error {
-	chCtx, cancel := context.WithCancel(ctx)
+func (p *sHiddenLakeNode) GetAnonymityNode() anonymity.INode {
+	return p.fAnonymityNode
+}
+
+func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
+	chCtx, cancel := context.WithCancel(pCtx)
 	defer cancel()
 
 	const N = 2
 
-	errs := [N]error{}
-	wg := sync.WaitGroup{}
+	errs := make([]error, N)
+	wg := &sync.WaitGroup{}
 	wg.Add(N)
 
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		errs[0] = p.fConnKeeper.Run(chCtx)
+		runnerAdapter := p.fAnonymityNode.GetAdapter().(adapters.IRunnerAdapter)
+		errs[0] = runnerAdapter.Run(chCtx)
 	}()
+
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		errs[1] = p.fAnonNode.Run(chCtx)
+		errs[1] = p.fAnonymityNode.Run(chCtx)
 	}()
 
 	wg.Wait()
 
 	select {
-	case <-ctx.Done():
-		return ctx.Err()
+	case <-pCtx.Done():
+		return pCtx.Err()
 	default:
-		for _, err := range errs {
-			if err != nil {
-				return err
-			}
-		}
-		panic("closed without errors")
+		return errors.Join(errs...)
 	}
 }
 
@@ -154,7 +118,7 @@ func (p *sHiddenLakeNode) SendRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) error {
-	return p.fAnonNode.SendPayload(
+	return p.fAnonymityNode.SendPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
@@ -169,7 +133,7 @@ func (p *sHiddenLakeNode) FetchRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
-	rspBytes, err := p.fAnonNode.FetchPayload(
+	rspBytes, err := p.fAnonymityNode.FetchPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
@@ -181,8 +145,4 @@ func (p *sHiddenLakeNode) FetchRequest(
 		return nil, err
 	}
 	return response.LoadResponse(rspBytes)
-}
-
-func (p *sHiddenLakeNode) GetOriginNode() anonymity.INode {
-	return p.fAnonNode
 }

@@ -2,9 +2,23 @@ package build
 
 import (
 	_ "embed"
+	"net/url"
 	"testing"
 	"time"
 )
+
+func TestHiddenLakeConnections(t *testing.T) {
+	t.Parallel()
+
+	for _, network := range GNetworks {
+		for _, conn := range network.FConnections {
+			if _, err := url.Parse(conn); err != nil {
+				t.Error(err)
+				return
+			}
+		}
+	}
+}
 
 func TestHiddenLakeNetworks(t *testing.T) {
 	t.Parallel()

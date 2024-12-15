@@ -23,7 +23,7 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[14],
+			testutils.TgAddrs[14],
 			&http.Client{Timeout: time.Minute},
 		),
 	)

@@ -9,11 +9,12 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	testutils "github.com/number571/go-peer/test/utils"
+	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 var (
@@ -96,8 +97,9 @@ func TestApp(t *testing.T) {
 			FNetworkKey:       "_",
 		},
 		FAddress: &config.SAddress{
-			FTCP:  testutils.TgAddrs[2],
-			FHTTP: testutils.TgAddrs[3],
+			FExternal: testutils.TgAddrs[2],
+			FInternal: testutils.TgAddrs[3],
+			FPPROF:    testutils.TgAddrs[22],
 		},
 		FFriends: map[string]string{
 			"Alice": asymmetric.NewPrivKey().GetPubKey().ToString(),
@@ -124,12 +126,12 @@ func TestApp(t *testing.T) {
 	client := client.NewClient(
 		client.NewBuilder(),
 		client.NewRequester(
-			"http://"+testutils.TgAddrs[3],
+			testutils.TgAddrs[3],
 			&http.Client{Timeout: time.Minute},
 		),
 	)
 
-	err1 := testutils.TryN(
+	err1 := testutils_gopeer.TryN(
 		50,
 		10*time.Millisecond,
 		func() error {

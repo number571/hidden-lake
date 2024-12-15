@@ -49,21 +49,7 @@ $ go run ./cmd/hlr
 ```
 
 Open port `9532` (HTTP, incoming).
-Creates `./hlr.yml` file.
-
-Default config `hlr.yml`
-
-```yaml
-settings:
-  exec_timeout_ms: 5000
-  password: 4otg9sohTw8Lv8PheDZ7fOD5j5v5sU
-logging:
-- info
-- warn
-- erro
-address:
-  incoming: 127.0.0.1:9532
-```
+Creates [`./hlr.yml`](./hlr.yml) file.
 
 ## Running options
 
@@ -74,17 +60,17 @@ $ hlr -path=/root
 
 ## Example
 
-The example will involve three nodes `recv_hlc, send_hls` and three repeaters `middle_hlt_1, middle_hlt_2, middle_hlt3_`. The three remaining nodes are used only for the successful connection of the two main nodes. In other words, HLT nodes are traffic relay nodes.
+The example will involve three nodes `recv_hlc, send_hls` and three repeaters `middle_hla_tcp_1, middle_hla_tcp_2, middle_hla_tcp_3`. The three remaining nodes are used only for the successful connection of the two main nodes. In other words, `HLA=tcp` nodes are traffic relay nodes.
 
 Build and run nodes
 ```bash
-$ cd examples/anonymity/remoter/routing
+$ cd examples/remoter/routing
 $ make
 ```
 
 Than run command
 ```bash
-$ cd examples/anonymity/remoter
+$ cd examples/remoter
 $ make request # go run ./_request/main.go
 ```
 

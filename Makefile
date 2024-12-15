@@ -71,7 +71,7 @@ test-coverage-view:
 	go tool cover -html=$(_TEST_RESULT_PATH)/coverage.out
 
 test-coverage-treemap:
-	go-cover-treemap -coverprofile=$(_TEST_RESULT_PATH)/coverage.out > $(_TEST_RESULT_PATH)/coverage.svg
+	go-cover-treemap -coverprofile=$(_TEST_RESULT_PATH)/coverage.out > $(_TEST_RESULT_PATH)/coverage_treemap.svg
 
 test-coverage-badge: 
 	$(eval _COVERAGE_FLOOR=go tool cover -func=$(_TEST_RESULT_PATH)/coverage.out | grep total: | grep -oP '([0-9])+(?=\.[0-9]+)')
@@ -85,8 +85,6 @@ test-coverage-badge:
 
 ### PPROF
 # make pprof-run PPROF_NAME=hls PPROF_PORT=9573
-# make pprof-run PPROF_NAME=hlt PPROF_PORT=9583
-# make pprof-run PPROF_NAME=hlm PPROF_PORT=9593
 
 pprof-run:
 	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/threadcreate.png http://localhost:$(PPROF_PORT)/debug/pprof/threadcreate

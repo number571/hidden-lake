@@ -16,7 +16,7 @@ var (
 
 type SConfigSettings struct {
 	FExecTimeoutMS uint64 `json:"exec_timeout_ms" yaml:"exec_timeout_ms"`
-	FPassword      string `json:"password" yaml:"password"`
+	FPassword      string `json:"password,omitempty" yaml:"password,omitempty"`
 }
 
 type SConfig struct {

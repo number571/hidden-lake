@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	"github.com/number571/go-peer/pkg/network/conn"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 )
@@ -49,7 +49,7 @@ func (p *tsAddr) String() string  { return "192.168.0.1:2000" }
 const (
 	tcService = "TST"
 	tcHash    = "96cb1f0968adba001ebc216708a02c8d2817b1a77fad1206012c22716a9b130b"
-	tcFmtLog  = "service=TST type=ENQRQ hash=96CB1F09...00000000 addr=D803515E...8AAFCC77 proof=0000012345 size=1024B conn=192.168.0.1:2000"
+	tcFmtLog  = "service=TST type=ENQRQ hash=96CB1F09...00000000 addr=D803515E...8AAFCC77 proof=0000012345 size=1024B"
 )
 
 func TestLoggerPanic(t *testing.T) {
@@ -100,8 +100,7 @@ func testNewAnonLogger() anon_logger.ILogBuilder {
 		WithHash(encoding.HexDecode(tcHash)).
 		WithProof(12345).
 		WithSize(1024).
-		WithPubKey(pubKey).
-		WithConn(&tsConn{})
+		WithPubKey(pubKey)
 }
 
 const (

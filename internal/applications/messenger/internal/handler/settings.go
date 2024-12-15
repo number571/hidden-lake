@@ -3,9 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
@@ -69,19 +67,11 @@ func SettingsPage(
 			}
 		case http.MethodPost:
 			host := strings.TrimSpace(pR.FormValue("host"))
-			port := strings.TrimSpace(pR.FormValue("port"))
-
-			if host == "" || port == "" {
-				ErrorPage(pLogger, cfg, "get_host_port", "host or port is nil")(pW, pR)
+			if host == "" {
+				ErrorPage(pLogger, cfg, "get_host", "host is nil")(pW, pR)
 				return
 			}
-			if _, err := strconv.Atoi(port); err != nil {
-				ErrorPage(pLogger, cfg, "port_to_int", "port is not a number")(pW, pR)
-				return
-			}
-
-			connect := fmt.Sprintf("%s:%s", host, port)
-			if err := pHlsClient.AddConnection(pCtx, connect); err != nil {
+			if err := pHlsClient.AddConnection(pCtx, host); err != nil {
 				ErrorPage(pLogger, cfg, "add_connection", "add connection")(pW, pR)
 				return
 			}

@@ -33,20 +33,7 @@ $ go run ./cmd/hlc
 > ...
 ```
 
-Creates `./hlc.yml` file.
-
-Default config `hlc.yml`
-
-```yaml
-logging:
-- info
-- warn
-- erro
-services:
-- hidden-lake-service
-- hidden-lake-messenger
-- hidden-lake-filesharer
-```
+Creates [`./hlc.yml`](./hlc.yml) file.
 
 ## Running options
 

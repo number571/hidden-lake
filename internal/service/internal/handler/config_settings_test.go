@@ -32,7 +32,7 @@ func TestHandleConfigSettingsAPI2(t *testing.T) {
 		},
 	)
 
-	handler := HandleConfigSettingsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true, true))
+	handler := HandleConfigSettingsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true))
 	if err := settingsAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -95,7 +95,7 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+addr,
+			addr,
 			&http.Client{Timeout: time.Minute},
 		),
 	)

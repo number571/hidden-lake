@@ -2,9 +2,34 @@
 
 <!-- ... -->
 
-## v1.7.8~
+## v1.8.1~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.8.0
+
+*Decembet 15, 2024*
+
+### IMPROVEMENTS
+
+- `cmd/hla`: rethink adapter's concept
+- `cmd/hla/hla_tcp`: create
+
+### CHANGES
+
+- `cmd/*`: change log.Fatal -> panic (args validate)
+- `cmd/*`: add *.yml default configs
+- `cmd/hlt`: delete default config connection 127.0.0.1:9571
+- `cmd/hls,cmd/hlc`: delete default config service hidden-lake-filesharer
+- `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
+- `cmd/hlt,cmd/hll,cmd/hle,cmd/hla/common`: deleted
+- `go.mod`: update go-peer version: v1.7.6 -> v1.7.8
+
+### BUG FIXES
+
+- `cmd/hlm, cmd/hlf`: rename dir _daemon -> daemon
 
 <!-- ... -->
 

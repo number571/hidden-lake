@@ -41,23 +41,8 @@ $ go run ./cmd/hlm
 ```
 
 Open ports `9591` (HTTP, interface) and `9592` (HTTP, incoming).
-Creates `./hlm.yml` and `./hlm.db` files.
+Creates [`./hlm.yml`](./hlm.yml) and `./hlm.db` files.
 The file `hlm.db` stores all sent/received messages in encrypted view. 
-
-Default config `hlm.yml`
-
-```yaml
-settings:
-  messages_capacity: 2048
-logging:
-  - info
-  - warn
-  - erro
-address:
-  interface: 127.0.0.1:9591
-  incoming: 127.0.0.1:9592
-connection: 127.0.0.1:9572
-```
 
 ## Running options
 
@@ -68,11 +53,11 @@ $ hlm -path=/root
 
 ## Example
 
-The example will involve (as well as in HLS) five nodes `node1_hlm, node2_hlm` and `middle_hlt_1, middle_hlt_2, middle_hlt_3`. The three HLT nodes are only needed for communication between `node1_hlm` and `node2_hlm` nodes. Each of the remaining ones is a combination of HLS and HLM, where HLM plays the role of an application and services (as it was depicted in `Figure 3` HLS readme).
+The example will involve (as well as in HLS) five nodes `node1_hlm, node2_hlm` and `middle_hla_tcp_1, middle_hla_tcp_2, middle_hla_tcp_3`. The three `HLA=tcp` nodes are only needed for communication between `node1_hlm` and `node2_hlm` nodes. Each of the remaining ones is a combination of HLS and HLM, where HLM plays the role of an application and services (as it was depicted in `Figure 3` HLS readme).
 
 Build and run nodes
 ```bash
-$ cd examples/anonymity/messenger/routing
+$ cd examples/messenger/routing
 $ make
 ```
 

@@ -12,10 +12,16 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
+	net_message "github.com/number571/go-peer/pkg/network/message"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
+)
+
+var (
+	tgConnections = []string{"tcp://localhost:1111", "tcp://localhost:2222"}
 )
 
 func TestHandleConnectsAPI2(t *testing.T) {
@@ -36,7 +42,11 @@ func TestHandleConnectsAPI2(t *testing.T) {
 		},
 	)
 
-	handler := HandleConfigConnectsAPI(ctx, newTsWrapper(true), httpLogger, newTsNode(true, true, true, true))
+	epClients := []client.IClient{
+		client.NewClient(&tsRequester{}),
+	}
+
+	handler := HandleConfigConnectsAPI(ctx, httpLogger, epClients)
 	if err := connectsAPIRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -59,7 +69,15 @@ func TestHandleConnectsAPI2(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleConfigConnectsAPI(ctx, newTsWrapper(false), httpLogger, newTsNode(true, true, true, true))
+	epClientsx := []client.IClient{
+		client.NewClient(&tsRequester{fWithFail: true}),
+	}
+
+	handlerx := HandleConfigConnectsAPI(ctx, httpLogger, epClientsx)
+	if err := connectsAPIRequestOK(handlerx); err == nil {
+		t.Error("request success with invalid get connections")
+		return
+	}
 	if err := connectsAPIRequestPostOK(handlerx); err == nil {
 		t.Error("request success with invalid update editor (post)")
 		return
@@ -171,81 +189,87 @@ func TestHandleConnectsAPI(t *testing.T) {
 	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 0)
 	pathDB := fmt.Sprintf(tcPathDBTemplate, 0)
 
-	wcfg, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[6])
+	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[6])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[6],
+			testutils.TgAddrs[6],
 			&http.Client{Timeout: time.Minute},
 		),
 	)
 
-	connect := "test_connect4"
-	testGetConnects(t, client, wcfg.GetConfig())
-	testAddConnect(t, client, connect)
-	testDelConnect(t, client, connect)
+	testGetConnects(t, client)
+	testAddConnect(t, client)
+	testDelConnect(t, client)
 }
 
-func testGetConnects(t *testing.T, client hls_client.IClient, cfg config.IConfig) {
+func testGetConnects(t *testing.T, client hls_client.IClient) {
 	connects, err := client.GetConnections(context.Background())
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	if len(connects) != 3 {
-		t.Error("length of connects != 3")
+	if len(connects) != 2 || connects[0] != tgConnections[0] {
+		t.Error("len(connects) != 2 || connects[0] != tgConnections[0]")
 		return
-	}
-
-	for i := range connects {
-		if connects[i] != cfg.GetConnections()[i] {
-			t.Error("connections from config not equals with get")
-			return
-		}
 	}
 }
 
-func testAddConnect(t *testing.T, client hls_client.IClient, connect string) {
-	err := client.AddConnection(context.Background(), connect)
-	if err != nil {
+func testAddConnect(t *testing.T, client hls_client.IClient) {
+	if err := client.AddConnection(context.Background(), "tcp://aaa"); err != nil {
 		t.Error(err)
 		return
 	}
-
-	connects, err := client.GetConnections(context.Background())
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	for _, conn := range connects {
-		if conn == connect {
-			return
-		}
-	}
-	t.Errorf("undefined connection key by '%s'", connect)
 }
 
-func testDelConnect(t *testing.T, client hls_client.IClient, connect string) {
-	err := client.DelConnection(context.Background(), connect)
-	if err != nil {
+func testDelConnect(t *testing.T, client hls_client.IClient) {
+	if err := client.DelConnection(context.Background(), "tcp://bbb"); err != nil {
 		t.Error(err)
 		return
-	}
-
-	connects, err := client.GetConnections(context.Background())
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	for _, conn := range connects {
-		if conn == connect {
-			t.Errorf("deleted connect exists for '%s'", connect)
-			return
-		}
 	}
 }
+
+var (
+	_ client.IRequester = &tsRequester{}
+)
+
+type tsRequester struct {
+	fWithFail bool
+}
+
+func (p *tsRequester) GetIndex(context.Context) (string, error)                    { return "", nil }
+func (p *tsRequester) GetSettings(context.Context) (config.IConfigSettings, error) { return nil, nil }
+func (p *tsRequester) GetOnlines(context.Context) ([]string, error) {
+	if p.fWithFail {
+		return nil, errors.New("some error") // nolint: err113
+	}
+	return tgConnections, nil
+}
+func (p *tsRequester) DelOnline(context.Context, string) error {
+	if p.fWithFail {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsRequester) GetConnections(context.Context) ([]string, error) {
+	if p.fWithFail {
+		return nil, errors.New("some error") // nolint: err113
+	}
+	return tgConnections, nil
+}
+func (p *tsRequester) AddConnection(context.Context, string) error {
+	if p.fWithFail {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsRequester) DelConnection(context.Context, string) error {
+	if p.fWithFail {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsRequester) ProduceMessage(context.Context, net_message.IMessage) error { return nil }

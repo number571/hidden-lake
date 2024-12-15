@@ -31,18 +31,18 @@ type SConfig struct {
 	fLogging  logger.ILogging
 	fFriends  map[string]asymmetric.IPubKey
 
-	FSettings    *SConfigSettings  `yaml:"settings"`
-	FLogging     []string          `yaml:"logging,omitempty"`
-	FAddress     *SAddress         `yaml:"address,omitempty"`
-	FServices    map[string]string `yaml:"services,omitempty"`
-	FConnections []string          `yaml:"connections,omitempty"`
-	FFriends     map[string]string `yaml:"friends,omitempty"`
+	FSettings  *SConfigSettings  `yaml:"settings"`
+	FLogging   []string          `yaml:"logging,omitempty"`
+	FAddress   *SAddress         `yaml:"address,omitempty"`
+	FServices  map[string]string `yaml:"services,omitempty"`
+	FEndpoints []string          `yaml:"endpoints,omitempty"`
+	FFriends   map[string]string `yaml:"friends,omitempty"`
 }
 
 type SAddress struct {
-	FTCP   string `yaml:"tcp,omitempty"`
-	FHTTP  string `yaml:"http,omitempty"`
-	FPPROF string `yaml:"pprof,omitempty"`
+	FExternal string `yaml:"external,omitempty"`
+	FInternal string `yaml:"internal,omitempty"`
+	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -197,11 +197,8 @@ func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
-func (p *SConfig) GetConnections() []string {
-	p.fMutex.RLock()
-	defer p.fMutex.RUnlock()
-
-	return p.FConnections
+func (p *SConfig) GetEndpoints() []string {
+	return p.FEndpoints
 }
 
 func (p *SConfig) GetService(name string) (string, bool) {
@@ -212,12 +209,12 @@ func (p *SConfig) GetService(name string) (string, bool) {
 	return service, ok
 }
 
-func (p *SAddress) GetTCP() string {
-	return p.FTCP
+func (p *SAddress) GetExternal() string {
+	return p.FExternal
 }
 
-func (p *SAddress) GetHTTP() string {
-	return p.FHTTP
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
 }
 
 func (p *SAddress) GetPPROF() string {

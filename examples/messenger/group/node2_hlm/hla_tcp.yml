@@ -1,0 +1,13 @@
+settings:
+  message_size_bytes: 8192
+  work_size_bits: 22
+logging:
+- info
+- warn
+- erro
+address:
+  internal: 127.0.0.1:7522
+endpoints: 
+- 127.0.0.1:7571
+connections:
+- middle_hla_tcp:5581

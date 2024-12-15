@@ -5,7 +5,11 @@ import (
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
 
 	"github.com/number571/go-peer/pkg/client"
@@ -29,29 +33,37 @@ func (p *sApp) initAnonNode() error {
 		return errors.Join(ErrMessageSizeLimit, err)
 	}
 
-	settings := network.NewSettings(&network.SSettings{
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{
 		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
 		FNetworkKey:       cfgSettings.GetNetworkKey(),
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
-		FQueuePeriod:      cfgSettings.GetQueuePeriod(),
-		FFetchTimeout:     cfgSettings.GetFetchTimeout(),
-		FSubSettings: &network.SSubSettings{
-			FServiceName: hls_settings.GServiceName.Short(),
-			FTCPAddress:  cfg.GetAddress().GetTCP(),
-			FParallel:    p.fParallel,
-			FLogger:      p.fAnonLogger,
-		},
 	})
 
 	node := network.NewHiddenLakeNode(
-		settings,
+		network.NewSettings(&network.SSettings{
+			FAdapterSettings: adapterSettings,
+			FQueuePeriod:     cfgSettings.GetQueuePeriod(),
+			FFetchTimeout:    cfgSettings.GetFetchTimeout(),
+			FSubSettings: &network.SSubSettings{
+				FServiceName: hls_settings.GServiceName.Short(),
+				FParallel:    p.fParallel,
+				FLogger:      p.fAnonLogger,
+			},
+		}),
 		p.fPrivKey,
 		kvDatabase,
-		func() []string { return p.fCfgW.GetConfig().GetConnections() },
-		handler.HandleServiceTCP(cfg, p.fAnonLogger),
+		http.NewHTTPAdapter(
+			http.NewSettings(&http.SSettings{
+				FAdapterSettings: adapterSettings,
+				FAddress:         cfg.GetAddress().GetExternal(),
+			}),
+			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
+			func() []string { return p.fCfgW.GetConfig().GetEndpoints() },
+		),
+		handler.HandleServiceFunc(cfg, p.fAnonLogger),
 	)
 
-	originNode := node.GetOriginNode()
+	originNode := node.GetAnonymityNode()
 	for _, f := range cfg.GetFriends() {
 		originNode.GetMapPubKeys().SetPubKey(f)
 	}

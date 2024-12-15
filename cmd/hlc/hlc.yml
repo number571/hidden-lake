@@ -1,0 +1,10 @@
+logging:
+- info
+- warn
+- erro
+services:
+- hidden-lake-adapter=tcp
+- hidden-lake-service
+- hidden-lake-messenger
+# - hidden-lake-filesharer
+# - hidden-lake-remoter

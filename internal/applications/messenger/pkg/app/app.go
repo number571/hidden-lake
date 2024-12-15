@@ -102,7 +102,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		hlsClient := hls_client.NewClient(
 			hls_client.NewBuilder(),
 			hls_client.NewRequester(
-				"http://"+p.fConfig.GetConnection(),
+				p.fConfig.GetConnection(),
 				&http.Client{Timeout: time.Hour},
 			),
 		)

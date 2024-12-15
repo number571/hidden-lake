@@ -1,200 +1,138 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"errors"
-	"io"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/client"
-	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
-	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
-func TestIncomingExecHTTP2(t *testing.T) {
+func TestHandleIncomingExecHTTP(t *testing.T) {
 	t.Parallel()
-
-	logging, err := std_logger.LoadLogging([]string{})
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	httpLogger := std_logger.NewStdLogger(
-		logging,
-		func(_ logger.ILogArg) string {
-			return ""
-		},
-	)
 
 	ctx := context.Background()
-	cfg := &config.SConfig{
-		FSettings: &config.SConfigSettings{
-			FExecTimeoutMS: 10_000,
-			FPassword:      tcPassword,
-		},
-	}
+	log := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
+	handler := HandleIncomingExecHTTP(ctx, &tsConfig{}, log)
 
-	handler := HandleIncomingExecHTTP(ctx, cfg, httpLogger)
-	if err := incomingExecRequestOK(handler); err != nil {
+	if err := incomingRequestMethod(handler); err != nil {
 		t.Error(err)
 		return
 	}
-
-	if err := incomingExecRequestMethod(handler); err == nil {
-		t.Error("success request with invalid method")
-		return
-	}
-	if err := incomingExecRequestPassword(handler); err == nil {
-		t.Error("success request with invalid password")
-		return
-	}
-	if err := incomingExecRequestHasNotGraphicChars(handler); err == nil {
-		t.Error("success request with invalid chars (not graphic)")
-		return
-	}
-	if err := incomingExecRequestCommand(handler); err == nil {
-		t.Error("success request with invalid command")
-		return
-	}
-}
-
-func incomingExecRequestOK(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/exec", strings.NewReader("echo"+settings.CExecSeparator+"hello"))
-	req.Header.Set(settings.CHeaderPassword, tcPassword)
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-	return nil
-}
-
-func incomingExecRequestCommand(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/exec", strings.NewReader("____"+settings.CExecSeparator+"hello"))
-	req.Header.Set(settings.CHeaderPassword, tcPassword)
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-	return nil
-}
-
-func incomingExecRequestHasNotGraphicChars(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/exec", strings.NewReader("echo"+settings.CExecSeparator+"\x01hello"))
-	req.Header.Set(settings.CHeaderPassword, tcPassword)
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-	return nil
-}
-
-func incomingExecRequestPassword(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/exec", strings.NewReader("echo"+settings.CExecSeparator+"hello"))
-	req.Header.Set(settings.CHeaderPassword, tcPassword+"_")
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-	return nil
-}
-
-func incomingExecRequestMethod(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/exec", strings.NewReader("echo"+settings.CExecSeparator+"hello"))
-	req.Header.Set(settings.CHeaderPassword, tcPassword)
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-	return nil
-}
-
-func TestIncomingExecHTTP1(t *testing.T) {
-	t.Parallel()
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	_, service := testRunService(testutils.TgAddrs[40])
-	defer service.Close()
-
-	testRunNewNodes(
-		ctx,
-		testutils.TgAddrs[41],
-		testutils.TgAddrs[42],
-		testutils.TgAddrs[40],
-	)
-
-	hlsClient := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[41],
-			&http.Client{Timeout: time.Minute},
-		),
-	)
-
-	hlrClient := client.NewClient(
-		client.NewBuilder(tcPassword),
-		client.NewRequester(hlsClient),
-	)
-
-	msg := "hello, world!"
-	rsp, err := hlrClient.Exec(ctx, "test_recv", "echo", msg)
-	if err != nil {
+	if err := incomingRequestInvalidPassword(handler); err != nil {
 		t.Error(err)
 		return
 	}
-
-	if strings.TrimSpace(string(rsp)) != msg {
-		t.Error("get invalid response")
+	if err := incomingRequestNotGraphicChars(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingRequestExecCommand(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingRequestSuccess(handler); err != nil {
+		t.Error(err)
 		return
 	}
 }
+
+func incomingRequestMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusMethodNotAllowed {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRequestInvalidPassword(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	req.Header.Set(hlr_settings.CHeaderPassword, "___")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusForbidden {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRequestNotGraphicChars(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("abc\x01xyz")))
+	req.Header.Set(hlr_settings.CHeaderPassword, "abc")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRequestExecCommand(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("")))
+	req.Header.Set(hlr_settings.CHeaderPassword, "abc")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusInternalServerError {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRequestSuccess(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("dir")))
+	req.Header.Set(hlr_settings.CHeaderPassword, "abc")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+type tsConfig struct{}
+
+func (p *tsConfig) GetSettings() config.IConfigSettings { return &tsConfigSettings{} }
+func (p *tsConfig) GetAddress() config.IAddress         { return nil }
+func (p *tsConfig) GetLogging() std_logger.ILogging     { return nil }
+
+type tsConfigSettings struct{}
+
+func (p *tsConfigSettings) GetExecTimeout() time.Duration { return time.Second }
+func (p *tsConfigSettings) GetPassword() string           { return "abc" }

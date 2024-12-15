@@ -4,22 +4,19 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"slices"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 )
 
 func HandleConfigConnectsAPI(
 	pCtx context.Context,
-	pWrapper config.IWrapper,
 	pLogger logger.ILogger,
-	pNode anonymity.INode,
+	pEPClients []client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
@@ -31,8 +28,18 @@ func HandleConfigConnectsAPI(
 		}
 
 		if pR.Method == http.MethodGet {
+			connects := make([]string, 0, 256)
+			for _, client := range pEPClients {
+				gotConns, err := client.GetConnections(pCtx)
+				if err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get connections")
+					return
+				}
+				connects = append(connects, gotConns...)
+			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, pWrapper.GetConfig().GetConnections())
+			_ = api.Response(pW, http.StatusOK, connects)
 			return
 		}
 
@@ -52,44 +59,29 @@ func HandleConfigConnectsAPI(
 
 		switch pR.Method {
 		case http.MethodPost:
-			connects := uniqAppendToSlice(
-				pWrapper.GetConfig().GetConnections(),
-				connect,
-			)
-			if err := pWrapper.GetEditor().UpdateConnections(connects); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("update_connections"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: update connections")
-				return
+			for _, client := range pEPClients {
+				if err := client.AddConnection(pCtx, connect); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("add_connections"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: add connections")
+					return
+				}
 			}
 
-			_ = pNode.GetNetworkNode().AddConnection(pCtx, connect) // connection may be refused (closed)
-
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, "success: update connections")
+			_ = api.Response(pW, http.StatusOK, "success: add connections")
 			return
 
 		case http.MethodDelete:
-			connects := slices.DeleteFunc(
-				pWrapper.GetConfig().GetConnections(),
-				func(p string) bool { return p == connect },
-			)
-			if err := pWrapper.GetEditor().UpdateConnections(connects); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("update_connections"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete connection")
-				return
+			for _, client := range pEPClients {
+				if err := client.DelConnection(pCtx, connect); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: del connection")
+					return
+				}
 			}
 
-			_ = pNode.GetNetworkNode().DelConnection(connect) // connection may be refused (closed)
-
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, "success: delete connection")
+			_ = api.Response(pW, http.StatusOK, "success: del connection")
 		}
 	}
-}
-
-func uniqAppendToSlice(pSlice []string, pStr string) []string {
-	if slices.Contains(pSlice, pStr) {
-		return pSlice
-	}
-	return append(pSlice, pStr)
 }

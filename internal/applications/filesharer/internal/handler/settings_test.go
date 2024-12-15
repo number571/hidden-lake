@@ -58,10 +58,6 @@ func TestSettingsPage(t *testing.T) {
 		t.Error("request success with invalid address")
 		return
 	}
-	if err := settingsRequestPostPort(handler); err == nil {
-		t.Error("request success with invalid port")
-		return
-	}
 	if err := settingsRequestPostHostPort(handler); err == nil {
 		t.Error("request success with invalid host:port")
 		return
@@ -122,28 +118,6 @@ func settingsRequestPostOK(handler http.HandlerFunc) error {
 		"method": {"POST"},
 		"host":   {"127.0.0.1"},
 		"port":   {"9999"},
-	}
-
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/settings", strings.NewReader(formData.Encode()))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	handler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code")
-	}
-
-	return nil
-}
-
-func settingsRequestPostPort(handler http.HandlerFunc) error {
-	formData := url.Values{
-		"method": {"POST"},
-		"host":   {"127.0.0.1"},
-		"port":   {"abc"},
 	}
 
 	w := httptest.NewRecorder()

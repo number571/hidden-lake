@@ -1,0 +1,13 @@
+settings:
+  message_size_bytes: 8192
+  work_size_bits: 22
+  fetch_timeout_ms: 60000
+  queue_period_ms: 5000
+logging:
+  - info
+  - warn
+  - erro
+address:
+  external: 127.0.0.1:6571
+endpoints:
+  - 127.0.0.1:6522

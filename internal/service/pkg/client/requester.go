@@ -19,13 +19,13 @@ var (
 )
 
 const (
-	cHandleIndexTemplate          = "%s" + hls_settings.CHandleIndexPath
-	cHandleConfigSettingsTemplate = "%s" + hls_settings.CHandleConfigSettingsPath
-	cHandleConfigConnectsTemplate = "%s" + hls_settings.CHandleConfigConnectsPath
-	cHandleConfigFriendsTemplate  = "%s" + hls_settings.CHandleConfigFriendsPath
-	cHandleNetworkOnlineTemplate  = "%s" + hls_settings.CHandleNetworkOnlinePath
-	cHandleNetworkRequestTemplate = "%s" + hls_settings.CHandleNetworkRequestPath
-	cHandleServicePubKeyTemplate  = "%s" + hls_settings.CHandleServicePubKeyPath
+	cHandleIndexTemplate          = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleConfigSettingsTemplate = "http://" + "%s" + hls_settings.CHandleConfigSettingsPath
+	cHandleConfigConnectsTemplate = "http://" + "%s" + hls_settings.CHandleConfigConnectsPath
+	cHandleConfigFriendsTemplate  = "http://" + "%s" + hls_settings.CHandleConfigFriendsPath
+	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hls_settings.CHandleNetworkOnlinePath
+	cHandleNetworkRequestTemplate = "http://" + "%s" + hls_settings.CHandleNetworkRequestPath
+	cHandleServicePubKeyTemplate  = "http://" + "%s" + hls_settings.CHandleServicePubKeyPath
 )
 
 type sRequester struct {

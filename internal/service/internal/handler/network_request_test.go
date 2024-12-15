@@ -12,15 +12,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/anonymity"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/handler"
 	"github.com/number571/hidden-lake/pkg/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
@@ -48,7 +49,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, true, true, true)),
+		newTsHiddenLakeNode(newTsNode(true, true, true)),
 	)
 	if err := requestAPIRequestPutOK(handler); err != nil {
 		t.Error(err)
@@ -80,7 +81,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, false, false, true)),
+		newTsHiddenLakeNode(newTsNode(false, false, true)),
 	)
 	if err := requestAPIRequestPutOK(handlerx); err == nil {
 		t.Error("request success with put error")
@@ -95,7 +96,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		ctx,
 		&tsConfig{},
 		httpLogger,
-		newTsHiddenLakeNode(newTsNode(true, true, true, false)),
+		newTsHiddenLakeNode(newTsNode(true, true, false)),
 	)
 	if err := requestAPIRequestPostOK(handlery); err == nil {
 		t.Error("request success with post error (load response)")
@@ -262,12 +263,13 @@ func TestHandleRequestAPI(t *testing.T) {
 	client := hls_client.NewClient(
 		hls_client.NewBuilder(),
 		hls_client.NewRequester(
-			"http://"+testutils.TgAddrs[9],
+			testutils.TgAddrs[9],
 			&http.Client{Timeout: time.Minute},
 		),
 	)
 
-	_ = node.GetNetworkNode().AddConnection(ctx, testutils.TgAddrs[11])
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	_ = networkNode.AddConnection(ctx, testutils.TgAddrs[11])
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
 	testSend(t, client)
@@ -343,7 +345,6 @@ func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.
 	_ = closer.CloseAll([]io.Closer{
 		srv,
 		node.GetKVDatabase(),
-		node.GetNetworkNode(),
 	})
 }
 
@@ -373,11 +374,12 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 
 	node.HandleFunc(
 		build.GSettings.FProtoMask.FService,
-		handler.RequestHandler(HandleServiceTCP(cfg, logger)),
+		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
 
-	go func() { _ = node.GetNetworkNode().Listen(ctx) }()
+	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
+	go func() { _ = networkNode.Run(ctx) }()
 
 	return node, cancel
 }

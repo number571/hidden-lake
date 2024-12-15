@@ -7,13 +7,16 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 )
 
 const (
@@ -49,10 +52,10 @@ func main() {
 }
 
 func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
-	hostPorts := build.GNetworks[networkKey].FConnections
-	connects := make([]string, 0, len(hostPorts))
-	for _, c := range hostPorts {
-		connects = append(connects, fmt.Sprintf("%s:%d", c.FHost, c.FPort))
+	networkByKey := build.GNetworks[networkKey]
+	connects := make([]string, 0, len(networkByKey.FConnections))
+	for _, c := range networkByKey.FConnections {
+		connects = append(connects, c)
 	}
 	return network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(
@@ -70,7 +73,17 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 			}
 			return kv
 		}(),
-		func() []string { return connects },
+		tcp.NewTCPAdapter(
+			tcp.NewSettings(&tcp.SSettings{
+				FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+					FNetworkKey:       networkKey,
+					FMessageSizeBytes: networkByKey.FMessageSizeBytes,
+					FWorkSizeBits:     networkByKey.FWorkSizeBits,
+				}),
+			}),
+			cache.NewLRUCache(1<<10),
+			func() []string { return connects },
+		),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
 			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
@@ -79,11 +92,11 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
-	node1 := hlNode1.GetOriginNode()
-	node2 := hlNode2.GetOriginNode()
+	node1 := hlNode1.GetAnonymityNode()
+	node2 := hlNode2.GetAnonymityNode()
 
-	pubKey1 := node1.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
-	pubKey2 := node2.GetMessageQueue().GetClient().GetPrivKey().GetPubKey()
+	pubKey1 := node1.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
+	pubKey2 := node2.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
 
 	node1.GetMapPubKeys().SetPubKey(pubKey2)
 	node2.GetMapPubKeys().SetPubKey(pubKey1)

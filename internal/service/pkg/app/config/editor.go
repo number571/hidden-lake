@@ -31,29 +31,6 @@ func newEditor(pCfg IConfig) IEditor {
 	}
 }
 
-func (p *sEditor) UpdateConnections(pConns []string) error {
-	p.fMutex.Lock()
-	defer p.fMutex.Unlock()
-
-	filepath := p.fConfig.fFilepath
-	icfg, err := LoadConfig(filepath)
-	if err != nil {
-		return errors.Join(ErrLoadConfig, err)
-	}
-
-	cfg := icfg.(*SConfig)
-	cfg.FConnections = deleteDuplicateStrings(pConns)
-	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
-		return errors.Join(ErrWriteConfig, err)
-	}
-
-	p.fConfig.fMutex.Lock()
-	defer p.fConfig.fMutex.Unlock()
-
-	p.fConfig.FConnections = cfg.FConnections
-	return nil
-}
-
 func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
@@ -103,15 +80,15 @@ func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
 	return false
 }
 
-func deleteDuplicateStrings(pStrs []string) []string {
-	result := make([]string, 0, len(pStrs))
-	mapping := make(map[string]struct{}, len(pStrs))
-	for _, s := range pStrs {
-		if _, ok := mapping[s]; ok {
-			continue
-		}
-		mapping[s] = struct{}{}
-		result = append(result, s)
-	}
-	return result
-}
+// func deleteDuplicateStrings(pStrs []string) []string {
+// 	result := make([]string, 0, len(pStrs))
+// 	mapping := make(map[string]struct{}, len(pStrs))
+// 	for _, s := range pStrs {
+// 		if _, ok := mapping[s]; ok {
+// 			continue
+// 		}
+// 		mapping[s] = struct{}{}
+// 		result = append(result, s)
+// 	}
+// 	return result
+// }

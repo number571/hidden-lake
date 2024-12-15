@@ -6,11 +6,11 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 )
 
 const (
-	cLogTemplate = "service=%s type=%s hash=%08X...%08X addr=%08X...%08X proof=%010d size=%04dB conn=%s"
+	cLogTemplate = "service=%s type=%s hash=%08X...%08X addr=%08X...%08X proof=%010d size=%04dB"
 )
 
 func GetLogFunc() logger.ILogFunc {
@@ -35,11 +35,6 @@ func GetLogFunc() logger.ILogFunc {
 }
 
 func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
-	conn := "127.0.0.1:"
-	if x := pLogGetter.GetConn(); x != nil {
-		conn = x.GetSocket().RemoteAddr().String()
-	}
-
 	addr := make([]byte, hashing.CHasherSize)
 	if x := pLogGetter.GetPubKey(); x != nil {
 		addr = hashing.NewHasher(x.ToBytes()).ToBytes()
@@ -58,6 +53,5 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		addr[:4], addr[len(addr)-4:],
 		pLogGetter.GetProof(),
 		pLogGetter.GetSize(),
-		conn,
 	)
 }

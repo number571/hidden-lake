@@ -1,18 +1,23 @@
 package handler
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"sort"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/network/anonymity"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 )
 
-func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.HandlerFunc {
+func HandleNetworkOnlineAPI(
+	pCtx context.Context,
+	pLogger logger.ILogger,
+	pEPClients []client.IClient,
+) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
 
@@ -24,12 +29,17 @@ func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 
 		switch pR.Method {
 		case http.MethodGet:
-			conns := pNode.GetNetworkNode().GetConnections()
-
-			inOnline := make([]string, 0, len(conns))
-			for addr := range conns {
-				inOnline = append(inOnline, addr)
+			inOnline := make([]string, 0, 128)
+			for _, client := range pEPClients {
+				gotConns, err := client.GetOnlines(pCtx)
+				if err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
+					return
+				}
+				inOnline = append(inOnline, gotConns...)
 			}
+
 			sort.SliceStable(inOnline, func(i, j int) bool {
 				return inOnline[i] < inOnline[j]
 			})
@@ -44,10 +54,12 @@ func HandleNetworkOnlineAPI(pLogger logger.ILogger, pNode anonymity.INode) http.
 				return
 			}
 
-			if err := pNode.GetNetworkNode().DelConnection(string(connectBytes)); err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete online connection")
-				return
+			for _, client := range pEPClients {
+				if err := client.DelOnline(pCtx, string(connectBytes)); err != nil {
+					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
+					return
+				}
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

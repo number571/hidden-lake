@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/number571/go-peer/pkg/anonymity"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/network/anonymity"
-	anon_logger "github.com/number571/go-peer/pkg/network/anonymity/logger"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/pkg/request"
 )
@@ -34,20 +34,16 @@ func RequestHandler(pHandleF IHandlerF) anonymity.IHandlerF {
 		}
 
 		// handle request
-		rsp, err := pHandleF(pCtx, pSender, loadReq)
-		if err != nil {
-			logger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestHandle))
+		switch rsp, err := pHandleF(pCtx, pSender, loadReq); {
+		case err != nil:
+			// internal logger
 			return nil, ErrUndefinedService
-		}
-
-		// no need response
-		if rsp == nil {
-			logger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseResponseModeFromService))
+		case rsp == nil:
+			// no need response
 			return nil, nil
+		default:
+			// send response
+			return rsp.ToBytes(), nil
 		}
-
-		// send response
-		logger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoResponseFromService))
-		return rsp.ToBytes(), nil
 	}
 }
