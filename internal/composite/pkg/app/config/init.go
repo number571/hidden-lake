@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/number571/hidden-lake/build"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -60,11 +61,12 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		if err != nil {
 			return nil, errors.Join(ErrParseURL, err)
 		}
-		if _, ok := mapAdapters[u.Scheme]; ok {
+		scheme := u.Scheme
+		if _, ok := mapAdapters[scheme]; ok {
 			continue
 		}
-		mapAdapters[u.Scheme] = struct{}{}
-		switch u.Scheme { // nolint: gocritic
+		mapAdapters[scheme] = struct{}{}
+		switch scheme { // nolint: gocritic
 		case hla_tcp_settings.CServiceAdapterScheme:
 			cfg.FServices = append(cfg.FServices, hla_tcp_settings.CServiceFullName)
 		}
@@ -77,12 +79,10 @@ func getServicesWithoutAdapters(cfg IConfig) []string {
 	services := cfg.GetServices()
 	result := make([]string, 0, len(services))
 	for _, s := range services {
-		switch s {
-		case hla_tcp_settings.CServiceFullName:
+		if strings.HasPrefix(s, "hidden-lake-adapter") {
 			continue
-		default:
-			result = append(result, s)
 		}
+		result = append(result, s)
 	}
 	return result
 }
