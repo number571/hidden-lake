@@ -2,13 +2,20 @@
 
 <!-- ... -->
 
-## v1.8.1~
+## v1.8.2~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.8.1
+
+*December 15, 2024*
 
 ### CHANGES
 
 - `pkg/*`: add custom errors
+- `go.mod`: update go-peer version: v1.7.8 -> v1.7.9
 
 ### BUG FIXES
 
