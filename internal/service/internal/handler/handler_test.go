@@ -31,6 +31,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/internal/utils/name"
 	hl_adapters "github.com/number571/hidden-lake/pkg/adapters"
+	hla_http_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
@@ -159,14 +160,18 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 		func(_ logger.ILogArg) string { return "" },
 	)
 
+	epClients := []hla_http_client.IClient{
+		hla_http_client.NewClient(&tsRequester{}),
+	}
+
 	cfg := wcfg.GetConfig()
 	hlNode := hiddenlake_network.NewRawHiddenLakeNode(node)
 
 	mux.HandleFunc(pkg_settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))
-	mux.HandleFunc(pkg_settings.CHandleConfigConnectsPath, HandleConfigConnectsAPI(ctx, logger, nil))
+	mux.HandleFunc(pkg_settings.CHandleConfigConnectsPath, HandleConfigConnectsAPI(ctx, logger, epClients))
 	mux.HandleFunc(pkg_settings.CHandleConfigFriendsPath, HandleConfigFriendsAPI(wcfg, logger, node))
-	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(ctx, logger, nil))
+	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(ctx, logger, epClients))
 	mux.HandleFunc(pkg_settings.CHandleNetworkRequestPath, HandleNetworkRequestAPI(ctx, cfg, logger, hlNode))
 	mux.HandleFunc(pkg_settings.CHandleServicePubKeyPath, HandleServicePubKeyAPI(logger, node))
 
