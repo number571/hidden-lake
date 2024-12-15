@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/name"
 	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
@@ -102,6 +102,12 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
+	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
+	logBuilder.
+		WithHash(pNetMsg.GetHash()).
+		WithProof(pNetMsg.GetProof()).
+		WithSize(len(pNetMsg.ToBytes()))
+
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
 		return ErrNoConnections
@@ -133,7 +139,13 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 	p.fOnlines.fSlice = onlines
 	p.fOnlines.fMutex.Unlock()
 
-	return errors.Join(errs...)
+	if err := errors.Join(errs...); err != nil {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+		return err
+	}
+
+	p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+	return nil
 }
 
 func (p *sHTTPAdapter) Consume(pCtx context.Context) (net_message.IMessage, error) {
@@ -154,41 +166,28 @@ func (p *sHTTPAdapter) GetOnlines() []string {
 
 func (p *sHTTPAdapter) adapterHandler() func(http.ResponseWriter, *http.Request) {
 	adapterSettings := p.fSettings.GetAdapterSettings()
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(p.fShortName, r)
-
 		if r.Method != http.MethodPost {
-			p.fLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-
 		msgLen := adapterSettings.GetMessageSizeBytes() + net_message.CMessageHeadSize
 		msgLen <<= 1 // message hex_encoded
 		msgStr := make([]byte, msgLen)
-
 		n, err := io.ReadFull(r.Body, msgStr)
 		if err != nil || uint64(n) != msgLen {
-			p.fLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-
 		msg, err := net_message.LoadMessage(adapterSettings, string(msgStr))
 		if err != nil {
-			p.fLogger.PushWarn(logBuilder.WithMessage("load_message"))
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-
 		if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
-			p.fLogger.PushInfo(logBuilder.WithMessage("message_exist"))
 			w.WriteHeader(http.StatusLocked)
 			return
 		}
-
-		p.fLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		p.fNetMsgChan <- msg
 	}
 }
