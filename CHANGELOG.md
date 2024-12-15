@@ -18,10 +18,8 @@
 - `cmd/hlt`: delete default config connection 127.0.0.1:9571
 - `cmd/hls,cmd/hlc`: delete default config service hidden-lake-filesharer
 - `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
-- `cmd/hlt`: deleted
-- `cmd/hll`: deleted
-- `cmd/hle`: deleted
-- `cmd/hla/common`: deleted
+- `cmd/hlt,cmd/hll,cmd/hle,cmd/hla/common`: deleted
+- `go.mod`: update go-peer version: v1.7.6 -> v1.7.8
 
 ### BUG FIXES
 
