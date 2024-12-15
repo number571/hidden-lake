@@ -8,6 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/payload"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
@@ -79,6 +82,8 @@ func TestApp(t *testing.T) {
 		},
 		FAddress: &config.SAddress{
 			FInternal: testutils.TgAddrs[17],
+			FExternal: testutils.TgAddrs[20],
+			FPPROF:    testutils.TgAddrs[21],
 		},
 	})
 	if err != nil {
@@ -117,6 +122,23 @@ func TestApp(t *testing.T) {
 	)
 	if err1 != nil {
 		t.Error(err1)
+		return
+	}
+
+	msgBytes := []byte("hello, world!")
+	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...)
+	netMsg := message.NewMessage(
+		message.NewConstructSettings(&message.SConstructSettings{
+			FSettings: message.NewSettings(&message.SSettings{
+				FWorkSizeBits: 10,
+				FNetworkKey:   "_",
+			}),
+		}),
+		payload.NewPayload32(0x01, msgBytes),
+	)
+
+	if err := client.ProduceMessage(ctx, netMsg); err != nil {
+		t.Error(err)
 		return
 	}
 
