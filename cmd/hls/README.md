@@ -79,7 +79,7 @@ As shown in the figure above, HLS acts as an anonymizer and handlers of incoming
 Default build and run
 
 ```bash 
-$ cd ./cmd/service
+$ cd ./cmd/hls
 $ make build # create hls, hls_[arch=amd64,arm64]_[os=linux,windows,darwin] and copy to ./bin
 $ make run # run ./bin/hls
 
@@ -90,7 +90,7 @@ $ make run # run ./bin/hls
 > ...
 ```
 
-Service was running with random private key. Open ports `9571` (TCP, traffic) and `9572` (HTTP, interface).
+Service was running with random private key. Open ports `9571` (External, traffic) and `9572` (Internal, interface).
 Creates [`./hls.yml`](hls.yml) and `./hls.db` files. 
 The file `hls.db` stores hashes of sent/received messages.
 
