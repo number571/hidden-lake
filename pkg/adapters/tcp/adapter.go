@@ -115,6 +115,7 @@ func (p *sTCPAdapter) Run(pCtx context.Context) error {
 	case <-pCtx.Done():
 		return pCtx.Err()
 	default:
+		errs := append([]error{ErrRunning}, errs...)
 		return errors.Join(errs...)
 	}
 }
@@ -129,7 +130,7 @@ func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage
 	networkNode := p.fConnKeeper.GetNetworkNode()
 	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {
 		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
-		return err
+		return errors.Join(ErrBroadcast, err)
 	}
 
 	p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogBaseBroadcast))

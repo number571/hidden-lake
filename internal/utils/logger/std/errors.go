@@ -1,7 +1,7 @@
 package std
 
 const (
-	errPrefix = "internal/logger/std = "
+	errPrefix = "internal/utils/logger/std = "
 )
 
 type SStdError struct {

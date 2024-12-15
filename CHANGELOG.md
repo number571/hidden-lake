@@ -6,6 +6,14 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `pkg/*`: add custom errors
+
+### BUG FIXES
+
+- `cmd/hls`: log broadcast WARN if len(connections) = 0
+
 <!-- ... -->
 
 ## v1.8.0

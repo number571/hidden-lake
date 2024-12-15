@@ -78,11 +78,13 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 		<-pCtx.Done()
 		return pCtx.Err()
 	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.adapterHandler())
 	for _, handler := range p.fHandlers {
 		mux.HandleFunc(handler.GetPath(), handler.GetFunc())
 	}
+
 	httpServer := &http.Server{
 		Addr:        address,
 		Handler:     mux,
@@ -92,11 +94,19 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 		<-pCtx.Done()
 		httpServer.Close()
 	}()
-	return httpServer.ListenAndServe()
+
+	if err := httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		return errors.Join(ErrRunning, err)
+	}
+	return context.Canceled
 }
 
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
 	connects := p.fConnsGetter()
+	if len(connects) == 0 {
+		return ErrNoConnections
+	}
+
 	N := len(connects)
 	errs := make([]error, N)
 

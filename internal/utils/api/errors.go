@@ -1,7 +1,7 @@
 package api
 
 const (
-	errPrefix = "internal/api = "
+	errPrefix = "internal/utils/api = "
 )
 
 type SApiError struct {

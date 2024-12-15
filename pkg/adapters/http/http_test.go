@@ -21,6 +21,17 @@ import (
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
+func TestError(t *testing.T) {
+	t.Parallel()
+
+	str := "value"
+	err := &SAppError{str}
+	if err.Error() != errPrefix+str {
+		t.Error("incorrect err.Error()")
+		return
+	}
+}
+
 func TestHTTPAdapter(t *testing.T) {
 	t.Parallel()
 

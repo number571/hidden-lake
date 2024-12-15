@@ -88,14 +88,18 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 	const N = 2
 
-	errs := make([]error, N)
+	errs := make([]error, N+1)
 	wg := &sync.WaitGroup{}
 	wg.Add(N)
 
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		runnerAdapter := p.fAnonymityNode.GetAdapter().(adapters.IRunnerAdapter)
-		errs[0] = runnerAdapter.Run(chCtx)
+		ra, ok := p.fAnonymityNode.GetAdapter().(adapters.IRunnerAdapter)
+		if !ok {
+			errs[0] = ErrRunning
+			return
+		}
+		errs[0] = ra.Run(chCtx)
 	}()
 
 	go func() {
@@ -109,6 +113,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 	case <-pCtx.Done():
 		return pCtx.Err()
 	default:
+		errs := append([]error{ErrRunning}, errs...)
 		return errors.Join(errs...)
 	}
 }
@@ -118,7 +123,7 @@ func (p *sHiddenLakeNode) SendRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) error {
-	return p.fAnonymityNode.SendPayload(
+	err := p.fAnonymityNode.SendPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
@@ -126,6 +131,10 @@ func (p *sHiddenLakeNode) SendRequest(
 			pRequest.ToBytes(),
 		),
 	)
+	if err != nil {
+		return errors.Join(ErrSendRequest, err)
+	}
+	return nil
 }
 
 func (p *sHiddenLakeNode) FetchRequest(
@@ -142,7 +151,11 @@ func (p *sHiddenLakeNode) FetchRequest(
 		),
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrFetchRequest, err)
 	}
-	return response.LoadResponse(rspBytes)
+	rsp, err := response.LoadResponse(rspBytes)
+	if err != nil {
+		return nil, errors.Join(ErrLoadResponse, err)
+	}
+	return rsp, nil
 }

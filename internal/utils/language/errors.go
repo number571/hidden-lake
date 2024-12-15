@@ -1,7 +1,7 @@
 package language
 
 const (
-	errPrefix = "internal/language = "
+	errPrefix = "internal/utils/language = "
 )
 
 type SLanguageError struct {
