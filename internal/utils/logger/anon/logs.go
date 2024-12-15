@@ -25,35 +25,25 @@ var gLogMap = map[anon_logger.ILogType]string{
 
 	// extend
 	CLogBaseResponseModeFromService: "RSPMD",
-	CLogBaseAppendNewFriend:         "APNFR",
 	CLogInfoResponseFromService:     "RSPSR",
-	CLogInfoRequestIDAlreadyExist:   "RQIDE",
 	CLogWarnRequestToService:        "RQTSR",
 	CLogWarnUndefinedService:        "UNDSR",
-	CLogWarnInvalidRequestID:        "INRID",
-	CLogWarnRequestHandle:           "RQHND",
 	CLogErroLoadRequestType:         "LDRQT",
-	CLogErroPushDatabaseType:        "PSHDB",
 	CLogErroProxyRequestType:        "PXRQT",
 }
 
 const (
 	// BASE
 	CLogBaseResponseModeFromService anon_logger.ILogType = iota + anon_logger.CLogFinal + 1
-	CLogBaseAppendNewFriend
 
 	// INFO
 	CLogInfoResponseFromService
-	CLogInfoRequestIDAlreadyExist
 
 	// WARN
 	CLogWarnRequestToService
 	CLogWarnUndefinedService
-	CLogWarnInvalidRequestID
-	CLogWarnRequestHandle
 
 	// ERRO
 	CLogErroLoadRequestType
-	CLogErroPushDatabaseType
 	CLogErroProxyRequestType
 )

@@ -26,7 +26,7 @@ func GetLogFunc() logger.ILogFunc {
 		}
 
 		logStrType, ok := gLogMap[logType]
-		if !ok {
+		if !ok || logStrType == "" {
 			panic("value not found in log map")
 		}
 
