@@ -3,7 +3,7 @@ services:
   middle_hla_tcp:
     build:
       context: ./../../../
-      dockerfile: cmd/hla_tcp/Dockerfile
+      dockerfile: cmd/hla/hla_tcp/Dockerfile
     environment:
       - SERVICE_PATH=examples/messenger/group/middle_hla_tcp
     networks:

@@ -9,7 +9,7 @@
 ### IMPROVEMENTS
 
 - `cmd/hla`: rethink adapter's concept
-- `cmd/hla_tcp`: create
+- `cmd/hla/hla_tcp`: create
 
 ### CHANGES
 
