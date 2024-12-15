@@ -88,7 +88,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 	const N = 2
 
-	errs := make([]error, N+1)
+	errs := make([]error, N)
 	wg := &sync.WaitGroup{}
 	wg.Add(N)
 
