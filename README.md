@@ -140,34 +140,34 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 ## Build and run
 
-Launching an anonymous network is primarily the launch of an anonymizing HLS service. There are two ways to run HLS: through `source code`, and through the `release version`. 
+Launching an anonymous network is primarily the launch of an anonymizing HLS and HLA=tcp services. There are two ways to run HLS & HLA=tcp: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls@latest
-$ hls
+$ go install github.com/number571/hidden-lake/cmd/hlc@latest
+$ hlc
 ```
 
 ### 2. Running from release version
 
 ```bash
-$ wget https://github.com/number571/hidden-lake/releases/latest/download/hls_amd64_linux
-$ chmod +x hls_amd64_linux
-$ ./hls_amd64_linux
+$ wget https://github.com/number571/hidden-lake/releases/latest/download/hlc_amd64_linux
+$ chmod +x hlc_amd64_linux
+$ ./hlc_amd64_linux
 ```
 
 ## Production
 
-The HLS node is easily connected to the production environment. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file.
+The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file.
 
 ```bash
-$ hls -network=oi4r9NW9Le7fKF9d
+$ hlc -network=oi4r9NW9Le7fKF9d
 ```
 
 <p align="center"><img src="cmd/hls/images/hls_logger.gif" alt="hls_logger.gif"/></p>
 
-After such a launch, the hls.yml file will be created or overwritten (if it existed). The `settings` and `connections` fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
+After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
 > Examples of running HL apps in a prod environment: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
 

@@ -63,35 +63,6 @@ func testDeleteFiles(path string) {
 	os.RemoveAll(path + settings.CPathDB)
 }
 
-func TestAppDatabase(t *testing.T) {
-	t.Parallel()
-
-	// Run application
-	cfg, err := config.BuildConfig(settings.CPathYML, &config.SConfig{
-		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: 8192,
-			FWorkSizeBits:     10,
-			FNetworkKey:       "_",
-			FDatabaseEnabled:  true,
-		},
-		FAddress: &config.SAddress{
-			FInternal: testutils.TgAddrs[17],
-		},
-	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	app := NewApp(cfg, ".")
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	go func() { _ = app.Run(ctx) }()
-	time.Sleep(100 * time.Millisecond)
-}
-
 func TestApp(t *testing.T) {
 	t.Parallel()
 
@@ -104,6 +75,7 @@ func TestApp(t *testing.T) {
 			FMessageSizeBytes: 8192,
 			FWorkSizeBits:     10,
 			FNetworkKey:       "_",
+			FDatabaseEnabled:  true,
 		},
 		FAddress: &config.SAddress{
 			FInternal: testutils.TgAddrs[17],
