@@ -14,3 +14,5 @@ require (
 	golang.org/x/sys v0.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/number571/go-peer => github.com/number571/go-peer v1.7.9-0.20241215093630-c3ed913664b1

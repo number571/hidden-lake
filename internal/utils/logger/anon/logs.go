@@ -25,9 +25,14 @@ var gLogMap = map[anon_logger.ILogType]string{
 
 	// extend
 	CLogBaseResponseModeFromService: "RSPMD",
+	CLogBaseSendNetworkMessage:      "SNMSG",
 	CLogInfoResponseFromService:     "RSPSR",
+	CLogInfoRecvNetworkMessage:      "RNMSG",
 	CLogWarnRequestToService:        "RQTSR",
 	CLogWarnUndefinedService:        "UNDSR",
+	CLogWarnInvalidRequestMethod:    "IRMTH",
+	CLogWarnFailedReadFullBytes:     "RFBTS",
+	CLogWarnNoConnections:           "NOCON",
 	CLogErroLoadRequestType:         "LDRQT",
 	CLogErroProxyRequestType:        "PXRQT",
 }
@@ -35,13 +40,18 @@ var gLogMap = map[anon_logger.ILogType]string{
 const (
 	// BASE
 	CLogBaseResponseModeFromService anon_logger.ILogType = iota + anon_logger.CLogFinal + 1
+	CLogBaseSendNetworkMessage
 
 	// INFO
 	CLogInfoResponseFromService
+	CLogInfoRecvNetworkMessage
 
 	// WARN
 	CLogWarnRequestToService
 	CLogWarnUndefinedService
+	CLogWarnInvalidRequestMethod
+	CLogWarnFailedReadFullBytes
+	CLogWarnNoConnections
 
 	// ERRO
 	CLogErroLoadRequestType

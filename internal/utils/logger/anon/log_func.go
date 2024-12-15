@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	cLogTemplate = "service=%s type=%s hash=%08X...%08X addr=%08X...%08X proof=%010d size=%04dB"
+	cLogTemplate = "service=%s type=%s hash=%08X...%08X addr=%08X...%08X proof=%010d size=%04dB conn=%s"
 )
 
 func GetLogFunc() logger.ILogFunc {
@@ -45,6 +45,11 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		copy(hash, x)
 	}
 
+	conn := "nil"
+	if x := pLogGetter.GetConn(); x != "" {
+		conn = x
+	}
+
 	return fmt.Sprintf(
 		cLogTemplate,
 		pLogGetter.GetService(),
@@ -53,5 +58,6 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		addr[:4], addr[len(addr)-4:],
 		pLogGetter.GetProof(),
 		pLogGetter.GetSize(),
+		conn,
 	)
 }

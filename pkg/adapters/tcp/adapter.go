@@ -15,6 +15,7 @@ import (
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	net_message "github.com/number571/go-peer/pkg/network/message"
+	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
 const (
@@ -39,7 +40,7 @@ func NewTCPAdapter(
 	pConnsGetter func() []string,
 ) ITCPAdapter {
 	adapterSettings := pSettings.GetAdapterSettings()
-	tcpAdapter := &sTCPAdapter{
+	p := &sTCPAdapter{
 		fNetMsgChan: make(chan net_message.IMessage, netMessageChanSize),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{
@@ -69,14 +70,21 @@ func NewTCPAdapter(
 			func(_ logger.ILogArg) string { return "" },
 		),
 	}
-	tcpAdapter.fConnKeeper.GetNetworkNode().HandleFunc(
+	p.fConnKeeper.GetNetworkNode().HandleFunc(
 		build.GSettings.FProtoMask.FNetwork,
-		func(_ context.Context, _ network.INode, _ conn.IConn, msg net_message.IMessage) error {
-			tcpAdapter.fNetMsgChan <- msg
+		func(_ context.Context, _ network.INode, conn conn.IConn, msg net_message.IMessage) error {
+			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
+			p.fLogger.PushInfo(logBuilder.
+				WithType(internal_anon_logger.CLogInfoRecvNetworkMessage).
+				WithHash(msg.GetHash()).
+				WithProof(msg.GetProof()).
+				WithSize(len(msg.ToBytes())).
+				WithConn(conn.GetSocket().RemoteAddr().String()))
+			p.fNetMsgChan <- msg
 			return nil
 		},
 	)
-	return tcpAdapter
+	return p
 }
 
 func (p *sTCPAdapter) WithLogger(pName name.IServiceName, pLogger logger.ILogger) ITCPAdapter {
@@ -123,17 +131,21 @@ func (p *sTCPAdapter) Run(pCtx context.Context) error {
 func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
+		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
 		WithHash(pNetMsg.GetHash()).
 		WithProof(pNetMsg.GetProof()).
 		WithSize(len(pNetMsg.ToBytes()))
 
 	networkNode := p.fConnKeeper.GetNetworkNode()
 	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {
-		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+		if errors.Is(err, network.ErrNoConnections) {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
+		} else {
+			p.fLogger.PushInfo(logBuilder)
+		}
 		return errors.Join(ErrBroadcast, err)
 	}
-
-	p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
+	p.fLogger.PushInfo(logBuilder)
 	return nil
 }
 
