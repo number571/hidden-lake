@@ -182,7 +182,9 @@ func (p *sApp) runTCPRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 				continue
 			}
 			if err := p.fHTTPAdapter.Produce(pCtx, msg); err != nil {
-				continue
+				if !errors.Is(err, hla_http.ErrNoConnections) {
+					continue
+				}
 			}
 			_ = p.fTCPAdapter.Produce(pCtx, msg)
 		}

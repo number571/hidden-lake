@@ -110,6 +110,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogBaseBroadcast))
 		return ErrNoConnections
 	}
 
