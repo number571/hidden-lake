@@ -145,7 +145,7 @@ PUSH_FORMAT='{
 
 Build and run nodes
 ```bash
-$ cd examples/anonymity/echo_service/routing
+$ cd examples/echo_service/routing
 $ make
 ```
 
@@ -156,7 +156,7 @@ Logs from one another connected node. When sending requests and receiving respon
 
 Send request
 ```bash
-$ cd examples/anonymity/echo_service
+$ cd examples/echo_service
 $ make request # go run ./_request/main.go
 # OR
 $ ./_request/request.sh

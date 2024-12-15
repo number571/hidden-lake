@@ -131,7 +131,7 @@ func TestInitApp(t *testing.T) {
 		return
 	}
 
-	if _, err := InitApp([]string{"path", "./not_exist/path/to/hle"}, tgFlags); err == nil {
+	if _, err := InitApp([]string{"path", "./not_exist/path/to/hlc"}, tgFlags); err == nil {
 		t.Error("success init app with undefined dir key")
 		return
 	}

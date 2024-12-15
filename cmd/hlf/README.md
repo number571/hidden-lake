@@ -61,7 +61,7 @@ The example will involve two nodes `node1_hlf, node2_hlf` and three repeaters `m
 
 Build and run nodes
 ```bash
-$ cd examples/anonymity/filesharer/routing
+$ cd examples/filesharer/routing
 $ make
 ```
 

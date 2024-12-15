@@ -1,0 +1,47 @@
+version: "3"
+services:
+  recv_hlc:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/remoter/routing/recv_hlc
+    networks:
+      - hidden-lake
+  send_hls:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/remoter/routing/send_hls
+    ports:
+      - 7572:7572
+    networks:
+      - hidden-lake
+  middle_hla_tcp_1:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hla_tcp/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/remoter/routing/middle_hla_tcp_1
+    networks:
+      - hidden-lake
+  middle_hla_tcp_2:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hla_tcp/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/remoter/routing/middle_hla_tcp_2
+    networks:
+      - hidden-lake
+  middle_hla_tcp_3:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hla_tcp/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/remoter/routing/middle_hla_tcp_3
+    networks:
+      - hidden-lake
+networks:
+  hidden-lake:
+    driver: bridge

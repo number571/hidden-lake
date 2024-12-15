@@ -20,12 +20,12 @@
 - `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
 - `cmd/hlt`: deleted
 - `cmd/hll`: deleted
+- `cmd/hle`: deleted
 - `cmd/hla/common`: deleted
 
 ### BUG FIXES
 
 - `cmd/hlm, cmd/hlf`: rename dir _daemon -> daemon
-- `cmd/hle`: fix daemon/install_hle.sh
 
 <!-- ... -->
 

@@ -14,6 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
+	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
@@ -99,13 +100,22 @@ func TestHTTPAdapter(t *testing.T) {
 		return
 	}
 
-	sett, err := client.GetSettings(ctx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	if sett.GetMessageSizeBytes() != 8192 {
-		t.Error("invalid settings")
+	err1 := testutils_gopeer.TryN(
+		50,
+		10*time.Millisecond,
+		func() error {
+			sett, err := client.GetSettings(ctx)
+			if err != nil {
+				return err
+			}
+			if sett.GetMessageSizeBytes() != 8192 {
+				return errors.New("invalid settings") // nolint: err113
+			}
+			return nil
+		},
+	)
+	if err1 != nil {
+		t.Error(err1)
 		return
 	}
 

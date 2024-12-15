@@ -76,7 +76,7 @@ The `Hidden Lake` is an anonymous network built on a `micro-service` architectur
 
 ## Coverage map
 
-<p align="center"><img width="100%" src="test/result/coverage.svg" alt="coverage.svg"/></p>
+<p align="center"><img width="100%" src="test/result/coverage_treemap.svg" alt="coverage_treemap.svg"/></p>
 
 ## Releases
 
@@ -84,7 +84,7 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 
 ## Dependencies
 
-1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hls,cmd/hle`)
+1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hls`)
 2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hlm`)
 3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hlm,cmd/hlf`)
 
@@ -133,9 +133,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLM](cmd/hlm) - messenger with a web interface
    * [HLF](cmd/hlf) - file sharing with a web interface
    * [HLR](cmd/hlr) - executes remote access commands
-3. Helpers: 
-   * [HLE](cmd/hle) - encrypts and decrypts messages
-4. Adapters:
+3. Adapters:
    * [HLA=tcp](cmd/hla_tcp) - adapts HL traffic to a custom TCP connection
 
 ## Build and run
@@ -169,7 +167,7 @@ $ hlc -network=oi4r9NW9Le7fKF9d
 
 After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
-> Examples of running HL apps in a prod environment: [echo_service](examples/anonymity/echo_service/prod_test), [anon_messenger](examples/anonymity/messenger/prod_test), [anon_filesharer](examples/anonymity/filesharer/prod_test).
+> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [anon_messenger](examples/messenger/prod_test), [anon_filesharer](examples/filesharer/prod_test).
 
 ## Star History
 

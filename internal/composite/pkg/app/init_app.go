@@ -22,9 +22,6 @@ import (
 	hlr_app "github.com/number571/hidden-lake/internal/applications/remoter/pkg/app"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 
-	hle_app "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/app"
-	hle_settings "github.com/number571/hidden-lake/internal/helpers/encryptor/pkg/settings"
-
 	hls_app "github.com/number571/hidden-lake/internal/service/pkg/app"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -67,8 +64,6 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 		switch sName {
 		case hls_settings.CServiceFullName:
 			runner, err = hls_app.InitApp(pArgs, pFlags)
-		case hle_settings.CServiceFullName:
-			runner, err = hle_app.InitApp(pArgs, pFlags)
 		case hlm_settings.CServiceFullName:
 			runner, err = hlm_app.InitApp(pArgs, pFlags)
 		case hlf_settings.CServiceFullName:

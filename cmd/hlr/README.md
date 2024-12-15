@@ -64,13 +64,13 @@ The example will involve three nodes `recv_hlc, send_hls` and three repeaters `m
 
 Build and run nodes
 ```bash
-$ cd examples/anonymity/remoter/routing
+$ cd examples/remoter/routing
 $ make
 ```
 
 Than run command
 ```bash
-$ cd examples/anonymity/remoter
+$ cd examples/remoter
 $ make request # go run ./_request/main.go
 ```
 
