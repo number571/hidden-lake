@@ -60,6 +60,10 @@ func TestHandleOnlineAPI2(t *testing.T) {
 	}
 
 	handlerx := HandleNetworkOnlineAPI(ctx, httpLogger, epClientsx)
+	if err := onlineAPIRequestOK(handlerx); err == nil {
+		t.Error("request success with get error")
+		return
+	}
 	if err := onlineAPIRequestDeleteOK(handlerx); err == nil {
 		t.Error("request success with delete error")
 		return
@@ -150,8 +154,8 @@ func testGetOnlines(t *testing.T, client hls_client.IClient) {
 		t.Error(err)
 		return
 	}
-	if len(onlines) != 1 || onlines[0] != tcConnection {
-		t.Error("len(onlines) != 1 || onlines[0] != tcConnection")
+	if len(onlines) != 2 || onlines[0] != tgConnections[0] {
+		t.Error("len(onlines) != 2 || onlines[0] != tgConnections[0]")
 		return
 	}
 }

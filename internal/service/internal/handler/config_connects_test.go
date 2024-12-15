@@ -20,8 +20,8 @@ import (
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
-const (
-	tcConnection = "tcp://localhost:1111"
+var (
+	tgConnections = []string{"tcp://localhost:1111", "tcp://localhost:2222"}
 )
 
 func TestHandleConnectsAPI2(t *testing.T) {
@@ -212,8 +212,8 @@ func testGetConnects(t *testing.T, client hls_client.IClient) {
 		return
 	}
 
-	if len(connects) != 1 || connects[0] != tcConnection {
-		t.Error("len(connects) != 1 || connects[0] != tcConnection")
+	if len(connects) != 2 || connects[0] != tgConnections[0] {
+		t.Error("len(connects) != 2 || connects[0] != tgConnections[0]")
 		return
 	}
 }
@@ -246,7 +246,7 @@ func (p *tsRequester) GetOnlines(context.Context) ([]string, error) {
 	if p.fWithFail {
 		return nil, errors.New("some error") // nolint: err113
 	}
-	return []string{tcConnection}, nil
+	return tgConnections, nil
 }
 func (p *tsRequester) DelOnline(context.Context, string) error {
 	if p.fWithFail {
@@ -258,7 +258,7 @@ func (p *tsRequester) GetConnections(context.Context) ([]string, error) {
 	if p.fWithFail {
 		return nil, errors.New("some error") // nolint: err113
 	}
-	return []string{tcConnection}, nil
+	return tgConnections, nil
 }
 func (p *tsRequester) AddConnection(context.Context, string) error {
 	if p.fWithFail {
