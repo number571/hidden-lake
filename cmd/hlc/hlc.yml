@@ -3,8 +3,8 @@ logging:
 - warn
 - erro
 services:
+- hidden-lake-adapter=tcp
 - hidden-lake-service
 - hidden-lake-messenger
-- hidden-lake-adapter=tcp
 # - hidden-lake-filesharer
 # - hidden-lake-remoter

@@ -17,9 +17,9 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 		initCfg = &SConfig{
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FServices: []string{
+				hla_tcp_settings.CServiceFullName,
 				hls_settings.CServiceFullName,
 				hlm_settings.CServiceFullName,
-				hla_tcp_settings.CServiceFullName,
 			},
 		}
 	}

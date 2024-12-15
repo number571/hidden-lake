@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 )
 
 const (
@@ -70,7 +70,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetServices()[0] != hls_settings.CServiceFullName {
+	if config3.GetServices()[0] != hla_tcp_settings.CServiceFullName {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}
