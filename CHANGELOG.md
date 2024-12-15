@@ -18,7 +18,7 @@
 
 ## v1.8.0
 
-*Decembet 15, 2024*
+*December 15, 2024*
 
 ### IMPROVEMENTS
 
