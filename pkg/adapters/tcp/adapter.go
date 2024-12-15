@@ -134,7 +134,8 @@ func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage
 		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
 		WithHash(pNetMsg.GetHash()).
 		WithProof(pNetMsg.GetProof()).
-		WithSize(len(pNetMsg.ToBytes()))
+		WithSize(len(pNetMsg.ToBytes())).
+		WithConn("tcp")
 
 	networkNode := p.fConnKeeper.GetNetworkNode()
 	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {

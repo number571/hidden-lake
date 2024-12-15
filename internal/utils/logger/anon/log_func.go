@@ -45,7 +45,7 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		copy(hash, x)
 	}
 
-	conn := "nil"
+	conn := "<nil>"
 	if x := pLogGetter.GetConn(); x != "" {
 		conn = x
 	}

@@ -105,10 +105,11 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
-		WithType(internal_anon_logger.CLogInfoRecvNetworkMessage).
+		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
 		WithHash(pNetMsg.GetHash()).
 		WithProof(pNetMsg.GetProof()).
-		WithSize(len(pNetMsg.ToBytes()))
+		WithSize(len(pNetMsg.ToBytes())).
+		WithConn("http")
 
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
