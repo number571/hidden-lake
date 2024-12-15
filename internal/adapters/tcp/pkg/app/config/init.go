@@ -69,7 +69,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		if err != nil {
 			return nil, errors.Join(ErrParseURL, err)
 		}
-		if u.Scheme != "tcp" {
+		if u.Scheme != hla_settings.CServiceAdapterScheme {
 			continue
 		}
 		cfg.FConnections = append(cfg.FConnections, u.Host)

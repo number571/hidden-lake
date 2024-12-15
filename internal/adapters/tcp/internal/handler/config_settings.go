@@ -5,7 +5,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	pkg_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )

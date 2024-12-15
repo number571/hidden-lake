@@ -11,7 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	pkg_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
@@ -55,7 +55,7 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 			return
 		}
-		if u.Scheme != "tcp" {
+		if u.Scheme != pkg_settings.CServiceAdapterScheme {
 			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return

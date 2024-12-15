@@ -9,13 +9,17 @@ var (
 )
 
 const (
-	CServiceFullName    = "hidden-lake-adapter=tcp"
+	CServiceAdapterScheme = "tcp"
+)
+
+const (
+	CServiceFullName    = "hidden-lake-adapter=" + CServiceAdapterScheme
 	CServiceDescription = "adapts HL traffic to a custom TCP connection"
 )
 
 const (
-	CPathYML = "hla_tcp.yml"
-	CPathDB  = "hla_tcp.db"
+	CPathYML = "hla_" + CServiceAdapterScheme + ".yml"
+	CPathDB  = "hla_" + CServiceAdapterScheme + ".db"
 )
 
 const (

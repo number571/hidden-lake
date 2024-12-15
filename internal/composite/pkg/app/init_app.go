@@ -30,7 +30,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(pFlags.Get("path").GetStringValue(pArgs), "/")
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
-	cfg, err := config.InitConfig(cfgPath, nil)
+	cfg, err := config.InitConfig(cfgPath, nil, pFlags.Get("network").GetStringValue(pArgs))
 	if err != nil {
 		return nil, errors.Join(ErrInitConfig, err)
 	}
