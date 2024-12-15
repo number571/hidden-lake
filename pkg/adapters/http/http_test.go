@@ -90,32 +90,33 @@ func TestHTTPAdapter(t *testing.T) {
 		client.NewRequester(testutils.TgAddrs[18], &http.Client{Timeout: 5 * time.Second}),
 	)
 
-	res, err := client.GetIndex(ctx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	if res != "http-adapter" {
-		t.Error("failed get index")
-		return
-	}
-
 	err1 := testutils_gopeer.TryN(
 		50,
 		10*time.Millisecond,
 		func() error {
-			sett, err := client.GetSettings(ctx)
+			res, err := client.GetIndex(ctx)
 			if err != nil {
 				return err
 			}
-			if sett.GetMessageSizeBytes() != 8192 {
-				return errors.New("invalid settings") // nolint: err113
+			if res != "http-adapter" {
+				t.Error()
+				return errors.New("failed get index") // nolint: err113
 			}
 			return nil
 		},
 	)
 	if err1 != nil {
 		t.Error(err1)
+		return
+	}
+
+	sett, err := client.GetSettings(ctx)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if sett.GetMessageSizeBytes() != 8192 {
+		t.Error("invalid settings")
 		return
 	}
 
