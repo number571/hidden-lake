@@ -53,20 +53,17 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
 
-	mapAdapters := make(map[string]struct{}, 16)
-
+	mapAdapters := make(map[string]struct{}, len(network.FConnections))
 	cfg.FServices = getServicesWithoutAdapters(pCfg)
 	for _, c := range network.FConnections {
 		u, err := url.Parse(c)
 		if err != nil {
 			return nil, errors.Join(ErrParseURL, err)
 		}
-
 		if _, ok := mapAdapters[u.Scheme]; ok {
 			continue
 		}
 		mapAdapters[u.Scheme] = struct{}{}
-
 		switch u.Scheme { // nolint: gocritic
 		case hla_tcp_settings.CServiceAdapterScheme:
 			cfg.FServices = append(cfg.FServices, hla_tcp_settings.CServiceFullName)
@@ -77,14 +74,15 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func getServicesWithoutAdapters(cfg IConfig) []string {
-	services := make([]string, 0, 16)
-	for _, s := range cfg.GetServices() {
+	services := cfg.GetServices()
+	result := make([]string, 0, len(services))
+	for _, s := range services {
 		switch s {
 		case hla_tcp_settings.CServiceFullName:
 			continue
 		default:
-			services = append(services, s)
+			result = append(result, s)
 		}
 	}
-	return services
+	return result
 }
