@@ -16,16 +16,16 @@ import (
 
 // initApp work with the raw data = read files, read args
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
-	strParallel := pFlags.Get("threads").GetStringValue(pArgs)
+	strParallel := pFlags.Get("-t").GetStringValue(pArgs)
 	setParallel, err := strconv.ParseUint(strParallel, 10, 64)
 	if err != nil {
 		return nil, errors.Join(ErrGetParallel, err)
 	}
 
-	inputPath := strings.TrimSuffix(pFlags.Get("path").GetStringValue(pArgs), "/")
+	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
 
 	cfgPath := filepath.Join(inputPath, pkg_settings.CPathYML)
-	cfg, err := config.InitConfig(cfgPath, nil, pFlags.Get("network").GetStringValue(pArgs))
+	cfg, err := config.InitConfig(cfgPath, nil, pFlags.Get("-n").GetStringValue(pArgs))
 	if err != nil {
 		return nil, errors.Join(ErrInitConfig, err)
 	}

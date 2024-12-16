@@ -1,9 +1,5 @@
 package flag
 
-import (
-	"strings"
-)
-
 var (
 	_ IFlagsBuilder = &sFlagsBuilder{}
 	_ IFlags        = &sFlags{}
@@ -68,13 +64,11 @@ func (p *sFlags) Validate(pArgs []string) bool {
 			isNextValue = false
 			continue
 		}
-		trimArg := strings.TrimLeft(arg, "-")
-		splited := strings.Split(trimArg, "=")
-		withValue, ok := mapArgs[splited[0]]
+		withValue, ok := mapArgs[arg]
 		if !ok {
 			return false
 		}
-		if withValue && len(splited) == 1 {
+		if withValue {
 			isNextValue = true
 		}
 		continue

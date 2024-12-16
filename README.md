@@ -159,7 +159,7 @@ $ ./hlc_amd64_linux
 The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file.
 
 ```bash
-$ hlc -network=oi4r9NW9Le7fKF9d
+$ hlc --network oi4r9NW9Le7fKF9d
 ```
 
 <p align="center"><img src="cmd/hls/images/hls_logger.gif" alt="hls_logger.gif"/></p>

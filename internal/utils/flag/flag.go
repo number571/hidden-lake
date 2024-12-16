@@ -2,7 +2,6 @@ package flag
 
 import (
 	"slices"
-	"strings"
 )
 
 var (
@@ -47,8 +46,7 @@ func (p *sFlag) Build() IFlag {
 func (p *sFlag) GetBoolValue(pArgs []string) bool {
 	aliases := p.GetAliases()
 	for _, arg := range pArgs {
-		trimArg := strings.TrimLeft(arg, "-")
-		if slices.Contains(aliases, trimArg) {
+		if slices.Contains(aliases, arg) {
 			return true
 		}
 	}
@@ -62,16 +60,10 @@ func (p *sFlag) GetStringValue(pArgs []string) string {
 		if isNextValue {
 			return arg
 		}
-		trimArg := strings.TrimLeft(arg, "-")
-		splited := strings.Split(trimArg, "=")
-		if !slices.Contains(aliases, splited[0]) {
+		if !slices.Contains(aliases, arg) {
 			continue
 		}
-		if len(splited) == 1 {
-			isNextValue = true
-			continue
-		}
-		return strings.Join(splited[1:], "=")
+		isNextValue = true
 	}
 	if isNextValue {
 		panic("args has key but value is not found")

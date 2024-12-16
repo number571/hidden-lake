@@ -54,7 +54,7 @@ Creates [`./hlr.yml`](./hlr.yml) file.
 ## Running options
 
 ```bash
-$ hlr -path=/root
+$ hlr --path /root
 # path = path to config
 ```
 

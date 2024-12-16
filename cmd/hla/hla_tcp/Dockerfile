@@ -11,4 +11,4 @@ RUN go build -o hla_tcp ./cmd/hla/hla_tcp
 
 ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."
-CMD ./hla_tcp -path="${SERVICE_PATH}" -network="${SERVICE_NETWORK}"
+CMD ./hla_tcp --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}"

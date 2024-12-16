@@ -19,17 +19,17 @@ import (
 
 var (
 	tgFlags = flag.NewFlagsBuilder(
-		flag.NewFlagBuilder("v", "version").
+		flag.NewFlagBuilder("-v", "--version").
 			WithDescription("print information about service"),
-		flag.NewFlagBuilder("h", "help").
+		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print version of service"),
-		flag.NewFlagBuilder("p", "path").
+		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefaultValue("."),
-		flag.NewFlagBuilder("n", "network").
+		flag.NewFlagBuilder("-n", "--network").
 			WithDescription("set network key for connections").
 			WithDefaultValue(""),
-		flag.NewFlagBuilder("t", "threads").
+		flag.NewFlagBuilder("-t", "--threads").
 			WithDescription("set num of parallel functions to calculate PoW").
 			WithDefaultValue("1"),
 	).Build()
@@ -65,17 +65,17 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcTestdataPath)
 	defer testDeleteFiles(tcTestdataPath)
 
-	if _, err := InitApp([]string{"path", tcTestdataPath}, tgFlags); err != nil {
+	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if _, err := InitApp([]string{"path", tcTestdataPath, "threads", "abc"}, tgFlags); err == nil {
+	if _, err := InitApp([]string{"--path", tcTestdataPath, "--threads", "abc"}, tgFlags); err == nil {
 		t.Error("success init app with threads=abc")
 		return
 	}
 
-	if _, err := InitApp([]string{"path", "./not_exist/path/to/hls"}, tgFlags); err == nil {
+	if _, err := InitApp([]string{"--path", "./not_exist/path/to/hls"}, tgFlags); err == nil {
 		t.Error("success init app with undefined dir key")
 		return
 	}

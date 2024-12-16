@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/*`: change args format input
+
 <!-- ... -->
 
 ## v1.8.1

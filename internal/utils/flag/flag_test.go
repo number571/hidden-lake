@@ -16,7 +16,7 @@ func TestPanicFlagValue(t *testing.T) {
 	argsSlice := []string{
 		"--key",
 	}
-	_ = NewFlagBuilder("key").Build().GetStringValue(argsSlice)
+	_ = NewFlagBuilder("--key").Build().GetStringValue(argsSlice)
 }
 
 func TestBoolFlagValue(t *testing.T) {
@@ -28,7 +28,7 @@ func TestBoolFlagValue(t *testing.T) {
 		"value", "571",
 	}
 
-	if !NewFlagBuilder("key").Build().GetBoolValue(argsSlice) {
+	if !NewFlagBuilder("--key").Build().GetBoolValue(argsSlice) {
 		t.Error("!key")
 		return
 	}
@@ -38,7 +38,7 @@ func TestBoolFlagValue(t *testing.T) {
 		return
 	}
 
-	if !NewFlagBuilder("name").Build().GetBoolValue(argsSlice) {
+	if !NewFlagBuilder("-name").Build().GetBoolValue(argsSlice) {
 		t.Error("!name")
 		return
 	}
@@ -67,38 +67,20 @@ func TestStringFlagValue(t *testing.T) {
 		"-name", "number",
 		"-null", "some-value",
 		"value", "571",
-		"asdfg=12345",
-		"-qwerty=67890",
-		"--zxcvb=!@#$%",
 	}
 
-	if NewFlagBuilder("key").Build().GetStringValue(argsSlice) != "123" {
+	if NewFlagBuilder("--key").Build().GetStringValue(argsSlice) != "123" {
 		t.Error("key != 123")
 		return
 	}
 
-	if NewFlagBuilder("name").Build().GetStringValue(argsSlice) != "number" {
+	if NewFlagBuilder("-name").Build().GetStringValue(argsSlice) != "number" {
 		t.Error("name != number")
 		return
 	}
 
 	if NewFlagBuilder("value").Build().GetStringValue(argsSlice) != "571" {
 		t.Error("value != 571")
-		return
-	}
-
-	if NewFlagBuilder("asdfg").Build().GetStringValue(argsSlice) != "12345" {
-		t.Error("asdfg != 12345")
-		return
-	}
-
-	if NewFlagBuilder("qwerty").Build().GetStringValue(argsSlice) != "67890" {
-		t.Error("qwerty != 67890")
-		return
-	}
-
-	if NewFlagBuilder("zxcvb").Build().GetStringValue(argsSlice) != "!@#$%" {
-		t.Error("zxcvb != !@#$%")
 		return
 	}
 

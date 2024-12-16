@@ -18,14 +18,14 @@ import (
 
 var (
 	gFlags = flag.NewFlagsBuilder(
-		flag.NewFlagBuilder("v", "version").
+		flag.NewFlagBuilder("-v", "--version").
 			WithDescription("print information about service"),
-		flag.NewFlagBuilder("h", "help").
+		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print version of service"),
-		flag.NewFlagBuilder("p", "path").
+		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefaultValue("."),
-		flag.NewFlagBuilder("n", "network").
+		flag.NewFlagBuilder("-n", "--network").
 			WithDescription("set network key for connections").
 			WithDefaultValue(""),
 	).Build()
@@ -37,12 +37,12 @@ func main() {
 		panic("args invalid")
 	}
 
-	if gFlags.Get("version").GetBoolValue(args) {
+	if gFlags.Get("-v").GetBoolValue(args) {
 		fmt.Println(build.GVersion)
 		return
 	}
 
-	if gFlags.Get("help").GetBoolValue(args) {
+	if gFlags.Get("-h").GetBoolValue(args) {
 		help.Println(settings.GServiceName, settings.CServiceDescription, gFlags)
 		return
 	}

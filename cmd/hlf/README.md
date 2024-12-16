@@ -51,7 +51,7 @@ The directory `hlf.stg` stores all shared/loaded files.
 ## Running options
 
 ```bash
-$ hlf -path=/root
+$ hlf --path /root
 # path = path to config and storage
 ```
 

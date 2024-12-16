@@ -21,14 +21,14 @@ import (
 
 var (
 	tgFlags = flag.NewFlagsBuilder(
-		flag.NewFlagBuilder("v", "version").
+		flag.NewFlagBuilder("-v", "--version").
 			WithDescription("print information about service"),
-		flag.NewFlagBuilder("h", "help").
+		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print version of service"),
-		flag.NewFlagBuilder("p", "path").
+		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefaultValue("."),
-		flag.NewFlagBuilder("n", "network").
+		flag.NewFlagBuilder("-n", "--network").
 			WithDescription("set network key for connections").
 			WithDefaultValue(""),
 	).Build()
@@ -55,7 +55,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcPathConfig)
 	defer testDeleteFiles(tcPathConfig)
 
-	if _, err := InitApp([]string{"path", tcPathConfig}, tgFlags); err != nil {
+	if _, err := InitApp([]string{"--path", tcPathConfig}, tgFlags); err != nil {
 		t.Error(err)
 		return
 	}

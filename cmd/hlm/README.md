@@ -47,7 +47,7 @@ The file `hlm.db` stores all sent/received messages in encrypted view.
 ## Running options
 
 ```bash
-$ hlm -path=/root
+$ hlm --path /root
 # path = path to config and database files
 ```
 

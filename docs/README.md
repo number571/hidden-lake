@@ -4,7 +4,7 @@ Run HLC (composite of HL services). The following services are started by defaul
 
 ```bash
 $ go install github.com/number571/hidden-lake/cmd/hlc@latest
-$ hlc -network=oi4r9NW9Le7fKF9d
+$ hlc --network oi4r9NW9Le7fKF9d
 ```
 
 The list of networks can be found here: [hidden-lake/build/networks.yml](https://github.com/number571/hidden-lake/blob/master/build/networks.yml).

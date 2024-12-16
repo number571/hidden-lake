@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeAdapterTCP
 
 [Service]
-ExecStart=/root/hla_tcp_amd64_linux -path=/root
+ExecStart=/root/hla_tcp_amd64_linux --path /root
 Restart=always
 RestartSec=10
 

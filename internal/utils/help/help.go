@@ -14,13 +14,9 @@ func Println(pServiceName name.IServiceName, pDescription string, pArgs flag.IFl
 
 	for _, arg := range pArgs.List() {
 		aliases := arg.GetAliases()
-		slice := make([]string, 0, len(aliases))
-		for _, a := range aliases {
-			slice = append(slice, "-"+a)
-		}
 		args.WriteString(fmt.Sprintf(
 			"[ %s ] = %s\n",
-			strings.Join(slice, ", "),
+			strings.Join(aliases, ", "),
 			arg.GetDescription(),
 		))
 	}

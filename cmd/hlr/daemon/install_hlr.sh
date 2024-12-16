@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeRemoter
 
 [Service]
-ExecStart=/root/hlr_amd64_linux -path=/root
+ExecStart=/root/hlr_amd64_linux --path /root
 Restart=always
 RestartSec=10
 

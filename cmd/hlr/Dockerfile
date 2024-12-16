@@ -10,4 +10,4 @@ COPY ./ ./
 RUN go build -o hlr ./cmd/hlr
 
 ENV SERVICE_PATH="."
-CMD ./hlr -path="${SERVICE_PATH}"
+CMD ./hlr --path "${SERVICE_PATH}"
