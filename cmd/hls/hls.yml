@@ -14,10 +14,10 @@ address:
   # pprof: ""
 services:
   hidden-lake-messenger: 127.0.0.1:9592
-endpoints:
-- 127.0.0.1:9522
   # hidden-lake-filesharer: 127.0.0.1:9542
   # hidden-lake-remoter: 127.0.0.1:9532
+endpoints:
+- 127.0.0.1:9522
 # friends:
 #   <friend-name>: <public-key>
 # connections:
