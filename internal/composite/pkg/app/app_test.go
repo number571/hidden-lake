@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/types"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
@@ -61,6 +62,13 @@ func testDeleteFiles(prefixPath string) {
 	os.RemoveAll(prefixPath + tcPathKeyHLS)
 }
 
+type tsRunner struct{}
+
+func (p *tsRunner) Run(ctx context.Context) error {
+	<-ctx.Done()
+	return ctx.Err()
+}
+
 func TestApp(t *testing.T) {
 	t.Parallel()
 
@@ -76,7 +84,7 @@ func TestApp(t *testing.T) {
 		return
 	}
 
-	app := NewApp(cfg, nil)
+	app := NewApp(cfg, []types.IRunner{&tsRunner{}})
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
