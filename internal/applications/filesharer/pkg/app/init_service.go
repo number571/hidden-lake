@@ -37,7 +37,7 @@ func (p *sApp) initInterfaceServiceHTTP(pCtx context.Context, pHlsClient hls_cli
 	mux := http.NewServeMux()
 	mux.Handle(hlf_settings.CStaticPath, http.StripPrefix(
 		hlf_settings.CStaticPath,
-		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(webui.GetStaticPath()))),
+		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(webui.MustGetStaticPath()))),
 	)
 
 	cfgWrapper := config.NewWrapper(p.fConfig)

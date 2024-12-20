@@ -21,23 +21,19 @@ var (
 )
 
 func MustParseTemplate(pPatters ...string) *template.Template {
-	t, err := template.ParseFS(GetTemplatePath(), pPatters...)
+	fsys, err := fs.Sub(gEmbededTemplate, "template")
+	if err != nil {
+		panic(err)
+	}
+	t, err := template.ParseFS(fsys, pPatters...)
 	if err != nil {
 		panic(err)
 	}
 	return t
 }
 
-func GetStaticPath() fs.FS {
+func MustGetStaticPath() fs.FS {
 	fsys, err := fs.Sub(gEmbededStatic, "static")
-	if err != nil {
-		panic(err)
-	}
-	return fsys
-}
-
-func GetTemplatePath() fs.FS {
-	fsys, err := fs.Sub(gEmbededTemplate, "template")
 	if err != nil {
 		panic(err)
 	}
