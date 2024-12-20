@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"testing"
 )
@@ -70,4 +72,32 @@ func TestConfig(t *testing.T) {
 			return
 		}
 	}
+}
+
+func TestComplexConfig(t *testing.T) {
+	t.Parallel()
+
+	configFile := fmt.Sprintf(tcConfigFileTemplate, 0)
+	defer os.Remove(configFile)
+
+	if err := testIncorrectConfig(configFile); err != nil {
+		t.Error(err)
+		return
+	}
+}
+
+func testIncorrectConfig(configFile string) error {
+	if _, err := LoadConfig(configFile); err == nil {
+		return errors.New("success load config on non exist file") // nolint: err113
+	}
+
+	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
+		return err
+	}
+
+	if _, err := LoadConfig(configFile); err == nil {
+		return errors.New("success load config with invalid structure") // nolint: err113
+	}
+
+	return nil
 }
