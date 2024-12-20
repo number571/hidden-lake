@@ -51,11 +51,19 @@ func TestFriendsChatPage(t *testing.T) {
 		t.Error(err)
 		return
 	}
+	if err := friendsChatRequestPutOK(handler); err != nil {
+		t.Error(err)
+		return
+	}
 	if err := friendsChatRequestPostPingOK(handler); err != nil {
 		t.Error(err)
 		return
 	}
 
+	if err := friendsChatRequestPutSizeFile(handler); err == nil {
+		t.Error("request success with invalid file size")
+		return
+	}
 	if err := friendsChatRequestHasNotGraphicChars(handler); err == nil {
 		t.Error("request success with invalid (has not grpahic chars)")
 		return
@@ -167,6 +175,58 @@ func friendsChatRequestAliasName(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/friends/chat?alias_name=", strings.NewReader(formData.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusSeeOther {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func friendsChatRequestPutOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/friends/chat?alias_name=abc", strings.NewReader(`-----------------------------60072964122428079602614660621
+Content-Disposition: form-data; name="method"
+
+PUT
+-----------------------------60072964122428079602614660621
+Content-Disposition: form-data; name="input_file"; filename="file.txt"
+Content-Type: text/plain
+
+hello, world!
+
+-----------------------------60072964122428079602614660621--
+`))
+	req.Header.Set("Content-Type", "multipart/form-data; boundary=---------------------------60072964122428079602614660621")
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusSeeOther {
+		return errors.New("bad status code")
+	}
+
+	return nil
+}
+
+func friendsChatRequestPutSizeFile(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/friends/chat?alias_name=abc", strings.NewReader(`-----------------------------60072964122428079602614660621
+Content-Disposition: form-data; name="method"
+
+PUT
+-----------------------------60072964122428079602614660621
+Content-Disposition: form-data; name="input_file"; filename="file.txt"
+Content-Type: text/plain
+
+-----------------------------60072964122428079602614660621--
+`))
+	req.Header.Set("Content-Type", "multipart/form-data; boundary=---------------------------60072964122428079602614660621")
 
 	handler(w, req)
 	res := w.Result()
