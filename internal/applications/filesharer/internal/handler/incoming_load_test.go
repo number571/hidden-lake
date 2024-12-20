@@ -184,8 +184,10 @@ func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
 	return p.fPrivKey.GetPubKey(), nil
 }
 
-func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) { return nil, nil }
-func (p *tsHLSClient) DelOnline(context.Context, string) error      { return nil }
+func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
+	return []string{"tcp://aaa"}, nil
+}
+func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
 func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
 	return nil, nil
@@ -194,9 +196,11 @@ func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey
 func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
 func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
 
-func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) { return nil, nil }
-func (p *tsHLSClient) AddConnection(context.Context, string) error      { return nil }
-func (p *tsHLSClient) DelConnection(context.Context, string) error      { return nil }
+func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
+	return []string{"tcp://aaa"}, nil
+}
+func (p *tsHLSClient) AddConnection(context.Context, string) error { return nil }
+func (p *tsHLSClient) DelConnection(context.Context, string) error { return nil }
 
 func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
 	return nil

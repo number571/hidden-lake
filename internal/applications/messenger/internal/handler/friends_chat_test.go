@@ -42,7 +42,7 @@ func TestFriendsChatPage(t *testing.T) {
 	db := newTsDatabase(true, true)
 	_ = db.Push(nil, database.NewMessage(false, wrapText("hello, world!")))
 
-	handler := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(true))
+	handler := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(true, true))
 	if err := friendsChatRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -77,19 +77,19 @@ func TestFriendsChatPage(t *testing.T) {
 		return
 	}
 
-	handlerx := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(false))
+	handlerx := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(false, true))
 	if err := friendsChatRequestPostOK(handlerx); err == nil {
 		t.Error("request success with invalid my pubkey")
 		return
 	}
 
-	handlery := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(false, true), newTsHLSClient(true))
+	handlery := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(false, true), newTsHLSClient(true, true))
 	if err := friendsChatRequestPostOK(handlery); err == nil {
 		t.Error("request success with invalid push message")
 		return
 	}
 
-	handlerz := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(true, false), newTsHLSClient(true))
+	handlerz := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(true, false), newTsHLSClient(true, true))
 	if err := friendsChatRequestOK(handlerz); err == nil {
 		t.Error("request success with invalid load message")
 		return

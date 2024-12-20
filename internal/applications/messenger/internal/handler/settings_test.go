@@ -39,7 +39,7 @@ func TestSettingsPage(t *testing.T) {
 		},
 	}
 
-	handler := SettingsPage(ctx, httpLogger, &tsWrapper{cfg}, newTsHLSClient(true))
+	handler := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, true))
 
 	if err := settingsRequestPutOK(handler); err != nil {
 		t.Error(err)
@@ -70,6 +70,43 @@ func TestSettingsPage(t *testing.T) {
 		t.Error("request success with invalid path")
 		return
 	}
+
+	handlerx := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg, fWithFail: true}, newTsHLSClient(true, true))
+	if err := settingsRequestPutOK(handlerx); err == nil {
+		t.Error("success update language with invalid update config")
+		return
+	}
+
+	handlery := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, false))
+	if err := settingsRequestPostOK(handlery); err == nil {
+		t.Error("success update conns with invalid add_connection")
+		return
+	}
+	if err := settingsRequestDeleteOK(handlery); err == nil {
+		t.Error("success update conns with invalid del_connection")
+		return
+	}
+
+	handler1 := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, false))
+	if err := settingsRequestOK(handler1); err == nil {
+		t.Error("success get settings with invalid get_pub_key")
+		return
+	}
+}
+
+func settingsRequestOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/settings", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
 }
 
 func settingsRequestDeleteOK(handler http.HandlerFunc) error {
@@ -213,12 +250,24 @@ func settingsRequest404(handler http.HandlerFunc) error {
 }
 
 type tsWrapper struct {
-	fCfg config.IConfig
+	fCfg      config.IConfig
+	fWithFail bool
 }
 
 func (p *tsWrapper) GetConfig() config.IConfig { return p.fCfg }
-func (p *tsWrapper) GetEditor() config.IEditor { return &tsEditor{} }
+func (p *tsWrapper) GetEditor() config.IEditor {
+	return &tsEditor{
+		fWithFail: p.fWithFail,
+	}
+}
 
-type tsEditor struct{}
+type tsEditor struct {
+	fWithFail bool
+}
 
-func (p *tsEditor) UpdateLanguage(language.ILanguage) error { return nil }
+func (p *tsEditor) UpdateLanguage(language.ILanguage) error {
+	if p.fWithFail {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}

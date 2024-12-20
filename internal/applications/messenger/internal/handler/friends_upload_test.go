@@ -36,7 +36,7 @@ func TestFriendsUploadPage(t *testing.T) {
 		},
 	}
 
-	handler := FriendsUploadPage(ctx, httpLogger, cfg, newTsHLSClient(true))
+	handler := FriendsUploadPage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
 	if err := friendsUploadOK(handler); err != nil {
 		t.Error(err)
 		return

@@ -39,7 +39,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	msgBroker := msgbroker.NewMessageBroker()
-	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true))
+	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
 
 	if err := incomingPushRequestOK(handler); err != nil {
 		t.Error(err)
@@ -59,12 +59,12 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		return
 	}
 
-	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false))
+	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false, true))
 	if err := incomingPushRequestOK(handlerx); err == nil {
 		t.Error("request success with invalid my pubkey")
 		return
 	}
-	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true))
+	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true, true))
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Error("request success with invalid push message")
 		return
@@ -150,13 +150,15 @@ var (
 )
 
 type tsHLSClient struct {
+	fWithOK       bool
 	fGetPubKey    bool
 	fPrivKey      asymmetric.IPrivKey
 	fFriendPubKey asymmetric.IPubKey
 }
 
-func newTsHLSClient(pGetPubKey bool) *tsHLSClient {
+func newTsHLSClient(pGetPubKey, pWithOK bool) *tsHLSClient {
 	return &tsHLSClient{
+		fWithOK:       pWithOK,
 		fGetPubKey:    pGetPubKey,
 		fPrivKey:      asymmetric.NewPrivKey(),
 		fFriendPubKey: asymmetric.NewPrivKey().GetPubKey(),
@@ -165,6 +167,9 @@ func newTsHLSClient(pGetPubKey bool) *tsHLSClient {
 
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
+	if !p.fWithOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
 	return &hls_config.SConfigSettings{
 		FLimitMessageSizeBytes: 256,
 	}, nil
@@ -177,8 +182,10 @@ func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
 	return p.fPrivKey.GetPubKey(), nil
 }
 
-func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) { return nil, nil }
-func (p *tsHLSClient) DelOnline(context.Context, string) error      { return nil }
+func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
+	return []string{"tcp://aaa"}, nil
+}
+func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
 func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
 	return map[string]asymmetric.IPubKey{
@@ -189,9 +196,21 @@ func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey
 func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
 func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
 
-func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) { return nil, nil }
-func (p *tsHLSClient) AddConnection(context.Context, string) error      { return nil }
-func (p *tsHLSClient) DelConnection(context.Context, string) error      { return nil }
+func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
+	return []string{"tcp://aaa"}, nil
+}
+func (p *tsHLSClient) AddConnection(context.Context, string) error {
+	if !p.fWithOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
+func (p *tsHLSClient) DelConnection(context.Context, string) error {
+	if !p.fWithOK {
+		return errors.New("some error") // nolint: err113
+	}
+	return nil
+}
 
 func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
 	return nil
