@@ -34,10 +34,6 @@ var (
 	).Build()
 )
 
-const (
-	tcPathConfig = "./testdata/"
-)
-
 func TestError(t *testing.T) {
 	t.Parallel()
 
@@ -49,16 +45,40 @@ func TestError(t *testing.T) {
 	}
 }
 
+const tcPathConfig = "./testdata/"
+const tcDataConfig = `settings:
+  message_size_bytes: 8192
+`
+
 func TestInitApp(t *testing.T) {
 	t.Parallel()
 
 	testDeleteFiles(tcPathConfig)
 	defer testDeleteFiles(tcPathConfig)
 
-	if _, err := InitApp([]string{"--path", tcPathConfig}, tgFlags); err != nil {
+	if err := os.WriteFile(tcPathConfig+"hla_tcp.yml", []byte(tcDataConfig), 0600); err != nil {
 		t.Error(err)
 		return
 	}
+
+	app, err := InitApp([]string{"--path", tcPathConfig}, tgFlags)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() {
+		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
+			t.Error(err)
+			return
+		}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+	cancel()
 }
 
 func testDeleteFiles(path string) {
