@@ -38,7 +38,7 @@ func TestStoragePage(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	handler := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(true))
+	handler := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
 	if err := storageRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -56,7 +56,7 @@ func TestStoragePage(t *testing.T) {
 		t.Error("request success with alias_name")
 		return
 	}
-	handlerx := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(false))
+	handlerx := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(false, true))
 	if err := storageRequestOK(handlerx); err == nil {
 		t.Error("request success with fetch failed")
 		return

@@ -34,7 +34,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true))
+	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, true))
 
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Error(err)
@@ -163,18 +163,23 @@ var (
 
 type tsHLSClient struct {
 	fFetchOK bool
+	fWithOK  bool
 	fPrivKey asymmetric.IPrivKey
 }
 
-func newTsHLSClient(pFetchOK bool) *tsHLSClient {
+func newTsHLSClient(pFetchOK, pWithOK bool) *tsHLSClient {
 	return &tsHLSClient{
 		fFetchOK: pFetchOK,
+		fWithOK:  pWithOK,
 		fPrivKey: asymmetric.NewPrivKey(),
 	}
 }
 
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
+	if !p.fWithOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
 	return &hls_config.SConfigSettings{
 		FLimitMessageSizeBytes: 1024,
 	}, nil
