@@ -3,9 +3,9 @@ GC=go build
 ROOPATH=..
 BINPATH=$(ROOPATH)/bin
 
-.PHONY: default build clean 
+.PHONY: default build move_hla remove-std clean 
 
-default: build move_hla
+default: build move_hla remove-std
 build: 
 	for app in hls hlc hlm hlf hlr hla/hla_tcp; \
 	do \
@@ -27,5 +27,8 @@ build:
 move_hla:
 	mv $(BINPATH)/hla/* $(BINPATH)/
 	rm -r $(BINPATH)/hla
+remove-std:
+	make -C $(BINPATH) remove-std
+
 clean:
 	make -C $(BINPATH) clean
