@@ -34,8 +34,8 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, true))
 
+	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, true))
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Error(err)
 		return
@@ -61,6 +61,58 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 		t.Error("request success with invalid size")
 		return
 	}
+	if err := incomingLoadRequestNotFound(handler); err == nil {
+		t.Error("request success with not found file")
+		return
+	}
+	if err := incomingLoadRequestBigChunk(handler); err == nil {
+		t.Error("request success with big chunk number")
+		return
+	}
+
+	handlerx := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, false))
+	if err := incomingLoadRequestOK(handlerx); err == nil {
+		t.Error("success request with failed get message size")
+		return
+	}
+}
+
+func incomingLoadRequestBigChunk(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=10000", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingLoadRequestNotFound(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/load?name=norfound.txt&chunk=0", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func incomingLoadRequestOK(handler http.HandlerFunc) error {
