@@ -166,7 +166,7 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
-> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [anon_messenger](examples/messenger/prod_test), [anon_filesharer](examples/filesharer/prod_test).
+> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
 
 ## Star History
 
