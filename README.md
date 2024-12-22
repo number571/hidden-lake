@@ -139,8 +139,6 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 Launching an anonymous network is primarily the launch of an anonymizing HLS and HLA=tcp services. Simultaneous launch of these services can be performed using the `HLC` application. There are two ways to run HLC: through `source code`, and through the `release version`. 
 
-Along with the running HLS (anonymization core) and HLA=tcp (communication adapter) services, the `HLM` (messenger) application will also be launched. In order to check its performance, you need to follow the `localhost:9591` link. You can read more about this [here](docs/README.md).
-
 ### 1. Running from source code
 
 ```bash
