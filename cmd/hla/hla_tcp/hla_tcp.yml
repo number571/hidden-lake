@@ -11,6 +11,6 @@ address:
   internal: 127.0.0.1:9522
   # pprof: ""
 endpoints: 
-- 127.0.0.1:9572
+- 127.0.0.1:9571
 # connections:
 # - <tcp-address>
