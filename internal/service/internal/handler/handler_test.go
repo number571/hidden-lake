@@ -165,7 +165,7 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 	}
 
 	cfg := wcfg.GetConfig()
-	hlNode := hiddenlake_network.NewRawHiddenLakeNode(node)
+	hlNode := hiddenlake_network.WrapNodeToHiddenLake(node)
 
 	mux.HandleFunc(pkg_settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))

@@ -28,7 +28,7 @@ type sHiddenLakeNode struct {
 	fAnonymityNode anonymity.INode
 }
 
-func NewRawHiddenLakeNode(pAnonymityNode anonymity.INode) IHiddenLakeNode {
+func WrapNodeToHiddenLake(pAnonymityNode anonymity.INode) IHiddenLakeNode {
 	return &sHiddenLakeNode{fAnonymityNode: pAnonymityNode}
 }
 
