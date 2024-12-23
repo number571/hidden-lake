@@ -20,5 +20,3 @@ endpoints:
 - 127.0.0.1:9522
 # friends:
 #   <friend-name>: <public-key>
-# connections:
-# - <tcp-address>
