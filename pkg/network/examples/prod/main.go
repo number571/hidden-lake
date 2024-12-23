@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
@@ -55,7 +56,11 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 	networkByKey := build.GNetworks[networkKey]
 	connects := make([]string, 0, len(networkByKey.FConnections))
 	for _, c := range networkByKey.FConnections {
-		connects = append(connects, c)
+		u, err := url.Parse(c)
+		if err != nil || u.Scheme != "tcp" {
+			continue
+		}
+		connects = append(connects, u.Host)
 	}
 	return network.NewHiddenLakeNode(
 		network.NewSettingsByNetworkKey(
