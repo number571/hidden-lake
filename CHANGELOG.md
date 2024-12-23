@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `internal/service/pkg/config`: rename GetLimitMessageSizeBytes -> GetPayloadSizeBytes
+
 <!-- ... -->
 
 ## v1.8.2

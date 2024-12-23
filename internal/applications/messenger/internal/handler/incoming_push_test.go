@@ -171,7 +171,7 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 		return nil, errors.New("some error") // nolint: err113
 	}
 	return &hls_config.SConfigSettings{
-		FLimitMessageSizeBytes: 256,
+		FPayloadSizeBytes: 256,
 	}, nil
 }
 

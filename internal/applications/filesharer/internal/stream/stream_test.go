@@ -96,7 +96,7 @@ func newTsHLSClient(pFileBytes []byte) *tsHLSClient {
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
 	return &hls_config.SConfigSettings{
-		FLimitMessageSizeBytes: 104, // gRespSize + 1
+		FPayloadSizeBytes: 104, // gRespSize + 1
 	}, nil
 }
 

@@ -20,10 +20,10 @@ func GetMessageLimit(pCtx context.Context, pHlsClient client.IClient) (uint64, e
 		return 0, errors.Join(ErrGetSettingsHLS, err)
 	}
 
-	msgLimitOrig := sett.GetLimitMessageSizeBytes()
-	if gReqSize >= msgLimitOrig {
+	pldLimit := sett.GetPayloadSizeBytes()
+	if gReqSize >= pldLimit {
 		return 0, ErrMessageSizeGteLimit
 	}
 
-	return msgLimitOrig - gReqSize, nil
+	return pldLimit - gReqSize, nil
 }
