@@ -62,11 +62,8 @@ func (p SNetwork) validate() error {
 	}
 	for _, c := range p.FConnections {
 		u, err := url.Parse(c)
-		switch {
-		case err != nil:
-			return err
-		case u.Scheme == "":
-			return errors.New("scheme = ''")
+		if err != nil || u.Scheme == "" {
+			return errors.New("parse url conn")
 		}
 	}
 	return nil
