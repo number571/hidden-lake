@@ -4,41 +4,16 @@ package build
 import (
 	_ "embed"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
-const (
-	CDefaultNetwork = "__default_network__"
-)
-
 var (
-	//go:embed networks.yml
-	gNetworks []byte
-	GNetworks map[string]SNetwork
-
 	//go:embed settings.yml
 	gSettings []byte
 	GSettings SSettings
-
-	//go:embed version.yml
-	gVersion []byte
-	GVersion string
 )
-
-func init() {
-	networksYAML := &SNetworksYAML{}
-	if err := encoding.DeserializeYAML(gNetworks, networksYAML); err != nil {
-		panic(err)
-	}
-	if _, ok := networksYAML.FNetworks[CDefaultNetwork]; ok {
-		panic(fmt.Sprintf("network '%s' already exist", CDefaultNetwork))
-	}
-	GNetworks = networksYAML.FNetworks
-	GNetworks[CDefaultNetwork] = networksYAML.FSettings
-}
 
 func init() {
 	if err := encoding.DeserializeYAML(gSettings, &GSettings); err != nil {
@@ -47,29 +22,6 @@ func init() {
 	if err := GSettings.validate(); err != nil {
 		panic(err)
 	}
-}
-
-func init() {
-	var versionYAML struct {
-		FVersion string `yaml:"version"`
-	}
-	if err := encoding.DeserializeYAML(gVersion, &versionYAML); err != nil {
-		panic(err)
-	}
-	GVersion = versionYAML.FVersion
-}
-
-type SNetworksYAML struct {
-	FSettings SNetwork            `yaml:"settings"`
-	FNetworks map[string]SNetwork `yaml:"networks"`
-}
-
-type SNetwork struct {
-	FMessageSizeBytes uint64   `yaml:"message_size_bytes"`
-	FFetchTimeoutMS   uint64   `yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS    uint64   `yaml:"queue_period_ms"`
-	FWorkSizeBits     uint64   `yaml:"work_size_bits"`
-	FConnections      []string `yaml:"connections"`
 }
 
 type SSettings struct {
@@ -115,14 +67,6 @@ func (p SSettings) validate() error {
 		return errors.New("network_connection is invalid")
 	}
 	return nil
-}
-
-func (p SNetwork) GetFetchTimeout() time.Duration {
-	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond
-}
-
-func (p SNetwork) GetQueuePeriod() time.Duration {
-	return time.Duration(p.FQueuePeriodMS) * time.Millisecond
 }
 
 func (p SSettings) GetKeeperPeriod() time.Duration {

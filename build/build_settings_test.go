@@ -1,61 +1,9 @@
 package build
 
 import (
-	_ "embed"
-	"net/url"
 	"testing"
 	"time"
 )
-
-func TestHiddenLakeConnections(t *testing.T) {
-	t.Parallel()
-
-	for _, network := range GNetworks {
-		for _, conn := range network.FConnections {
-			if _, err := url.Parse(conn); err != nil {
-				t.Error(err)
-				return
-			}
-		}
-	}
-}
-
-func TestHiddenLakeNetworks(t *testing.T) {
-	t.Parallel()
-
-	network, ok := GNetworks[CDefaultNetwork]
-	if !ok {
-		t.Error("not found network _test_network_")
-		return
-	}
-
-	if network.FMessageSizeBytes != 8192 {
-		t.Error("network.FMessageSizeBytes != 8192")
-		return
-	}
-
-	if network.FFetchTimeoutMS != 60_000 {
-		t.Error("network.FFetchTimeoutMS != 60_000")
-		return
-	}
-
-	if network.FQueuePeriodMS != 5_000 {
-		t.Error("network.FQueuePeriodMS != 5_000")
-		return
-	}
-
-	if network.FWorkSizeBits != 0 {
-		t.Error("network.FWorkSizeBits != 0")
-		return
-	}
-
-	switch {
-	case network.GetFetchTimeout() != time.Duration(60_000)*time.Millisecond:
-		fallthrough
-	case network.GetQueuePeriod() != time.Duration(5_000)*time.Millisecond:
-		t.Error("Get methods (networks) is not valid")
-	}
-}
 
 func TestHiddenLakeSettings(t *testing.T) {
 	t.Parallel()
