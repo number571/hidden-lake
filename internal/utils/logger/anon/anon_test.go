@@ -49,7 +49,7 @@ func (p *tsAddr) String() string  { return "192.168.0.1:2000" }
 const (
 	tcService = "TST"
 	tcHash    = "96cb1f0968adba001ebc216708a02c8d2817b1a77fad1206012c22716a9b130b"
-	tcFmtLog  = "service=TST type=ENQRQ hash=96CB1F09...00000000 addr=D803515E...8AAFCC77 proof=0000012345 size=1024B conn=127.0.0.1"
+	tcFmtLog  = "service=TST type=ENQRQ hash=96CB1F09...00000000 proof=0000012345 size=1024B conn=127.0.0.1 addr=D803515E...8AAFCC77"
 )
 
 func TestLoggerPanic(t *testing.T) {

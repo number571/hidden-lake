@@ -2,6 +2,7 @@ package anon
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
@@ -10,7 +11,9 @@ import (
 )
 
 const (
-	cLogTemplate = "service=%s type=%s hash=%08X...%08X addr=%08X...%08X proof=%010d size=%04dB conn=%s"
+	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%04dB"
+	cLogAddrTemplate = " addr=%08X...%08X"
+	cLogConnTemplate = " conn=%s"
 )
 
 func GetLogFunc() logger.ILogFunc {
@@ -35,29 +38,30 @@ func GetLogFunc() logger.ILogFunc {
 }
 
 func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
-	addr := make([]byte, hashing.CHasherSize)
-	if x := pLogGetter.GetPubKey(); x != nil {
-		addr = hashing.NewHasher(x.ToBytes()).ToBytes()
-	}
-
 	hash := make([]byte, hashing.CHasherSize)
 	if x := pLogGetter.GetHash(); x != nil {
 		copy(hash, x)
 	}
 
-	conn := "<nil>"
-	if x := pLogGetter.GetConn(); x != "" {
-		conn = x
-	}
+	log := strings.Builder{}
+	log.Grow(1 << 10)
 
-	return fmt.Sprintf(
+	log.WriteString(fmt.Sprintf(
 		cLogTemplate,
 		pLogGetter.GetService(),
 		logStrType,
 		hash[:4], hash[len(hash)-4:],
-		addr[:4], addr[len(addr)-4:],
 		pLogGetter.GetProof(),
 		pLogGetter.GetSize(),
-		conn,
-	)
+	))
+
+	if x := pLogGetter.GetConn(); x != "" {
+		log.WriteString(fmt.Sprintf(cLogConnTemplate, x))
+	}
+	if x := pLogGetter.GetPubKey(); x != nil {
+		addr := hashing.NewHasher(x.ToBytes()).ToBytes()
+		log.WriteString(fmt.Sprintf(cLogAddrTemplate, addr[:4], addr[len(addr)-4:]))
+	}
+
+	return log.String()
 }
