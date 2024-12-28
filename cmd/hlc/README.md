@@ -14,7 +14,7 @@ $ go install github.com/number571/hidden-lake/cmd/hlc@latest
 
 ## How it works
 
-The application HLC includes the download of all Hidden Lake services, and runs only the configurations selected by names in the file. The exact names of the services can be found in their `pkg/settings/settings.go` configuration files.
+The application HLC includes the download of all Hidden Lake services, and runs only the configurations selected by names in the file. The exact names of the services can be found in their `pkg/settings/settings.go` configuration files by `CServiceFullName` constant.
 
 ## Supported platforms
 
@@ -42,11 +42,4 @@ $ hlc --path /root --network xxx --threads 1
 # path    = path to config, database, key files
 # network = use network configuration from networks.yml
 # threads = num of parallel functions for PoW algorithm
-```
-
-## Config structure
-
-```
-"logging"  Enable loggins in/out actions in the network
-"services" Names of Hidden Lake services 
 ```
