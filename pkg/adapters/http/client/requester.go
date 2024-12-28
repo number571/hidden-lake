@@ -8,7 +8,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	hla_settings "github.com/number571/hidden-lake/pkg/adapters/http/settings"
 )
@@ -49,26 +48,6 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		return "", errors.Join(ErrBadRequest, err)
 	}
 	return string(res), nil
-}
-
-func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {
-	res, err := api.Request(
-		pCtx,
-		p.fClient,
-		http.MethodGet,
-		fmt.Sprintf(cHandleConfigSettingsTemplate, p.fHost),
-		nil,
-	)
-	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
-	}
-
-	cfgSettings := new(config.SConfigSettings)
-	if err := encoding.DeserializeJSON(res, cfgSettings); err != nil {
-		return nil, errors.Join(ErrDecodeResponse, err)
-	}
-
-	return cfgSettings, nil
 }
 
 func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {

@@ -121,16 +121,6 @@ func TestHTTPAdapter(t *testing.T) {
 		return
 	}
 
-	sett, err := client.GetSettings(ctx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	if sett.GetMessageSizeBytes() != 8192 {
-		t.Error("invalid settings")
-		return
-	}
-
 	conns, err := client.GetConnections(ctx)
 	if err != nil {
 		t.Error(err)

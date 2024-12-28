@@ -81,7 +81,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.adapterHandler())
+	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.adapterHandler)
 	for _, handler := range p.fHandlers {
 		mux.HandleFunc(handler.GetPath(), handler.GetFunc())
 	}
@@ -168,47 +168,46 @@ func (p *sHTTPAdapter) GetOnlines() []string {
 	return p.fOnlines.fSlice
 }
 
-func (p *sHTTPAdapter) adapterHandler() func(http.ResponseWriter, *http.Request) {
+func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 	adapterSettings := p.fSettings.GetAdapterSettings()
-	return func(w http.ResponseWriter, r *http.Request) {
-		logBuilder := anon_logger.NewLogBuilder(p.fShortName)
-		logBuilder.WithConn(r.RemoteAddr)
 
-		if r.Method != http.MethodPost {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
+	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
+	logBuilder.WithConn(r.RemoteAddr)
 
-		msgLen := adapterSettings.GetMessageSizeBytes() + net_message.CMessageHeadSize
-		msgLen <<= 1 // message hex_encoded
-		msgStr := make([]byte, msgLen)
-		n, err := io.ReadFull(r.Body, msgStr)
-		if err != nil || uint64(n) != msgLen {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		msg, err := net_message.LoadMessage(adapterSettings, string(msgStr))
-		if err != nil {
-			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		logBuilder.
-			WithHash(msg.GetHash()).
-			WithProof(msg.GetProof()).
-			WithSize(len(msg.ToBytes()))
-
-		if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
-			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogInfoExist))
-			w.WriteHeader(http.StatusLocked)
-			return
-		}
-
-		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoRecvNetworkMessage))
-		p.fNetMsgChan <- msg
+	if r.Method != http.MethodPost {
+		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
+
+	msgLen := adapterSettings.GetMessageSizeBytes() + net_message.CMessageHeadSize
+	msgLen <<= 1 // message hex_encoded
+	msgStr := make([]byte, msgLen)
+	n, err := io.ReadFull(r.Body, msgStr)
+	if err != nil || uint64(n) != msgLen {
+		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	msg, err := net_message.LoadMessage(adapterSettings, string(msgStr))
+	if err != nil {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	logBuilder.
+		WithHash(msg.GetHash()).
+		WithProof(msg.GetProof()).
+		WithSize(len(msg.ToBytes()))
+
+	if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogInfoExist))
+		w.WriteHeader(http.StatusLocked)
+		return
+	}
+
+	p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoRecvNetworkMessage))
+	p.fNetMsgChan <- msg
 }

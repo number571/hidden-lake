@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	net_message "github.com/number571/go-peer/pkg/network/message"
-	"github.com/number571/hidden-lake/internal/service/pkg/config"
 )
 
 var (
@@ -26,14 +25,6 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	res, err := p.fRequester.GetIndex(pCtx)
 	if err != nil {
 		return "", fmt.Errorf("get index (client): %w", err)
-	}
-	return res, nil
-}
-
-func (p *sClient) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {
-	res, err := p.fRequester.GetSettings(pCtx)
-	if err != nil {
-		return nil, fmt.Errorf("get settings (client): %w", err)
 	}
 	return res, nil
 }

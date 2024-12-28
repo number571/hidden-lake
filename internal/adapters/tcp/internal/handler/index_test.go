@@ -53,11 +53,6 @@ func TestErrorsAPI(t *testing.T) {
 		return
 	}
 
-	if _, err := client.GetSettings(context.Background()); err == nil {
-		t.Error("success get settings with unknown host")
-		return
-	}
-
 	if err := client.DelOnline(context.Background(), "test"); err == nil {
 		t.Error("success del online key with unknown host")
 		return
