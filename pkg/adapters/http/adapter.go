@@ -36,7 +36,7 @@ type sHTTPAdapter struct {
 
 	fShortName string
 	fLogger    logger.ILogger
-	fHandlers  []IHandler
+	fHandlers  map[string]http.HandlerFunc
 }
 
 type sOnlines struct {
@@ -62,7 +62,7 @@ func NewHTTPAdapter(
 	}
 }
 
-func (p *sHTTPAdapter) WithHandlers(pHandlers ...IHandler) IHTTPAdapter {
+func (p *sHTTPAdapter) WithHandlers(pHandlers map[string]http.HandlerFunc) IHTTPAdapter {
 	p.fHandlers = pHandlers
 	return p
 }
@@ -82,8 +82,8 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(settings.CHandleNetworkAdapterPath, p.adapterHandler)
-	for _, handler := range p.fHandlers {
-		mux.HandleFunc(handler.GetPath(), handler.GetFunc())
+	for k, v := range p.fHandlers {
+		mux.HandleFunc(k, v)
 	}
 
 	httpServer := &http.Server{

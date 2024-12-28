@@ -12,13 +12,8 @@ type IHTTPAdapter interface {
 	adapters.IRunnerAdapter
 
 	WithLogger(name.IServiceName, logger.ILogger) IHTTPAdapter
-	WithHandlers(...IHandler) IHTTPAdapter
+	WithHandlers(map[string]http.HandlerFunc) IHTTPAdapter
 	GetOnlines() []string
-}
-
-type IHandler interface {
-	GetPath() string
-	GetFunc() func(http.ResponseWriter, *http.Request)
 }
 
 type ISettings interface {

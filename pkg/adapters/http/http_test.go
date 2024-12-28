@@ -71,24 +71,20 @@ func TestHTTPAdapter(t *testing.T) {
 		return
 	}
 
-	adapter1.WithHandlers(
-		NewHandler(
-			settings.CHandleIndexPath,
-			func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "http-adapter") },
-		),
-		NewHandler(
-			settings.CHandleConfigSettingsPath,
-			func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, `{"message_size_bytes":8192}`) },
-		),
-		NewHandler(
-			settings.CHandleConfigConnectsPath,
-			func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, `["tcp://abc_1"]`) },
-		),
-		NewHandler(
-			settings.CHandleNetworkOnlinePath,
-			func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, `["tcp://abc_2"]`) },
-		),
-	)
+	adapter1.WithHandlers(map[string]http.HandlerFunc{
+		settings.CHandleIndexPath: func(w http.ResponseWriter, _ *http.Request) {
+			fmt.Fprint(w, "http-adapter")
+		},
+		settings.CHandleConfigSettingsPath: func(w http.ResponseWriter, _ *http.Request) {
+			fmt.Fprint(w, `{"message_size_bytes":8192}`)
+		},
+		settings.CHandleConfigConnectsPath: func(w http.ResponseWriter, _ *http.Request) {
+			fmt.Fprint(w, `["tcp://abc_1"]`)
+		},
+		settings.CHandleNetworkOnlinePath: func(w http.ResponseWriter, _ *http.Request) {
+			fmt.Fprint(w, `["tcp://abc_2"]`)
+		},
+	})
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -224,18 +220,6 @@ func testCustomProduceMessage(ctx context.Context, method, host, msg string) err
 		return errors.New("bad status code") // nolint: err113
 	}
 	return nil
-}
-
-func TestHandler(t *testing.T) {
-	t.Parallel()
-
-	path := "/path"
-	handler := NewHandler(path, func(_ http.ResponseWriter, _ *http.Request) {})
-	if handler.GetPath() != path {
-		t.Error("path is invalid")
-		return
-	}
-	_ = handler.GetFunc()
 }
 
 func TestSettings(t *testing.T) {
