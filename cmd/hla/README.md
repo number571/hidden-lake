@@ -42,6 +42,8 @@ $ go run ./cmd/hla/hla_<proto>
 > ...
 ```
 
+Creates [`./hla_<proto>.yml`](./hla_tcp/hla_tcp.yml) file (as example `tcp`).
+
 ## Running options
 
 ```bash
