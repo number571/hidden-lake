@@ -9,10 +9,11 @@ import (
 )
 
 type IHTTPAdapter interface {
+	adapters.IRunnerAdapter
+
 	WithLogger(name.IServiceName, logger.ILogger) IHTTPAdapter
 	WithHandlers(...IHandler) IHTTPAdapter
 	GetOnlines() []string
-	adapters.IRunnerAdapter
 }
 
 type IHandler interface {
