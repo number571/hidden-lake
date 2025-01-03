@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `internal/service/pkg/config`: rename GetLimitMessageSizeBytes -> GetPayloadSizeBytes
+- `internal/utils/logger/anon`: addr, conn -> variable params
 
 <!-- ... -->
 
