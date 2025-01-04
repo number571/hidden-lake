@@ -11,6 +11,10 @@
 - `internal/service/pkg/config`: rename GetLimitMessageSizeBytes -> GetPayloadSizeBytes
 - `internal/utils/logger/anon`: addr, conn -> variable params
 
+### BUG FIXES
+
+- `cmd/hla/hla_tcp`: delete duplicate host add
+
 <!-- ... -->
 
 ## v1.8.2

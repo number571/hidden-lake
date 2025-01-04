@@ -74,7 +74,6 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		}
 		cfg.FConnections = append(cfg.FConnections, u.Host)
 	}
-	cfg.FConnections = append(cfg.FConnections, network.FConnections...)
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)
