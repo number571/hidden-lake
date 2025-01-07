@@ -22,8 +22,8 @@ logging:
   - info
   - erro
 address:
-  interface: '%s'
-  incoming: '%s'
+  internal: '%s'
+  external: '%s'
   pprof: '%s'
 connection: '%s'`
 )
@@ -92,12 +92,12 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetAddress().GetInterface() != tcAddressInterface {
+	if cfg.GetAddress().GetInternal() != tcAddressInterface {
 		t.Error("address.interface is invalid")
 		return
 	}
 
-	if cfg.GetAddress().GetIncoming() != tcAddressIncoming {
+	if cfg.GetAddress().GetExternal() != tcAddressIncoming {
 		t.Error("address.incoming is invalid")
 		return
 	}

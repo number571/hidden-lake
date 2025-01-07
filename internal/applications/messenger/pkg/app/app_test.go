@@ -59,8 +59,8 @@ func TestApp(t *testing.T) {
 			FMessagesCapacity: 64,
 		},
 		FAddress: &config.SAddress{
-			FInterface: testutils.TgAddrs[36],
-			FIncoming:  testutils.TgAddrs[38],
+			FInternal: testutils.TgAddrs[36],
+			FExternal: testutils.TgAddrs[38],
 		},
 		FConnection: "test_connection",
 	})

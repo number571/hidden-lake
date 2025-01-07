@@ -57,7 +57,7 @@ func TestApp(t *testing.T) {
 			FExecTimeoutMS: 5000,
 		},
 		FAddress: &config.SAddress{
-			FIncoming: testutils.TgAddrs[35],
+			FExternal: testutils.TgAddrs[35],
 		},
 	})
 	if err != nil {

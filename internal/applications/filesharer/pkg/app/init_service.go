@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/internal/webui"
 )
 
-func (p *sApp) initIncomingServiceHTTP(pCtx context.Context, pHlsClient hls_client.IClient) {
+func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlsClient hls_client.IClient) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		hlf_settings.CLoadPath,
@@ -26,14 +26,14 @@ func (p *sApp) initIncomingServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fStgPath),
 	) // POST
 
-	p.fIncServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetIncoming(),
+	p.fExtServiceHTTP = &http.Server{
+		Addr:        p.fConfig.GetAddress().GetExternal(),
 		Handler:     http.TimeoutHandler(mux, time.Minute/2, "timeout"),
 		ReadTimeout: (5 * time.Second),
 	}
 }
 
-func (p *sApp) initInterfaceServiceHTTP(pCtx context.Context, pHlsClient hls_client.IClient) {
+func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlsClient hls_client.IClient) {
 	mux := http.NewServeMux()
 	mux.Handle(hlf_settings.CStaticPath, http.StripPrefix(
 		hlf_settings.CStaticPath,
@@ -49,7 +49,7 @@ func (p *sApp) initInterfaceServiceHTTP(pCtx context.Context, pHlsClient hls_cli
 	mux.HandleFunc(hlf_settings.CHandleFriendsStoragePath, handler.StoragePage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient)) // GET, POST, DELETE
 
 	p.fIntServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetInterface(),
+		Addr:        p.fConfig.GetAddress().GetInternal(),
 		Handler:     mux, // http.TimeoutHandler returns bug with progress bar of file downloading
 		ReadTimeout: (5 * time.Second),
 	}

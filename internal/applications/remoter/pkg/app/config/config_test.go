@@ -32,7 +32,7 @@ func testConfigDefaultInit(configPath string) {
 		},
 		FLogging: []string{"info", "erro"},
 		FAddress: &SAddress{
-			FIncoming: tcAddress1,
+			FExternal: tcAddress1,
 			FPPROF:    tcAddress2,
 		},
 	})

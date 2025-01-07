@@ -9,7 +9,7 @@ import (
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 )
 
-func (p *sApp) initIncomingServiceHTTP(pCtx context.Context) {
+func (p *sApp) initExternalServiceHTTP(pCtx context.Context) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		hlr_settings.CExecPath,
@@ -17,7 +17,7 @@ func (p *sApp) initIncomingServiceHTTP(pCtx context.Context) {
 	) // POST
 
 	execTimeout := p.fConfig.GetSettings().GetExecTimeout()
-	p.fIncServiceHTTP = &http.Server{
+	p.fExtServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetIncoming(),
 		Handler:     http.TimeoutHandler(mux, 2*execTimeout, "timeout"),
 		ReadTimeout: (5 * time.Second),

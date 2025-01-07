@@ -149,8 +149,18 @@ func (p *sApp) stop() error {
 	return nil
 }
 
+func (p *sApp) runAnonymityNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	if err := p.fNode.Run(pCtx); err != nil {
+		pChErr <- err
+		return
+	}
+}
+
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	if p.fCfgW.GetConfig().GetAddress().GetPPROF() == "" {
 		return
@@ -163,12 +173,11 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
 func (p *sApp) runListenerInternal(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	if p.fCfgW.GetConfig().GetAddress().GetInternal() == "" {
 		return
@@ -181,15 +190,4 @@ func (p *sApp) runListenerInternal(pCtx context.Context, wg *sync.WaitGroup, pCh
 			return
 		}
 	}()
-
-	<-pCtx.Done()
-}
-
-func (p *sApp) runAnonymityNode(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-
-	if err := p.fNode.Run(pCtx); err != nil {
-		pChErr <- err
-		return
-	}
 }

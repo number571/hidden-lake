@@ -146,6 +146,23 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 	}
 }
 
+func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
+
+	if p.fWrapper.GetConfig().GetAddress().GetPPROF() == "" {
+		return
+	}
+
+	go func() {
+		err := p.fServicePPROF.ListenAndServe()
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			pChErr <- err
+			return
+		}
+	}()
+}
+
 func (p *sApp) runTCPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
@@ -222,24 +239,6 @@ func (p *sApp) setIntoDB(msg net_message.IMessage) error {
 		return err
 	}
 	return p.fDatabase.Set(msg.GetHash(), []byte{})
-}
-
-func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-
-	if p.fWrapper.GetConfig().GetAddress().GetPPROF() == "" {
-		return
-	}
-
-	go func() {
-		err := p.fServicePPROF.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			pChErr <- err
-			return
-		}
-	}()
-
-	<-pCtx.Done()
 }
 
 func (p *sApp) stop() error {

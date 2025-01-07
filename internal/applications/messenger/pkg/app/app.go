@@ -38,7 +38,7 @@ type sApp struct {
 
 	fDatabase       database.IKVDatabase
 	fIntServiceHTTP *http.Server
-	fIncServiceHTTP *http.Server
+	fExtServiceHTTP *http.Server
 	fServicePPROF   *http.Server
 
 	fHTTPLogger logger.ILogger
@@ -64,8 +64,8 @@ func NewApp(
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
 		p.runListenerPPROF,
-		p.runIncomingListenerHTTP,
-		p.runInterfaceListenerHTTP,
+		p.runExternalListenerHTTP,
+		p.runInternalListenerHTTP,
 	}
 
 	ctx, cancel := context.WithCancel(pCtx)
@@ -108,8 +108,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		)
 
 		p.initServicePPROF()
-		p.initIncomingServiceHTTP(pCtx, hlsClient, msgBroker)
-		p.initInterfaceServiceHTTP(pCtx, hlsClient, msgBroker)
+		p.initExternalServiceHTTP(pCtx, hlsClient, msgBroker)
+		p.initInternalServiceHTTP(pCtx, hlsClient, msgBroker)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
@@ -135,6 +135,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	if p.fConfig.GetAddress().GetPPROF() == "" {
 		return
@@ -147,12 +148,11 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
-func (p *sApp) runInterfaceListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runInternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	go func() {
 		err := p.fIntServiceHTTP.ListenAndServe()
@@ -161,28 +161,29 @@ func (p *sApp) runInterfaceListenerHTTP(pCtx context.Context, wg *sync.WaitGroup
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
-func (p *sApp) runIncomingListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
+
+	if p.fConfig.GetAddress().GetExternal() == "" {
+		return
+	}
 
 	go func() {
-		err := p.fIncServiceHTTP.ListenAndServe()
+		err := p.fExtServiceHTTP.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			pChErr <- err
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fIntServiceHTTP,
-		p.fIncServiceHTTP,
+		p.fExtServiceHTTP,
 		p.fServicePPROF,
 		p.fDatabase,
 	})

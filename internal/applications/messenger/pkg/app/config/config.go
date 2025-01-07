@@ -35,9 +35,9 @@ type SConfig struct {
 }
 
 type SAddress struct {
-	FInterface string `yaml:"interface"`
-	FIncoming  string `yaml:"incoming"`
-	FPPROF     string `yaml:"pprof,omitempty"`
+	FInternal string `yaml:"internal"`
+	FExternal string `yaml:"external,omitempty"`
+	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -107,8 +107,7 @@ func (p *SConfigSettings) loadLanguage() error {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != "" &&
-		p.FAddress.FInterface != "" &&
-		p.FAddress.FIncoming != "" &&
+		p.FAddress.FInternal != "" &&
 		p.FSettings.FMessagesCapacity != 0
 }
 
@@ -153,12 +152,12 @@ func (p *SConfig) GetConnection() string {
 	return p.FConnection
 }
 
-func (p *SAddress) GetInterface() string {
-	return p.FInterface
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
 }
 
-func (p *SAddress) GetIncoming() string {
-	return p.FIncoming
+func (p *SAddress) GetExternal() string {
+	return p.FExternal
 }
 
 func (p *SAddress) GetPPROF() string {

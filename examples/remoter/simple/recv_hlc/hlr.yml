@@ -6,4 +6,4 @@ logging:
 - warn
 - erro
 address:
-  incoming: 127.0.0.1:8532
+  external: 127.0.0.1:8532

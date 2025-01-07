@@ -6,7 +6,7 @@ logging:
 - warn
 - erro
 address:
-  interface: 127.0.0.1:9591
-  incoming: 127.0.0.1:9592
+  internal: 127.0.0.1:9591
+  external: 127.0.0.1:9592
   # pprof: ""
 connection: 127.0.0.1:9572

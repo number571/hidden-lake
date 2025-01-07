@@ -22,7 +22,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config1.GetAddress().GetInterface() != tcAddressInterface {
+	if config1.GetAddress().GetInternal() != tcAddressInterface {
 		t.Error("got invalid field with exist config (1)")
 		return
 	}
@@ -53,7 +53,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config2.GetAddress().GetInterface() != tcAddressInterface {
+	if config2.GetAddress().GetInternal() != tcAddressInterface {
 		t.Error("got invalid field with exist config (2)")
 		return
 	}
@@ -66,7 +66,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetInterface() != hlm_settings.CDefaultInterfaceAddress {
+	if config3.GetAddress().GetInternal() != hlm_settings.CDefaultInterfaceAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

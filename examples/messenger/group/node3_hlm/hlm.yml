@@ -5,6 +5,6 @@ logging:
 - warn
 - erro
 address:
-  interface: :6060
-  incoming: :6061
+  internal: :6060
+  external: :6061
 connection: 127.0.0.1:6572

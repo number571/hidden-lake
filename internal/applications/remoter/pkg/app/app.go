@@ -33,7 +33,7 @@ type sApp struct {
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
-	fIncServiceHTTP *http.Server
+	fExtServiceHTTP *http.Server
 	fServicePPROF   *http.Server
 }
 
@@ -57,7 +57,7 @@ func NewApp(
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
-		p.runIncomingListenerHTTP,
+		p.runExternalListenerHTTP,
 		p.runListenerPPROF,
 	}
 
@@ -87,7 +87,7 @@ func (p *sApp) Run(pCtx context.Context) error {
 
 func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
-		p.initIncomingServiceHTTP(pCtx)
+		p.initExternalServiceHTTP(pCtx)
 		p.initServicePPROF()
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
@@ -114,6 +114,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	if p.fConfig.GetAddress().GetPPROF() == "" {
 		return
@@ -126,27 +127,24 @@ func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
-func (p *sApp) runIncomingListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
 
 	go func() {
-		err := p.fIncServiceHTTP.ListenAndServe()
+		err := p.fExtServiceHTTP.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			pChErr <- err
 			return
 		}
 	}()
-
-	<-pCtx.Done()
 }
 
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
-		p.fIncServiceHTTP,
+		p.fExtServiceHTTP,
 		p.fServicePPROF,
 	})
 	if err != nil {

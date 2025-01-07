@@ -22,9 +22,9 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{
-				FInterface: hlf_settings.CDefaultInterfaceAddress,
-				FIncoming:  hlf_settings.CDefaultIncomingAddress,
-				FPPROF:     "",
+				FInternal: hlf_settings.CDefaultInterfaceAddress,
+				FExternal: hlf_settings.CDefaultIncomingAddress,
+				FPPROF:    "",
 			},
 			FConnection: hls_settings.CDefaultInternalAddress,
 		}

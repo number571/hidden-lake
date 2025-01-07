@@ -28,7 +28,7 @@ type SConfig struct {
 }
 
 type SAddress struct {
-	FIncoming string `yaml:"incoming"`
+	FExternal string `yaml:"external,omitempty"`
 	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
@@ -72,7 +72,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 
 func (p *SConfig) isValid() bool {
 	return true &&
-		p.FAddress.FIncoming != "" &&
+		p.FAddress.FExternal != "" &&
 		p.FSettings.FExecTimeoutMS != 0
 }
 
@@ -122,7 +122,7 @@ func (p *SConfig) GetAddress() IAddress {
 }
 
 func (p *SAddress) GetIncoming() string {
-	return p.FIncoming
+	return p.FExternal
 }
 
 func (p *SAddress) GetPPROF() string {

@@ -9,8 +9,6 @@ logging:
 address:
   external: 127.0.0.1:8571
   internal: 127.0.0.1:8572
-services:
-  hidden-lake-filesharer: 127.0.0.1:8081
 endpoints:
 - 127.0.0.1:9522
 friends:

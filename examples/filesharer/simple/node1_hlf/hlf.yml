@@ -6,6 +6,5 @@ logging:
 - warn
 - erro
 address:
-  interface: :8080
-  incoming: :8081
+  internal: :8080
 connection: 127.0.0.1:8572

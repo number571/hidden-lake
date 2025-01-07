@@ -6,5 +6,5 @@ logging:
 - warn
 - erro
 address:
-  incoming: 127.0.0.1:9532
+  external: 127.0.0.1:9532
   # pprof: ""

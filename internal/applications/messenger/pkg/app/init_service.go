@@ -16,7 +16,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func (p *sApp) initIncomingServiceHTTP(
+func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
 	pHlsClient hls_client.IClient,
 	pMsgBroker msgbroker.IMessageBroker,
@@ -31,14 +31,14 @@ func (p *sApp) initIncomingServiceHTTP(
 		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlsClient),
 	) // POST
 
-	p.fIncServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetIncoming(),
+	p.fExtServiceHTTP = &http.Server{
+		Addr:        p.fConfig.GetAddress().GetExternal(),
 		Handler:     http.TimeoutHandler(mux, time.Minute/2, "timeout"),
 		ReadTimeout: (5 * time.Second),
 	}
 }
 
-func (p *sApp) initInterfaceServiceHTTP(
+func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlsClient hls_client.IClient,
 	pMsgBroker msgbroker.IMessageBroker,
@@ -61,7 +61,7 @@ func (p *sApp) initInterfaceServiceHTTP(
 	mux.Handle(hlm_settings.CHandleFriendsChatWSPath, websocket.Handler(handler.FriendsChatWS(pMsgBroker)))
 
 	p.fIntServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetInterface(),
+		Addr:        p.fConfig.GetAddress().GetInternal(),
 		Handler:     mux, // http.TimeoutHandler send panic from websocket use
 		ReadTimeout: (5 * time.Second),
 	}
