@@ -13,7 +13,7 @@ type IFlags interface {
 type IFlagBuilder interface {
 	Build() IFlag
 	WithDescription(string) IFlagBuilder
-	WithDefaultValue(string) IFlagBuilder
+	WithDefinedValue(string) IFlagBuilder
 }
 
 type IFlag interface {

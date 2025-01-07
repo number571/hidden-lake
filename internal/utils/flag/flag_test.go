@@ -84,7 +84,7 @@ func TestStringFlagValue(t *testing.T) {
 		return
 	}
 
-	if NewFlagBuilder("unknown").WithDefaultValue("7").Build().GetStringValue(argsSlice) != "7" {
+	if NewFlagBuilder("unknown").WithDefinedValue("7").Build().GetStringValue(argsSlice) != "7" {
 		t.Error("unknown != 7")
 		return
 	}

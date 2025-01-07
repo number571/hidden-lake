@@ -23,13 +23,13 @@ var (
 			WithDescription("print version of service"),
 		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
-			WithDefaultValue("."),
+			WithDefinedValue("."),
 		flag.NewFlagBuilder("-n", "--network").
 			WithDescription("set network key for connections").
-			WithDefaultValue(""),
+			WithDefinedValue(""),
 		flag.NewFlagBuilder("-t", "--threads").
 			WithDescription("set num of parallel functions to calculate PoW").
-			WithDefaultValue("1"),
+			WithDefinedValue("1"),
 	).Build()
 )
 

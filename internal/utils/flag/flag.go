@@ -33,7 +33,7 @@ func (p *sFlag) WithDescription(pDescription string) IFlagBuilder {
 	return p
 }
 
-func (p *sFlag) WithDefaultValue(pDefaultValue string) IFlagBuilder {
+func (p *sFlag) WithDefinedValue(pDefaultValue string) IFlagBuilder {
 	p.fDefaultValue = pDefaultValue
 	p.fHasValue = true
 	return p

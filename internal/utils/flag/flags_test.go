@@ -10,7 +10,7 @@ var (
 			WithDescription("print information about service"),
 		NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
-			WithDefaultValue("."),
+			WithDefinedValue("."),
 	).Build()
 )
 
