@@ -96,7 +96,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 		defer func() { wg.Done(); cancel() }()
 		ra, ok := p.fAnonymityNode.GetAdapter().(adapters.IRunnerAdapter)
 		if !ok {
-			errs[0] = ErrRunning
+			errs[0] = ErrAdapterNotRunner
 			return
 		}
 		errs[0] = ra.Run(chCtx)
