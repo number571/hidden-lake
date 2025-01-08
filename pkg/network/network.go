@@ -28,10 +28,6 @@ type sHiddenLakeNode struct {
 	fAnonymityNode anonymity.INode
 }
 
-func WrapNodeToHiddenLake(pAnonymityNode anonymity.INode) IHiddenLakeNode {
-	return &sHiddenLakeNode{fAnonymityNode: pAnonymityNode}
-}
-
 func NewHiddenLakeNode(
 	pSettings ISettings,
 	pPrivKey asymmetric.IPrivKey,

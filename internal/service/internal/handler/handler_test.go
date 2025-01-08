@@ -165,7 +165,7 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 	}
 
 	cfg := wcfg.GetConfig()
-	hlNode := hiddenlake_network.WrapNodeToHiddenLake(node)
+	hlNode := &tsHiddenLakeNode{node}
 
 	mux.HandleFunc(pkg_settings.CHandleIndexPath, HandleIndexAPI(logger))
 	mux.HandleFunc(pkg_settings.CHandleConfigSettingsPath, HandleConfigSettingsAPI(wcfg, logger, node))
@@ -486,3 +486,49 @@ func (p *tsNetworkNode) DelConnection(string) error {
 }
 
 func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }
+
+type tsHiddenLakeNode struct {
+	fAnon anonymity.INode
+}
+
+func (p *tsHiddenLakeNode) GetAnonymityNode() anonymity.INode {
+	return p.fAnon
+}
+
+func (p *tsHiddenLakeNode) Run(_ context.Context) error {
+	return nil
+}
+
+func (p *tsHiddenLakeNode) SendRequest(
+	pCtx context.Context,
+	pPubKey asymmetric.IPubKey,
+	pRequest request.IRequest,
+) error {
+	return p.fAnon.SendPayload(
+		pCtx,
+		pPubKey,
+		payload.NewPayload64(
+			uint64(build.GSettings.FProtoMask.FService),
+			pRequest.ToBytes(),
+		),
+	)
+}
+
+func (p *tsHiddenLakeNode) FetchRequest(
+	pCtx context.Context,
+	pPubKey asymmetric.IPubKey,
+	pRequest request.IRequest,
+) (response.IResponse, error) {
+	rspBytes, err := p.fAnon.FetchPayload(
+		pCtx,
+		pPubKey,
+		payload.NewPayload32(
+			build.GSettings.FProtoMask.FService,
+			pRequest.ToBytes(),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.LoadResponse(rspBytes)
+}
