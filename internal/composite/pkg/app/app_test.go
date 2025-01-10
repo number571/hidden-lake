@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/types"
-	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
 	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -35,12 +36,13 @@ var (
 )
 
 const (
-	tcTestdataPath  = "./testdata/"
-	tcPathConfigHLC = hlc_settings.CPathYML
-	tcPathConfigHLS = hls_settings.CPathYML
-	tcPathConfigHLM = hlm_settings.CPathYML
-	tcPathConfigHLF = hlf_settings.CPathYML
-	tcPathKeyHLS    = hls_settings.CPathKey
+	tcTestdataPath     = "./testdata/"
+	tcPathConfigHLC    = hlc_settings.CPathYML
+	tcPathConfigHLS    = hls_settings.CPathYML
+	tcPathConfigHLM    = hlm_settings.CPathYML
+	tcPathConfigHLP    = hlp_settings.CPathYML
+	tcPathConfigHLAtcp = hla_tcp_settings.CPathYML
+	tcPathKeyHLS       = hls_settings.CPathKey
 )
 
 func TestError(t *testing.T) {
@@ -57,8 +59,9 @@ func TestError(t *testing.T) {
 func testDeleteFiles(prefixPath string) {
 	os.RemoveAll(prefixPath + tcPathConfigHLC)
 	os.RemoveAll(prefixPath + tcPathConfigHLS)
-	os.RemoveAll(prefixPath + tcPathConfigHLF)
+	os.RemoveAll(prefixPath + tcPathConfigHLP)
 	os.RemoveAll(prefixPath + tcPathConfigHLM)
+	os.RemoveAll(prefixPath + tcPathConfigHLAtcp)
 	os.RemoveAll(prefixPath + tcPathKeyHLS)
 }
 
