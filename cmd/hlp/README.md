@@ -1,4 +1,4 @@
-# HLR
+# HLP
 
 > Hidden Lake Pinger
 
