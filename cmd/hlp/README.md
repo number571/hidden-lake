@@ -14,7 +14,7 @@ $ go install github.com/number571/hidden-lake/cmd/hlp@latest
 
 ## How it works
 
-HLP is the simplest service.
+HLP is the simplest service
 
 ```go
 func handler() {
@@ -52,8 +52,6 @@ Creates [`./hlp.yml`](./hlp.yml) file.
 $ hlp --path /root
 # path = path to config
 ```
-
-## Example
 
 ## Example
 
