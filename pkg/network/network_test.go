@@ -136,16 +136,14 @@ func TestHiddenLakeNode(t *testing.T) {
 }
 
 func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan net_message.IMessage) IHiddenLakeNode {
-	sett := NewSettings(&SSettings{
-		FQueuePeriod:  time.Second,
-		FFetchTimeout: time.Minute,
-		FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
-			FMessageSizeBytes: 8 << 10,
-		}),
-	})
-
 	return NewHiddenLakeNode(
-		sett,
+		NewSettings(&SSettings{
+			FQueuePeriod:  time.Second,
+			FFetchTimeout: time.Minute,
+			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: 8 << 10,
+			}),
+		}),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {
 			db, err := database.NewKVDatabase(dbPath)
