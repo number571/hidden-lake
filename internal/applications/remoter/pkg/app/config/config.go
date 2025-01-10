@@ -121,7 +121,7 @@ func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
-func (p *SAddress) GetIncoming() string {
+func (p *SAddress) GetExternal() string {
 	return p.FExternal
 }
 

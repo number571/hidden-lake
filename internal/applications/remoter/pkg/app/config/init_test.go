@@ -26,7 +26,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config1.GetAddress().GetIncoming() != tcAddress1 {
+	if config1.GetAddress().GetExternal() != tcAddress1 {
 		t.Error("got invalid field with exist config (1)")
 		return
 	}
@@ -62,7 +62,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetIncoming() != hlr_settings.CDefaultIncomingAddress {
+	if config3.GetAddress().GetExternal() != hlr_settings.CDefaultExternalAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

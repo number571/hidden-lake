@@ -8,6 +8,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -74,7 +75,8 @@ func initConfig() *SConfig {
 			FInternal: hls_settings.CDefaultInternalAddress,
 		},
 		FServices: map[string]string{
-			hlm_settings.CServiceFullName: hlm_settings.CDefaultIncomingAddress,
+			hlp_settings.CServiceFullName: hlp_settings.CDefaultExternalAddress,
+			hlm_settings.CServiceFullName: hlm_settings.CDefaultExternalAddress,
 		},
 		FEndpoints: []string{
 			hla_tcp_settings.CDefaultInternalAddress,

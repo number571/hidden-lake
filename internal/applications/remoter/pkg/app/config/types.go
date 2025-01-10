@@ -18,6 +18,6 @@ type IConfigSettings interface {
 }
 
 type IAddress interface {
-	GetIncoming() string
+	GetExternal() string
 	GetPPROF() string
 }

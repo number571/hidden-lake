@@ -65,7 +65,7 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetAddress().GetIncoming() != tcAddress1 {
+	if cfg.GetAddress().GetExternal() != tcAddress1 {
 		t.Error("address incoming is invalid")
 		return
 	}

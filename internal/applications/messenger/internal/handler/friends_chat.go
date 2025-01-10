@@ -13,6 +13,7 @@ import (
 	internal_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_client "github.com/number571/hidden-lake/internal/applications/messenger/pkg/client"
+	hlp_client "github.com/number571/hidden-lake/internal/applications/pinger/pkg/client"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -109,8 +110,13 @@ func FriendsChatPage(
 				return
 			}
 
+			hlpClient := hlp_client.NewClient(
+				hlp_client.NewBuilder(),
+				hlp_client.NewRequester(pHlsClient),
+			)
+
 			pingState = 1
-			if err := pingMessage(pCtx, pHlsClient, aliasName); err != nil {
+			if err := hlpClient.Ping(pCtx, aliasName); err != nil {
 				pingState = -1
 			}
 		}
@@ -201,18 +207,6 @@ func getUploadFile(pR *http.Request) (string, []byte, error) {
 	}
 
 	return handler.Filename, fileBytes, nil
-}
-
-func pingMessage(
-	pCtx context.Context,
-	pClient hls_client.IClient,
-	pAliasName string,
-) error {
-	hlmClient := hlm_client.NewClient(
-		hlm_client.NewBuilder(),
-		hlm_client.NewRequester(pClient),
-	)
-	return hlmClient.PingMessage(pCtx, pAliasName)
 }
 
 func pushMessage(

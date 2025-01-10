@@ -66,7 +66,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetInternal() != hlm_settings.CDefaultInterfaceAddress {
+	if config3.GetAddress().GetInternal() != hlm_settings.CDefaultInternalAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

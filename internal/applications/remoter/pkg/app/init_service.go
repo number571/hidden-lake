@@ -18,7 +18,7 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context) {
 
 	execTimeout := p.fConfig.GetSettings().GetExecTimeout()
 	p.fExtServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetIncoming(),
+		Addr:        p.fConfig.GetAddress().GetExternal(),
 		Handler:     http.TimeoutHandler(mux, 2*execTimeout, "timeout"),
 		ReadTimeout: (5 * time.Second),
 	}

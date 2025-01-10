@@ -22,8 +22,8 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{
-				FInternal: hlf_settings.CDefaultInterfaceAddress,
-				FExternal: hlf_settings.CDefaultIncomingAddress,
+				FInternal: hlf_settings.CDefaultInternalAddress,
+				FExternal: hlf_settings.CDefaultExternalAddress,
 				FPPROF:    "",
 			},
 			FConnection: hls_settings.CDefaultInternalAddress,

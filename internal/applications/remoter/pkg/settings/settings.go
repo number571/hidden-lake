@@ -22,6 +22,6 @@ const (
 )
 
 const (
-	CDefaultIncomingAddress = "127.0.0.1:9532"
+	CDefaultExternalAddress = "127.0.0.1:9532"
 	CDefaultExecTimeout     = 5_000 // 5s
 )

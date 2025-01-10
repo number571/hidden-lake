@@ -23,10 +23,6 @@ func (p *sApp) initExternalServiceHTTP(
 ) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
-		hlm_settings.CPingPath,
-		handler.HandleIncomingPingHTTP(pCtx, p.fHTTPLogger),
-	) // GET
-	mux.HandleFunc(
 		hlm_settings.CPushPath,
 		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlsClient),
 	) // POST
