@@ -8,7 +8,6 @@ _CODE_LINES_FLOOR=_
 
 _TEST_UTILS_PATH=./test/utils
 _TEST_RESULT_PATH=./test/result
-_TEST_PPROF_PATH=./test/pprof
 
 _CHECK_ERROR=if [ $$? != 0 ]; then exit 1; fi
 _GO_TEST_LIST=\
@@ -21,7 +20,6 @@ _GO_TEST_LIST=\
 	build clean \
 	lint-run test-run \
 	test-coverage test-coverage-view test-coverage-treemap test-coverage-badge \
-	pprof-run \
 	go-fmt-vet \
 	git-status git-push \
 	install-deps
@@ -82,16 +80,6 @@ test-coverage-badge:
 	else \
 		cat $(_TEST_UTILS_PATH)/badge_coverage_template.svg | sed -e "s/{{.color}}/ff8c00/g;s/{{.percent}}/`${_COVERAGE_FLOOR}`/g" > $(_TEST_RESULT_PATH)/badge_coverage.svg; \
 	fi
-
-### PPROF
-# make pprof-run PPROF_NAME=hls PPROF_PORT=9573
-
-pprof-run:
-	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/threadcreate.png http://localhost:$(PPROF_PORT)/debug/pprof/threadcreate
-	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/profile.png http://localhost:$(PPROF_PORT)/debug/pprof/profile?seconds=5
-	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/heap.png http://localhost:$(PPROF_PORT)/debug/pprof/heap
-	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/goroutine.png http://localhost:$(PPROF_PORT)/debug/pprof/goroutine
-	go tool pprof -png -output $(_TEST_PPROF_PATH)/$(PPROF_NAME)/allocs.png http://localhost:$(PPROF_PORT)/debug/pprof/allocs
 
 ### GIT
 

@@ -38,7 +38,6 @@ type SConfig struct {
 type SAddress struct {
 	FInternal string `yaml:"internal"`
 	FExternal string `yaml:"external,omitempty"`
-	FPPROF    string `yaml:"pprof,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -163,10 +162,6 @@ func (p *SAddress) GetInternal() string {
 
 func (p *SAddress) GetExternal() string {
 	return p.FExternal
-}
-
-func (p *SAddress) GetPPROF() string {
-	return p.FPPROF
 }
 
 func (p *SConfig) GetLogging() logger.ILogging {

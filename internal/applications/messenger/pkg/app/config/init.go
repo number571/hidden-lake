@@ -23,7 +23,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			FAddress: &SAddress{
 				FInternal: hlm_settings.CDefaultInternalAddress,
 				FExternal: hlm_settings.CDefaultExternalAddress,
-				FPPROF:    "",
 			},
 			FConnection: hls_settings.CDefaultInternalAddress,
 		}

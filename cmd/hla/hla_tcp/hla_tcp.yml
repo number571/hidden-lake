@@ -9,7 +9,6 @@ logging:
 address:
   external: 127.0.0.1:9521
   internal: 127.0.0.1:9522
-  # pprof: ""
 endpoints: 
 - 127.0.0.1:9571
 # connections:

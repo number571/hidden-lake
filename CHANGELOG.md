@@ -17,6 +17,7 @@
 - `internal/applications/*`: rename config params incoming,interface -> external,internal
 - `internal/applications/filesharer`: external param is now can be omitempty
 - `internal/applications/messenger`: deleted ping function
+- `internal/utils/pprof`: deleted
 
 ### BUG FIXES
 

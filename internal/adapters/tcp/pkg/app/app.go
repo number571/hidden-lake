@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -44,8 +43,6 @@ type sApp struct {
 
 	fTCPAdapter  hla_tcp.ITCPAdapter
 	fHTTPAdapter hla_http.IHTTPAdapter
-
-	fServicePPROF *http.Server
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
@@ -88,7 +85,6 @@ func (p *sApp) Run(pCtx context.Context) error {
 		p.runTCPRelayer,
 		p.runHTTPAdapter,
 		p.runHTTPRelayer,
-		p.runListenerPPROF,
 	}
 
 	ctx, cancel := context.WithCancel(pCtx)
@@ -123,7 +119,6 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 
 		p.initLoggers()
 		p.initHandlers(pCtx)
-		p.initServicePPROF()
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is started",
@@ -144,23 +139,6 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 		))
 		return p.stop()
 	}
-}
-
-func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-	defer func() { <-pCtx.Done() }()
-
-	if p.fWrapper.GetConfig().GetAddress().GetPPROF() == "" {
-		return
-	}
-
-	go func() {
-		err := p.fServicePPROF.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			pChErr <- err
-			return
-		}
-	}()
 }
 
 func (p *sApp) runTCPAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
@@ -244,7 +222,6 @@ func (p *sApp) setIntoDB(msg layer1.IMessage) error {
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fDatabase,
-		p.fServicePPROF,
 	})
 	if err != nil {
 		return errors.Join(ErrClose, err)

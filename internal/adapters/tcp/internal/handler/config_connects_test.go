@@ -182,7 +182,6 @@ type tsAddress struct{}
 
 func (p *tsAddress) GetExternal() string { return "external" }
 func (p *tsAddress) GetInternal() string { return "internal" }
-func (p *tsAddress) GetPPROF() string    { return "pprof" }
 
 type tsEditor struct {
 	fWithFail bool

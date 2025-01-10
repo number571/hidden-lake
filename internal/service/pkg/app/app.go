@@ -42,8 +42,7 @@ type sApp struct {
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
-	fServiceHTTP  *http.Server
-	fServicePPROF *http.Server
+	fServiceHTTP *http.Server
 }
 
 func NewApp(
@@ -75,7 +74,6 @@ func NewApp(
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
 		p.runListenerInternal,
-		p.runListenerPPROF,
 		p.runAnonymityNode,
 	}
 
@@ -109,7 +107,6 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrCreateAnonNode, err)
 		}
 
-		p.initServicePPROF()
 		p.initServiceHTTP(pCtx)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
@@ -140,7 +137,6 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fServiceHTTP,
-		p.fServicePPROF,
 		p.fNode.GetAnonymityNode().GetKVDatabase(),
 	})
 	if err != nil {
@@ -156,23 +152,6 @@ func (p *sApp) runAnonymityNode(pCtx context.Context, wg *sync.WaitGroup, pChErr
 		pChErr <- err
 		return
 	}
-}
-
-func (p *sApp) runListenerPPROF(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
-	defer wg.Done()
-	defer func() { <-pCtx.Done() }()
-
-	if p.fCfgW.GetConfig().GetAddress().GetPPROF() == "" {
-		return
-	}
-
-	go func() {
-		err := p.fServicePPROF.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			pChErr <- err
-			return
-		}
-	}()
 }
 
 func (p *sApp) runListenerInternal(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {

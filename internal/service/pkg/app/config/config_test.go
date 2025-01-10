@@ -23,7 +23,6 @@ const (
 	tcUploader        = "test_uploader"
 	tcAddressExternal = "test_address_external"
 	tcAddressInternal = "test_address_internal"
-	tcAddressPPROF    = "test_address_pprof"
 	tcPubKeyAlias1    = "test_alias1"
 	tcPubKeyAlias2    = "test_alias2"
 	tcServiceName1    = "test_service1"
@@ -62,7 +61,6 @@ logging:
 address:
   external: %s
   internal: %s
-  pprof: %s
 endpoints:
   - %s
   - %s
@@ -85,7 +83,6 @@ func testNewConfigString() string {
 		tcNetwork,
 		tcAddressExternal,
 		tcAddressInternal,
-		tcAddressPPROF,
 		tgAdapters[0],
 		tgAdapters[1],
 		tcPubKeyAlias1,
@@ -266,11 +263,6 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetAddress().GetInternal() != tcAddressInternal {
 		t.Error("address_internal is invalid")
-		return
-	}
-
-	if cfg.GetAddress().GetPPROF() != tcAddressPPROF {
-		t.Error("address_pprof is invalid")
 		return
 	}
 

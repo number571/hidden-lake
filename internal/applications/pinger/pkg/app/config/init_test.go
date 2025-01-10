@@ -31,11 +31,6 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config1.GetAddress().GetPPROF() != tcAddress2 {
-		t.Error("got invalid field with exist config (2)")
-		return
-	}
-
 	os.Remove(configFile)
 	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
 		t.Error(err)

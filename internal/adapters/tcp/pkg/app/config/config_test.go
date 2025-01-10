@@ -20,7 +20,6 @@ const (
 	tcDatabaseEnabled = true
 	tcAddressExternal = "external_address"
 	tcAddressInternal = "internal_address"
-	tcAddressPPROF    = "pprof_address"
 )
 
 var (
@@ -46,7 +45,6 @@ logging:
 address:
   external: %s
   internal: %s
-  pprof: %s
 endpoints:
   - %s
   - %s
@@ -65,7 +63,6 @@ func testNewConfigString() string {
 		tcDatabaseEnabled,
 		tcAddressExternal,
 		tcAddressInternal,
-		tcAddressPPROF,
 		tgEndpoints[0],
 		tgEndpoints[1],
 		tgConnections[0],
@@ -219,11 +216,6 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetAddress().GetInternal() != tcAddressInternal {
 		t.Error("address_internal is invalid")
-		return
-	}
-
-	if cfg.GetAddress().GetPPROF() != tcAddressPPROF {
-		t.Error("address_pprof is invalid")
 		return
 	}
 

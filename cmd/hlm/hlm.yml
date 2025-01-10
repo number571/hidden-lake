@@ -8,5 +8,4 @@ logging:
 address:
   internal: 127.0.0.1:9591
   external: 127.0.0.1:9592
-  # pprof: ""
 connection: 127.0.0.1:9572

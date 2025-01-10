@@ -17,7 +17,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			FLogging:  []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{
 				FExternal: hlr_settings.CDefaultExternalAddress,
-				FPPROF:    "",
 			},
 		}
 	}

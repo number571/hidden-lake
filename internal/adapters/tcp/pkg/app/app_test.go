@@ -103,7 +103,6 @@ func TestApp(t *testing.T) {
 		FAddress: &config.SAddress{
 			FInternal: testutils.TgAddrs[17],
 			FExternal: testutils.TgAddrs[20],
-			FPPROF:    testutils.TgAddrs[21],
 		},
 	})
 	if err != nil {

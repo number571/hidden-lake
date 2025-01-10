@@ -11,7 +11,6 @@ logging:
 address:
   external: 127.0.0.1:9571
   internal: 127.0.0.1:9572
-  # pprof: ""
 services:
   hidden-lake-pinger: 127.0.0.1:9552
   hidden-lake-messenger: 127.0.0.1:9592

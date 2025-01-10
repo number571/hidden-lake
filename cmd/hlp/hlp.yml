@@ -6,4 +6,3 @@ logging:
 - erro
 address:
   external: 127.0.0.1:9552
-  # pprof: ""

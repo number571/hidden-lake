@@ -33,7 +33,6 @@ func testConfigDefaultInit(configPath string) {
 		FLogging: []string{"info", "erro"},
 		FAddress: &SAddress{
 			FExternal: tcAddress1,
-			FPPROF:    tcAddress2,
 		},
 	})
 }
@@ -67,11 +66,6 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetAddress().GetExternal() != tcAddress1 {
 		t.Error("address incoming is invalid")
-		return
-	}
-
-	if cfg.GetAddress().GetPPROF() != tcAddress2 {
-		t.Error("address pprof is invalid")
 		return
 	}
 

@@ -24,14 +24,12 @@ logging:
 address:
   internal: '%s'
   external: '%s'
-  pprof: '%s'
 connection: '%s'`
 )
 
 const (
 	tcAddressInterface  = "address_interface"
 	tcAddressIncoming   = "address_incoming"
-	tcAddressPPROF      = "address_pprof"
 	tcConnectionService = "connection_service"
 	tcMessageSize       = (1 << 20)
 	tcPageOffset        = 10
@@ -56,7 +54,6 @@ func testNewConfigString() string {
 		tcRetryNum,
 		tcAddressInterface,
 		tcAddressIncoming,
-		tcAddressPPROF,
 		tcConnectionService,
 	)
 }
@@ -99,11 +96,6 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetAddress().GetExternal() != tcAddressIncoming {
 		t.Error("address.incoming is invalid")
-		return
-	}
-
-	if cfg.GetAddress().GetPPROF() != tcAddressPPROF {
-		t.Error("address.pprof is invalid")
 		return
 	}
 
