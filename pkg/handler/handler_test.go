@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/payload"
@@ -128,8 +128,8 @@ func (p *tsNode) GetNetworkNode() network.INode       { return &tsNetworkNode{} 
 func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 	return queue.NewQBProblemProcessor(
 		queue.NewSettings(&queue.SSettings{
-			FMessageConstructSettings: net_message.NewConstructSettings(&net_message.SConstructSettings{
-				FSettings: net_message.NewSettings(&net_message.SSettings{}),
+			FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
+				FSettings: layer1.NewSettings(&layer1.SSettings{}),
 			}),
 			FQueuePeriod:  5_000,
 			FConsumersCap: 1,
@@ -168,7 +168,7 @@ func (p *tsNetworkNode) GetSettings() network.ISettings {
 			FDialTimeout:           time.Second,
 			FReadTimeout:           time.Second,
 			FWriteTimeout:          time.Second,
-			FMessageSettings: net_message.NewSettings(&net_message.SSettings{
+			FMessageSettings: layer1.NewSettings(&layer1.SSettings{
 				FWorkSizeBits: 1,
 				FNetworkKey:   "_",
 			}),
@@ -191,4 +191,4 @@ func (p *tsNetworkNode) DelConnection(string) error {
 	return nil
 }
 
-func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }
+func (p *tsNetworkNode) BroadcastMessage(context.Context, layer1.IMessage) error { return nil }

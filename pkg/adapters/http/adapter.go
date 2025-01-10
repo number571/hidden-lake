@@ -10,7 +10,7 @@ import (
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/internal/utils/name"
@@ -28,7 +28,7 @@ var (
 
 type sHTTPAdapter struct {
 	fSettings   ISettings
-	fNetMsgChan chan net_message.IMessage
+	fNetMsgChan chan layer1.IMessage
 
 	fConnsGetter func() []string
 	fOnlines     *sOnlines
@@ -52,7 +52,7 @@ func NewHTTPAdapter(
 	return &sHTTPAdapter{
 		fSettings:    pSettings,
 		fCache:       pCache,
-		fNetMsgChan:  make(chan net_message.IMessage, netMessageChanSize),
+		fNetMsgChan:  make(chan layer1.IMessage, netMessageChanSize),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 		fLogger: logger.NewLogger(
@@ -102,7 +102,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 	return context.Canceled
 }
 
-func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
+func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) error {
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
 		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
@@ -152,7 +152,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessag
 	return nil
 }
 
-func (p *sHTTPAdapter) Consume(pCtx context.Context) (net_message.IMessage, error) {
+func (p *sHTTPAdapter) Consume(pCtx context.Context) (layer1.IMessage, error) {
 	select {
 	case <-pCtx.Done():
 		return nil, pCtx.Err()
@@ -180,7 +180,7 @@ func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msgLen := adapterSettings.GetMessageSizeBytes() + net_message.CMessageHeadSize
+	msgLen := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
 	msgLen <<= 1 // message hex_encoded
 	msgStr := make([]byte, msgLen)
 	n, err := io.ReadFull(r.Body, msgStr)
@@ -190,7 +190,7 @@ func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg, err := net_message.LoadMessage(adapterSettings, string(msgStr))
+	msg, err := layer1.LoadMessage(adapterSettings, string(msgStr))
 	if err != nil {
 		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
 		w.WriteHeader(http.StatusBadRequest)

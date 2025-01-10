@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 )
 
 var (
@@ -66,7 +66,7 @@ func (p *sClient) DelConnection(pCtx context.Context, pConnect string) error {
 	return nil
 }
 
-func (p *sClient) ProduceMessage(pCtx context.Context, pNetMsg net_message.IMessage) error {
+func (p *sClient) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessage) error {
 	if err := p.fRequester.ProduceMessage(pCtx, pNetMsg); err != nil {
 		return fmt.Errorf("produce message (client): %w", err)
 	}

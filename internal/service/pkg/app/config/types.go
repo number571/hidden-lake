@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -18,7 +18,7 @@ type IEditor interface {
 }
 
 type IConfigSettings interface {
-	net_message.ISettings
+	layer1.ISettings
 
 	GetMessageSizeBytes() uint64
 	GetFetchTimeout() time.Duration

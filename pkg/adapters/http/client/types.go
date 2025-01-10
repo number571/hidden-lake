@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 )
 
 type IClient interface {
@@ -16,7 +16,7 @@ type IClient interface {
 	AddConnection(context.Context, string) error
 	DelConnection(context.Context, string) error
 
-	ProduceMessage(context.Context, net_message.IMessage) error
+	ProduceMessage(context.Context, layer1.IMessage) error
 }
 
 type IRequester interface {
@@ -29,5 +29,5 @@ type IRequester interface {
 	AddConnection(context.Context, string) error
 	DelConnection(context.Context, string) error
 
-	ProduceMessage(context.Context, net_message.IMessage) error
+	ProduceMessage(context.Context, layer1.IMessage) error
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network/conn"
 )
 
@@ -22,11 +22,11 @@ var (
 
 type tsConn struct{}
 
-func (p *tsConn) Close() error                                             { return nil }
-func (p *tsConn) GetSettings() conn.ISettings                              { return nil }
-func (p *tsConn) GetSocket() net.Conn                                      { return &tsNetConn{} }
-func (p *tsConn) WriteMessage(context.Context, net_message.IMessage) error { return nil }
-func (p *tsConn) ReadMessage(context.Context, chan<- struct{}) (net_message.IMessage, error) {
+func (p *tsConn) Close() error                                        { return nil }
+func (p *tsConn) GetSettings() conn.ISettings                         { return nil }
+func (p *tsConn) GetSocket() net.Conn                                 { return &tsNetConn{} }
+func (p *tsConn) WriteMessage(context.Context, layer1.IMessage) error { return nil }
+func (p *tsConn) ReadMessage(context.Context, chan<- struct{}) (layer1.IMessage, error) {
 	return nil, nil
 }
 

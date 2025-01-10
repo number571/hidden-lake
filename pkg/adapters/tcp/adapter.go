@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/name"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
@@ -27,7 +27,7 @@ var (
 )
 
 type sTCPAdapter struct {
-	fNetMsgChan chan net_message.IMessage
+	fNetMsgChan chan layer1.IMessage
 	fConnKeeper connkeeper.IConnKeeper
 
 	fShortName string
@@ -41,7 +41,7 @@ func NewTCPAdapter(
 ) ITCPAdapter {
 	adapterSettings := pSettings.GetAdapterSettings()
 	p := &sTCPAdapter{
-		fNetMsgChan: make(chan net_message.IMessage, netMessageChanSize),
+		fNetMsgChan: make(chan layer1.IMessage, netMessageChanSize),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{
 				FDuration:    build.GSettings.GetKeeperPeriod(),
@@ -72,7 +72,7 @@ func NewTCPAdapter(
 	}
 	p.fConnKeeper.GetNetworkNode().HandleFunc(
 		build.GSettings.FProtoMask.FNetwork,
-		func(_ context.Context, _ network.INode, conn conn.IConn, msg net_message.IMessage) error {
+		func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
 			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 			p.fLogger.PushInfo(logBuilder.
 				WithType(internal_anon_logger.CLogInfoRecvNetworkMessage).
@@ -128,7 +128,7 @@ func (p *sTCPAdapter) Run(pCtx context.Context) error {
 	}
 }
 
-func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage) error {
+func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) error {
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
 		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
@@ -150,7 +150,7 @@ func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg net_message.IMessage
 	return nil
 }
 
-func (p *sTCPAdapter) Consume(pCtx context.Context) (net_message.IMessage, error) {
+func (p *sTCPAdapter) Consume(pCtx context.Context) (layer1.IMessage, error) {
 	select {
 	case <-pCtx.Done():
 		return nil, pCtx.Err()

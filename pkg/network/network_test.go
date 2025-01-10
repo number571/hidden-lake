@@ -9,7 +9,7 @@ import (
 
 	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/adapters"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
@@ -50,8 +50,8 @@ func TestPanicNode(t *testing.T) {
 		&tsDatabase{},
 		adapters.NewRunnerAdapter(
 			gopeer_adapters.NewAdapterByFuncs(
-				func(context.Context, net_message.IMessage) error { return nil },
-				func(context.Context) (net_message.IMessage, error) { return nil, nil },
+				func(context.Context, layer1.IMessage) error { return nil },
+				func(context.Context) (layer1.IMessage, error) { return nil, nil },
 			),
 			func(context.Context) error { return nil },
 		),
@@ -90,8 +90,8 @@ func (p *tsDatabase) Del([]byte) error           { return nil }
 func TestHiddenLakeNode(t *testing.T) {
 	t.Parallel()
 
-	msgChan1 := make(chan net_message.IMessage)
-	msgChan2 := make(chan net_message.IMessage)
+	msgChan1 := make(chan layer1.IMessage)
+	msgChan2 := make(chan layer1.IMessage)
 
 	node1 := testNewHiddenLakeNode("node1.db", msgChan2, msgChan1)
 	node1PubKey := node1.GetAnonymityNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
@@ -135,7 +135,7 @@ func TestHiddenLakeNode(t *testing.T) {
 	}
 }
 
-func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan net_message.IMessage) IHiddenLakeNode {
+func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) IHiddenLakeNode {
 	return NewHiddenLakeNode(
 		NewSettings(&SSettings{
 			FQueuePeriod:  time.Second,
@@ -154,11 +154,11 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan net_message
 		}(),
 		adapters.NewRunnerAdapter(
 			gopeer_adapters.NewAdapterByFuncs(
-				func(_ context.Context, msg net_message.IMessage) error {
+				func(_ context.Context, msg layer1.IMessage) error {
 					outMsgChan <- msg
 					return nil
 				},
-				func(_ context.Context) (net_message.IMessage, error) {
+				func(_ context.Context) (layer1.IMessage, error) {
 					return <-inMsgChan, nil
 				},
 			),

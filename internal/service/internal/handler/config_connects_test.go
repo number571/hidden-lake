@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -272,4 +272,4 @@ func (p *tsRequester) DelConnection(context.Context, string) error {
 	}
 	return nil
 }
-func (p *tsRequester) ProduceMessage(context.Context, net_message.IMessage) error { return nil }
+func (p *tsRequester) ProduceMessage(context.Context, layer1.IMessage) error { return nil }

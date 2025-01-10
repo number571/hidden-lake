@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/storage/cache"
@@ -217,7 +217,7 @@ func (p *tsNetworkNode) GetSettings() network.ISettings {
 			FDialTimeout:           time.Second,
 			FReadTimeout:           time.Second,
 			FWriteTimeout:          time.Second,
-			FMessageSettings: net_message.NewSettings(&net_message.SSettings{
+			FMessageSettings: layer1.NewSettings(&layer1.SSettings{
 				FWorkSizeBits: 1,
 				FNetworkKey:   "_",
 			}),
@@ -245,4 +245,4 @@ func (p *tsNetworkNode) DelConnection(string) error {
 	}
 	return nil
 }
-func (p *tsNetworkNode) BroadcastMessage(context.Context, net_message.IMessage) error { return nil }
+func (p *tsNetworkNode) BroadcastMessage(context.Context, layer1.IMessage) error { return nil }

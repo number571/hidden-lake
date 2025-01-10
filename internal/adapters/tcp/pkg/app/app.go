@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
@@ -230,7 +230,7 @@ func (p *sApp) runHTTPRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr c
 	}
 }
 
-func (p *sApp) setIntoDB(msg net_message.IMessage) error {
+func (p *sApp) setIntoDB(msg layer1.IMessage) error {
 	_, err := p.fDatabase.Get(msg.GetHash())
 	if err == nil {
 		return ErrExist

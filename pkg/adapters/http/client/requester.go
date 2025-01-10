@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	net_message "github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	hla_settings "github.com/number571/hidden-lake/pkg/adapters/http/settings"
 )
@@ -132,7 +132,7 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 	return nil
 }
 
-func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg net_message.IMessage) error {
+func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessage) error {
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
