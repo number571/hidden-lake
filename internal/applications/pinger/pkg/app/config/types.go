@@ -11,6 +11,7 @@ type IConfig interface {
 }
 
 type IConfigSettings interface {
+	GetResponseMessage() string
 }
 
 type IAddress interface {

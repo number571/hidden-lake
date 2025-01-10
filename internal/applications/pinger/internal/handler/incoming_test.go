@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/applications/pinger/pkg/app/config"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func TestHandleIncomingExecHTTP(t *testing.T) {
@@ -16,7 +18,7 @@ func TestHandleIncomingExecHTTP(t *testing.T) {
 		logger.NewSettings(&logger.SSettings{}),
 		func(_ logger.ILogArg) string { return "" },
 	)
-	handler := HandleIncomingPingHTTP(log)
+	handler := HandleIncomingPingHTTP(&tsConfig{}, log)
 
 	if err := incomingRequestMethod(handler); err != nil {
 		t.Error(err)
@@ -57,3 +59,13 @@ func incomingRequestSuccess(handler http.HandlerFunc) error {
 
 	return nil
 }
+
+type tsConfig struct{}
+
+func (p *tsConfig) GetSettings() config.IConfigSettings { return &tsConfigSettings{} }
+func (p *tsConfig) GetAddress() config.IAddress         { return nil }
+func (p *tsConfig) GetLogging() std_logger.ILogging     { return nil }
+
+type tsConfigSettings struct{}
+
+func (p *tsConfigSettings) GetResponseMessage() string { return "" }

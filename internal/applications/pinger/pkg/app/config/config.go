@@ -14,6 +14,7 @@ var (
 )
 
 type SConfigSettings struct {
+	FResponseMessage string `json:"response_message,omitempty" yaml:"response_message,omitempty"`
 }
 
 type SConfig struct {
@@ -103,6 +104,10 @@ func (p *SConfig) loadLogging() error {
 
 func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
+}
+
+func (p *SConfigSettings) GetResponseMessage() string {
+	return p.FResponseMessage
 }
 
 func (p *SConfig) GetAddress() IAddress {

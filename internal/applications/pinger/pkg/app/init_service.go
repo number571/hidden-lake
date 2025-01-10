@@ -12,7 +12,7 @@ func (p *sApp) initExternalServiceHTTP() {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		hlr_settings.CPingPath,
-		handler.HandleIncomingPingHTTP(p.fHTTPLogger),
+		handler.HandleIncomingPingHTTP(p.fConfig, p.fHTTPLogger),
 	) // POST
 
 	p.fExtServiceHTTP = &http.Server{
