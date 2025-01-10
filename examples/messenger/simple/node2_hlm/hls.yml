@@ -10,6 +10,7 @@ address:
   external: 127.0.0.1:7571
   internal: 127.0.0.1:7572
 services:
+  hidden-lake-pinger: 127.0.0.1:7552
   hidden-lake-messenger: 127.0.0.1:7071
 endpoints:
   - 127.0.0.1:9522
