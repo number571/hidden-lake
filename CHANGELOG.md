@@ -6,12 +6,17 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hlp`: new service - pinger
+
 ### CHANGES
 
 - `internal/service/pkg/config`: rename GetLimitMessageSizeBytes -> GetPayloadSizeBytes
 - `internal/utils/logger/anon`: addr, conn -> variable params
 - `internal/applications/*`: rename config params incoming,interface -> external,internal
 - `internal/applications/filesharer`: external param is now can be omitempty
+- `internal/applications/messenger`: deleted ping function
 
 ### BUG FIXES
 

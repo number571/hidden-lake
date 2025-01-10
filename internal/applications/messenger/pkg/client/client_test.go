@@ -34,10 +34,6 @@ func TestClient(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if err := client.PingMessage(ctx, "alias_name"); err != nil {
-		t.Error(err)
-		return
-	}
 }
 
 type tsHLSClient struct {
