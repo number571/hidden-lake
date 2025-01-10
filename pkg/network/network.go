@@ -10,7 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/build"
 )
 
@@ -40,5 +40,5 @@ func TestNewRunnerAdapter(t *testing.T) {
 
 type tsAdapter struct{}
 
-func (p *tsAdapter) Consume(context.Context) (message.IMessage, error) { return nil, nil }
-func (p *tsAdapter) Produce(context.Context, message.IMessage) error   { return nil }
+func (p *tsAdapter) Consume(context.Context) (layer1.IMessage, error) { return nil, nil }
+func (p *tsAdapter) Produce(context.Context, layer1.IMessage) error   { return nil }

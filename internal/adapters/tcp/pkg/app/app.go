@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"

@@ -9,7 +9,7 @@ import (
 
 	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/adapters"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"

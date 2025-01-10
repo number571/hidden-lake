@@ -1,7 +1,7 @@
 package config
 
 import (
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 

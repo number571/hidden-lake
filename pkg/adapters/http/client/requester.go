@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	hla_settings "github.com/number571/hidden-lake/pkg/adapters/http/settings"
 )

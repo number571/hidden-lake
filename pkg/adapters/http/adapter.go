@@ -10,7 +10,7 @@ import (
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/logger"
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/internal/utils/name"

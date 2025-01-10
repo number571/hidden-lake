@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/random"
-	"github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
@@ -147,9 +147,9 @@ func TestApp(t *testing.T) {
 
 	msgBytes := []byte("hello, world!")
 	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...)
-	netMsg := message.NewMessage(
-		message.NewConstructSettings(&message.SConstructSettings{
-			FSettings: message.NewSettings(&message.SSettings{
+	netMsg := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{
 				FWorkSizeBits: 10,
 				FNetworkKey:   "_",
 			}),

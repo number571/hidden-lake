@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	net_message "github.com/number571/go-peer/pkg/network/message"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 )
 
 type IClient interface {

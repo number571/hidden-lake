@@ -10,8 +10,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network/conn"
-	net_message "github.com/number571/go-peer/pkg/network/message"
 )
 
 var (

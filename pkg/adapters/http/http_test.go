@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/random"
-	"github.com/number571/go-peer/pkg/network/message"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
@@ -152,9 +152,9 @@ func TestHTTPAdapter(t *testing.T) {
 
 	msgBytes := []byte("hello, world!")
 	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...)
-	netMsg := message.NewMessage(
-		message.NewConstructSettings(&message.SConstructSettings{
-			FSettings: message.NewSettings(&message.SSettings{}),
+	netMsg := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
 		payload.NewPayload32(0x01, msgBytes),
 	)
@@ -168,9 +168,9 @@ func TestHTTPAdapter(t *testing.T) {
 		return
 	}
 
-	netMsg2 := message.NewMessage(
-		message.NewConstructSettings(&message.SConstructSettings{
-			FSettings: message.NewSettings(&message.SSettings{}),
+	netMsg2 := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
 		payload.NewPayload32(0x01, []byte{1}),
 	)

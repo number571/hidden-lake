@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	net_message "github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
-	net_message "github.com/number571/go-peer/pkg/network/message"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
