@@ -1,0 +1,11 @@
+settings:
+  message_size_bytes: 8192
+logging:
+- info
+- warn
+- erro
+address:
+  external: :7521
+  internal: 127.0.0.1:7522
+endpoints: 
+- 127.0.0.1:7571

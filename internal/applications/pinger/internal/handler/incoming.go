@@ -23,6 +23,6 @@ func HandleIncomingPingHTTP(pLogger logger.ILogger) http.HandlerFunc {
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, "pong")
+		_ = api.Response(pW, http.StatusOK, "")
 	}
 }

@@ -1,0 +1,7 @@
+settings: {}
+logging:
+- info
+- warn
+- erro
+address:
+  external: 127.0.0.1:8552

@@ -14,7 +14,17 @@ $ go install github.com/number571/hidden-lake/cmd/hlp@latest
 
 ## How it works
 
-...
+HLP is the simplest service.
+
+```go
+func handler() {
+    if method != GET {
+        response(StatusMethodNotAllowed)
+        return
+    }
+    response(StatusOK)
+}
+```
 
 ## Supported platforms
 
@@ -45,4 +55,23 @@ $ hlp --path /root
 
 ## Example
 
-...
+## Example
+
+The example will involve two nodes `recv_hlc, send_hls` and three repeaters `middle_hla_tcp_1, middle_hla_tcp_2, middle_hla_tcp_3`. The three remaining nodes are used only for the successful connection of the two main nodes. In other words, `HLA=tcp` nodes are traffic relay nodes.
+
+Build and run nodes
+```bash
+$ cd examples/pinger/routing
+$ make
+```
+
+Than run command
+```bash
+$ cd examples/pinger
+$ make request # go run ./_request/main.go
+```
+
+Got response
+```json
+{"code":200,"head":{"Content-Type":"text/plain"}}
+```
