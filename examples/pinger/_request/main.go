@@ -2,13 +2,10 @@ package main
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
-
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 )
 
 const (
@@ -31,19 +28,13 @@ func main() {
 	}()
 
 	receiver := "Bob"
-	message := fmt.Sprintf("bash%[1]s-c%[1]secho 'hello, world' >> file.txt && cat file.txt", hlr_settings.CExecSeparator)
-
-	sendMessage(receiver, []byte(message))
+	sendMessage(receiver)
 }
 
-func sendMessage(pReceiver string, pMessage []byte) {
+func sendMessage(pReceiver string) {
 	httpClient := http.Client{Timeout: time.Hour}
 
-	requestData := fmt.Sprintf(
-		cRequestTemplate,
-		pReceiver,
-		base64.StdEncoding.EncodeToString(pMessage),
-	)
+	requestData := fmt.Sprintf(cRequestTemplate, pReceiver)
 	req, err := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:7572/api/network/request",
