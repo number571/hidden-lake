@@ -8,6 +8,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
@@ -38,6 +39,7 @@ func initConfig() *SConfig {
 		FServices: []string{
 			hla_tcp_settings.CServiceFullName,
 			hls_settings.CServiceFullName,
+			hlp_settings.CServiceFullName,
 			hlm_settings.CServiceFullName,
 		},
 	}

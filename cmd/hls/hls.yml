@@ -13,6 +13,7 @@ address:
   internal: 127.0.0.1:9572
   # pprof: ""
 services:
+  hidden-lake-pinger: 127.0.0.1:9552
   hidden-lake-messenger: 127.0.0.1:9592
   # hidden-lake-filesharer: 127.0.0.1:9542
   # hidden-lake-remoter: 127.0.0.1:9532
