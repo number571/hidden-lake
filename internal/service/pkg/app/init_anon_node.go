@@ -23,14 +23,14 @@ func (p *sApp) initAnonNode() error {
 		cfgSettings = cfg.GetSettings()
 	)
 
+	client := client.NewClient(p.fPrivKey, cfgSettings.GetMessageSizeBytes())
+	if client.GetPayloadLimit() <= encoding.CSizeUint64 {
+		return ErrMessageSizeLimit
+	}
+
 	kvDatabase, err := database.NewKVDatabase(filepath.Join(p.fPathTo, hls_settings.CPathDB))
 	if err != nil {
 		return errors.Join(ErrOpenKVDatabase, err)
-	}
-
-	client := client.NewClient(p.fPrivKey, cfgSettings.GetMessageSizeBytes())
-	if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-		return errors.Join(ErrMessageSizeLimit, err)
 	}
 
 	adapterSettings := adapters.NewSettings(&adapters.SSettings{
