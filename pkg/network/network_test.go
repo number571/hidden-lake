@@ -78,6 +78,26 @@ func TestSettings(t *testing.T) {
 	t.Parallel()
 
 	_ = NewSettingsByNetworkKey(build.CDefaultNetwork, nil)
+
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
+	sett := NewSettings(nil)
+
+	if sett.GetAdapterSettings().GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {
+		t.Error("got invalid message size by default settings")
+		return
+	}
+
+	if sett.GetFetchTimeout() != defaultNetwork.GetFetchTimeout() {
+		t.Error("got invalid fetch timeout by default settings")
+		return
+	}
+
+	if sett.GetQueuePeriod() != defaultNetwork.GetQueuePeriod() {
+		t.Error("got invalid queue period by default settings")
+		return
+	}
+
+	sett.GetLogger().PushInfo("___")
 }
 
 type tsDatabase struct{}

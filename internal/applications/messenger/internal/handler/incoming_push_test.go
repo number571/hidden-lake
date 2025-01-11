@@ -154,6 +154,7 @@ type tsHLSClient struct {
 	fGetPubKey    bool
 	fPrivKey      asymmetric.IPrivKey
 	fFriendPubKey asymmetric.IPubKey
+	fPldSize      uint64
 }
 
 func newTsHLSClient(pGetPubKey, pWithOK bool) *tsHLSClient {

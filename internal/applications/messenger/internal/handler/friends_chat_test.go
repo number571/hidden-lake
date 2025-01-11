@@ -12,9 +12,27 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
+	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
+
+func TestGetMessage(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	if _, err := utils.GetMessageLimit(ctx, newTsHLSClient(true, false)); err == nil {
+		t.Error("success get message limit with settings failed")
+		return
+	}
+
+	hlsClient := newTsHLSClient(true, false)
+	hlsClient.fPldSize = 10
+	if _, err := utils.GetMessageLimit(ctx, hlsClient); err == nil {
+		t.Error("success get message limit with payload limit")
+		return
+	}
+}
 
 func TestFriendsChatPage(t *testing.T) {
 	t.Parallel()

@@ -58,6 +58,10 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 func (p *sSettings) useDefault() *sSettings {
 	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 
+	if p.FAdapterSettings == nil {
+		p.FAdapterSettings = adapters.NewSettings(nil)
+	}
+
 	if p.FQueuePeriod == 0 {
 		p.FQueuePeriod = defaultNetwork.GetQueuePeriod()
 	}
