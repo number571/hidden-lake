@@ -7,7 +7,7 @@ BINPATH=$(ROOPATH)/bin
 
 default: build move_hla remove-std
 build: 
-	for app in hls hlc hlm hlf hlr hla/hla_tcp; \
+	for app in hls hlc hlm hlf hlr hlp hla/hla_tcp; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \
