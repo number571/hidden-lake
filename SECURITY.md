@@ -8,8 +8,8 @@ If a problem is found and such a problem becomes critical, a new version of the 
 
 Most of the project updates are related to patch versions. The minor version, in turn, is updated solely based on considerations of stability of all functions during manual testing. Thus, patch versions are directly related to fixing problems and creating new functionality, while minor versions are related to standardizing everything created in patch versions.
 
-You can find out more about all the changes made during the correction or update of the project in the file [CHANGELOG.md](https://github.com/number571/go-peer/blob/master/CHANGELOG.md).
+You can find out more about all the changes made during the correction or update of the project in the file [CHANGELOG.md](https://github.com/number571/hidden-lake/blob/master/CHANGELOG.md).
 
 ## Reporting a Vulnerability
 
-If you have found a vulnerability, or another problem has been found in the project, then you can report it in the [Issue](https://github.com/number571/go-peer/issues/new). If you are using the program code and found a bug in it, then you can also leave a [Pull Request](https://github.com/number571/go-peer/pulls) with the fixed problem.
+If you have found a vulnerability, or another problem has been found in the project, then you can report it in the [Issue](https://github.com/number571/hidden-lake/issues/new). If you are using the program code and found a bug in it, then you can also leave a [Pull Request](https://github.com/number571/hidden-lake/pulls) with the fixed problem.
