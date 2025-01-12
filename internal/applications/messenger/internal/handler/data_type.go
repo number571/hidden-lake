@@ -8,36 +8,40 @@ import (
 	"strings"
 
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
-	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/chars"
+)
+
+const (
+	cIsText = 0x01
+	cIsFile = 0x02
 )
 
 func isText(pBytes []byte) bool {
 	if len(pBytes) == 0 {
 		return false
 	}
-	return pBytes[0] == hlm_settings.CIsText
+	return pBytes[0] == cIsText
 }
 
 func isFile(pBytes []byte) bool {
 	if len(pBytes) == 0 {
 		return false
 	}
-	return pBytes[0] == hlm_settings.CIsFile
+	return pBytes[0] == cIsFile
 }
 
 func wrapText(pMsg string) []byte {
 	return bytes.Join([][]byte{
-		{hlm_settings.CIsText},
+		{cIsText},
 		[]byte(pMsg),
 	}, []byte{})
 }
 
 func wrapFile(filename string, pBytes []byte) []byte {
 	return bytes.Join([][]byte{
-		{hlm_settings.CIsFile},
+		{cIsFile},
 		[]byte(filename),
-		{hlm_settings.CIsFile},
+		{cIsFile},
 		pBytes,
 	}, []byte{})
 }
@@ -59,7 +63,7 @@ func unwrapFile(pBytes []byte) (template.HTML, string) {
 	if !isFile(pBytes) {
 		return "", ""
 	}
-	splited := bytes.Split(pBytes[1:], []byte{hlm_settings.CIsFile})
+	splited := bytes.Split(pBytes[1:], []byte{cIsFile})
 	if len(splited) < 2 {
 		return "", ""
 	}
@@ -67,7 +71,7 @@ func unwrapFile(pBytes []byte) (template.HTML, string) {
 	if chars.HasNotGraphicCharacters(filename) {
 		return "", ""
 	}
-	fileBytes := bytes.Join(splited[1:], []byte{hlm_settings.CIsFile})
+	fileBytes := bytes.Join(splited[1:], []byte{cIsFile})
 	if len(fileBytes) == 0 {
 		return "", ""
 	}

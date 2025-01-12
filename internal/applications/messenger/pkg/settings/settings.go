@@ -41,8 +41,3 @@ const (
 	CHandleFriendsUploadPath = "/friends/upload"
 	CHandleFriendsChatWSPath = "/friends/chat/ws"
 )
-
-const (
-	CIsText = 0x01
-	CIsFile = 0x02
-)

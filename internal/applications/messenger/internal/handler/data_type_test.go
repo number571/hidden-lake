@@ -3,8 +3,6 @@ package handler
 import (
 	"encoding/base64"
 	"testing"
-
-	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 )
 
 const (
@@ -44,8 +42,8 @@ func TestDataType(t *testing.T) {
 		t.Error("wrapText: isFile(wt)")
 		return
 	}
-	if wt[0] != hlm_settings.CIsText {
-		t.Error("wrapText:  wt[0] != hlm_settings.CIsText")
+	if wt[0] != cIsText {
+		t.Error("wrapText:  wt[0] != cIsText")
 		return
 	}
 	if unwrapText(wt) != tcTextEscaped {
@@ -62,8 +60,8 @@ func TestDataType(t *testing.T) {
 		t.Error("wrapFile: isText(wf)")
 		return
 	}
-	if wf[0] != hlm_settings.CIsFile || wf[len(tcFile)+1] != hlm_settings.CIsFile {
-		t.Error("wrapFile: wf[0] != hlm_settings.CIsFile || wf[len(tcFile)+1] != hlm_settings.CIsFile")
+	if wf[0] != cIsFile || wf[len(tcFile)+1] != cIsFile {
+		t.Error("wrapFile: wf[0] != cIsFile || wf[len(tcFile)+1] != cIsFile")
 		return
 	}
 	if f, b := unwrapFile(wf); f != tcFile || b != base64.StdEncoding.EncodeToString([]byte(tcText)) {
