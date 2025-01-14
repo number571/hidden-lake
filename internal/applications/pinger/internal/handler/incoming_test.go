@@ -11,7 +11,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleIncomingExecHTTP(t *testing.T) {
+func TestHandleIncomingPingHTTP(t *testing.T) {
 	t.Parallel()
 
 	log := logger.NewLogger(

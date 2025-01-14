@@ -14,7 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/applications/pinger/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/applications/pinger/pkg/config"
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -89,7 +89,7 @@ func (p *sApp) enable(_ context.Context) state.IStateF {
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
-			hlr_settings.GServiceName.Short(),
+			hlp_settings.GServiceName.Short(),
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(p.fConfig)),
 		))
 		return nil
@@ -103,7 +103,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hlr_settings.GServiceName.Short(),
+			hlp_settings.GServiceName.Short(),
 		))
 		return p.stop()
 	}

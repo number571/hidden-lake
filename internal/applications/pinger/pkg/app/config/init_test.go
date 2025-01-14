@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 )
 
 const (
@@ -57,7 +57,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	if config3.GetAddress().GetExternal() != hlr_settings.CDefaultExternalAddress {
+	if config3.GetAddress().GetExternal() != hlp_settings.CDefaultExternalAddress {
 		t.Error("got invalid field with exist config (3)")
 		return
 	}

@@ -5,13 +5,13 @@ import (
 	"time"
 
 	"github.com/number571/hidden-lake/internal/applications/pinger/internal/handler"
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
+	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 )
 
 func (p *sApp) initExternalServiceHTTP() {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
-		hlr_settings.CPingPath,
+		hlp_settings.CPingPath,
 		handler.HandleIncomingPingHTTP(p.fConfig, p.fHTTPLogger),
 	) // POST
 
