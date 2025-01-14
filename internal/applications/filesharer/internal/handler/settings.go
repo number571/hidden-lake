@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/language"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	"github.com/number571/hidden-lake/internal/webui"
 
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -112,11 +112,8 @@ func getSettings(
 		return nil, errors.Join(ErrGetPublicKey, err)
 	}
 
-	myPubKeyStr := myPubKey.ToString()
-	result.FPublicKey = myPubKeyStr
-
-	// echo PubKey{...} | sha384sum
-	result.FPublicKeyHash = hashing.NewHasher([]byte(myPubKeyStr)).ToString()
+	result.FPublicKey = myPubKey.ToString()
+	result.FPublicKeyHash = pubkey.GetPubKeyHash(myPubKey)
 
 	gotSettings, err := pHlsClient.GetSettings(pCtx)
 	if err != nil {

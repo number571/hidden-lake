@@ -6,13 +6,14 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/utils/pubkey"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 )
 
 const (
 	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%04dB"
-	cLogAddrTemplate = " addr=%08X...%08X"
+	cLogAddrTemplate = " addr=%s...%s"
 	cLogConnTemplate = " conn=%s"
 )
 
@@ -59,8 +60,8 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		log.WriteString(fmt.Sprintf(cLogConnTemplate, x))
 	}
 	if x := pLogGetter.GetPubKey(); x != nil {
-		addr := hashing.NewHasher(x.ToBytes()).ToBytes()
-		log.WriteString(fmt.Sprintf(cLogAddrTemplate, addr[:4], addr[len(addr)-4:]))
+		addr := strings.ToUpper(pubkey.GetPubKeyHash(x))
+		log.WriteString(fmt.Sprintf(cLogAddrTemplate, addr[:8], addr[len(addr)-8:]))
 	}
 
 	return log.String()

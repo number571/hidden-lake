@@ -12,6 +12,7 @@ import (
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	"github.com/number571/hidden-lake/internal/webui"
 )
 
@@ -58,7 +59,7 @@ func FriendsPage(
 
 			if aliasName == "" {
 				// get hash of public key as alias_name
-				aliasName = pubKey.GetHasher().ToString()
+				aliasName = pubkey.GetPubKeyHash(pubKey)
 			}
 
 			if err := pHlsClient.AddFriend(pCtx, aliasName, pubKey); err != nil {
