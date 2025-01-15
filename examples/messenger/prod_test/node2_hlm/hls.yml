@@ -12,7 +12,7 @@ address:
   internal: :7572
 services:
   hidden-lake-pinger: 127.0.0.1:7552
-  hidden-lake-messenger: node2_hlc:7071
+  hidden-lake-messenger: 127.0.0.1:7071
 endpoints:
   - 127.0.0.1:7522
 friends:
