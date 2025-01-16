@@ -38,8 +38,7 @@ Creates [`./hlc.yml`](./hlc.yml) file.
 ## Running options
 
 ```bash
-$ hlc --path /root --network xxx --threads 1
+$ hlc --path /root --network xxx
 # path    = path to config, database, key files
 # network = use network configuration from networks.yml
-# threads = num of parallel functions for PoW algorithm
 ```

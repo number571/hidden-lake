@@ -31,5 +31,6 @@ type ISettings interface {
 type ISubSettings interface {
 	GetLogger() gopeer_logger.ILogger
 	GetParallel() uint64
+	GetQBConsumers() uint64
 	GetServiceName() string
 }

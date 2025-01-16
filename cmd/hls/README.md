@@ -97,10 +97,9 @@ The file `hls.db` stores hashes of sent/received messages.
 ## Running options
 
 ```bash
-$ hls --path /root --network xxx --threads 1
-# path    = path to config, database, key files
-# network = use network configuration from networks.yml
-# threads = num of parallel functions for PoW algorithm
+$ hls --path /root --network xxx
+# path      = path to config, database, key files
+# network   = use network configuration from networks.yml
 ```
 
 ## Example

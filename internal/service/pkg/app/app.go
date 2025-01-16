@@ -30,9 +30,8 @@ var (
 )
 
 type sApp struct {
-	fState    state.IState
-	fPathTo   string
-	fParallel uint64
+	fState  state.IState
+	fPathTo string
 
 	fCfgW    config.IWrapper
 	fNode    network.IHiddenLakeNode
@@ -49,7 +48,6 @@ func NewApp(
 	pCfg config.IConfig,
 	pPrivKey asymmetric.IPrivKey,
 	pPathTo string,
-	pParallel uint64,
 ) types.IRunner {
 	logging := pCfg.GetLogging()
 
@@ -62,7 +60,6 @@ func NewApp(
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fPathTo:     pPathTo,
-		fParallel:   pParallel,
 		fCfgW:       config.NewWrapper(pCfg),
 		fPrivKey:    pPrivKey,
 		fAnonLogger: anonLogger,

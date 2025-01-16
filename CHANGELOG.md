@@ -6,6 +6,11 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/hls`: move threads param from args -> hls.yml config (pow_parallel, default=0->1)
+- `build/settings.yml`: move consumers_cap -> hls.yml config (qb_consumers, default=0->1)
+
 <!-- ... -->
 
 ## v1.8.3

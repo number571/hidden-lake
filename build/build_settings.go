@@ -30,9 +30,8 @@ type SSettings struct {
 		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
 	FQueueProblem struct {
-		FMainPoolCap  uint64 `yaml:"main_pool_cap"`
-		FRandPoolCap  uint64 `yaml:"rand_pool_cap"`
-		FConsumersCap uint64 `yaml:"consumers_cap"`
+		FMainPoolCap uint64 `yaml:"main_pool_cap"`
+		FRandPoolCap uint64 `yaml:"rand_pool_cap"`
 	} `yaml:"queue_problem"`
 	FNetworkManager struct {
 		FConnectsLimiter uint64 `yaml:"connects_limiter"`
@@ -51,8 +50,7 @@ func (p SSettings) validate() error {
 	switch {
 	case
 		p.FQueueProblem.FMainPoolCap == 0,
-		p.FQueueProblem.FRandPoolCap == 0,
-		p.FQueueProblem.FConsumersCap == 0:
+		p.FQueueProblem.FRandPoolCap == 0:
 		return errors.New("queue_problem is invalid")
 	case
 		p.FNetworkManager.FConnectsLimiter == 0,

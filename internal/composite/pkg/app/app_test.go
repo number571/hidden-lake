@@ -27,11 +27,8 @@ var (
 			WithDescription("set path to config, database files").
 			WithDefinedValue("."),
 		flag.NewFlagBuilder("-n", "--network").
-			WithDescription("set network key for connections").
+			WithDescription("set network key of connections from build").
 			WithDefinedValue(""),
-		flag.NewFlagBuilder("-t", "--threads").
-			WithDescription("set num of parallel functions to calculate PoW").
-			WithDefinedValue("1"),
 	).Build()
 )
 
@@ -134,11 +131,6 @@ func TestInitApp(t *testing.T) {
 
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Error(err)
-		return
-	}
-
-	if _, err := InitApp([]string{"--path", tcTestdataPath, "--threads", "abc"}, tgFlags); err == nil {
-		t.Error("success init app with threads=abc")
 		return
 	}
 

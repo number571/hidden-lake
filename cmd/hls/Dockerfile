@@ -12,4 +12,4 @@ RUN go build -o hls ./cmd/hls
 ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."
 ENV SERVICE_THREADS="1"
-CMD ./hls --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}" --threads "${SERVICE_THREADS}"
+CMD ./hls --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}"

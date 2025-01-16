@@ -16,7 +16,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings.FQueueProblem.FMainPoolCap = 64
 	settings.FQueueProblem.FRandPoolCap = 64
-	settings.FQueueProblem.FConsumersCap = 1
 	if err := settings.validate(); err == nil {
 		t.Error("success validate with invalid network manager")
 		return
@@ -53,10 +52,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 	if GSettings.FQueueProblem.FRandPoolCap != 32 {
 		t.Error(`GSettings.QueueCapacity.FRandPoolCap != 32`)
-		return
-	}
-	if GSettings.FQueueProblem.FConsumersCap != 1 {
-		t.Error(`GSettings.QueueCapacity.FConsumersCap != 1`)
 		return
 	}
 	if GSettings.FNetworkManager.FCacheHashesCap != 2048 {

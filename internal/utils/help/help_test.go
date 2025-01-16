@@ -18,11 +18,8 @@ func ExamplePrintln() {
 				WithDescription("set path to config, database files").
 				WithDefinedValue("."),
 			flag.NewFlagBuilder("-n", "--network").
-				WithDescription("set network key for connections").
+				WithDescription("set network key of connections from build").
 				WithDefinedValue(""),
-			flag.NewFlagBuilder("-t", "--threads").
-				WithDescription("set num of parallel functions to calculate PoW").
-				WithDefinedValue("1"),
 		).Build(),
 	)
 	// Output:
@@ -32,6 +29,5 @@ func ExamplePrintln() {
 	// [ -v, --version ] = print information about service
 	// [ -h, --help ] = print version of service
 	// [ -p, --path ] = set path to config, database files
-	// [ -n, --network ] = set network key for connections
-	// [ -t, --threads ] = set num of parallel functions to calculate PoW
+	// [ -n, --network ] = set network key of connections from build
 }

@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
@@ -16,12 +15,6 @@ import (
 
 // initApp work with the raw data = read files, read args
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
-	strParallel := pFlags.Get("-t").GetStringValue(pArgs)
-	setParallel, err := strconv.ParseUint(strParallel, 10, 64)
-	if err != nil {
-		return nil, errors.Join(ErrGetParallel, err)
-	}
-
 	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
 
 	cfgPath := filepath.Join(inputPath, pkg_settings.CPathYML)
@@ -36,5 +29,5 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 		return nil, errors.Join(ErrGetPrivateKey, err)
 	}
 
-	return NewApp(cfg, privKey, inputPath, setParallel), nil
+	return NewApp(cfg, privKey, inputPath), nil
 }

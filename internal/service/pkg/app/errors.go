@@ -22,6 +22,7 @@ var (
 	ErrInitConfig       = &SAppError{"init config"}
 	ErrSetParallelNull  = &SAppError{"set parallel = 0"}
 	ErrGetParallel      = &SAppError{"get parallel"}
+	ErrGetConsumers     = &SAppError{"get consumers"}
 	ErrCreateAnonNode   = &SAppError{"create anon node"}
 	ErrOpenKVDatabase   = &SAppError{"open kv database"}
 	ErrReadKVDatabase   = &SAppError{"read kv database"}
