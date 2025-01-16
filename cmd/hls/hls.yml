@@ -2,6 +2,8 @@ settings:
   message_size_bytes: 8192
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
+  # pow_parallel: 0
+  # qb_consumers: 0
   # work_size_bits: 0
   # network_key: ""
 logging:
