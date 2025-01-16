@@ -47,7 +47,7 @@ func (p *sApp) initAnonNode() error {
 			FSubSettings: &network.SSubSettings{
 				FServiceName: hls_settings.GServiceName.Short(),
 				FLogger:      p.fAnonLogger,
-				FParallel:    cfgSettings.GetPowParallel(),
+				FPowParallel: cfgSettings.GetPowParallel(),
 				FQBConsumers: cfgSettings.GetQBConsumers(),
 			},
 		}),

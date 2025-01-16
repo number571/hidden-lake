@@ -49,7 +49,7 @@ func NewHiddenLakeNode(
 				queue.NewSettings(&queue.SSettings{
 					FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
 						FSettings: adaptersSettings,
-						FParallel: pSettings.GetParallel(),
+						FParallel: pSettings.GetPowParallel(),
 					}),
 					FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
 					FQueuePeriod:  pSettings.GetQueuePeriod(),

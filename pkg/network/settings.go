@@ -22,7 +22,7 @@ type sSettings struct {
 
 type SSubSettings struct {
 	FLogger      gopeer_logger.ILogger
-	FParallel    uint64
+	FPowParallel uint64
 	FQBConsumers uint64
 	FServiceName string
 }
@@ -79,8 +79,8 @@ func (p *sSettings) useDefault() *sSettings {
 		p.FSubSettings.FServiceName = "_"
 	}
 
-	if p.FSubSettings.FParallel == 0 {
-		p.FSubSettings.FParallel = 1
+	if p.FSubSettings.FPowParallel == 0 {
+		p.FSubSettings.FPowParallel = 1
 	}
 
 	if p.FSubSettings.FQBConsumers == 0 {
@@ -109,8 +109,8 @@ func (p *sSettings) GetFetchTimeout() time.Duration {
 	return p.FFetchTimeout
 }
 
-func (p *sSettings) GetParallel() uint64 {
-	return p.FSubSettings.FParallel
+func (p *sSettings) GetPowParallel() uint64 {
+	return p.FSubSettings.FPowParallel
 }
 
 func (p *sSettings) GetQBConsumers() uint64 {
