@@ -97,6 +97,21 @@ func TestSettings(t *testing.T) {
 		return
 	}
 
+	if sett.GetQBConsumers() != 1 {
+		t.Error("got invalid qb_consumers by default")
+		return
+	}
+
+	if sett.GetPowParallel() != 1 {
+		t.Error("got invalid pow_parallel by default")
+		return
+	}
+
+	if sett.GetServiceName() != "_" {
+		t.Error("got invalid service_name by default")
+		return
+	}
+
 	sett.GetLogger().PushInfo("___")
 }
 
