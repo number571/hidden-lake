@@ -21,10 +21,10 @@ type sSettings struct {
 }
 
 type SSubSettings struct {
-	FLogger      gopeer_logger.ILogger
-	FPowParallel uint64
-	FQBConsumers uint64
-	FServiceName string
+	FLogger       gopeer_logger.ILogger
+	FPowParallel  uint64
+	FQBPConsumers uint64
+	FServiceName  string
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -83,8 +83,8 @@ func (p *sSettings) useDefault() *sSettings {
 		p.FSubSettings.FPowParallel = 1
 	}
 
-	if p.FSubSettings.FQBConsumers == 0 {
-		p.FSubSettings.FQBConsumers = 1
+	if p.FSubSettings.FQBPConsumers == 0 {
+		p.FSubSettings.FQBPConsumers = 1
 	}
 
 	if p.FSubSettings.FLogger == nil {
@@ -113,8 +113,8 @@ func (p *sSettings) GetPowParallel() uint64 {
 	return p.FSubSettings.FPowParallel
 }
 
-func (p *sSettings) GetQBConsumers() uint64 {
-	return p.FSubSettings.FQBConsumers
+func (p *sSettings) GetQBPConsumers() uint64 {
+	return p.FSubSettings.FQBPConsumers
 }
 
 func (p *sSettings) GetServiceName() string {

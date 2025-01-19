@@ -31,7 +31,7 @@ const (
 	tcWorkSize        = 22
 	tcFetchTimeout    = 5000
 	tcQueuePeriod     = 1000
-	tcQBConsumers     = 5
+	tcQBPConsumers    = 5
 	tcPowParallel     = 8
 )
 
@@ -57,7 +57,7 @@ const (
   fetch_timeout_ms: %d
   queue_period_ms: %d
   network_key: %s
-  qb_consumers: %d
+  qbp_consumers: %d
   pow_parallel: %d
 logging:
   - info
@@ -85,7 +85,7 @@ func testNewConfigString() string {
 		tcFetchTimeout,
 		tcQueuePeriod,
 		tcNetwork,
-		tcQBConsumers,
+		tcQBPConsumers,
 		tcPowParallel,
 		tcAddressExternal,
 		tcAddressInternal,
@@ -262,8 +262,8 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetSettings().GetQBConsumers() != tcQBConsumers {
-		t.Error("qb_consumers is invalid")
+	if cfg.GetSettings().GetQBPConsumers() != tcQBPConsumers {
+		t.Error("qbp_consumers is invalid")
 		return
 	}
 

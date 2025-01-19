@@ -15,7 +15,7 @@ func GetConfigSettings(pCfg config.IConfig, pClient client.IClient) SConfigSetti
 			FNetworkKey:       sett.GetNetworkKey(),
 			FMessageSizeBytes: sett.GetMessageSizeBytes(),
 			FWorkSizeBits:     sett.GetWorkSizeBits(),
-			FQBConsumers:      sett.GetQBConsumers(),
+			FQBPConsumers:     sett.GetQBPConsumers(),
 			FPowParallel:      sett.GetPowParallel(),
 			FFetchTimeoutMS:   uint64(sett.GetFetchTimeout() / time.Millisecond),
 			FQueuePeriodMS:    uint64(sett.GetQueuePeriod() / time.Millisecond),

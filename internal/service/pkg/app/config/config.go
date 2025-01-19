@@ -22,7 +22,7 @@ type SConfigSettings struct {
 	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
 	FQueuePeriodMS    uint64 `json:"queue_period_ms" yaml:"queue_period_ms"`
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FQBConsumers      uint64 `json:"qb_consumers,omitempty" yaml:"qb_consumers,omitempty"`
+	FQBPConsumers     uint64 `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
 	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 }
@@ -110,8 +110,8 @@ func (p *SConfigSettings) GetNetworkKey() string {
 	return p.FNetworkKey
 }
 
-func (p *SConfigSettings) GetQBConsumers() uint64 {
-	return p.FQBConsumers
+func (p *SConfigSettings) GetQBPConsumers() uint64 {
+	return p.FQBPConsumers
 }
 
 func (p *SConfigSettings) GetPowParallel() uint64 {

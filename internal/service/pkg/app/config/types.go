@@ -25,7 +25,7 @@ type IConfigSettings interface {
 	GetQueuePeriod() time.Duration
 
 	GetPowParallel() uint64
-	GetQBConsumers() uint64
+	GetQBPConsumers() uint64
 }
 
 type IConfig interface {

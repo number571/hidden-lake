@@ -97,8 +97,8 @@ func TestSettings(t *testing.T) {
 		return
 	}
 
-	if sett.GetQBConsumers() != 1 {
-		t.Error("got invalid qb_consumers by default")
+	if sett.GetQBPConsumers() != 1 {
+		t.Error("got invalid qbp_consumers by default")
 		return
 	}
 
