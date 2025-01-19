@@ -1212,21 +1212,21 @@
 
 
 <g>
+	<rect x="561.868622" y="282.962768" width="42.621352" height="9.225906" style="fill: rgb(26, 152, 80);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	
+</g>
+
+
+<g>
 	<rect x="590.608486" y="234.417034" width="18.943623" height="40.545734" style="fill: rgb(57, 164, 86);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 <text 
 	data-notex="1" 
 	text-anchor="start"
-	transform="translate(598.608486,250.017034) scale(0.018037)"
+	transform="translate(598.608486,250.017034) scale(0.025552)"
 	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(0, 0, 0); fill-opacity: 1.00; white-space: pre;" 
-	data-math="N">init_anon_node.go</text>
+	data-math="N">init_node.go</text>
 		
-</g>
-
-
-<g>
-	<rect x="561.868622" y="282.962768" width="42.621352" height="9.225906" style="fill: rgb(26, 152, 80);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
-	
 </g>
 
 
