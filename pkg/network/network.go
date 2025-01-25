@@ -25,7 +25,7 @@ var (
 )
 
 type sHiddenLakeNode struct {
-	fAnonymityNode anonymity.INode
+	fOriginNode anonymity.INode
 }
 
 func NewHiddenLakeNode(
@@ -75,7 +75,7 @@ func NewHiddenLakeNode(
 }
 
 func (p *sHiddenLakeNode) GetOriginNode() anonymity.INode {
-	return p.fAnonymityNode
+	return p.fOriginNode
 }
 
 func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
@@ -90,7 +90,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		ra, ok := p.fAnonymityNode.GetAdapter().(adapters.IRunnerAdapter)
+		ra, ok := p.fOriginNode.GetAdapter().(adapters.IRunnerAdapter)
 		if !ok {
 			errs[0] = ErrAdapterNotRunner
 			return
@@ -100,7 +100,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		errs[1] = p.fAnonymityNode.Run(chCtx)
+		errs[1] = p.fOriginNode.Run(chCtx)
 	}()
 
 	wg.Wait()
@@ -119,7 +119,7 @@ func (p *sHiddenLakeNode) SendRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) error {
-	err := p.fAnonymityNode.SendPayload(
+	err := p.fOriginNode.SendPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
@@ -138,7 +138,7 @@ func (p *sHiddenLakeNode) FetchRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
-	rspBytes, err := p.fAnonymityNode.FetchPayload(
+	rspBytes, err := p.fOriginNode.FetchPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
