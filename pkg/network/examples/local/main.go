@@ -111,8 +111,8 @@ func runAsRelayer(ctx context.Context, adapter adapters.IRunnerAdapter) error {
 }
 
 func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
-	node1 := hlNode1.GetAnonymityNode()
-	node2 := hlNode2.GetAnonymityNode()
+	node1 := hlNode1.GetOriginNode()
+	node2 := hlNode2.GetOriginNode()
 
 	pubKey1 := node1.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
 	pubKey2 := node2.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()

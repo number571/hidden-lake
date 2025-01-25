@@ -129,15 +129,15 @@ func TestHiddenLakeNode(t *testing.T) {
 	msgChan2 := make(chan layer1.IMessage)
 
 	node1 := testNewHiddenLakeNode("node1.db", msgChan2, msgChan1)
-	node1PubKey := node1.GetAnonymityNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
+	node1PubKey := node1.GetOriginNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
 	defer os.Remove("node1.db")
 
 	node2 := testNewHiddenLakeNode("node2.db", msgChan1, msgChan2)
-	node2PubKey := node2.GetAnonymityNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
+	node2PubKey := node2.GetOriginNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
 	defer os.Remove("node2.db")
 
-	node1.GetAnonymityNode().GetMapPubKeys().SetPubKey(node2PubKey)
-	node2.GetAnonymityNode().GetMapPubKeys().SetPubKey(node1PubKey)
+	node1.GetOriginNode().GetMapPubKeys().SetPubKey(node2PubKey)
+	node2.GetOriginNode().GetMapPubKeys().SetPubKey(node1PubKey)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

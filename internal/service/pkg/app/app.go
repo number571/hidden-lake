@@ -111,7 +111,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_settings.GServiceName.Short(),
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(
 				p.fCfgW.GetConfig(),
-				p.fNode.GetAnonymityNode().GetQBProcessor().GetClient(),
+				p.fNode.GetOriginNode().GetQBProcessor().GetClient(),
 			)),
 		))
 		return nil
@@ -134,7 +134,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 func (p *sApp) stop() error {
 	err := closer.CloseAll([]io.Closer{
 		p.fServiceHTTP,
-		p.fNode.GetAnonymityNode().GetKVDatabase(),
+		p.fNode.GetOriginNode().GetKVDatabase(),
 	})
 	if err != nil {
 		return errors.Join(ErrClose, err)

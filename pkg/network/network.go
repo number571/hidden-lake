@@ -74,7 +74,7 @@ func NewHiddenLakeNode(
 	}
 }
 
-func (p *sHiddenLakeNode) GetAnonymityNode() anonymity.INode {
+func (p *sHiddenLakeNode) GetOriginNode() anonymity.INode {
 	return p.fAnonymityNode
 }
 

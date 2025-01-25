@@ -13,7 +13,7 @@ import (
 func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux := http.NewServeMux()
 	cfg := p.fCfgW.GetConfig()
-	origNode := p.fNode.GetAnonymityNode()
+	origNode := p.fNode.GetOriginNode()
 
 	endpoints := cfg.GetEndpoints()
 	epClients := make([]client.IClient, 0, len(endpoints))

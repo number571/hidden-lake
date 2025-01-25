@@ -64,7 +64,7 @@ func (p *sApp) initAnonNode() error {
 		handler.HandleServiceFunc(cfg, p.fAnonLogger),
 	)
 
-	originNode := node.GetAnonymityNode()
+	originNode := node.GetOriginNode()
 	for _, f := range cfg.GetFriends() {
 		originNode.GetMapPubKeys().SetPubKey(f)
 	}
