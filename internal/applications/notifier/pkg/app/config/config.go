@@ -22,6 +22,7 @@ type SConfigSettings struct {
 	FMessagesCapacity uint64 `json:"messages_capacity" yaml:"messages_capacity"`
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FLanguage         string `json:"language,omitempty" yaml:"language,omitempty"`
 }
 
@@ -146,6 +147,10 @@ func (p *SConfigSettings) GetLanguage() language.ILanguage {
 
 func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
+}
+
+func (p *SConfigSettings) GetNetworkKey() string {
+	return p.FNetworkKey
 }
 
 func (p *SConfigSettings) GetPowParallel() uint64 {

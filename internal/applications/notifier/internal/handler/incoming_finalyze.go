@@ -2,12 +2,15 @@ package handler
 
 import (
 	"context"
+	"io"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
 	"github.com/number571/hidden-lake/internal/utils/alias"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/layer1x"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
@@ -26,13 +29,6 @@ func HandleIncomingFinalyzeHTTP(
 	pBroker msgdata.IMessageBroker,
 	pHLSClient hls_client.IClient,
 ) http.HandlerFunc {
-	sett := pConfig.GetSettings()
-	hlnClient := hln_client.NewClient(
-		sett,
-		hln_client.NewBuilder(),
-		hln_client.NewRequester(pHLSClient),
-	)
-
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeOFF)
 
@@ -44,10 +40,29 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		proof, hash, saltBytes, bodyBytes, err := readRequestWithValidate(pR, sett.GetWorkSizeBits())
+		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("read_body"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: read body")
+			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode body")
+			return
+		}
+
+		rawMsg, err := layer1.LoadMessage(
+			layer1.NewSettings(&layer1.SSettings{
+				FWorkSizeBits: pConfig.GetSettings().GetWorkSizeBits(),
+			}),
+			msgBytes,
+		)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("decode_message"))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message")
+			return
+		}
+
+		rawBodyBytes, err := layer1x.ExtractMessage(rawMsg)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("extract_raw_message"))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: extract raw message")
 			return
 		}
 
@@ -59,14 +74,28 @@ func HandleIncomingFinalyzeHTTP(
 		}
 
 		rel := database.NewRelation(myPubKey)
-		hashExist, err := pDB.SetHash(rel, true, hash)
+		hashExist, err := pDB.SetHash(rel, true, rawMsg.GetHash())
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
 			return
 		}
 
-		if !hashExist {
+		// try decrypt message
+		decMsg, err := layer1.LoadMessage(
+			layer1.NewSettings(&layer1.SSettings{
+				FNetworkKey: pConfig.GetSettings().GetNetworkKey(),
+			}),
+			rawBodyBytes,
+		)
+		if !hashExist && err == nil {
+			bodyBytes, err := layer1x.ExtractMessage(decMsg)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("extract_dec_message"))
+				_ = api.Response(pW, http.StatusBadRequest, "failed: extract dec message")
+				return
+			}
+
 			dbMsg := database.NewMessage(true, bodyBytes)
 			msg, err := msgdata.GetMessage(dbMsg.GetMessage(), dbMsg.GetTimestamp())
 			if err != nil {
@@ -91,8 +120,11 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		err = hlnClient.Finalyze(pCtx, alias.GetAliasesList(friends), proof, saltBytes, bodyBytes)
-		if err != nil {
+		hlnClient := hln_client.NewClient(
+			hln_client.NewBuilder(),
+			hln_client.NewRequester(pHLSClient),
+		)
+		if err := hlnClient.Finalyze(pCtx, alias.GetAliasesList(friends), rawMsg); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("finalyze"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: finalyze")
 			return

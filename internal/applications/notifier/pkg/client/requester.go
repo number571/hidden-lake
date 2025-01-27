@@ -23,10 +23,7 @@ func NewRequester(pHLSClient hls_client.IClient) IRequester {
 }
 
 func (p *sRequester) Broadcast(pCtx context.Context, pAliasNames []string, pRequest hls_request.IRequest) error {
-	switch {
-	case len(pAliasNames) == 0:
-		fallthrough
-	case len(pAliasNames) == 1 && pAliasNames[0] == "":
+	if len(pAliasNames) == 0 {
 		return ErrTargetsIsNull
 	}
 	for _, alias := range pAliasNames {

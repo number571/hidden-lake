@@ -25,6 +25,7 @@ type IConfigSettings interface {
 	GetMessagesCapacity() uint64
 	GetWorkSizeBits() uint64
 	GetPowParallel() uint64
+	GetNetworkKey() string
 	GetLanguage() language.ILanguage
 }
 

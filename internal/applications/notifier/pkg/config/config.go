@@ -12,6 +12,7 @@ func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
 			FMessagesCapacity: sett.GetMessagesCapacity(),
 			FWorkSizeBits:     sett.GetWorkSizeBits(),
 			FPowParallel:      sett.GetPowParallel(),
+			FNetworkKey:       sett.GetNetworkKey(),
 			FLanguage:         language.FromILanguage(sett.GetLanguage()),
 		},
 	}

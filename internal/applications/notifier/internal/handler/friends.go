@@ -90,7 +90,7 @@ func FriendsPage(
 		result.sTemplate = getTemplate(pCfg)
 		result.FFriends = make([]string, 0, len(friends))
 		result.FFriendBaseURL = "/friends/chat"
-		result.FUsedBaseURLBlock = "Anonymous chat"
+		result.FUsedBaseURLBlock = "Channel"
 
 		friendsList := make([]string, 0, len(friends))
 		for aliasName := range friends {

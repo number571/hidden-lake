@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/number571/go-peer/pkg/message/layer1"
 	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
@@ -11,9 +12,8 @@ const (
 )
 
 type IClient interface {
-	Initialize(context.Context, []string, []byte) ([]byte, error)
-	Finalyze(context.Context, []string, uint64, []byte, []byte) error
-	Redirect(context.Context, []string, string, uint64, []byte, []byte) error
+	Finalyze(context.Context, []string, layer1.IMessage) error
+	Redirect(context.Context, []string, string, layer1.IMessage) error
 }
 
 type IRequester interface {
@@ -21,8 +21,8 @@ type IRequester interface {
 }
 
 type IBuilder interface {
-	Finalyze(uint64, []byte, []byte) hls_request.IRequest
-	Redirect(uint64, []byte, []byte) hls_request.IRequest
+	Finalyze(layer1.IMessage) hls_request.IRequest
+	Redirect(layer1.IMessage) hls_request.IRequest
 }
 
 type ISettings interface {

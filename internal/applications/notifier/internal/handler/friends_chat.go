@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
 	internal_utils "github.com/number571/hidden-lake/internal/applications/notifier/internal/utils"
 	"github.com/number571/hidden-lake/internal/applications/notifier/pkg/app/config"
@@ -13,6 +14,7 @@ import (
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/notifier/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/alias"
+	"github.com/number571/hidden-lake/internal/utils/layer1x"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"github.com/number571/hidden-lake/internal/webui"
@@ -151,16 +153,31 @@ func pushMessage(
 		return nil, ErrLenMessageGtLimit
 	}
 
+	cfgSett := pCfg.GetSettings()
+	msg := layer1x.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{
+				FWorkSizeBits: cfgSett.GetWorkSizeBits(),
+			}),
+			FParallel: cfgSett.GetPowParallel(),
+		}),
+		layer1x.NewMessage(
+			layer1.NewConstructSettings(&layer1.SConstructSettings{
+				FSettings: layer1.NewSettings(&layer1.SSettings{
+					FNetworkKey: cfgSett.GetNetworkKey(),
+				}),
+			}),
+			pMsgBytes,
+		).ToBytes(),
+	)
+
 	hlnClient := hln_client.NewClient(
-		pCfg.GetSettings(),
 		hln_client.NewBuilder(),
 		hln_client.NewRequester(pClient),
 	)
-
-	hash, err := hlnClient.Initialize(pCtx, pFriends, pMsgBytes)
-	if err != nil {
+	if err := hlnClient.Redirect(pCtx, pFriends, "", msg); err != nil {
 		return nil, errors.Join(ErrPushMessage, err)
 	}
 
-	return hash, nil
+	return msg.GetHash(), nil
 }

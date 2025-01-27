@@ -1,13 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"context"
-	"math"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
-	"github.com/number571/go-peer/pkg/crypto/puzzle"
 	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/hidden-lake/internal/utils/rand"
 )
 
 var (
@@ -15,50 +13,39 @@ var (
 )
 
 type sClient struct {
-	fSettings  ISettings
 	fBuilder   IBuilder
 	fRequester IRequester
 }
 
-func NewClient(pSettings ISettings, pBuilder IBuilder, pRequester IRequester) IClient {
+func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
 	return &sClient{
-		fSettings:  pSettings,
 		fBuilder:   pBuilder,
 		fRequester: pRequester,
 	}
 }
 
-func (p *sClient) Initialize(pCtx context.Context, pTargets []string, pBody []byte) ([]byte, error) {
-	salt := random.NewRandom().GetBytes(CSaltSize)
-	hash := hashing.NewHasher(bytes.Join([][]byte{salt, pBody}, []byte{})).ToBytes()
-	powPuzzle := puzzle.NewPoWPuzzle(p.fSettings.GetWorkSizeBits())
-	proof := powPuzzle.ProofBytes(hash, p.fSettings.GetPowParallel())
-	return hash, p.Redirect(pCtx, pTargets, "", proof, salt, pBody)
-}
-
 func (p *sClient) Finalyze(
 	pCtx context.Context,
 	pTargets []string,
-	pProof uint64,
-	pSalt []byte,
-	pBody []byte,
+	pMsg layer1.IMessage,
 ) error {
-	return p.fRequester.Broadcast(pCtx, pTargets, p.fBuilder.Finalyze(pProof, pSalt, pBody))
+	return p.fRequester.Broadcast(pCtx, pTargets, p.fBuilder.Finalyze(pMsg))
 }
 
 func (p *sClient) Redirect(
 	pCtx context.Context,
 	pTargets []string,
 	pIgnore string,
-	pProof uint64,
-	pSalt []byte,
-	pBody []byte,
+	pMsg layer1.IMessage,
 ) error {
 	if r := random.NewRandom(); r.GetBool() {
-		return p.Finalyze(pCtx, pTargets, pProof, pSalt, pBody)
+		return p.Finalyze(pCtx, pTargets, pMsg)
 	}
-	randTarget := []string{getRandomTarget(deleteTarget(pTargets, pIgnore))}
-	return p.fRequester.Broadcast(pCtx, randTarget, p.fBuilder.Redirect(pProof, pSalt, pBody))
+	randTarget := make([]string, 0, 1)
+	if x := getRandomTarget(deleteTarget(pTargets, pIgnore)); x != "" {
+		randTarget = append(randTarget, x)
+	}
+	return p.fRequester.Broadcast(pCtx, randTarget, p.fBuilder.Redirect(pMsg))
 }
 
 func deleteTarget(pFriends []string, pIgnore string) []string {
@@ -75,19 +62,10 @@ func deleteTarget(pFriends []string, pIgnore string) []string {
 	return result
 }
 
-// The equally probable randomness of a set of bits.
 func getRandomTarget(pFriends []string) string {
 	if len(pFriends) == 0 {
 		return ""
 	}
-	random := random.NewRandom()
-	lenTargets := uint64(len(pFriends))
-	pow2 := uint64(math.Pow(2, math.Ceil(math.Log2(float64(lenTargets)))))
-	for {
-		u64 := random.GetUint64() % pow2
-		if u64 >= lenTargets {
-			continue
-		}
-		return pFriends[u64]
-	}
+	lenFriends := uint64(len(pFriends))
+	return pFriends[rand.UniformIntn(lenFriends)]
 }

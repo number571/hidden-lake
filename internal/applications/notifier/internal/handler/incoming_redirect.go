@@ -1,17 +1,13 @@
 package handler
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"io"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
-	"github.com/number571/go-peer/pkg/crypto/puzzle"
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/hidden-lake/internal/applications/notifier/pkg/app/config"
 	hln_client "github.com/number571/hidden-lake/internal/applications/notifier/pkg/client"
 	hln_settings "github.com/number571/hidden-lake/internal/applications/notifier/pkg/settings"
@@ -19,6 +15,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/alias"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/layer1x"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
@@ -28,13 +25,6 @@ func HandleIncomingRedirectHTTP(
 	pLogger logger.ILogger,
 	pHLSClient hls_client.IClient,
 ) http.HandlerFunc {
-	sett := pConfig.GetSettings()
-	hlnClient := hln_client.NewClient(
-		sett,
-		hln_client.NewBuilder(),
-		hln_client.NewRequester(pHLSClient),
-	)
-
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeOFF)
 
@@ -46,10 +36,28 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		proof, _, saltBytes, bodyBytes, err := readRequestWithValidate(pR, sett.GetWorkSizeBits())
+		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("read_body"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: read body")
+			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode body")
+			return
+		}
+
+		rawMsg, err := layer1.LoadMessage(
+			layer1.NewSettings(&layer1.SSettings{
+				FWorkSizeBits: pConfig.GetSettings().GetWorkSizeBits(),
+			}),
+			msgBytes,
+		)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("decode_message"))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message")
+			return
+		}
+
+		if _, err := layer1x.ExtractMessage(rawMsg); err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("decode_message_body"))
+			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message body")
 			return
 		}
 
@@ -74,8 +82,11 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		err = hlnClient.Redirect(pCtx, alias.GetAliasesList(friends), aliasName, proof, saltBytes, bodyBytes)
-		if err != nil {
+		hlnClient := hln_client.NewClient(
+			hln_client.NewBuilder(),
+			hln_client.NewRequester(pHLSClient),
+		)
+		if err := hlnClient.Redirect(pCtx, alias.GetAliasesList(friends), aliasName, rawMsg); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("redirect"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: redirect")
 			return
@@ -84,32 +95,4 @@ func HandleIncomingRedirectHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage("redirect"))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
-}
-
-func readRequestWithValidate(pR *http.Request, pWorkSizeBits uint64) (uint64, []byte, []byte, []byte, error) {
-	bodyBytes, err := io.ReadAll(pR.Body)
-	if err != nil {
-		return 0, nil, nil, nil, err
-	}
-
-	proofBytes := encoding.HexDecode(pR.Header.Get(hln_settings.CHeaderPow))
-	if proofBytes == nil {
-		return 0, nil, nil, nil, errors.New("proof bytes is nil") // nolint: err113
-	}
-
-	saltBytes := encoding.HexDecode(pR.Header.Get(hln_settings.CHeaderSalt))
-	if saltBytes == nil || len(saltBytes) != hln_client.CSaltSize {
-		return 0, nil, nil, nil, errors.New("salt bytes is nil") // nolint: err113
-	}
-
-	proofArr := [encoding.CSizeUint64]byte{}
-	copy(proofArr[:], proofBytes)
-	proof := encoding.BytesToUint64(proofArr)
-
-	hash := hashing.NewHasher(bytes.Join([][]byte{saltBytes, bodyBytes}, []byte{})).ToBytes()
-	if !puzzle.NewPoWPuzzle(pWorkSizeBits).VerifyBytes(hash, proof) {
-		return 0, nil, nil, nil, errors.New("salt bytes is nil") // nolint: err113
-	}
-
-	return proof, hash, saltBytes, bodyBytes, nil
 }
