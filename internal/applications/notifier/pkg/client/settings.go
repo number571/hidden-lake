@@ -6,8 +6,8 @@ var (
 
 type SSettings sSettings
 type sSettings struct {
-	FDiffBits uint64
-	FParallel uint64
+	FWorkSizeBits uint64
+	FPowParallel  uint64
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -15,22 +15,22 @@ func NewSettings(pSett *SSettings) ISettings {
 		pSett = &SSettings{}
 	}
 	return (&sSettings{
-		FDiffBits: pSett.FDiffBits,
-		FParallel: pSett.FParallel,
+		FWorkSizeBits: pSett.FWorkSizeBits,
+		FPowParallel:  pSett.FPowParallel,
 	}).useDefault()
 }
 
 func (p *sSettings) useDefault() *sSettings {
-	if p.FParallel == 0 {
-		p.FParallel = 1
+	if p.FPowParallel == 0 {
+		p.FPowParallel = 1
 	}
 	return p
 }
 
-func (p *sSettings) GetDiffBits() uint64 {
-	return p.FDiffBits
+func (p *sSettings) GetWorkSizeBits() uint64 {
+	return p.FWorkSizeBits
 }
 
-func (p *sSettings) GetParallel() uint64 {
-	return p.FParallel
+func (p *sSettings) GetPowParallel() uint64 {
+	return p.FPowParallel
 }

@@ -151,12 +151,8 @@ func pushMessage(
 		return nil, ErrLenMessageGtLimit
 	}
 
-	sett := pCfg.GetSettings()
 	hlnClient := hln_client.NewClient(
-		hln_client.NewSettings(&hln_client.SSettings{
-			FDiffBits: sett.GetWorkSizeBits(),
-			FParallel: sett.GetPowParallel(),
-		}),
+		pCfg.GetSettings(),
 		hln_client.NewBuilder(),
 		hln_client.NewRequester(pClient),
 	)

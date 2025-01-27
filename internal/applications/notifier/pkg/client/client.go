@@ -31,8 +31,8 @@ func NewClient(pSettings ISettings, pBuilder IBuilder, pRequester IRequester) IC
 func (p *sClient) Initialize(pCtx context.Context, pTargets []string, pBody []byte) ([]byte, error) {
 	salt := random.NewRandom().GetBytes(CSaltSize)
 	hash := hashing.NewHasher(bytes.Join([][]byte{salt, pBody}, []byte{})).ToBytes()
-	powPuzzle := puzzle.NewPoWPuzzle(p.fSettings.GetDiffBits())
-	proof := powPuzzle.ProofBytes(hash, p.fSettings.GetParallel())
+	powPuzzle := puzzle.NewPoWPuzzle(p.fSettings.GetWorkSizeBits())
+	proof := powPuzzle.ProofBytes(hash, p.fSettings.GetPowParallel())
 	return hash, p.Redirect(pCtx, pTargets, "", proof, salt, pBody)
 }
 

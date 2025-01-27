@@ -30,10 +30,7 @@ func HandleIncomingRedirectHTTP(
 ) http.HandlerFunc {
 	sett := pConfig.GetSettings()
 	hlnClient := hln_client.NewClient(
-		hln_client.NewSettings(&hln_client.SSettings{
-			FDiffBits: sett.GetWorkSizeBits(),
-			FParallel: sett.GetPowParallel(),
-		}),
+		sett,
 		hln_client.NewBuilder(),
 		hln_client.NewRequester(pHLSClient),
 	)

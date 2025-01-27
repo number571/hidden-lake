@@ -26,6 +26,6 @@ type IBuilder interface {
 }
 
 type ISettings interface {
-	GetDiffBits() uint64
-	GetParallel() uint64
+	GetWorkSizeBits() uint64
+	GetPowParallel() uint64
 }
