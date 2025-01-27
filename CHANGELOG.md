@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hln`: new service - notifier
+
 ### CHANGES
 
 - `cmd/hls`: move threads param from args -> hls.yml config (pow_parallel, default=0->1)
