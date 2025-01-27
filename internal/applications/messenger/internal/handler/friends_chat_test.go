@@ -2,6 +2,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"net/http"
@@ -32,6 +33,13 @@ func TestGetMessage(t *testing.T) {
 		t.Error("success get message limit with payload limit")
 		return
 	}
+}
+
+func wrapText(pMsg string) []byte {
+	return bytes.Join([][]byte{
+		{0x01}, // cIsText
+		[]byte(pMsg),
+	}, []byte{})
 }
 
 func TestFriendsChatPage(t *testing.T) {

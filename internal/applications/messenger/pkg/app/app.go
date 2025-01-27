@@ -14,8 +14,8 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/messenger/pkg/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -48,8 +48,12 @@ func NewApp(
 	pCfg config.IConfig,
 	pPathTo string,
 ) types.IRunner {
-	httpLogger := std_logger.NewStdLogger(pCfg.GetLogging(), http_logger.GetLogFunc())
-	stdfLogger := std_logger.NewStdLogger(pCfg.GetLogging(), std_logger.GetLogFunc())
+	logging := pCfg.GetLogging()
+
+	var (
+		httpLogger = std_logger.NewStdLogger(logging, http_logger.GetLogFunc())
+		stdfLogger = std_logger.NewStdLogger(logging, std_logger.GetLogFunc())
+	)
 
 	return &sApp{
 		fState:      state.NewBoolState(),
@@ -96,7 +100,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrInitDB, err)
 		}
 
-		msgBroker := msgbroker.NewMessageBroker()
+		msgBroker := msgdata.NewMessageBroker()
 		hlsClient := hls_client.NewClient(
 			hls_client.NewBuilder(),
 			hls_client.NewRequester(

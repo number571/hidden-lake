@@ -1,0 +1,10 @@
+settings:
+  messages_capacity: 2048
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :7561
+  external: 127.0.0.1:7562
+connection: 127.0.0.1:7572

@@ -6,8 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	testutils "github.com/number571/hidden-lake/test/utils"
 	"golang.org/x/net/websocket"
 )
@@ -15,7 +14,7 @@ import (
 func TestFriendsChatWS(t *testing.T) {
 	t.Parallel()
 
-	msgBroker := msgbroker.NewMessageBroker()
+	msgBroker := msgdata.NewMessageBroker()
 
 	mux := http.NewServeMux()
 	mux.Handle("/", websocket.Handler(FriendsChatWS(msgBroker)))
@@ -39,19 +38,19 @@ func TestFriendsChatWS(t *testing.T) {
 	defer conn.Close()
 
 	subAddr := "abc"
-	if err := websocket.JSON.Send(conn, utils.SSubscribe{FAddress: subAddr}); err != nil {
+	if err := websocket.JSON.Send(conn, msgdata.SSubscribe{FAddress: subAddr}); err != nil {
 		t.Error(err)
 		return
 	}
 
-	pMsg := utils.SMessage{
+	pMsg := msgdata.SMessage{
 		FFileName:  "file.txt",
 		FFileData:  "hello, world!",
 		FTimestamp: time.Now().String(),
 	}
 	msgBroker.Produce(subAddr, pMsg)
 
-	cMsg := utils.SMessage{}
+	cMsg := msgdata.SMessage{}
 	if err := websocket.JSON.Receive(conn, &cMsg); err != nil {
 		t.Error(err)
 		return

@@ -42,7 +42,6 @@ $ go run ./cmd/hlm
 
 Open ports `9591` (HTTP, interface) and `9592` (HTTP, incoming).
 Creates [`./hlm.yml`](./hlm.yml) and `./hlm.db` files.
-The file `hlm.db` stores all sent/received messages in encrypted view. 
 
 ## Running options
 

@@ -1,0 +1,27 @@
+package database
+
+const (
+	errPrefix = "internal/applications/messenger/internal/database = "
+)
+
+type SDatabaseError struct {
+	str string
+}
+
+func (err *SDatabaseError) Error() string {
+	return errPrefix + err.str
+}
+
+var (
+	ErrLoadMessage    = &SDatabaseError{"load message"}
+	ErrGetMessage     = &SDatabaseError{"get message"}
+	ErrSetMessage     = &SDatabaseError{"set message"}
+	ErrSetSizeMessage = &SDatabaseError{"set size message"}
+	ErrCloseDB        = &SDatabaseError{"close db"}
+	ErrEndGtSize      = &SDatabaseError{"end > size"}
+	ErrStartGtEnd     = &SDatabaseError{"start > end"}
+	ErrCreateDB       = &SDatabaseError{"create db"}
+	ErrHashExist      = &SDatabaseError{"hash exist"}
+	ErrGetHash        = &SDatabaseError{"get hash"}
+	ErrSetHash        = &SDatabaseError{"set hash"}
+)

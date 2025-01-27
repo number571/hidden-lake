@@ -8,10 +8,9 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
-	hlm_utils "github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
@@ -22,7 +21,7 @@ func HandleIncomingPushHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pDB database.IKVDatabase,
-	pBroker msgbroker.IMessageBroker,
+	pBroker msgdata.IMessageBroker,
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -51,7 +50,7 @@ func HandleIncomingPushHTTP(
 		}
 
 		dbMsg := database.NewMessage(true, rawMsgBytes)
-		msg, err := getMessage(dbMsg)
+		msg, err := msgdata.GetMessage(dbMsg.GetMessage(), dbMsg.GetTimestamp())
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("recv_message"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: get message bytes")
@@ -76,33 +75,5 @@ func HandleIncomingPushHTTP(
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, hlm_settings.CServiceFullName)
-	}
-}
-
-func getMessage(pDBMsg database.IMessage) (hlm_utils.SMessage, error) {
-	rawMsgBytes := pDBMsg.GetMessage()
-	timestamp := pDBMsg.GetTimestamp()
-	switch {
-	case isText(rawMsgBytes):
-		textdata := unwrapText(rawMsgBytes)
-		if textdata == "" {
-			return hlm_utils.SMessage{}, ErrMessageNull
-		}
-		return hlm_utils.SMessage{
-			FTimestamp: timestamp,
-			FTextData:  textdata,
-		}, nil
-	case isFile(rawMsgBytes):
-		filename, filedata := unwrapFile(rawMsgBytes)
-		if filename == "" || filedata == "" {
-			return hlm_utils.SMessage{}, ErrUnwrapFile
-		}
-		return hlm_utils.SMessage{
-			FTimestamp: timestamp,
-			FFileName:  filename,
-			FFileData:  filedata,
-		}, nil
-	default:
-		return hlm_utils.SMessage{}, ErrUnknownMessageType
 	}
 }

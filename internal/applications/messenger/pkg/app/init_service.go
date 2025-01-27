@@ -8,10 +8,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/handler"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"github.com/number571/hidden-lake/internal/webui"
 	"golang.org/x/net/websocket"
 )
@@ -19,7 +19,7 @@ import (
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
 	pHlsClient hls_client.IClient,
-	pMsgBroker msgbroker.IMessageBroker,
+	pMsgBroker msgdata.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
@@ -37,7 +37,7 @@ func (p *sApp) initExternalServiceHTTP(
 func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlsClient hls_client.IClient,
-	pMsgBroker msgbroker.IMessageBroker,
+	pMsgBroker msgdata.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
 	mux.Handle(hlm_settings.CStaticPath, http.StripPrefix(

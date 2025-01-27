@@ -12,11 +12,11 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -38,7 +38,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	msgBroker := msgbroker.NewMessageBroker()
+	msgBroker := msgdata.NewMessageBroker()
 	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
 
 	if err := incomingPushRequestOK(handler); err != nil {

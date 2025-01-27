@@ -3,9 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
-	"io"
 	"net/http"
-	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
@@ -15,8 +13,8 @@ import (
 	hlm_client "github.com/number571/hidden-lake/internal/applications/messenger/pkg/client"
 	hlp_client "github.com/number571/hidden-lake/internal/applications/pinger/pkg/client"
 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"github.com/number571/hidden-lake/internal/webui"
 
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -24,7 +22,7 @@ import (
 
 type sChatMessage struct {
 	FIsIncoming bool
-	internal_utils.SMessage
+	msgdata.SMessage
 }
 
 type sChatAddress struct {
@@ -89,7 +87,7 @@ func FriendsChatPage(
 
 		switch pR.FormValue("method") {
 		case http.MethodPost, http.MethodPut:
-			msgBytes, err := getMessageBytes(pR)
+			msgBytes, err := msgdata.GetMessageBytes(pR)
 			if err != nil {
 				ErrorPage(pLogger, pCfg, "get_message", "get message bytes")(pW, pR)
 				return
@@ -146,7 +144,7 @@ func FriendsChatPage(
 			FMessages: func() []sChatMessage {
 				msgs := make([]sChatMessage, 0, len(dbMsgs))
 				for _, dbMsg := range dbMsgs {
-					msg, err := getMessage(dbMsg)
+					msg, err := msgdata.GetMessage(dbMsg.GetMessage(), dbMsg.GetTimestamp())
 					if err != nil {
 						panic(err)
 					}
@@ -162,51 +160,6 @@ func FriendsChatPage(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = webui.MustParseTemplate("index.html", "messenger/chat.html").Execute(pW, res)
 	}
-}
-
-func getMessageBytes(pR *http.Request) ([]byte, error) {
-	switch pR.FormValue("method") {
-	case http.MethodPost:
-		if pR.FormValue("ping") != "" {
-			return nil, nil
-		}
-		strMsg := strings.TrimSpace(pR.FormValue("input_message"))
-		if strMsg == "" {
-			return nil, ErrMessageNull
-		}
-		if chars.HasNotGraphicCharacters(strMsg) {
-			return nil, ErrHasNotWritableChars
-		}
-		return wrapText(strMsg), nil
-	case http.MethodPut:
-		filename, fileBytes, err := getUploadFile(pR)
-		if err != nil {
-			return nil, errors.Join(ErrUploadFile, err)
-		}
-		return wrapFile(filename, fileBytes), nil
-	default:
-		panic("got not supported method")
-	}
-}
-
-func getUploadFile(pR *http.Request) (string, []byte, error) {
-	// Get handler for filename, size and headers
-	file, handler, err := pR.FormFile("input_file")
-	if err != nil {
-		return "", nil, errors.Join(ErrGetFormFile, err)
-	}
-	defer file.Close()
-
-	if handler.Size == 0 {
-		return "", nil, ErrReadFileSize
-	}
-
-	fileBytes, err := io.ReadAll(file)
-	if err != nil {
-		return "", nil, errors.Join(ErrReadFile, err)
-	}
-
-	return handler.Filename, fileBytes, nil
 }
 
 func pushMessage(

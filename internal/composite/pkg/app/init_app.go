@@ -25,6 +25,9 @@ import (
 	hlp_app "github.com/number571/hidden-lake/internal/applications/pinger/pkg/app"
 	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 
+	hln_app "github.com/number571/hidden-lake/internal/applications/notifier/pkg/app"
+	hln_settings "github.com/number571/hidden-lake/internal/applications/notifier/pkg/settings"
+
 	hls_app "github.com/number571/hidden-lake/internal/service/pkg/app"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -75,6 +78,8 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 			runner, err = hlr_app.InitApp(pArgs, pFlags)
 		case hlp_settings.CServiceFullName:
 			runner, err = hlp_app.InitApp(pArgs, pFlags)
+		case hln_settings.CServiceFullName:
+			runner, err = hln_app.InitApp(pArgs, pFlags)
 		case hla_tcp_settings.CServiceFullName:
 			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
 		default:

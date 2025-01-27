@@ -1,0 +1,44 @@
+version: "3"
+services:
+  node1_hln:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/notifier/simple/node1_hln
+    ports:
+      - 8561:8561
+    networks:
+      - hidden-lake
+  node2_hln:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/notifier/simple/node2_hln
+    ports:
+      - 7561:7561
+      - 7572:7572
+    networks:
+      - hidden-lake
+  node3_hln:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/notifier/simple/node3_hln
+    ports:
+      - 6561:6561
+    networks:
+      - hidden-lake
+  middle_hla_tcp:
+    build:
+      context: ./../../../
+      dockerfile: cmd/hla/hla_tcp/Dockerfile
+    environment:
+      - SERVICE_PATH=examples/notifier/simple/middle_hla_tcp
+    networks:
+      - hidden-lake
+networks:
+  hidden-lake:
+    driver: bridge

@@ -1,16 +1,15 @@
 package handler
 
 import (
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/msgbroker"
-	"github.com/number571/hidden-lake/internal/applications/messenger/internal/utils"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"golang.org/x/net/websocket"
 )
 
-func FriendsChatWS(pBroker msgbroker.IMessageBroker) func(pWS *websocket.Conn) {
+func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 	return func(pWS *websocket.Conn) {
 		defer pWS.Close()
 
-		subscribe := new(utils.SSubscribe)
+		subscribe := new(msgdata.SSubscribe)
 		if err := websocket.JSON.Receive(pWS, subscribe); err != nil {
 			return
 		}
