@@ -74,6 +74,6 @@ func HandleIncomingPushHTTP(
 		pBroker.Produce(fPubKey.GetHasher().ToString(), msg)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, hlm_settings.CServiceFullName)
+		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
 }

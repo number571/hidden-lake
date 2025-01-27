@@ -2,10 +2,8 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
 	"github.com/number571/hidden-lake/internal/utils/alias"
@@ -56,8 +54,6 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		fmt.Println("FINALYZE", encoding.HexEncode(hash))
-
 		myPubKey, err := pHLSClient.GetPubKey(pCtx)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
@@ -100,12 +96,12 @@ func HandleIncomingFinalyzeHTTP(
 
 		err = hlnClient.Finalyze(pCtx, alias.GetAliasesList(friends), proof, saltBytes, bodyBytes)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("notify_target"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: notify target")
+			pLogger.PushWarn(logBuilder.WithMessage("finalyze"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: finalyze")
 			return
 		}
 
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, hlm_settings.CServiceFullName)
+		pLogger.PushInfo(logBuilder.WithMessage("finalyze"))
+		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
 }

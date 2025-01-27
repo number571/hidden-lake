@@ -3,10 +3,8 @@ package handler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
 	internal_utils "github.com/number571/hidden-lake/internal/applications/notifier/internal/utils"
@@ -163,11 +161,10 @@ func pushMessage(
 		hln_client.NewRequester(pClient),
 	)
 
-	hash, err := hlnClient.Notify(pCtx, pFriends, "", 0, nil, pMsgBytes)
+	hash, err := hlnClient.Initialize(pCtx, pFriends, pMsgBytes)
 	if err != nil {
 		return nil, errors.Join(ErrPushMessage, err)
 	}
 
-	fmt.Println("NOTIFY", encoding.HexEncode(hash))
 	return hash, nil
 }

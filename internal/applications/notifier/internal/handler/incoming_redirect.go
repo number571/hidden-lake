@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -50,14 +49,12 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		proof, hash, saltBytes, bodyBytes, err := readRequestWithValidate(pR, sett.GetWorkSizeBits())
+		proof, _, saltBytes, bodyBytes, err := readRequestWithValidate(pR, sett.GetWorkSizeBits())
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("read_body"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: read body")
 			return
 		}
-
-		fmt.Println("REDIRECT", encoding.HexEncode(hash))
 
 		friends, err := pHLSClient.GetFriends(pCtx)
 		if err != nil || len(friends) < 2 {
@@ -80,14 +77,14 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		_, err = hlnClient.Notify(pCtx, alias.GetAliasesList(friends), aliasName, proof, saltBytes, bodyBytes)
+		err = hlnClient.Redirect(pCtx, alias.GetAliasesList(friends), aliasName, proof, saltBytes, bodyBytes)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("notify_target"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: notify target")
+			pLogger.PushWarn(logBuilder.WithMessage("redirect"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: redirect")
 			return
 		}
 
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+		pLogger.PushInfo(logBuilder.WithMessage("redirect"))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
 }

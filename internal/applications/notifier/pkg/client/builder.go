@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	b1 := NewBuilder().Finalyze(0, make([]byte, CSaltSize), []byte{}).ToBytes()
-	b2 := NewBuilder().Redirect(0, make([]byte, CSaltSize), []byte{}).ToBytes()
-	if len(b1) != len(b2) {
+	if len(hln_settings.CFinalyzePath) != len(hln_settings.CRedirectPath) {
 		panic("notifier builder length")
 	}
 }
@@ -28,23 +26,23 @@ func NewBuilder() IBuilder {
 }
 
 func (p *sBuilder) Finalyze(pProof uint64, pSalt, pMsg []byte) hls_request.IRequest {
-	return hls_request.NewRequestBuilder().
-		WithMethod(http.MethodPost).
-		WithHost(hln_settings.CServiceFullName).
+	return basicBuilder(pProof, pSalt, pMsg).
 		WithPath(hln_settings.CFinalyzePath).
-		WithHead(getHead(pProof, pSalt)).
-		WithBody(pMsg).
 		Build()
 }
 
 func (p *sBuilder) Redirect(pProof uint64, pSalt, pMsg []byte) hls_request.IRequest {
+	return basicBuilder(pProof, pSalt, pMsg).
+		WithPath(hln_settings.CRedirectPath).
+		Build()
+}
+
+func basicBuilder(pProof uint64, pSalt, pMsg []byte) hls_request.IRequestBuilder {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
 		WithHost(hln_settings.CServiceFullName).
-		WithPath(hln_settings.CRedirectPath).
 		WithHead(getHead(pProof, pSalt)).
-		WithBody(pMsg).
-		Build()
+		WithBody(pMsg)
 }
 
 func getHead(pProof uint64, pSalt []byte) map[string]string {

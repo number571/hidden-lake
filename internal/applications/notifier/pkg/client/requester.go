@@ -22,18 +22,17 @@ func NewRequester(pHLSClient hls_client.IClient) IRequester {
 	}
 }
 
-func (p *sRequester) Finalyze(pCtx context.Context, pAliasNames []string, pRequest hls_request.IRequest) error {
+func (p *sRequester) Broadcast(pCtx context.Context, pAliasNames []string, pRequest hls_request.IRequest) error {
+	switch {
+	case len(pAliasNames) == 0:
+		fallthrough
+	case len(pAliasNames) == 1 && pAliasNames[0] == "":
+		return ErrTargetsIsNull
+	}
 	for _, alias := range pAliasNames {
 		if err := p.fHLSClient.SendRequest(pCtx, alias, pRequest); err != nil {
 			return errors.Join(ErrBadRequest, err)
 		}
-	}
-	return nil
-}
-
-func (p *sRequester) Redirect(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
-	if err := p.fHLSClient.SendRequest(pCtx, pAliasName, pRequest); err != nil {
-		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
 }

@@ -11,14 +11,13 @@ const (
 )
 
 type IClient interface {
-	Notify(context.Context, []string, string, uint64, []byte, []byte) ([]byte, error)
+	Initialize(context.Context, []string, []byte) ([]byte, error)
 	Finalyze(context.Context, []string, uint64, []byte, []byte) error
 	Redirect(context.Context, []string, string, uint64, []byte, []byte) error
 }
 
 type IRequester interface {
-	Finalyze(context.Context, []string, hls_request.IRequest) error
-	Redirect(context.Context, string, hls_request.IRequest) error
+	Broadcast(context.Context, []string, hls_request.IRequest) error
 }
 
 type IBuilder interface {
