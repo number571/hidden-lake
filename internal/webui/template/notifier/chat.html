@@ -61,7 +61,7 @@ Babilejo
             let obj = JSON.parse(e.data);
 
             var d1 = document.getElementById('chat_body');
-            var aliasName = "(hidden-friend)";
+            var aliasName = "__hidden__";
             var insertHTML = "";
             if (obj.filename == "") { // got text message
                 insertHTML = `
@@ -130,7 +130,7 @@ Babilejo
     <div class="need-break-text d-flex flex-row justify-content-start mb-2 pt-1">
         <div>
             <p class="border border-secondary rounded text-center p-2 me-3 mb-1 text-white bg-dark">
-                (hidden-friend)
+                __hidden__
             </p>
             {{if (eq .FFileName "")}}
             <p class="rounded text-center p-2 ms-3 mb-1 text-white bg-secondary">{{.FTextData}}</p>

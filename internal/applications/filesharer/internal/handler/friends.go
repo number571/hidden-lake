@@ -18,8 +18,9 @@ import (
 
 type sFriends struct {
 	*sTemplate
-	FFriends       []string
-	FFriendBaseURL string
+	FFriends          []string
+	FFriendBaseURL    string
+	FUsedBaseURLBlock string
 }
 
 func FriendsPage(
