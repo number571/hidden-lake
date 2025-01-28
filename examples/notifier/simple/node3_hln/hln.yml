@@ -1,7 +1,7 @@
 settings:
   messages_capacity: 2048
   work_size_bits: 25
-  network_key: BBCCBB
+  network_key: channel_password
 logging:
 - info
 - warn
