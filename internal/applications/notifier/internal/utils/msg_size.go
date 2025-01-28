@@ -5,18 +5,18 @@ import (
 	"errors"
 
 	"github.com/number571/go-peer/pkg/message/layer1"
-	"github.com/number571/go-peer/pkg/payload"
 	hln_client "github.com/number571/hidden-lake/internal/applications/notifier/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/pkg/client"
+	"github.com/number571/hidden-lake/internal/utils/layer3"
 )
 
 var (
 	gReqSize = uint64(len(
-		hln_client.NewBuilder().Redirect(layer1.NewMessage(
+		hln_client.NewBuilder().Redirect(layer3.NewMessage(
 			layer1.NewConstructSettings(&layer1.SConstructSettings{
 				FSettings: layer1.NewSettings(&layer1.SSettings{}),
 			}),
-			payload.NewPayload32(0, []byte{}),
+			[]byte{},
 		)).ToBytes(),
 	))
 )

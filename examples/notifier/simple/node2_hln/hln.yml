@@ -1,6 +1,6 @@
 settings:
   messages_capacity: 2048
-  work_size_bits: 30
+  work_size_bits: 25
   pow_parallel: 64
   network_key: channel_password
 logging:

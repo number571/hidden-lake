@@ -10,7 +10,7 @@ import (
 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
 	"github.com/number571/hidden-lake/internal/utils/alias"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/layer1x"
+	"github.com/number571/hidden-lake/internal/utils/layer3"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
@@ -59,7 +59,7 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		rawBodyBytes, err := layer1x.ExtractMessage(rawMsg)
+		rawBodyBytes, err := layer3.ExtractMessage(rawMsg)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("extract_raw_message"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: extract raw message")
@@ -89,7 +89,13 @@ func HandleIncomingFinalyzeHTTP(
 			rawBodyBytes,
 		)
 		if !hashExist && err == nil {
-			bodyBytes, err := layer1x.ExtractMessage(decMsg)
+			if _, err := pDB.SetHash(rel, true, decMsg.GetHash()); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
+				_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
+				return
+			}
+
+			bodyBytes, err := layer3.ExtractMessage(decMsg)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("extract_dec_message"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: extract dec message")

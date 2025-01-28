@@ -1,7 +1,7 @@
-package layer1x
+package layer3
 
 const (
-	errPrefix = "internal/utils/layer1x = "
+	errPrefix = "internal/utils/layer3 = "
 )
 
 type SAppError struct {

@@ -15,7 +15,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/alias"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/layer1x"
+	"github.com/number571/hidden-lake/internal/utils/layer3"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
@@ -55,7 +55,7 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		if _, err := layer1x.ExtractMessage(rawMsg); err != nil {
+		if _, err := layer3.ExtractMessage(rawMsg); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_message_body"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message body")
 			return

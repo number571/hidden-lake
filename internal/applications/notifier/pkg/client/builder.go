@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	// used for set gReqSize constant: 'internal/applications/notifier/internal/utils/msg_size.go'
 	if len(hln_settings.CFinalyzePath) != len(hln_settings.CRedirectPath) {
 		panic("notifier builder length")
 	}

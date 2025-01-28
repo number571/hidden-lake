@@ -7,10 +7,6 @@ import (
 	hls_request "github.com/number571/hidden-lake/pkg/request"
 )
 
-const (
-	CSaltSize = 32
-)
-
 type IClient interface {
 	Finalyze(context.Context, []string, layer1.IMessage) error
 	Redirect(context.Context, []string, string, layer1.IMessage) error

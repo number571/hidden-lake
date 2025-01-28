@@ -18,11 +18,6 @@ const (
 )
 
 const (
-	CHeaderPow  = "Hl-Notifier-Pow"
-	CHeaderSalt = "Hl-Notifier-Salt"
-)
-
-const (
 	CFinalyzePath = "/finalyze"
 	CRedirectPath = "/redirect"
 )
