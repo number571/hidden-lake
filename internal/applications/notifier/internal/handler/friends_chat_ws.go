@@ -9,7 +9,6 @@ func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 	return func(pWS *websocket.Conn) {
 		defer pWS.Close()
 
-		// TODO: delete
 		subscribe := new(msgdata.SSubscribe)
 		if err := websocket.JSON.Receive(pWS, subscribe); err != nil {
 			return
