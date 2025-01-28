@@ -166,7 +166,7 @@ func pushMessage(
 		hln_client.NewBuilder(),
 		hln_client.NewRequester(pClient),
 	)
-	if err := hlnClient.Redirect(pCtx, pFriends, "", msg); err != nil {
+	if err := hlnClient.Redirect(pCtx, pFriends, msg); err != nil {
 		return nil, errors.Join(ErrPushMessage, err)
 	}
 

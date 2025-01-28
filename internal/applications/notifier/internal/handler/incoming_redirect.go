@@ -62,7 +62,7 @@ func HandleIncomingRedirectHTTP(
 		}
 
 		friends, err := pHLSClient.GetFriends(pCtx)
-		if err != nil || len(friends) < 2 {
+		if err != nil || len(friends) == 0 {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: get friends")
 			return
@@ -86,7 +86,7 @@ func HandleIncomingRedirectHTTP(
 			hln_client.NewBuilder(),
 			hln_client.NewRequester(pHLSClient),
 		)
-		if err := hlnClient.Redirect(pCtx, alias.GetAliasesList(friends), aliasName, rawMsg); err != nil {
+		if err := hlnClient.Redirect(pCtx, alias.GetAliasesList(friends), rawMsg); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("redirect"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: redirect")
 			return

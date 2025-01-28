@@ -35,31 +35,16 @@ func (p *sClient) Finalyze(
 func (p *sClient) Redirect(
 	pCtx context.Context,
 	pTargets []string,
-	pIgnore string,
 	pMsg layer1.IMessage,
 ) error {
 	if r := random.NewRandom(); r.GetBool() {
 		return p.Finalyze(pCtx, pTargets, pMsg)
 	}
 	randTarget := make([]string, 0, 1)
-	if x := getRandomTarget(deleteTarget(pTargets, pIgnore)); x != "" {
+	if x := getRandomTarget(pTargets); x != "" {
 		randTarget = append(randTarget, x)
 	}
 	return p.fRequester.Broadcast(pCtx, randTarget, p.fBuilder.Redirect(pMsg))
-}
-
-func deleteTarget(pFriends []string, pIgnore string) []string {
-	if pIgnore == "" {
-		return pFriends
-	}
-	result := make([]string, 0, len(pFriends))
-	for _, alias := range pFriends {
-		if alias == pIgnore {
-			continue
-		}
-		result = append(result, alias)
-	}
-	return result
 }
 
 func getRandomTarget(pFriends []string) string {
