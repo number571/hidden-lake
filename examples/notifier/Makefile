@@ -1,6 +1,6 @@
-.PHONY: default clean request
+.PHONY: default clean 
 default: clean 
 clean:
 	make -C ./simple clean
-request:
-	go run ./_request/main.go 
+# request:
+# 	go run ./_request/main.go 
