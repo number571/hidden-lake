@@ -81,14 +81,8 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		// try decrypt message
-		decMsg, err := layer1.LoadMessage(
-			layer1.NewSettings(&layer1.SSettings{
-				FNetworkKey: pConfig.GetSettings().GetNetworkKey(),
-			}),
-			rawBodyBytes,
-		)
-		if !hashExist && err == nil {
+		decMsg, channelKey := tryDecryptMessage(pConfig, rawBodyBytes)
+		if !hashExist && channelKey != "" {
 			if _, err := pDB.SetHash(rel, true, decMsg.GetHash()); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
 				_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
@@ -116,7 +110,7 @@ func HandleIncomingFinalyzeHTTP(
 				return
 			}
 
-			pBroker.Produce("notifier", msg)
+			pBroker.Produce(channelKey, msg)
 		}
 
 		friends, err := pHLSClient.GetFriends(pCtx)
@@ -139,4 +133,21 @@ func HandleIncomingFinalyzeHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage("finalyze"))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
+}
+
+func tryDecryptMessage(pConfig config.IConfig, pBody []byte) (layer1.IMessage, string) {
+	for _, key := range pConfig.GetChannels() {
+		// try decrypt message
+		decMsg, err := layer1.LoadMessage(
+			layer1.NewSettings(&layer1.SSettings{
+				FNetworkKey: key,
+			}),
+			pBody,
+		)
+		if err != nil {
+			continue
+		}
+		return decMsg, key
+	}
+	return nil, ""
 }

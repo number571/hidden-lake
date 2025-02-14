@@ -24,7 +24,7 @@ Dosiero Alŝuto
         Mesaĝlimo ≈ {{.FMessageLimit}} bajtoj
         {{end}}
     </h2>
-    <form class="card-footer d-flex" enctype="multipart/form-data" action="/friends/chat"
+    <form class="card-footer d-flex" enctype="multipart/form-data" action="/channels/chat?key={{.FChannelKey}}"
         method="POST">
         <!-- HTML does not support another methods (PUT, DELETE, etc...) -->
         <input hidden name="method" value="PUT">

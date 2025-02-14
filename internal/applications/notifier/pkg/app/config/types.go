@@ -12,6 +12,7 @@ type IWrapper interface {
 
 type IEditor interface {
 	UpdateLanguage(language.ILanguage) error
+	UpdateChannels([]string) error
 }
 
 type IConfig interface {
@@ -19,13 +20,13 @@ type IConfig interface {
 	GetAddress() IAddress
 	GetLogging() logger.ILogging
 	GetConnection() string
+	GetChannels() []string
 }
 
 type IConfigSettings interface {
 	GetMessagesCapacity() uint64
 	GetWorkSizeBits() uint64
 	GetPowParallel() uint64
-	GetNetworkKey() string
 	GetLanguage() language.ILanguage
 }
 

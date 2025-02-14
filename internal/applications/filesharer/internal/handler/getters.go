@@ -7,8 +7,10 @@ import (
 )
 
 type sTemplate struct {
-	FAppName  string
-	FLanguage language.ILanguage
+	FAppName       string
+	FLanguage      language.ILanguage
+	FHeaderAddLink string
+	FHeaderAddName [3]string
 }
 
 func getTemplate(pCfg config.IConfig) *sTemplate {

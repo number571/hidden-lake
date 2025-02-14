@@ -29,6 +29,7 @@ func (p *tsConfig) GetNetworkKey() string            { return "" }
 func (p *tsConfig) GetConnection() string            { return "" }
 func (p *tsConfig) GetStorageKey() string            { return "" }
 func (p *tsConfig) GetSecretKeys() map[string]string { return nil }
+func (p *tsConfig) GetChannels() []string            { return nil }
 
 func TestPanicEditor(t *testing.T) {
 	t.Parallel()

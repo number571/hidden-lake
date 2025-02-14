@@ -5,7 +5,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
+func ChannelsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 	return func(pWS *websocket.Conn) {
 		defer pWS.Close()
 
@@ -15,7 +15,7 @@ func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 		}
 
 		for {
-			msg, ok := pBroker.Consume("notifier")
+			msg, ok := pBroker.Consume(subscribe.FAddress)
 			if !ok {
 				return
 			}

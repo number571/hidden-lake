@@ -22,11 +22,11 @@ type SConfigSettings struct {
 	FMessagesCapacity uint64 `json:"messages_capacity" yaml:"messages_capacity"`
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
-	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FLanguage         string `json:"language,omitempty" yaml:"language,omitempty"`
 }
 
 type SConfig struct {
+	fMutex    sync.RWMutex
 	fFilepath string
 	fLogging  logger.ILogging
 
@@ -34,6 +34,7 @@ type SConfig struct {
 	FLogging    []string         `yaml:"logging,omitempty"`
 	FAddress    *SAddress        `yaml:"address"`
 	FConnection string           `yaml:"connection"`
+	FChannels   []string         `yaml:"channels,omitempty"`
 }
 
 type SAddress struct {
@@ -149,12 +150,12 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
 }
 
-func (p *SConfigSettings) GetNetworkKey() string {
-	return p.FNetworkKey
-}
-
 func (p *SConfigSettings) GetPowParallel() uint64 {
 	return p.FPowParallel
+}
+
+func (p *SConfig) GetChannels() []string {
+	return p.FChannels
 }
 
 func (p *SConfig) GetAddress() IAddress {

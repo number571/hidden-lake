@@ -47,13 +47,13 @@ Babilejo
     }
 
     function connectToService() {
-        let s = "ws://" + window.location.host + "/friends/chat/ws";
+        let s = "ws://" + window.location.host + "/channels/chat/ws";
         let socket = new WebSocket(s);
 
         socket.onopen = () => {
-            console.log('Connection with notifier');
+            console.log('Connection with {{.FChannelKey}}');
             socket.send(JSON.stringify({
-                address: "notifier"
+                address: "{{.FChannelKey}}"
             }));
         };
 
@@ -171,6 +171,6 @@ Babilejo
         name="input_message" placeholder="Type message ..." id="input_message">
     <input type="submit" style="width:5em;" name="push" value="🗨" class="btn btn-info m-1">
     <button type="button" style="width:5em;" class="btn btn-info m-1"
-        onclick="location.href='/friends/upload';">📂</button>
+        onclick="location.href='/channels/upload?key={{.FChannelKey}}';">📂</button>
 </form>
 {{end}}

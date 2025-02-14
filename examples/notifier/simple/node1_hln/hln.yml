@@ -2,7 +2,6 @@ settings:
   messages_capacity: 2048
   work_size_bits: 25
   pow_parallel: 64
-  network_key: channel_password
 logging:
 - info
 - warn
@@ -11,3 +10,5 @@ address:
   internal: :8561
   external: 127.0.0.1:8562
 connection: 127.0.0.1:8572
+channels:
+  - chan-xxx-key

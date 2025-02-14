@@ -18,9 +18,8 @@ import (
 
 type sFriends struct {
 	*sTemplate
-	FFriends          []string
-	FFriendBaseURL    string
-	FUsedBaseURLBlock string
+	FFriends        []string
+	FFriendsBaseURL string
 }
 
 func FriendsPage(
@@ -89,7 +88,7 @@ func FriendsPage(
 		result := new(sFriends)
 		result.sTemplate = getTemplate(pCfg)
 		result.FFriends = make([]string, 0, len(friends))
-		result.FFriendBaseURL = "/friends/chat"
+		result.FFriendsBaseURL = "/friends/chat"
 
 		friendsList := make([]string, 0, len(friends))
 		for aliasName := range friends {

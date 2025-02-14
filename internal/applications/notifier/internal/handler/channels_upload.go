@@ -14,12 +14,13 @@ import (
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/notifier/pkg/settings"
 )
 
-type sUploadFile struct {
+type sChannelsUpload struct {
 	*sTemplate
 	FMessageLimit uint64
+	FChannelKey   string
 }
 
-func FriendsUploadPage(
+func ChannelsUploadPage(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
@@ -28,8 +29,14 @@ func FriendsUploadPage(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hlm_settings.GServiceName.Short(), pR)
 
-		if pR.URL.Path != "/friends/upload" {
+		if pR.URL.Path != "/channels/upload" {
 			NotFoundPage(pLogger, pCfg)(pW, pR)
+			return
+		}
+
+		channelKey := pR.URL.Query().Get("key")
+		if channelKey == "" {
+			ErrorPage(pLogger, pCfg, "get_channel_key", "channel key is nil")(pW, pR)
 			return
 		}
 
@@ -39,9 +46,10 @@ func FriendsUploadPage(
 			return
 		}
 
-		res := &sUploadFile{
+		res := &sChannelsUpload{
 			sTemplate:     getTemplate(pCfg),
 			FMessageLimit: msgLimit,
+			FChannelKey:   channelKey,
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

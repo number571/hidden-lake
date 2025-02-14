@@ -7,13 +7,17 @@ import (
 )
 
 type sTemplate struct {
-	FAppName  string
-	FLanguage language.ILanguage
+	FAppName       string
+	FLanguage      language.ILanguage
+	FHeaderAddLink string
+	FHeaderAddName [3]string
 }
 
 func getTemplate(pCfg config.IConfig) *sTemplate {
 	return &sTemplate{
-		FAppName:  settings.GServiceName.Short(),
-		FLanguage: pCfg.GetSettings().GetLanguage(),
+		FAppName:       settings.GServiceName.Short(),
+		FLanguage:      pCfg.GetSettings().GetLanguage(),
+		FHeaderAddLink: "/channels",
+		FHeaderAddName: [3]string{"Channels", "Каналы", "Kanaloj"},
 	}
 }

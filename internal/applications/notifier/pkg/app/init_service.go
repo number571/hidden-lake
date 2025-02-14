@@ -51,14 +51,15 @@ func (p *sApp) initInternalServiceHTTP(
 
 	cfgWrapper := config.NewWrapper(p.fConfig)
 
-	mux.HandleFunc(hln_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                            // GET, POST
-	mux.HandleFunc(hln_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                            // GET
-	mux.HandleFunc(hln_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlsClient))                   // GET, PATCH, PUT, POST, DELETE
-	mux.HandleFunc(hln_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))                      // GET, POST, DELETE
-	mux.HandleFunc(hln_settings.CHandleFriendsChatPath, handler.FriendsChatPage(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pHlsClient)) // GET, POST, PUT
-	mux.HandleFunc(hln_settings.CHandleFriendsUploadPath, handler.FriendsUploadPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))          // GET
+	mux.HandleFunc(hln_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                              // GET, POST
+	mux.HandleFunc(hln_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                              // GET
+	mux.HandleFunc(hln_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlsClient))                     // GET, PATCH, PUT, POST, DELETE
+	mux.HandleFunc(hln_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))                        // GET, POST, DELETE
+	mux.HandleFunc(hln_settings.CHandleChannelsPath, handler.ChannelsPage(p.fHTTPLogger, cfgWrapper))                                       // GET, POST, DELETE
+	mux.HandleFunc(hln_settings.CHandleChannelsChatPath, handler.ChannelsChatPage(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pHlsClient)) // GET, POST, PUT
+	mux.HandleFunc(hln_settings.CHandleChannelsUploadPath, handler.ChannelsUploadPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))          // GET
 
-	mux.Handle(hln_settings.CHandleFriendsChatWSPath, websocket.Handler(handler.FriendsChatWS(pMsgBroker)))
+	mux.Handle(hln_settings.CHandleChannelsChatWSPath, websocket.Handler(handler.ChannelsChatWS(pMsgBroker)))
 
 	p.fIntServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetInternal(),

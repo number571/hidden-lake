@@ -25,12 +25,13 @@ type sChatMessage struct {
 	msgdata.SMessage
 }
 
-type sFriendsChat struct {
+type sChannelsChat struct {
 	*sTemplate
-	FMessages []sChatMessage
+	FMessages   []sChatMessage
+	FChannelKey string
 }
 
-func FriendsChatPage(
+func ChannelsChatPage(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
@@ -40,7 +41,7 @@ func FriendsChatPage(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hlm_settings.GServiceName.Short(), pR)
 
-		if pR.URL.Path != "/friends/chat" {
+		if pR.URL.Path != "/channels/chat" {
 			NotFoundPage(pLogger, pCfg)(pW, pR)
 			return
 		}
@@ -68,6 +69,12 @@ func FriendsChatPage(
 			return
 		}
 
+		channelKey := pR.URL.Query().Get("key")
+		if channelKey == "" {
+			ErrorPage(pLogger, pCfg, "get_channel_key", "channel key is nil")(pW, pR)
+			return
+		}
+
 		rel := database.NewRelation(myPubKey)
 
 		switch pR.FormValue("method") {
@@ -78,7 +85,7 @@ func FriendsChatPage(
 				return
 			}
 
-			hash, err := pushMessage(pCtx, pCfg, pHlsClient, alias.GetAliasesList(friends), msgBytes)
+			hash, err := pushMessage(pCtx, pCfg, pHlsClient, alias.GetAliasesList(friends), channelKey, msgBytes)
 			if err != nil {
 				ErrorPage(pLogger, pCfg, "send_message", "push message to network")(pW, pR)
 				return
@@ -96,7 +103,7 @@ func FriendsChatPage(
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogRedirect))
-			http.Redirect(pW, pR, "/friends/chat", http.StatusSeeOther)
+			http.Redirect(pW, pR, "/channels/chat?key="+channelKey, http.StatusSeeOther)
 			return
 		}
 
@@ -114,7 +121,7 @@ func FriendsChatPage(
 			return
 		}
 
-		res := &sFriendsChat{
+		res := &sChannelsChat{
 			sTemplate: getTemplate(pCfg),
 			FMessages: func() []sChatMessage {
 				msgs := make([]sChatMessage, 0, len(dbMsgs))
@@ -130,6 +137,7 @@ func FriendsChatPage(
 				}
 				return msgs
 			}(),
+			FChannelKey: channelKey,
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
@@ -142,6 +150,7 @@ func pushMessage(
 	pCfg config.IConfig,
 	pClient hls_client.IClient,
 	pFriends []string,
+	pChannelKey string,
 	pMsgBytes []byte,
 ) ([]byte, error) {
 	msgLimit, err := internal_utils.GetMessageLimit(pCtx, pClient)
@@ -153,19 +162,20 @@ func pushMessage(
 		return nil, ErrLenMessageGtLimit
 	}
 
-	cfgSett := pCfg.GetSettings()
-	msg := layer3.NewMessage(
-		layer1.NewConstructSettings(&layer1.SConstructSettings{
-			FSettings: cfgSett,
-			FParallel: cfgSett.GetPowParallel(),
-		}),
-		pMsgBytes,
-	)
-
 	hlnClient := hln_client.NewClient(
 		hln_client.NewBuilder(),
 		hln_client.NewRequester(pClient),
 	)
+
+	sett := layer1.NewConstructSettings(&layer1.SConstructSettings{
+		FSettings: layer1.NewSettings(&layer1.SSettings{
+			FWorkSizeBits: pCfg.GetSettings().GetWorkSizeBits(),
+			FNetworkKey:   pChannelKey,
+		}),
+		FParallel: pCfg.GetSettings().GetPowParallel(),
+	})
+
+	msg := layer3.NewMessage(sett, pMsgBytes)
 	if err := hlnClient.Redirect(pCtx, pFriends, msg); err != nil {
 		return nil, errors.Join(ErrPushMessage, err)
 	}

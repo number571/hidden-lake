@@ -23,14 +23,15 @@ const (
 )
 
 const (
-	CHandleIndexPath         = "/"
-	CHandleAboutPath         = "/about"
-	CHandleFaviconPath       = "/favicon.ico"
-	CHandleSettingsPath      = "/settings"
-	CHandleFriendsPath       = "/friends"
-	CHandleFriendsChatPath   = "/friends/chat"
-	CHandleFriendsUploadPath = "/friends/upload"
-	CHandleFriendsChatWSPath = "/friends/chat/ws"
+	CHandleIndexPath          = "/"
+	CHandleAboutPath          = "/about"
+	CHandleFaviconPath        = "/favicon.ico"
+	CHandleSettingsPath       = "/settings"
+	CHandleFriendsPath        = "/friends"
+	CHandleChannelsPath       = "/channels"
+	CHandleChannelsChatWSPath = "/channels/chat/ws"
+	CHandleChannelsChatPath   = "/channels/chat"
+	CHandleChannelsUploadPath = "/channels/upload"
 )
 
 const (
