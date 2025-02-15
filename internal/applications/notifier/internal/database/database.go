@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
 )
@@ -28,11 +29,11 @@ func (p *sKeyValueDB) Size(pR IRelation) uint64 {
 	return p.getSize(pR)
 }
 
-func (p *sKeyValueDB) SetHash(pR IRelation, pIncoming bool, pHash []byte) (bool, error) {
+func (p *sKeyValueDB) SetHash(pPubKey asymmetric.IPubKey, pIncoming bool, pHash []byte) (bool, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	keyHash := getKeyHash(pR, pHash)
+	keyHash := getKeyHash(pPubKey, pHash)
 
 	exist := false
 	v, err := p.fDB.Get(keyHash)

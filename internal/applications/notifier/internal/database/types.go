@@ -8,7 +8,7 @@ import (
 
 type IKVDatabase interface {
 	io.Closer
-	SetHash(IRelation, bool, []byte) (bool, error)
+	SetHash(asymmetric.IPubKey, bool, []byte) (bool, error)
 
 	Size(IRelation) uint64
 	Push(IRelation, IMessage) error
@@ -17,6 +17,7 @@ type IKVDatabase interface {
 
 type IRelation interface {
 	IAm() asymmetric.IPubKey
+	Key() string
 }
 
 type IMessage interface {

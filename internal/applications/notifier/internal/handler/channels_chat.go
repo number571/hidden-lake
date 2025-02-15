@@ -75,7 +75,7 @@ func ChannelsChatPage(
 			return
 		}
 
-		rel := database.NewRelation(myPubKey)
+		rel := database.NewRelation(myPubKey, channelKey)
 
 		switch pR.FormValue("method") {
 		case http.MethodPost, http.MethodPut:
@@ -91,7 +91,7 @@ func ChannelsChatPage(
 				return
 			}
 
-			if _, err := pDB.SetHash(rel, false, hash); err != nil {
+			if _, err := pDB.SetHash(myPubKey, false, hash); err != nil {
 				ErrorPage(pLogger, pCfg, "set_hash", "set hash of message to database")(pW, pR)
 				return
 			}

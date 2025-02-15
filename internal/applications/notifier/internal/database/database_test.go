@@ -39,7 +39,7 @@ func TestDatabase(t *testing.T) {
 
 	iam := asymmetric.NewPrivKey().GetPubKey()
 
-	rel := NewRelation(iam)
+	rel := NewRelation(iam, "_")
 	err1 := db.Push(rel, NewMessage(true, []byte(tcBody)))
 	if err1 != nil {
 		t.Error(err1)

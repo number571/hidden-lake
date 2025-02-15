@@ -73,8 +73,7 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		rel := database.NewRelation(myPubKey)
-		hashExist, err := pDB.SetHash(rel, true, rawMsg.GetHash())
+		hashExist, err := pDB.SetHash(myPubKey, true, rawMsg.GetHash())
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
@@ -83,7 +82,7 @@ func HandleIncomingFinalyzeHTTP(
 
 		decMsg, channelKey := tryDecryptMessage(pConfig, rawBodyBytes)
 		if !hashExist && channelKey != "" {
-			if _, err := pDB.SetHash(rel, true, decMsg.GetHash()); err != nil {
+			if _, err := pDB.SetHash(myPubKey, true, decMsg.GetHash()); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
 				_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
 				return
@@ -104,6 +103,7 @@ func HandleIncomingFinalyzeHTTP(
 				return
 			}
 
+			rel := database.NewRelation(myPubKey, channelKey)
 			if err := pDB.Push(rel, dbMsg); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("push_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
