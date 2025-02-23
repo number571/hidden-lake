@@ -59,7 +59,7 @@ func HandleIncomingFinalyzeHTTP(
 			return
 		}
 
-		rawBodyBytes, err := layer3.ExtractMessage(rawMsg)
+		rawBodyBytes, err := layer3.ExtractMessageBody(rawMsg)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("extract_raw_message"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: extract raw message")
@@ -88,7 +88,7 @@ func HandleIncomingFinalyzeHTTP(
 				return
 			}
 
-			bodyBytes, err := layer3.ExtractMessage(decMsg)
+			bodyBytes, err := layer3.ExtractMessageBody(decMsg)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("extract_dec_message"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: extract dec message")

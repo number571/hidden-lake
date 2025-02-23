@@ -1,9 +1,40 @@
 package alias
 
-import "testing"
+import (
+	"testing"
 
-func TestNothing(t *testing.T) {
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+)
+
+func TestGetAliasesList(t *testing.T) {
 	t.Parallel()
 
-	_ = t
+	mapKeys := map[string]asymmetric.IPubKey{
+		"AAA": asymmetric.NewPrivKey().GetPubKey(),
+		"BBB": asymmetric.NewPrivKey().GetPubKey(),
+		"CCC": asymmetric.NewPrivKey().GetPubKey(),
+	}
+	aliases := GetAliasesList(mapKeys)
+	for _, alias := range aliases {
+		if _, ok := mapKeys[alias]; !ok {
+			t.Error("alias not found in map")
+			return
+		}
+	}
+}
+
+func TestGetAliasByPubKey(t *testing.T) {
+	t.Parallel()
+
+	bbbKey := asymmetric.NewPrivKey().GetPubKey()
+	mapKeys := map[string]asymmetric.IPubKey{
+		"AAA": asymmetric.NewPrivKey().GetPubKey(),
+		"BBB": bbbKey,
+		"CCC": asymmetric.NewPrivKey().GetPubKey(),
+	}
+	alias := GetAliasByPubKey(mapKeys, bbbKey)
+	if alias != "BBB" {
+		t.Error("get invalid alias name")
+		return
+	}
 }

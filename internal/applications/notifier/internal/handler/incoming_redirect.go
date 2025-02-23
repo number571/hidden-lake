@@ -55,7 +55,7 @@ func HandleIncomingRedirectHTTP(
 			return
 		}
 
-		if _, err := layer3.ExtractMessage(rawMsg); err != nil {
+		if _, err := layer3.ExtractMessageBody(rawMsg); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_message_body"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message body")
 			return

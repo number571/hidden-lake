@@ -34,22 +34,25 @@ func NewMessage(pSett layer1.IConstructSettings, pBody []byte) layer1.IMessage {
 	)
 }
 
-func ExtractMessage(pMsg layer1.IMessage) ([]byte, error) {
+func ExtractMessageBody(pMsg layer1.IMessage) ([]byte, error) {
 	pld := pMsg.GetPayload()
 	body := pld.GetBody()
 	if len(body) < cSaltSize {
 		return nil, ErrInvalidBody
 	}
-	if pld.GetHead() != crc32.Checksum(body[:cSaltSize], crc32.IEEETable) {
+	if pld.GetHead() != crc32.Checksum(body, crc32.IEEETable) {
 		return nil, ErrInvalidHead
 	}
 	return body[cSaltSize:], nil
 }
 
 func newPayload(pBody []byte) payload.IPayload32 {
-	salt := random.NewRandom().GetBytes(cSaltSize)
+	saltBody := bytes.Join(
+		[][]byte{random.NewRandom().GetBytes(cSaltSize), pBody},
+		[]byte{},
+	)
 	return payload.NewPayload32(
-		crc32.Checksum(salt, crc32.IEEETable),
-		bytes.Join([][]byte{salt, pBody}, []byte{}),
+		crc32.Checksum(saltBody, crc32.IEEETable),
+		saltBody,
 	)
 }
