@@ -7,7 +7,7 @@ import (
 )
 
 // Uniform random uint64 in [0;n)
-func UniformIntn(n uint64) uint64 {
+func UniformUint64n(n uint64) uint64 {
 	random := random.NewRandom()
 	pow2 := uint64(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
 	for {

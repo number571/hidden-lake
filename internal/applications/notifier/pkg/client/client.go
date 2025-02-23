@@ -52,5 +52,5 @@ func getRandomTarget(pFriends []string) string {
 		return ""
 	}
 	lenFriends := uint64(len(pFriends))
-	return pFriends[rand.UniformIntn(lenFriends)]
+	return pFriends[rand.UniformUint64n(lenFriends)]
 }
