@@ -17,6 +17,7 @@ func TestMessageBroker(t *testing.T) {
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		msgReceiver.Produce(addr, SMessage{FTextData: msgData})
+		msgReceiver.Produce(addr, SMessage{FTextData: msgData})
 	}()
 
 	msg, ok := msgReceiver.Consume(addr)
@@ -24,9 +25,28 @@ func TestMessageBroker(t *testing.T) {
 		t.Error("got not ok recv")
 		return
 	}
-
 	if msg.FTextData != msgData {
 		t.Error("msg.FTextData != msgData")
+		return
+	}
+
+	msgReceiver2 := NewMessageBroker()
+
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		msgReceiver2.Produce(addr, SMessage{FTextData: msgData})
+	}()
+
+	go func() {
+		if _, ok := msgReceiver2.Consume(addr); ok {
+			t.Error("success consume with canceled")
+			return
+		}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+	if _, ok := msgReceiver2.Consume(addr); !ok {
+		t.Error("got not ok recv")
 		return
 	}
 }
