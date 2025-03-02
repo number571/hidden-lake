@@ -329,6 +329,9 @@ func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
 func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
 func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
+	if p.fFriendPubKey == nil {
+		return map[string]asymmetric.IPubKey{}, nil
+	}
 	return map[string]asymmetric.IPubKey{
 		"abc": p.fFriendPubKey,
 	}, nil
@@ -354,17 +357,25 @@ func (p *tsHLSClient) DelConnection(context.Context, string) error {
 }
 
 func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
+	if !p.fWithOK {
+		return errors.New("some error") // nolint: err113
+	}
 	return nil
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
+	if !p.fWithOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
 	return response.NewResponseBuilder().WithCode(200).Build(), nil
 }
 
 type tsDatabase struct {
-	fPushOK bool
-	fLoadOK bool
-	fMsg    database.IMessage
+	fSetHashWithoutOK bool
+	fSetHashBoolValue bool
+	fPushOK           bool
+	fLoadOK           bool
+	fMsg              database.IMessage
 }
 
 func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
@@ -377,7 +388,10 @@ func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
 func (p *tsDatabase) Close() error { return nil }
 
 func (p *tsDatabase) SetHash(_ asymmetric.IPubKey, _ bool, _ []byte) (bool, error) {
-	return false, nil
+	if p.fSetHashWithoutOK {
+		return p.fSetHashBoolValue, errors.New("some error")
+	}
+	return p.fSetHashBoolValue, nil
 }
 
 func (p *tsDatabase) Size(database.IRelation) uint64 {

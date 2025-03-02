@@ -43,7 +43,7 @@ func HandleIncomingFinalyzeHTTP(
 		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode body")
+			_ = api.Response(pW, http.StatusConflict, "failed: decode body")
 			return
 		}
 
@@ -55,7 +55,7 @@ func HandleIncomingFinalyzeHTTP(
 		)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_message"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message")
+			_ = api.Response(pW, http.StatusBadRequest, "failed: decode message")
 			return
 		}
 
@@ -76,7 +76,7 @@ func HandleIncomingFinalyzeHTTP(
 		hashExist, err := pDB.SetHash(myPubKey, true, rawMsg.GetHash())
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: set hash")
 			return
 		}
 

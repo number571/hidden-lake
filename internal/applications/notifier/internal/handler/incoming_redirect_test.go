@@ -1,150 +1,253 @@
 package handler
 
-// import (
-// 	"context"
-// 	"errors"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
+import (
+	"bytes"
+	"context"
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
-// 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-// 	"github.com/number571/go-peer/pkg/logger"
-// 	"github.com/number571/hidden-lake/internal/applications/notifier/pkg/app/config"
-// 	hls_client "github.com/number571/hidden-lake/internal/service/pkg/client"
-// 	hls_config "github.com/number571/hidden-lake/internal/service/pkg/config"
-// 	"github.com/number571/hidden-lake/internal/utils/language"
-// 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-// 	"github.com/number571/hidden-lake/pkg/request"
-// 	"github.com/number571/hidden-lake/pkg/response"
-// )
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/payload"
+	"github.com/number571/hidden-lake/internal/applications/notifier/pkg/app/config"
+	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/layer3"
+)
 
-// func TestHandleIncomingNotifyHTTP(t *testing.T) {
-// 	t.Parallel()
+func TestHandleIncomingRedirectHTTP(t *testing.T) {
+	t.Parallel()
 
-// 	ctx := context.Background()
-// 	log := logger.NewLogger(
-// 		logger.NewSettings(&logger.SSettings{}),
-// 		func(_ logger.ILogArg) string { return "" },
-// 	)
-// 	handler := HandleIncomingRedirectHTTP(ctx, &tsConfig{}, log, newTsHLSClient(true, true))
+	ctx := context.Background()
+	log := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
 
-// 	if err := incomingRequestMethod(handler); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// 	if err := incomingRequestSuccess(handler); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// }
+	hlsClient := newTsHLSClient(true, true)
+	handler := HandleIncomingRedirectHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		hlsClient,
+	)
 
-// func incomingRequestMethod(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	if err := incomingRedirectRequestMethod(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingRedirectRequestLoadMessage(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingRedirectRequestExtractMessage(handler); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	hlsClient2 := newTsHLSClient(true, true)
+	hlsClient2.fFriendPubKey = nil
+	handler2 := HandleIncomingRedirectHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		hlsClient2,
+	)
+	if err := incomingRedirectRequestGetFriends(handler2); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	if res.StatusCode != http.StatusMethodNotAllowed {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	if err := incomingRedirectRequestLoadPubKey(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingRedirectRequestGetAliasByPubKey(handler); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	return nil
-// }
+	hlsClient3 := newTsHLSClient(true, false)
+	handler3 := HandleIncomingRedirectHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		hlsClient3,
+	)
+	if err := incomingRedirectRequestRedirect(handler3, hlsClient3.fFriendPubKey); err != nil {
+		t.Error(err)
+		return
+	}
 
-// func incomingRequestSuccess(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	if err := incomingRedirectRequestOK(handler, hlsClient.fFriendPubKey); err != nil {
+		t.Error(err)
+		return
+	}
+}
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+func incomingRedirectRequestMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// 	return nil
-// }
+	if res.StatusCode != http.StatusMethodNotAllowed {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// type tsConfig struct{}
+	return nil
+}
 
-// func (p *tsConfig) GetSettings() config.IConfigSettings { return &tsConfigSettings{} }
-// func (p *tsConfig) GetAddress() config.IAddress         { return nil }
-// func (p *tsConfig) GetLogging() std_logger.ILogging     { return nil }
-// func (p *tsConfig) GetConnection() string               { return "" }
+func incomingRedirectRequestLoadMessage(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte{1, 2, 3}))
 
-// type tsConfigSettings struct{}
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func (p *tsConfigSettings) GetMessagesCapacity() uint64 { return 2048 }
-// func (p *tsConfigSettings) GetPowParallel() uint64      { return 1 }
-// func (p *tsConfigSettings) GetWorkSizeBits() uint64     { return 1 }
-// func (p *tsConfigSettings) GetLanguage() language.ILanguage {
-// 	return language.ILanguage(language.CLangENG)
-// }
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// func (p *tsConfigSettings) GetResponseMessage() string { return "" }
+	return nil
+}
 
-// var (
-// 	_ hls_client.IClient = &tsHLSClient{}
-// )
+func incomingRedirectRequestExtractMessage(handler http.HandlerFunc) error {
+	msg := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(1, []byte("hello")),
+	)
 
-// type tsHLSClient struct {
-// 	fFetchOK bool
-// 	fWithOK  bool
-// 	fPrivKey asymmetric.IPrivKey
-// 	// fPldSize uint64
-// }
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
 
-// func newTsHLSClient(pFetchOK, pWithOK bool) *tsHLSClient { // nolint: unparam
-// 	return &tsHLSClient{
-// 		fFetchOK: pFetchOK,
-// 		fWithOK:  pWithOK,
-// 		fPrivKey: asymmetric.NewPrivKey(),
-// 	}
-// }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
-// func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
-// 	if !p.fWithOK {
-// 		return nil, errors.New("some error") // nolint: err113
-// 	}
-// 	return &hls_config.SConfigSettings{
-// 		FPayloadSizeBytes: 1024,
-// 	}, nil
-// }
+	if res.StatusCode != http.StatusNotAcceptable {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-// 	return p.fPrivKey.GetPubKey(), nil
-// }
+	return nil
+}
 
-// func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
-// 	return []string{"tcp://aaa"}, nil
-// }
-// func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
+func incomingRedirectRequestGetFriends(handler http.HandlerFunc) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello, world!"),
+	)
 
-// func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-// 	return nil, nil
-// }
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
 
-// func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-// func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
-// 	return []string{"tcp://aaa"}, nil
-// }
-// func (p *tsHLSClient) AddConnection(context.Context, string) error { return nil }
-// func (p *tsHLSClient) DelConnection(context.Context, string) error { return nil }
+	if res.StatusCode != http.StatusNotFound {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
-// 	return nil
-// }
+	return nil
+}
 
-// func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-// 	if !p.fFetchOK {
-// 		return nil, errors.New("some error") // nolint: err113
-// 	}
-// 	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"file.txt","hash":"114a856f792c4c292599dba6fa41adba45ef4f851b1d17707e2729651968ff64be375af9cff6f9547b878d5c73c16a11","size":500}]`))
-// 	return resp.Build(), nil
-// }
+func incomingRedirectRequestLoadPubKey(handler http.HandlerFunc) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello, world!"),
+	)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusInternalServerError {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRedirectRequestGetAliasByPubKey(handler http.HandlerFunc) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello, world!"),
+	)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
+	req.Header.Add(hls_settings.CHeaderPublicKey, asymmetric.NewPrivKey().GetPubKey().ToString())
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNotExtended {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRedirectRequestRedirect(handler http.HandlerFunc, pubKey asymmetric.IPubKey) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello, world!"),
+	)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
+	req.Header.Add(hls_settings.CHeaderPublicKey, pubKey.ToString())
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadGateway {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func incomingRedirectRequestOK(handler http.HandlerFunc, pubKey asymmetric.IPubKey) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello, world!"),
+	)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
+	req.Header.Add(hls_settings.CHeaderPublicKey, pubKey.ToString())
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}

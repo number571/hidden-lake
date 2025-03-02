@@ -39,7 +39,7 @@ func HandleIncomingRedirectHTTP(
 		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode body")
+			_ = api.Response(pW, http.StatusConflict, "failed: decode body")
 			return
 		}
 
@@ -51,7 +51,7 @@ func HandleIncomingRedirectHTTP(
 		)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_message"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: decode message")
+			_ = api.Response(pW, http.StatusBadRequest, "failed: decode message")
 			return
 		}
 
@@ -64,21 +64,21 @@ func HandleIncomingRedirectHTTP(
 		friends, err := pHLSClient.GetFriends(pCtx)
 		if err != nil || len(friends) == 0 {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: get friends")
+			_ = api.Response(pW, http.StatusNotFound, "failed: get friends")
 			return
 		}
 
 		fSender := asymmetric.LoadPubKey(pR.Header.Get(hls_settings.CHeaderPublicKey))
 		if fSender == nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: load public key")
 			return
 		}
 
 		aliasName := alias.GetAliasByPubKey(friends, fSender)
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("find_alias"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: find alias")
+			_ = api.Response(pW, http.StatusNotExtended, "failed: find alias")
 			return
 		}
 

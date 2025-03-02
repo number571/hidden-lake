@@ -1,182 +1,177 @@
 package handler
 
-// import (
-// 	"bytes"
-// 	"context"
-// 	"errors"
-// 	"io"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
+import (
+	"bytes"
+	"context"
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
-// 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-// 	"github.com/number571/go-peer/pkg/logger"
-// 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/database"
-// 	"github.com/number571/hidden-lake/internal/applications/notifier/internal/msgbroker"
-// 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
-// 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-// )
+	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/payload"
+	"github.com/number571/hidden-lake/internal/applications/notifier/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/utils/layer3"
+	"github.com/number571/hidden-lake/internal/utils/msgdata"
+)
 
-// func TestHandleIncomingPushHTTP(t *testing.T) {
-// 	t.Parallel()
+func TestHandleIncomingFinalyzeHTTP(t *testing.T) {
+	t.Parallel()
 
-// 	logging, err := std_logger.LoadLogging([]string{})
-// 	if err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
+	ctx := context.Background()
+	log := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(_ logger.ILogArg) string { return "" },
+	)
 
-// 	httpLogger := std_logger.NewStdLogger(
-// 		logging,
-// 		func(_ logger.ILogArg) string {
-// 			return ""
-// 		},
-// 	)
+	hlsClient := newTsHLSClient(true, true)
+	handler := HandleIncomingFinalyzeHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		newTsDatabase(true, true),
+		msgdata.NewMessageBroker(),
+		hlsClient,
+	)
 
-// 	ctx := context.Background()
-// 	msgBroker := msgdata.NewMessageBroker()
-// 	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
+	if err := incomingFinalyzeRequestMethod(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingFinalyzeRequestLoadMessage(handler); err != nil {
+		t.Error(err)
+		return
+	}
+	if err := incomingFinalyzeRequestExtractMessage(handler); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	if err := incomingPushRequestOK(handler); err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
+	hlsClient2 := newTsHLSClient(false, true)
+	handler2 := HandleIncomingFinalyzeHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		newTsDatabase(true, true),
+		msgdata.NewMessageBroker(),
+		hlsClient2,
+	)
+	if err := incomingFinalyzeRequestGetPubKey(handler2); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	if err := incomingPushRequestMethod(handler); err == nil {
-// 		t.Error("request success with invalid method")
-// 		return
-// 	}
-// 	if err := incomingPushRequestPubKey(handler); err == nil {
-// 		t.Error("request success with invalid pubkey")
-// 		return
-// 	}
-// 	if err := incomingPushRequestMessage(handler); err == nil {
-// 		t.Error("request success with invalid message")
-// 		return
-// 	}
+	database3 := newTsDatabase(false, true)
+	database3.fSetHashWithoutOK = true
+	handler3 := HandleIncomingFinalyzeHTTP(
+		ctx,
+		&config.SConfig{FSettings: &config.SConfigSettings{}},
+		log,
+		database3,
+		msgdata.NewMessageBroker(),
+		hlsClient,
+	)
+	if err := incomingFinalyzeRequestSetHash(handler3); err != nil {
+		t.Error(err)
+		return
+	}
 
-// 	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false, true))
-// 	if err := incomingPushRequestOK(handlerx); err == nil {
-// 		t.Error("request success with invalid my pubkey")
-// 		return
-// 	}
-// 	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true, true))
-// 	if err := incomingPushRequestOK(handlery); err == nil {
-// 		t.Error("request success with invalid push message")
-// 		return
-// 	}
-// }
+	// ...
+}
 
-// func incomingPushRequestOK(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
-// 	req.Header.Set(hls_settings.CHeaderPublicKey, asymmetric.NewPrivKey().GetPubKey().ToString())
+func incomingFinalyzeRequestMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	if res.StatusCode != http.StatusMethodNotAllowed {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+	return nil
+}
 
-// 	return nil
-// }
+func incomingFinalyzeRequestLoadMessage(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte{1, 2, 3}))
 
-// func incomingPushRequestMessage(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodPost, "/push", nil)
-// 	req.Header.Set(hls_settings.CHeaderPublicKey, asymmetric.NewPrivKey().GetPubKey().ToString())
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	return nil
+}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+func incomingFinalyzeRequestExtractMessage(handler http.HandlerFunc) error {
+	msg := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(1, []byte("hello")),
+	)
 
-// 	return nil
-// }
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
 
-// func incomingPushRequestPubKey(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	if res.StatusCode != http.StatusNotAcceptable {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	return nil
+}
 
-// 	if _, err := io.ReadAll(res.Body); err != nil {
-// 		return err
-// 	}
+func incomingFinalyzeRequestGetPubKey(handler http.HandlerFunc) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello"),
+	)
 
-// 	return nil
-// }
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
 
-// func incomingPushRequestMethod(handler http.HandlerFunc) error {
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodGet, "/push", nil)
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// 	handler(w, req)
-// 	res := w.Result()
-// 	defer res.Body.Close()
+	if res.StatusCode != http.StatusBadGateway {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		return errors.New("bad status code") // nolint: err113
-// 	}
+	return nil
+}
 
-// 	return nil
-// }
+func incomingFinalyzeRequestSetHash(handler http.HandlerFunc) error {
+	msg := layer3.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		[]byte("hello"),
+	)
 
-// type tsDatabase struct {
-// 	fPushOK bool
-// 	fLoadOK bool
-// 	fMsg    database.IMessage
-// }
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(msg.ToBytes()))
 
-// func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
-// 	return &tsDatabase{
-// 		fPushOK: pPushOK,
-// 		fLoadOK: pLoadOK,
-// 	}
-// }
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
 
-// func (p *tsDatabase) Close() error { return nil }
+	if res.StatusCode != http.StatusInternalServerError {
+		return errors.New("bad status code") // nolint: err113
+	}
 
-// func (p *tsDatabase) Size(database.IRelation) uint64 {
-// 	if p.fMsg == nil {
-// 		return 0
-// 	}
-// 	return 1
-// }
-
-// func (p *tsDatabase) Push(_ database.IRelation, pM database.IMessage) error {
-// 	if !p.fPushOK {
-// 		return errors.New("some error") // nolint: err113
-// 	}
-// 	p.fMsg = pM
-// 	return nil
-// }
-
-// func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]database.IMessage, error) {
-// 	if !p.fLoadOK {
-// 		return nil, errors.New("some error") // nolint: err113
-// 	}
-// 	if p.fMsg == nil {
-// 		return nil, nil
-// 	}
-// 	return []database.IMessage{p.fMsg}, nil
-// }
+	return nil
+}
