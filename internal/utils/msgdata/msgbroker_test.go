@@ -18,6 +18,7 @@ func TestMessageBroker(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 		msgReceiver.Produce(addr, SMessage{FTextData: msgData})
 		msgReceiver.Produce(addr, SMessage{FTextData: msgData})
+		msgReceiver.Produce(addr, SMessage{FTextData: msgData})
 	}()
 
 	msg, ok := msgReceiver.Consume(addr)

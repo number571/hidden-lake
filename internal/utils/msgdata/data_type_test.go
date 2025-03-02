@@ -19,8 +19,17 @@ func TestDataType(t *testing.T) {
 		t.Error("unwrapText([]byte{}) = ok")
 		return
 	}
+	if unwrapText(wrapText("\001")) != "" {
+		t.Error(`unwrapText: wrapText("\001")) != ""`)
+		return
+	}
+
 	if file, _ := unwrapFile([]byte{}); file != "" {
 		t.Error("unwrapFile([]byte{}) = ok")
+		return
+	}
+	if file, _ := unwrapFile([]byte{cIsFile, 0x01}); file != "" {
+		t.Error("unwrapFile([]byte{cIsFile, 0x01}) = ok")
 		return
 	}
 

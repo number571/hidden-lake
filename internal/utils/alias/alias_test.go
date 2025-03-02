@@ -37,4 +37,8 @@ func TestGetAliasByPubKey(t *testing.T) {
 		t.Error("get invalid alias name")
 		return
 	}
+	if GetAliasByPubKey(mapKeys, asymmetric.NewPrivKey().GetPubKey()) != "" {
+		t.Error("get alias by unknown pub key")
+		return
+	}
 }
