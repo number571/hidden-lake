@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 )
 
 const (
@@ -70,6 +71,27 @@ func TestDatabase(t *testing.T) {
 
 	if !bytes.Equal(msgs[0].GetMessage(), []byte(tcBody)) {
 		t.Error("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
+		return
+	}
+
+	pubKey := asymmetric.NewPrivKey().GetPubKey()
+	hash := hashing.NewHasher([]byte("hello")).ToBytes()
+	ok, err := db.SetHash(pubKey, false, hash)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if ok {
+		t.Error("hash already exist?")
+		return
+	}
+	ok1, err1 := db.SetHash(pubKey, true, hash)
+	if err1 != nil {
+		t.Error(err1)
+		return
+	}
+	if !ok1 {
+		t.Error("hash not found?")
 		return
 	}
 }

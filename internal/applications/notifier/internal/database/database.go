@@ -37,15 +37,16 @@ func (p *sKeyValueDB) SetHash(pPubKey asymmetric.IPubKey, pIncoming bool, pHash 
 
 	exist := false
 	v, err := p.fDB.Get(keyHash)
-	if err == nil {
+	switch err {
+	case nil:
 		exist = true
 		if v[0] == 1 {
 			return false, ErrHashExist
 		}
-	}
-
-	if !errors.Is(err, database.ErrNotFound) {
-		return false, errors.Join(ErrGetHash, err)
+	default:
+		if !errors.Is(err, database.ErrNotFound) {
+			return false, errors.Join(ErrGetHash, err)
+		}
 	}
 
 	state := byte(0)

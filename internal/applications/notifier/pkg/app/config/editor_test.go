@@ -79,6 +79,12 @@ func TestEditor(t *testing.T) {
 		t.Error(err)
 		return
 	}
+
+	channels := []string{"111", "222", "333", "222"}
+	if err := editor.UpdateChannels(channels); err != nil {
+		t.Error(err)
+		return
+	}
 }
 
 func TestIncorrectFilepathEditor(t *testing.T) {
