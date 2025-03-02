@@ -135,7 +135,6 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLF](cmd/hlf) - file sharing with a web interface
    * [HLR](cmd/hlr) - executes remote access commands
    * [HLP](cmd/hlp) - ping the node to check the online status
-   * [HLN](cmd/hln) - broadcast message throw crowds protocol
 
 ## Build and run
 

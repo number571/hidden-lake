@@ -1,8 +1,0 @@
-settings: {}
-logging:
-- info
-- warn
-- erro
-address:
-  external: 127.0.0.1:9562
-connection: 127.0.0.1:9572
