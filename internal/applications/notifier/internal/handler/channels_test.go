@@ -31,11 +31,14 @@ func TestChannelsPage(t *testing.T) {
 		},
 	)
 
-	handler := ChannelsPage(httpLogger, &tsWrapper{fCfg: &config.SConfig{
-		FSettings: &config.SConfigSettings{
-			FLanguage: "ENG",
+	tsWrapper1 := &tsWrapper{
+		fCfg: &config.SConfig{
+			FSettings: &config.SConfigSettings{
+				FLanguage: "ENG",
+			},
 		},
-	}})
+	}
+	handler := ChannelsPage(httpLogger, tsWrapper1)
 
 	if err := channelsRequestOK(handler); err != nil {
 		t.Error(err)
@@ -60,6 +63,24 @@ func TestChannelsPage(t *testing.T) {
 	}
 	if err := channelsRequest404(handler); err == nil {
 		t.Error("request success with invalid path")
+		return
+	}
+
+	tsWrapper2 := &tsWrapper{
+		fWithFail: true,
+		fCfg: &config.SConfig{
+			FSettings: &config.SConfigSettings{
+				FLanguage: "ENG",
+			},
+		},
+	}
+	handler2 := ChannelsPage(httpLogger, tsWrapper2)
+	if err := channelsRequestPostOK(handler2, "123"); err == nil {
+		t.Error("success create channel")
+		return
+	}
+	if err := channelsDeletePostOK(handler2, "123"); err == nil {
+		t.Error("success delete channel")
 		return
 	}
 }

@@ -41,11 +41,35 @@ func TestChannelsUploadPage(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
+	if err := channelsUploadNoneKey(handler); err == nil {
+		t.Error("request success with none key")
+		return
+	}
 	if err := channelsUploadRequest404(handler); err == nil {
 		t.Error("request success with invalid path")
 		return
 	}
+
+	handler2 := ChannelsUploadPage(ctx, httpLogger, cfg, newTsHLSClient(true, false))
+	if err := channelsUploadOK(handler2); err == nil {
+		t.Error("request sueccess with invalid hls client")
+		return
+	}
+}
+
+func channelsUploadNoneKey(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/channels/upload", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code")
+	}
+
+	return nil
 }
 
 func channelsUploadOK(handler http.HandlerFunc) error {
