@@ -48,7 +48,7 @@ func TestHandleIncomingRedirectHTTP(t *testing.T) {
 	}
 
 	hlsClient2 := newTsHLSClient(true, true)
-	hlsClient2.fFriendPubKey = nil
+	hlsClient2.fFriends = map[string]asymmetric.IPubKey{}
 	handler2 := HandleIncomingRedirectHTTP(
 		ctx,
 		&config.SConfig{FSettings: &config.SConfigSettings{}},

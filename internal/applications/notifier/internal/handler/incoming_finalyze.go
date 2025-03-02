@@ -69,7 +69,7 @@ func HandleIncomingFinalyzeHTTP(
 		myPubKey, err := pHLSClient.GetPubKey(pCtx)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
+			_ = api.Response(pW, http.StatusNotExtended, "failed: get public key from service")
 			return
 		}
 
@@ -84,14 +84,14 @@ func HandleIncomingFinalyzeHTTP(
 		if !hashExist && channelKey != "" {
 			if _, err := pDB.SetHash(myPubKey, true, decMsg.GetHash()); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("set_hash"))
-				_ = api.Response(pW, http.StatusNotAcceptable, "failed: set hash")
+				_ = api.Response(pW, http.StatusServiceUnavailable, "failed: set hash")
 				return
 			}
 
 			bodyBytes, err := layer3.ExtractMessageBody(decMsg)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("extract_dec_message"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: extract dec message")
+				_ = api.Response(pW, http.StatusUnsupportedMediaType, "failed: extract dec message")
 				return
 			}
 
@@ -99,14 +99,14 @@ func HandleIncomingFinalyzeHTTP(
 			msg, err := msgdata.GetMessage(dbMsg.GetMessage(), dbMsg.GetTimestamp())
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("recv_message"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: get message bytes")
+				_ = api.Response(pW, http.StatusTeapot, "failed: get message bytes")
 				return
 			}
 
 			rel := database.NewRelation(myPubKey, channelKey)
 			if err := pDB.Push(rel, dbMsg); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("push_message"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
+				_ = api.Response(pW, http.StatusInsufficientStorage, "failed: push message to database")
 				return
 			}
 
@@ -116,7 +116,7 @@ func HandleIncomingFinalyzeHTTP(
 		friends, err := pHLSClient.GetFriends(pCtx)
 		if err != nil || len(friends) < 2 {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
-			_ = api.Response(pW, http.StatusNotAcceptable, "failed: get friends")
+			_ = api.Response(pW, http.StatusNotFound, "failed: get friends")
 			return
 		}
 
