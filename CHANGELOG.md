@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### BUG FIXES
+
+- `cmd/hlm`: fix duplicate messages in WS receive
+
 <!-- ... -->
 
 ## v1.8.4
