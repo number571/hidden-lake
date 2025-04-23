@@ -80,7 +80,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 
 	n := copy(b, p.fBuffer)
 	p.fBuffer = p.fBuffer[n:]
-	p.fPosition += uint64(n)
+	p.fPosition += uint64(n) //nolint:gosec
 
 	if p.fPosition < p.fFileInfo.GetSize() {
 		return n, nil
@@ -100,9 +100,9 @@ func (p *sStream) Seek(offset int64, whence int) (int64, error) {
 	case io.SeekStart:
 		pos = offset
 	case io.SeekCurrent:
-		pos = int64(p.fPosition) + offset
+		pos = int64(p.fPosition) + offset //nolint:gosec
 	case io.SeekEnd:
-		pos = int64(p.fFileInfo.GetSize()) + offset
+		pos = int64(p.fFileInfo.GetSize()) + offset //nolint:gosec
 	default:
 		return 0, ErrInvalidWhence
 	}

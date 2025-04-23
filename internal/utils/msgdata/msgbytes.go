@@ -66,7 +66,7 @@ func getUploadFile(pR *http.Request) (string, []byte, error) {
 	if err != nil {
 		return "", nil, errors.Join(ErrGetFormFile, err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	if handler.Size == 0 {
 		return "", nil, ErrReadFileSize

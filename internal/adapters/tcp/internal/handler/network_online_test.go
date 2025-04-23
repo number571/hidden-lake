@@ -53,7 +53,7 @@ func networkOnlineRequestMethod(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
 		return errors.New("bad status code") // nolint: err113
@@ -68,7 +68,7 @@ func networkOnlineRequestGET(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -83,7 +83,7 @@ func networkOnlineRequestURLParse(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusTeapot {
 		return errors.New("bad status code") // nolint: err113
@@ -98,7 +98,7 @@ func networkOnlineRequestURLScheme(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusAccepted {
 		return errors.New("bad status code") // nolint: err113
@@ -113,7 +113,7 @@ func networkOnlineRequestDelConnection(handler http.HandlerFunc, code int) error
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != code {
 		return errors.New("bad status code") // nolint: err113

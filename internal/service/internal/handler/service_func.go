@@ -61,7 +61,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 			pLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestToService))
 			return nil, errors.Join(ErrBadRequest, err)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		// get response mode: on/off
 		respMode := resp.Header.Get(hls_settings.CHeaderResponseMode)

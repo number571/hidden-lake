@@ -54,12 +54,12 @@ func TestError(t *testing.T) {
 }
 
 func testDeleteFiles(prefixPath string) {
-	os.RemoveAll(prefixPath + tcPathConfigHLC)
-	os.RemoveAll(prefixPath + tcPathConfigHLS)
-	os.RemoveAll(prefixPath + tcPathConfigHLP)
-	os.RemoveAll(prefixPath + tcPathConfigHLM)
-	os.RemoveAll(prefixPath + tcPathConfigHLAtcp)
-	os.RemoveAll(prefixPath + tcPathKeyHLS)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLC)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLS)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLP)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLM)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLAtcp)
+	_ = os.RemoveAll(prefixPath + tcPathKeyHLS)
 }
 
 type tsRunner struct{}

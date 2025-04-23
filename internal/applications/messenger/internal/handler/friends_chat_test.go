@@ -142,7 +142,7 @@ func friendsChatRequestHasNotGraphicChars(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -162,7 +162,7 @@ func friendsChatRequestInputMessage(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -183,7 +183,7 @@ func friendsChatRequestAliasNameNotFound(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -204,7 +204,7 @@ func friendsChatRequestAliasName(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -231,7 +231,7 @@ hello, world!
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -256,7 +256,7 @@ Content-Type: text/plain
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -277,7 +277,7 @@ func friendsChatRequestPostOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusSeeOther {
 		return errors.New("bad status code")
@@ -298,7 +298,7 @@ func friendsChatRequestPostPingOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code")
@@ -313,7 +313,7 @@ func friendsChatRequestOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code")
@@ -328,7 +328,7 @@ func friendsChatRequest404(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code")

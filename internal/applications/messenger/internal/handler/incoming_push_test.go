@@ -78,7 +78,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -98,7 +98,7 @@ func incomingPushRequestMessage(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -117,7 +117,7 @@ func incomingPushRequestPubKey(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -136,7 +136,7 @@ func incomingPushRequestMethod(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113

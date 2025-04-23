@@ -70,9 +70,9 @@ func (p SNetwork) validate() error {
 }
 
 func (p SNetwork) GetFetchTimeout() time.Duration {
-	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond
+	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SNetwork) GetQueuePeriod() time.Duration {
-	return time.Duration(p.FQueuePeriodMS) * time.Millisecond
+	return time.Duration(p.FQueuePeriodMS) * time.Millisecond //nolint:gosec
 }

@@ -53,7 +53,7 @@ func incomingRequestMethod(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
 		return errors.New("bad status code") // nolint: err113
@@ -69,7 +69,7 @@ func incomingRequestInvalidPassword(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
@@ -85,7 +85,7 @@ func incomingRequestNotGraphicChars(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusBadRequest {
 		return errors.New("bad status code") // nolint: err113
@@ -101,7 +101,7 @@ func incomingRequestExecCommand(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusInternalServerError {
 		return errors.New("bad status code") // nolint: err113
@@ -117,7 +117,7 @@ func incomingRequestSuccess(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113

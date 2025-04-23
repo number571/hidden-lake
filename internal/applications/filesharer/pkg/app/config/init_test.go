@@ -12,7 +12,7 @@ func TestInit(t *testing.T) {
 	t.Parallel()
 
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 1)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	testConfigDefaultInit(configFile)
 
@@ -27,7 +27,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	os.Remove(configFile)
+	_ = os.Remove(configFile)
 	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
 		t.Error(err)
 		return
@@ -38,14 +38,14 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	os.Remove(configFile)
+	_ = os.Remove(configFile)
 
 	if _, err := InitConfig(configFile, &SConfig{}); err == nil {
 		t.Error("success init config with invalid config structure (2)")
 		return
 	}
 
-	os.Remove(configFile)
+	_ = os.Remove(configFile)
 
 	config2, err := InitConfig(configFile, config1.(*SConfig))
 	if err != nil {
@@ -58,7 +58,7 @@ func TestInit(t *testing.T) {
 		return
 	}
 
-	os.Remove(configFile)
+	_ = os.Remove(configFile)
 
 	config3, err := InitConfig(configFile, nil)
 	if err != nil {

@@ -52,7 +52,7 @@ func aboutRequestOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code")
@@ -71,7 +71,7 @@ func aboutRequest404(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code")

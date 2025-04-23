@@ -42,7 +42,7 @@ func TestError(t *testing.T) {
 }
 
 func testDeleteFiles(prefixPath string) {
-	os.RemoveAll(prefixPath + tcPathConfig)
+	_ = os.RemoveAll(prefixPath + tcPathConfig)
 }
 
 func TestApp(t *testing.T) {

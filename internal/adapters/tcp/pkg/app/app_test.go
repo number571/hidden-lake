@@ -82,8 +82,8 @@ func TestInitApp(t *testing.T) {
 }
 
 func testDeleteFiles(path string) {
-	os.RemoveAll(path + settings.CPathYML)
-	os.RemoveAll(path + settings.CPathDB)
+	_ = os.RemoveAll(path + settings.CPathYML)
+	_ = os.RemoveAll(path + settings.CPathDB)
 }
 
 func TestApp(t *testing.T) {
@@ -145,7 +145,7 @@ func TestApp(t *testing.T) {
 	}
 
 	msgBytes := []byte("hello, world!")
-	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...)
+	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...) //nolint:gosec
 	netMsg := layer1.NewMessage(
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{

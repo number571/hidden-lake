@@ -52,7 +52,7 @@ func main() {
 	}
 }
 
-func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
+func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 	networkByKey := build.GNetworks[networkKey]
 	connects := make([]string, 0, len(networkByKey.FConnections))
 	for _, c := range networkByKey.FConnections {
@@ -90,7 +90,7 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 			func() []string { return connects },
 		),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
-			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
+			rsp := []byte("echo: " + string(r.GetBody()))
 			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
 		},
 	)

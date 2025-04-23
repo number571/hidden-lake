@@ -130,11 +130,11 @@ func TestHiddenLakeNode(t *testing.T) {
 
 	node1 := testNewHiddenLakeNode("node1.db", msgChan2, msgChan1)
 	node1PubKey := node1.GetOriginNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
-	defer os.Remove("node1.db")
+	defer func() { _ = os.Remove("node1.db") }()
 
 	node2 := testNewHiddenLakeNode("node2.db", msgChan1, msgChan2)
 	node2PubKey := node2.GetOriginNode().GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
-	defer os.Remove("node2.db")
+	defer func() { _ = os.Remove("node2.db") }()
 
 	node1.GetOriginNode().GetMapPubKeys().SetPubKey(node2PubKey)
 	node2.GetOriginNode().GetMapPubKeys().SetPubKey(node1PubKey)

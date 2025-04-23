@@ -15,7 +15,7 @@ func GetPrivKey(pKeyPath string) (asymmetric.IPrivKey, error) {
 		}
 		return privKey, nil
 	}
-	privKeyStr, err := os.ReadFile(pKeyPath)
+	privKeyStr, err := os.ReadFile(pKeyPath) //nolint:gosec
 	if err != nil {
 		return nil, errors.Join(ErrReadPrivateKey, err)
 	}

@@ -124,7 +124,7 @@ func TestBuildConfig(t *testing.T) {
 	config2File := fmt.Sprintf(tcConfigFileTemplate, 3)
 
 	testConfigDefaultInit(config1File)
-	defer os.Remove(config1File)
+	defer func() { _ = os.Remove(config1File) }()
 
 	cfg, err := LoadConfig(config1File)
 	if err != nil {
@@ -141,7 +141,7 @@ func TestBuildConfig(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	defer os.Remove(config2File)
+	defer func() { _ = os.Remove(config2File) }()
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err == nil {
 		t.Error("success build already exist config")
@@ -208,7 +208,7 @@ func TestComplexConfig(t *testing.T) {
 	t.Parallel()
 
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 0)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	if err := testIncorrectConfig(configFile); err != nil {
 		t.Error(err)
@@ -321,7 +321,7 @@ func TestWrapper(t *testing.T) {
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 1)
 
 	testConfigDefaultInit(configFile)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	cfg, err := LoadConfig(configFile)
 	if err != nil {

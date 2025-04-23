@@ -66,7 +66,7 @@ func TestConfig(t *testing.T) {
 	t.Parallel()
 
 	testConfigDefaultInit(tcConfigFile)
-	defer os.Remove(tcConfigFile)
+	defer func() { _ = os.Remove(tcConfigFile) }()
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {

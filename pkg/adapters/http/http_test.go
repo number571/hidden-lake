@@ -73,16 +73,16 @@ func TestHTTPAdapter(t *testing.T) {
 
 	adapter1.WithHandlers(map[string]http.HandlerFunc{
 		settings.CHandleIndexPath: func(w http.ResponseWriter, _ *http.Request) {
-			fmt.Fprint(w, "http-adapter")
+			_, _ = fmt.Fprint(w, "http-adapter")
 		},
 		settings.CHandleConfigSettingsPath: func(w http.ResponseWriter, _ *http.Request) {
-			fmt.Fprint(w, `{"message_size_bytes":8192}`)
+			_, _ = fmt.Fprint(w, `{"message_size_bytes":8192}`)
 		},
 		settings.CHandleConfigConnectsPath: func(w http.ResponseWriter, _ *http.Request) {
-			fmt.Fprint(w, `["tcp://abc_1"]`)
+			_, _ = fmt.Fprint(w, `["tcp://abc_1"]`)
 		},
 		settings.CHandleNetworkOnlinePath: func(w http.ResponseWriter, _ *http.Request) {
-			fmt.Fprint(w, `["tcp://abc_2"]`)
+			_, _ = fmt.Fprint(w, `["tcp://abc_2"]`)
 		},
 	})
 
@@ -151,7 +151,7 @@ func TestHTTPAdapter(t *testing.T) {
 	}
 
 	msgBytes := []byte("hello, world!")
-	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...)
+	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...) //nolint:gosec
 	netMsg := layer1.NewMessage(
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
@@ -215,7 +215,7 @@ func testCustomProduceMessage(ctx context.Context, method, host, msg string) err
 	if err != nil {
 		return err
 	}
-	defer rsp.Body.Close()
+	defer func() { _ = rsp.Body.Close() }()
 	if rsp.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
 	}

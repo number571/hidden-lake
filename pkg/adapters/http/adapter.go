@@ -93,7 +93,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 	}
 	go func() {
 		<-pCtx.Done()
-		httpServer.Close()
+		_ = httpServer.Close()
 	}()
 
 	if err := httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
@@ -184,7 +184,7 @@ func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 	msgLen <<= 1 // message hex_encoded
 	msgStr := make([]byte, msgLen)
 	n, err := io.ReadFull(r.Body, msgStr)
-	if err != nil || uint64(n) != msgLen {
+	if err != nil || uint64(n) != msgLen { //nolint:gosec
 		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
 		w.WriteHeader(http.StatusBadRequest)
 		return

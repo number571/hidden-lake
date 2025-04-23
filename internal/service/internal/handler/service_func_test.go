@@ -34,15 +34,15 @@ func TestHandleServiceFunc(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/rsp-mode-on", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeON)
-		fmt.Fprint(w, rspMsg)
+		_, _ = fmt.Fprint(w, rspMsg)
 	})
 	mux.HandleFunc("/rsp-mode-off", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeOFF)
-		fmt.Fprint(w, rspMsg)
+		_, _ = fmt.Fprint(w, rspMsg)
 	})
 	mux.HandleFunc("/rsp-mode-unknown", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set(hls_settings.CHeaderResponseMode, "unknown")
-		fmt.Fprint(w, rspMsg)
+		_, _ = fmt.Fprint(w, rspMsg)
 	})
 
 	addr := testutils.TgAddrs[49]
@@ -51,7 +51,7 @@ func TestHandleServiceFunc(t *testing.T) {
 		Handler:     mux,
 		ReadTimeout: time.Second,
 	}
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 	go func() { _ = srv.ListenAndServe() }()
 
 	time.Sleep(200 * time.Millisecond)
@@ -134,9 +134,9 @@ func TestHandleServiceFunc(t *testing.T) {
 }
 
 func testCleanHLS() {
-	os.RemoveAll(fmt.Sprintf(tcPathConfigTemplate, 9))
+	_ = os.RemoveAll(fmt.Sprintf(tcPathConfigTemplate, 9))
 	for i := 0; i < 2; i++ {
-		os.RemoveAll(fmt.Sprintf(tcPathDBTemplate, 9+i))
+		_ = os.RemoveAll(fmt.Sprintf(tcPathDBTemplate, 9+i))
 	}
 }
 
@@ -150,7 +150,7 @@ func TestHLS(t *testing.T) {
 
 	// server
 	srv := testStartServerHTTP(testutils.TgAddrs[5])
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 
 	// service
 	nodeService, nodeCancel, err := testStartNodeHLS()

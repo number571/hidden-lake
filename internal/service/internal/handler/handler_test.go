@@ -142,8 +142,8 @@ func testAllCreate(cfgPath, dbPath, srvAddr string) (config.IWrapper, anonymity.
 
 func testAllFree(node anonymity.INode, cancel context.CancelFunc, srv *http.Server, pathCfg, pathDB string) {
 	defer func() {
-		os.RemoveAll(pathDB)
-		os.RemoveAll(pathCfg)
+		_ = os.RemoveAll(pathDB)
+		_ = os.RemoveAll(pathCfg)
 	}()
 	cancel()
 	_ = closer.CloseAll([]io.Closer{
@@ -195,7 +195,7 @@ func testNewWrapper(cfgPath string) config.IWrapper {
 }
 
 func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, context.CancelFunc) {
-	os.RemoveAll(dbPath)
+	_ = os.RemoveAll(dbPath)
 	node := testNewNode(dbPath, addr).HandleFunc(build.GSettings.FProtoMask.FService, nil)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() { _ = node.Run(ctx) }()

@@ -25,7 +25,7 @@ type sMessage struct {
 func NewMessage(pIsIncoming bool, pMessage []byte) IMessage {
 	return &sMessage{
 		fIsIncoming: pIsIncoming,
-		fTimestamp:  uint64(time.Now().Unix()),
+		fTimestamp:  uint64(time.Now().Unix()), //nolint:gosec
 		fMessage:    pMessage,
 	}
 }
@@ -35,11 +35,7 @@ func LoadMessage(pMsgBytes []byte) IMessage {
 		return nil
 	}
 
-	isIncoming := false
-	if pMsgBytes[0] == 1 {
-		isIncoming = true
-	}
-
+	isIncoming := pMsgBytes[0] == 1
 	blockTimestamp := [cTimestampSize]byte{}
 	copy(blockTimestamp[:], pMsgBytes[cIsIncomingSize:cIsIncomingSize+cTimestampSize])
 
@@ -59,7 +55,7 @@ func (p *sMessage) GetMessage() []byte {
 }
 
 func (p *sMessage) GetTimestamp() string {
-	return time.Unix(int64(p.fTimestamp), 0).Format("2006-01-02T15:04:05")
+	return time.Unix(int64(p.fTimestamp), 0).Format("2006-01-02T15:04:05") //nolint:gosec
 }
 
 func (p *sMessage) ToBytes() []byte {

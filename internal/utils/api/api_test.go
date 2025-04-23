@@ -78,7 +78,7 @@ func TestErrorsAPI(t *testing.T) {
 	}
 
 	srv := testRunServer(addr)
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 
 	if _, err := Request(context.Background(), client, http.MethodGet, addr, nil); err == nil {
 		t.Error("success request on incorrect url address")
@@ -102,7 +102,7 @@ func TestRequestResponseAPI(t *testing.T) {
 	}
 
 	srv := testRunServer(addr)
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 
 	if _, err := Request(context.Background(), client, http.MethodGet, "\n\t\a", nil); err == nil {
 		t.Error("success request on invalid url")

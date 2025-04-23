@@ -70,7 +70,7 @@ func configConnectsRequestMethod(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
 		return errors.New("bad status code") // nolint: err113
@@ -85,7 +85,7 @@ func configConnectsRequestGET(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -100,7 +100,7 @@ func configConnectsRequestURLParse(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusTeapot {
 		return errors.New("bad status code") // nolint: err113
@@ -115,7 +115,7 @@ func configConnectsRequestURLScheme(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusAccepted {
 		return errors.New("bad status code") // nolint: err113
@@ -130,7 +130,7 @@ func configConnectsRequestAddConnection(handler http.HandlerFunc, code int) erro
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != code {
 		return errors.New("bad status code") // nolint: err113
@@ -145,7 +145,7 @@ func configConnectsRequestDelConnection(handler http.HandlerFunc, code int) erro
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != code {
 		return errors.New("bad status code") // nolint: err113

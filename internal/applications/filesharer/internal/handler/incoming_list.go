@@ -38,7 +38,7 @@ func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pStgPat
 			return
 		}
 
-		result, err := getListFileInfo(pCfg, pStgPath, uint64(page))
+		result, err := getListFileInfo(pCfg, pStgPath, uint64(page)) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
@@ -88,15 +88,15 @@ func getListFileInfo(pCfg config.IConfig, pStgPath string, pPage uint64) ([]hlf_
 
 func getFileSize(filename string) uint64 {
 	stat, _ := os.Stat(filename)
-	return uint64(stat.Size())
+	return uint64(stat.Size()) //nolint:gosec
 }
 
 func getFileHash(filename string) string {
-	f, err := os.Open(filename)
+	f, err := os.Open(filename) //nolint:gosec
 	if err != nil {
 		return ""
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	h := sha512.New384()
 	if _, err := io.Copy(h, f); err != nil {

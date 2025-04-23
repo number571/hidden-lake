@@ -40,9 +40,9 @@ const (
 )
 
 func testDeleteFiles(prefixPath string) {
-	os.RemoveAll(prefixPath + tcPathDB)
-	os.RemoveAll(prefixPath + tcPathConfig)
-	os.RemoveAll(prefixPath + tcPathKey)
+	_ = os.RemoveAll(prefixPath + tcPathDB)
+	_ = os.RemoveAll(prefixPath + tcPathConfig)
+	_ = os.RemoveAll(prefixPath + tcPathKey)
 }
 
 func TestError(t *testing.T) {

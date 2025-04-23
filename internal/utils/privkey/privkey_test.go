@@ -18,7 +18,7 @@ const (
 )
 
 func testDeleteFile(f string) {
-	os.RemoveAll(f)
+	_ = os.RemoveAll(f)
 }
 
 func TestError(t *testing.T) {

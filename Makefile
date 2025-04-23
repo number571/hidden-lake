@@ -37,13 +37,13 @@ go-fmt-vet:
 ### INSTALL
 
 install-deps:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.0
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.2
 	go install github.com/nikolaydubina/go-cover-treemap@v1.4.2
 
 ### LINT
 
 lint-run: clean go-fmt-vet
-	golangci-lint run -E "gosec,unconvert,gosimple,goconst,gocyclo,err113,ineffassign,unparam,unused,bodyclose,noctx,perfsprint,prealloc,gocritic,govet,revive,staticcheck,errcheck,errorlint,nestif,maintidx"
+	golangci-lint run -E "gosec,unconvert,goconst,gocyclo,ineffassign,unparam,unused,bodyclose,noctx,perfsprint,prealloc,gocritic,govet,staticcheck,errorlint,nestif,maintidx"
 
 ### TEST
 # example run: make test-run N=10

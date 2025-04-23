@@ -40,7 +40,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 		return nil, errors.Join(ErrConfigNotExist, err)
 	}
 
-	bytes, err := os.ReadFile(pFilepath)
+	bytes, err := os.ReadFile(pFilepath) //nolint:gosec
 	if err != nil {
 		return nil, errors.Join(ErrReadConfig, err)
 	}

@@ -66,23 +66,23 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunks := utils.GetChunksCount(uint64(stat.Size()), chunkSize)
+		chunks := utils.GetChunksCount(uint64(stat.Size()), chunkSize) //nolint:gosec
 		if uint64(chunk) >= chunks {
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusLengthRequired, "failed: chunk number")
 			return
 		}
 
-		file, err := os.Open(fullPath)
+		file, err := os.Open(fullPath) //nolint:gosec
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("open_file"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open file")
 			return
 		}
-		defer file.Close()
+		defer func() { _ = file.Close() }()
 
 		buf := make([]byte, chunkSize)
-		chunkOffset := int64(chunk) * int64(chunkSize)
+		chunkOffset := int64(chunk) * int64(chunkSize) //nolint:gosec
 
 		nS, err := file.Seek(chunkOffset, io.SeekStart)
 		if err != nil || nS != chunkOffset {
@@ -92,7 +92,7 @@ func HandleIncomingLoadHTTP(
 		}
 
 		nR, err := file.Read(buf)
-		if err != nil || (uint64(chunk) != chunks-1 && uint64(nR) != chunkSize) {
+		if err != nil || (uint64(chunk) != chunks-1 && uint64(nR) != chunkSize) { //nolint:gosec
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: chunk number")
 			return

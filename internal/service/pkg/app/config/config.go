@@ -68,7 +68,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 		return nil, errors.Join(ErrConfigNotFound, err)
 	}
 
-	bytes, err := os.ReadFile(pFilepath)
+	bytes, err := os.ReadFile(pFilepath) //nolint:gosec
 	if err != nil {
 		return nil, errors.Join(ErrReadConfig, err)
 	}
@@ -99,11 +99,11 @@ func (p *SConfigSettings) GetEncKeySizeBytes() uint64 {
 }
 
 func (p *SConfigSettings) GetFetchTimeout() time.Duration {
-	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond
+	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p *SConfigSettings) GetQueuePeriod() time.Duration {
-	return time.Duration(p.FQueuePeriodMS) * time.Millisecond
+	return time.Duration(p.FQueuePeriodMS) * time.Millisecond //nolint:gosec
 }
 
 func (p *SConfigSettings) GetNetworkKey() string {

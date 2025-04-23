@@ -27,15 +27,15 @@ func TestError(t *testing.T) {
 func TestDatabase(t *testing.T) {
 	t.Parallel()
 
-	os.RemoveAll(tcPath)
-	defer os.RemoveAll(tcPath)
+	_ = os.RemoveAll(tcPath)
+	defer func() { _ = os.RemoveAll(tcPath) }()
 
 	db, err := NewKeyValueDB(tcPath)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	iam := asymmetric.NewPrivKey().GetPubKey()
 	friend := asymmetric.NewPrivKey().GetPubKey()

@@ -56,7 +56,7 @@ func main() {
 	}
 }
 
-func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
+func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FQueuePeriod:  time.Second,
@@ -76,7 +76,7 @@ func newNode(ctx context.Context, name string) network.IHiddenLakeNode {
 		}(),
 		newTCPAdapter("", []string{relayerAddress}),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
-			rsp := []byte(fmt.Sprintf("echo: %s", string(r.GetBody())))
+			rsp := []byte("echo: " + string(r.GetBody()))
 			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
 		},
 	)

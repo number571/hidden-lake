@@ -57,7 +57,7 @@ func TestEditor(t *testing.T) {
 	t.Parallel()
 
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 4)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
@@ -84,7 +84,7 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 	t.Parallel()
 
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 3)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)

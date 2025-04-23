@@ -50,7 +50,7 @@ func Request(
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	result, err := loadResponse(resp.StatusCode, resp.Body)
 	if err != nil {

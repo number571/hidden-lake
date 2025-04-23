@@ -68,21 +68,21 @@ func (p SSettings) validate() error {
 }
 
 func (p SSettings) GetKeeperPeriod() time.Duration {
-	return time.Duration(p.FNetworkManager.FKeeperPeriodMS) * time.Millisecond
+	return time.Duration(p.FNetworkManager.FKeeperPeriodMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SSettings) GetWriteTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FWriteTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FWriteTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SSettings) GetReadTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FReadTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FReadTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SSettings) GetDialTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FDialTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FDialTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SSettings) GetWaitTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FWaitTimeoutMS) * time.Millisecond
+	return time.Duration(p.FNetworkConnection.FWaitTimeoutMS) * time.Millisecond //nolint:gosec
 }

@@ -49,7 +49,7 @@ func unwrapText(pBytes []byte) template.HTML {
 	if !isText(pBytes) {
 		return ""
 	}
-	text := string(pBytes[1:])
+	text := string(pBytes[1:]) //nolint:gosec
 	if chars.HasNotGraphicCharacters(text) {
 		return ""
 	}
@@ -62,7 +62,7 @@ func unwrapFile(pBytes []byte) (template.HTML, string) {
 	if !isFile(pBytes) {
 		return "", ""
 	}
-	splited := bytes.Split(pBytes[1:], []byte{cIsFile})
+	splited := bytes.Split(pBytes[1:], []byte{cIsFile}) //nolint:gosec
 	if len(splited) < 2 {
 		return "", ""
 	}

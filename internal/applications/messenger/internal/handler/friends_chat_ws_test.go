@@ -25,7 +25,7 @@ func TestFriendsChatWS(t *testing.T) {
 		Handler:     mux,
 		ReadTimeout: time.Second,
 	}
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 	go func() { _ = srv.ListenAndServe() }()
 
 	time.Sleep(200 * time.Millisecond)
@@ -35,7 +35,7 @@ func TestFriendsChatWS(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	subAddr := "abc"
 	if err := websocket.JSON.Send(conn, msgdata.SSubscribe{FAddress: subAddr}); err != nil {

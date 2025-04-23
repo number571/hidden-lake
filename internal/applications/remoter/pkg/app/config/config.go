@@ -52,7 +52,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 		return nil, errors.Join(ErrConfigNotExist, err)
 	}
 
-	bytes, err := os.ReadFile(pFilepath)
+	bytes, err := os.ReadFile(pFilepath) //nolint:gosec
 	if err != nil {
 		return nil, errors.Join(ErrReadConfig, err)
 	}
@@ -109,7 +109,7 @@ func (p *SConfig) GetSettings() IConfigSettings {
 }
 
 func (p *SConfigSettings) GetExecTimeout() time.Duration {
-	return time.Duration(p.FExecTimeoutMS) * time.Millisecond
+	return time.Duration(p.FExecTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p *SConfigSettings) GetPassword() string {

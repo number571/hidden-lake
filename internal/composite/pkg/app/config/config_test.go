@@ -37,7 +37,7 @@ func TestConfig(t *testing.T) {
 	t.Parallel()
 
 	testConfigDefaultInit(tcConfigFile)
-	defer os.Remove(tcConfigFile)
+	defer func() { _ = os.Remove(tcConfigFile) }()
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {
@@ -78,7 +78,7 @@ func TestComplexConfig(t *testing.T) {
 	t.Parallel()
 
 	configFile := fmt.Sprintf(tcConfigFileTemplate, 0)
-	defer os.Remove(configFile)
+	defer func() { _ = os.Remove(configFile) }()
 
 	if err := testIncorrectConfig(configFile); err != nil {
 		t.Error(err)

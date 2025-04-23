@@ -60,7 +60,7 @@ func StoragePage(
 			hlf_client.NewRequester(pHlsClient),
 		)
 
-		filesList, err := hlfClient.GetListFiles(pCtx, aliasName, uint64(page))
+		filesList, err := hlfClient.GetListFiles(pCtx, aliasName, uint64(page)) //nolint:gosec
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_files_list", "failed get list of files")(pW, pR)
 			return
@@ -68,7 +68,7 @@ func StoragePage(
 
 		result := sStorage{
 			sTemplate:  getTemplate(pCfg),
-			FPage:      uint64(page),
+			FPage:      uint64(page), //nolint:gosec
 			FAliasName: aliasName,
 			FFilesList: filesList,
 		}

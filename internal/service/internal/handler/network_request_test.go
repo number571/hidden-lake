@@ -115,7 +115,7 @@ func requestAPIRequestPutOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -139,7 +139,7 @@ func requestAPIRequestPostOK(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -162,7 +162,7 @@ func requestAPIRequestReqData(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -186,7 +186,7 @@ func requestAPIRequestNotFound(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -216,7 +216,7 @@ func requestAPIRequestDecode(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -235,7 +235,7 @@ func requestAPIRequestMethod(handler http.HandlerFunc) error {
 
 	handler(w, req)
 	res := w.Result()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
 		return errors.New("bad status code") // nolint: err113
@@ -323,8 +323,8 @@ func testFetch(t *testing.T, client hls_client.IClient) {
 }
 
 func testAllPushCreate(pathCfg, pathDB string) (anonymity.INode, context.CancelFunc, *http.Server) {
-	os.RemoveAll(pathCfg + "_push1")
-	os.RemoveAll(pathDB + "_push1")
+	_ = os.RemoveAll(pathCfg + "_push1")
+	_ = os.RemoveAll(pathDB + "_push1")
 
 	pushNode, cancel := testNewPushNode(pathCfg+"_push1", pathDB+"_push1")
 	if pushNode == nil {
@@ -338,8 +338,8 @@ func testAllPushCreate(pathCfg, pathDB string) (anonymity.INode, context.CancelF
 
 func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.Server, pathCfg, pathDB string) {
 	defer func() {
-		os.RemoveAll(pathCfg + "_push1")
-		os.RemoveAll(pathDB + "_push1")
+		_ = os.RemoveAll(pathCfg + "_push1")
+		_ = os.RemoveAll(pathDB + "_push1")
 	}()
 	cancel()
 	_ = closer.CloseAll([]io.Closer{
