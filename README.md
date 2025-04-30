@@ -92,7 +92,7 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 
 There are a number of dependencies that represent separate applications for providing additional information about the quality of the code. These applications are not entered into the project, but are loaded via the `make install-deps` command. The list of applications is as follows:
 
-1. golangci-lint [github.com/golangci/golangci-lint/cmd/golangci-lintv2.1.2](https://github.com/golangci/golangci-lint/tree/v2.1.2)
+1. golangci-lint [github.com/golangci/golangci-lint@v2.1.2](https://github.com/golangci/golangci-lint/tree/v2.1.2)
 2. go-cover-treemap [github.com/nikolaydubina/go-cover-treemap@v1.4.2](https://github.com/nikolaydubina/go-cover-treemap/tree/v1.4.2)
 
 ## How it works
