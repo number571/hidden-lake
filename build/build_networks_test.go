@@ -109,4 +109,13 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		t.Error("new set value not saved")
 		return
 	}
+
+	if err := SetNetworks(map[string]SNetwork{}); err == nil {
+		t.Error("success set networks without default")
+		return
+	}
+	if err := SetNetworks(map[string]SNetwork{CDefaultNetwork: SNetwork{}}); err == nil {
+		t.Error("success set incorrect network")
+		return
+	}
 }

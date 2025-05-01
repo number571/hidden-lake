@@ -19,7 +19,7 @@ func setSettings(pInputPath, pFilename string) error {
 	}
 	settingsYAML := &build.SSettings{}
 	if err := encoding.DeserializeYAML(settVal, settingsYAML); err != nil {
-		panic(err)
+		return err
 	}
 	return build.SetSettings(*settingsYAML)
 }

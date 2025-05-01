@@ -6,10 +6,31 @@ import (
 	"github.com/number571/hidden-lake/build"
 )
 
-func TestSetBuildByPath(t *testing.T) {
+func TestFailedSetBuildByPath(t *testing.T) {
 	t.Parallel()
 
-	if err := SetBuildByPath("testdata"); err != nil {
+	if err := SetBuildByPath("testdata/failed/1"); err == nil {
+		t.Error("success set build with invalid settings")
+		return
+	}
+	if err := SetBuildByPath("testdata/failed/2"); err == nil {
+		t.Error("success set build with invalid networks")
+		return
+	}
+	if err := SetBuildByPath("testdata/failed/3"); err == nil {
+		t.Error("success set build with invalid settings (yaml)")
+		return
+	}
+	if err := SetBuildByPath("testdata/failed/4"); err == nil {
+		t.Error("success set build with invalid networks (yaml)")
+		return
+	}
+}
+
+func TestSuccessSetBuildByPath(t *testing.T) {
+	t.Parallel()
+
+	if err := SetBuildByPath("testdata/success"); err != nil {
 		t.Error(err)
 		return
 	}

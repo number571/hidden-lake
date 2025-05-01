@@ -115,4 +115,9 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error("new set value not saved")
 		return
 	}
+
+	if err := SetSettings(SSettings{}); err == nil {
+		t.Error("success set incorrect settings")
+		return
+	}
 }
