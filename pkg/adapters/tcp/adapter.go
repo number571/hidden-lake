@@ -39,27 +39,28 @@ func NewTCPAdapter(
 	pCache cache.ICache,
 	pConnsGetter func() []string,
 ) ITCPAdapter {
+	buildSettings := build.GetSettings()
 	adapterSettings := pSettings.GetAdapterSettings()
 	p := &sTCPAdapter{
 		fNetMsgChan: make(chan layer1.IMessage, netMessageChanSize),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{
-				FDuration:    build.GSettings.GetKeeperPeriod(),
+				FDuration:    buildSettings.GetKeeperPeriod(),
 				FConnections: pConnsGetter,
 			}),
 			network.NewNode(
 				network.NewSettings(&network.SSettings{
 					FAddress:      pSettings.GetAddress(),
-					FMaxConnects:  build.GSettings.FNetworkManager.FConnectsLimiter,
-					FReadTimeout:  build.GSettings.GetReadTimeout(),
-					FWriteTimeout: build.GSettings.GetWriteTimeout(),
+					FMaxConnects:  buildSettings.FNetworkManager.FConnectsLimiter,
+					FReadTimeout:  buildSettings.GetRecvTimeout(),
+					FWriteTimeout: buildSettings.GetSendTimeout(),
 					FConnSettings: conn.NewSettings(&conn.SSettings{
 						FMessageSettings:       adapterSettings,
 						FLimitMessageSizeBytes: adapterSettings.GetMessageSizeBytes(),
-						FWaitReadTimeout:       build.GSettings.GetWaitTimeout(),
-						FDialTimeout:           build.GSettings.GetDialTimeout(),
-						FReadTimeout:           build.GSettings.GetReadTimeout(),
-						FWriteTimeout:          build.GSettings.GetWriteTimeout(),
+						FWaitReadTimeout:       buildSettings.GetWaitTimeout(),
+						FDialTimeout:           buildSettings.GetDialTimeout(),
+						FReadTimeout:           buildSettings.GetRecvTimeout(),
+						FWriteTimeout:          buildSettings.GetSendTimeout(),
 					}),
 				}),
 				pCache,
@@ -71,7 +72,7 @@ func NewTCPAdapter(
 		),
 	}
 	p.fConnKeeper.GetNetworkNode().HandleFunc(
-		build.GSettings.FProtoMask.FNetwork,
+		buildSettings.FProtoMask.FNetwork,
 		func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
 			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 			p.fLogger.PushInfo(logBuilder.

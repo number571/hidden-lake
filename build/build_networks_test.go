@@ -45,7 +45,7 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		return
 	}
 
-	network, ok := GNetworks[CDefaultNetwork]
+	network, ok := gNetworks[CDefaultNetwork]
 	if !ok {
 		t.Error("not found network _test_network_")
 		return

@@ -1,15 +1,17 @@
 proto_mask:
   network: 0x5f67705f
   service: 0x5f686c5f
-queue_problem:
+queue_based_problem:
   main_pool_cap: 256
   rand_pool_cap: 32
+  num_consumers: 1
+  pow_parallels: 1
 network_manager:
   connects_limiter: 256
   cache_hashes_cap: 2048
   keeper_period_ms: 10_000 
 network_connection:
-  write_timeout_ms: 5_000
-  read_timeout_ms:  5_000
-  dial_timeout_ms:  5_000
-  wait_timeout_ms:  3_600_000
+  send_timeout_ms: 5_000
+  recv_timeout_ms: 5_000
+  dial_timeout_ms: 5_000
+  wait_timeout_ms: 3_600_000

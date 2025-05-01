@@ -27,4 +27,5 @@ var (
 	ErrNetworkNotFound    = &SConfigError{"network not found"}
 	ErrParseURL           = &SConfigError{"parse url"}
 	ErrLoadConfig         = &SConfigError{"load config"}
+	ErrAdapterNotFound    = &SConfigError{"adapter not found"}
 )

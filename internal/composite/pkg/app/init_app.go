@@ -8,6 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/build"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 
 	hla_tcp_app "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app"
@@ -31,6 +32,9 @@ import (
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
+	if err := build.SetBuildByPath(inputPath); err != nil {
+		return nil, errors.Join(ErrSetNetworks, err)
+	}
 
 	cfgPath := filepath.Join(inputPath, settings.CPathYML)
 	cfg, err := config.InitConfig(cfgPath, nil, pFlags.Get("-n").GetStringValue(pArgs))

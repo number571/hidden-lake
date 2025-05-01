@@ -35,6 +35,7 @@ func NewHiddenLakeNode(
 	pRunnerAdapter adapters.IRunnerAdapter,
 	pHandlerF handler.IHandlerF,
 ) IHiddenLakeNode {
+	buildSettings := build.GetSettings()
 	adaptersSettings := pSettings.GetAdapterSettings()
 	return &sHiddenLakeNode{
 		anonymity.NewNode(
@@ -49,14 +50,14 @@ func NewHiddenLakeNode(
 				queue.NewSettings(&queue.SSettings{
 					FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
 						FSettings: adaptersSettings,
-						FParallel: pSettings.GetPowParallel(),
+						FParallel: buildSettings.FQueueBasedProblem.FPowParallels,
 					}),
-					FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
+					FNetworkMask:  buildSettings.FProtoMask.FNetwork,
+					FConsumersCap: buildSettings.FQueueBasedProblem.FQBPConsumers,
 					FQueuePeriod:  pSettings.GetQueuePeriod(),
-					FConsumersCap: pSettings.GetQBPConsumers(),
 					FQueuePoolCap: [2]uint64{
-						build.GSettings.FQueueProblem.FMainPoolCap,
-						build.GSettings.FQueueProblem.FRandPoolCap,
+						buildSettings.FQueueBasedProblem.FMainPoolCap,
+						buildSettings.FQueueBasedProblem.FRandPoolCap,
 					},
 				}),
 				func() client.IClient {
@@ -68,7 +69,7 @@ func NewHiddenLakeNode(
 				}(),
 			),
 		).HandleFunc(
-			build.GSettings.FProtoMask.FService,
+			buildSettings.FProtoMask.FService,
 			handler.RequestHandler(pHandlerF),
 		),
 	}
@@ -123,7 +124,7 @@ func (p *sHiddenLakeNode) SendRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
-			uint64(build.GSettings.FProtoMask.FService),
+			uint64(build.GetSettings().FProtoMask.FService),
 			pRequest.ToBytes(),
 		),
 	)
@@ -142,7 +143,7 @@ func (p *sHiddenLakeNode) FetchRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
-			build.GSettings.FProtoMask.FService,
+			build.GetSettings().FProtoMask.FService,
 			pRequest.ToBytes(),
 		),
 	)

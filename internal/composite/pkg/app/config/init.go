@@ -51,7 +51,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	cfg := pCfg.(*SConfig)
-	network, ok := build.GNetworks[pUseNetwork]
+	network, ok := build.GetNetwork(pUseNetwork)
 	if !ok {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
@@ -71,6 +71,8 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		switch scheme { // nolint: gocritic
 		case hla_tcp_settings.CServiceAdapterScheme:
 			cfg.FServices = append(cfg.FServices, hla_tcp_settings.CServiceFullName)
+		default:
+			return nil, ErrAdapterNotFound
 		}
 	}
 

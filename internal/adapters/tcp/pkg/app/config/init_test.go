@@ -22,13 +22,7 @@ func TestRebuild(t *testing.T) {
 		return
 	}
 
-	network := ""
-	for k := range build.GNetworks {
-		network = k
-		break
-	}
-
-	if _, err := InitConfig(configFile, nil, network); err != nil {
+	if _, err := InitConfig(configFile, nil, build.CDefaultNetwork); err != nil {
 		t.Error(err)
 		return
 	}
