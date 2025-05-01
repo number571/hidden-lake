@@ -52,8 +52,8 @@ type SSettings struct {
 	FQueueBasedProblem struct {
 		FMainPoolCap  uint64 `yaml:"main_pool_cap"`
 		FRandPoolCap  uint64 `yaml:"rand_pool_cap"`
-		FPowParallels uint64 `yaml:"pow_parallels"`
 		FQBPConsumers uint64 `yaml:"qbp_consumers"`
+		FPowParallels uint64 `yaml:"pow_parallels"`
 	} `yaml:"queue_based_problem"`
 	FNetworkManager struct {
 		FConnectsLimiter uint64 `yaml:"connects_limiter"`
