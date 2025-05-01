@@ -1,0 +1,17 @@
+proto_mask:
+  network: 0x1
+  service: 0x2
+queue_based_problem:
+  main_pool_cap: 1
+  rand_pool_cap: 2
+  num_consumers: 3
+  pow_parallels: 4
+network_manager:
+  connects_limiter: 1
+  cache_hashes_cap: 2
+  keeper_period_ms: 3 
+network_connection:
+  send_timeout_ms: 1
+  recv_timeout_ms: 2
+  dial_timeout_ms: 3
+  wait_timeout_ms: 4

@@ -53,6 +53,17 @@ func GetNetwork(k string) (SNetwork, bool) {
 	return v, ok
 }
 
+func GetNetworks() map[string]SNetwork {
+	gNetworksMtx.RLock()
+	defer gNetworksMtx.RUnlock()
+
+	r := make(map[string]SNetwork, len(gNetworks))
+	for k, v := range gNetworks {
+		r[k] = v
+	}
+	return r
+}
+
 func SetNetworks(networksMap map[string]SNetwork) error {
 	if _, ok := networksMap[CDefaultNetwork]; !ok {
 		return errors.New("default network not found in map")

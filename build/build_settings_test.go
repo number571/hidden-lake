@@ -96,4 +96,23 @@ func TestHiddenLakeSettings(t *testing.T) {
 	case gSettings.GetKeeperPeriod() != time.Duration(gSettings.FNetworkManager.FKeeperPeriodMS)*time.Millisecond: //nolint:gosec
 		t.Error("Get methods (settings) is not valid")
 	}
+
+	newSettings := GetSettings()
+
+	newProtoMaskNetwork := uint32(0x1)
+	if newSettings.FProtoMask.FNetwork == newProtoMaskNetwork {
+		t.Error("new set value already equal")
+		return
+	}
+
+	newSettings.FProtoMask.FNetwork = newProtoMaskNetwork
+	if err := SetSettings(newSettings); err != nil {
+		t.Error(err)
+		return
+	}
+
+	if newSettings.FProtoMask.FNetwork != newProtoMaskNetwork {
+		t.Error("new set value not saved")
+		return
+	}
 }

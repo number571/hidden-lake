@@ -77,4 +77,36 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	case network.GetQueuePeriod() != time.Duration(5_000)*time.Millisecond:
 		t.Error("Get methods (networks) is not valid")
 	}
+
+	networks := GetNetworks()
+	newNetwork := networks[CDefaultNetwork]
+
+	newNetworkKey := "new_network"
+	newFetchTimeout := uint64(2_123)
+
+	if _, ok := networks[newNetworkKey]; ok {
+		t.Error("new network key already exist")
+		return
+	}
+	if newNetwork.FFetchTimeoutMS == newFetchTimeout {
+		t.Error("new set value already equal")
+		return
+	}
+
+	newNetwork.FFetchTimeoutMS = newFetchTimeout
+	networks[newNetworkKey] = newNetwork
+	if err := SetNetworks(networks); err != nil {
+		t.Error(err)
+		return
+	}
+
+	gotNetwork, ok := GetNetwork(newNetworkKey)
+	if !ok {
+		t.Error("new set network key not saved")
+		return
+	}
+	if gotNetwork.FFetchTimeoutMS != newFetchTimeout {
+		t.Error("new set value not saved")
+		return
+	}
 }

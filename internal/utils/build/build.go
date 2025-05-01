@@ -1,8 +1,8 @@
 package build
 
 const (
-	cFileSettings = "hl_settings.yaml"
-	cFileNetworks = "hl_networks.yaml"
+	cFileSettings = "hl_settings.yml"
+	cFileNetworks = "hl_networks.yml"
 )
 
 func SetBuildByPath(pInputPath string) error {
