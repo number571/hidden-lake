@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	CDefaultNetwork = ""
+	CDefaultNetwork = ";"
 )
 
 var (
