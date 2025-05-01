@@ -4,7 +4,7 @@ proto_mask:
 queue_based_problem:
   main_pool_cap: 0
   rand_pool_cap: 2
-  num_consumers: 3
+  qbp_consumers: 3
   pow_parallels: 4
 network_manager:
   connects_limiter: 1
