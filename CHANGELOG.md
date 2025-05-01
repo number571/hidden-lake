@@ -6,6 +6,11 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `build`: hl_settings.yml, hl_networks.yml can rewrite default settings.yml, networks.yml
+- `cmd/hls`: move qbp_consumers, pow_parallel params -> build/settings.yml
+
 ### BUG FIXES
 
 - `cmd/hlm`: fix duplicate messages in WS receive
