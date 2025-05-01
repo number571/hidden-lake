@@ -15,22 +15,22 @@ import (
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 )
 
-func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, error) {
-	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
-		cfg, err := LoadConfig(cfgPath)
+func InitConfig(pCfgPath string, pInitCfg *SConfig, pUseNetwork string) (IConfig, error) {
+	if _, err := os.Stat(pCfgPath); !os.IsNotExist(err) {
+		cfg, err := LoadConfig(pCfgPath)
 		if err != nil {
 			return nil, errors.Join(ErrLoadConfig, err)
 		}
-		return rebuildConfig(cfg, useNetwork)
+		return rebuildConfig(cfg, pUseNetwork)
 	}
-	if initCfg == nil {
-		initCfg = initConfig()
+	if pInitCfg == nil {
+		pInitCfg = initConfig()
 	}
-	cfg, err := BuildConfig(cfgPath, initCfg)
+	cfg, err := BuildConfig(pCfgPath, pInitCfg)
 	if err != nil {
 		return nil, errors.Join(ErrBuildConfig, err)
 	}
-	return rebuildConfig(cfg, useNetwork)
+	return rebuildConfig(cfg, pUseNetwork)
 }
 
 func initConfig() *SConfig {

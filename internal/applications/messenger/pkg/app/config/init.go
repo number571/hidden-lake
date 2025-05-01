@@ -9,23 +9,27 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
-func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
-	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
-		return LoadConfig(cfgPath)
+func InitConfig(pCfgPath string, pInitCfg *SConfig) (IConfig, error) {
+	if _, err := os.Stat(pCfgPath); !os.IsNotExist(err) {
+		return LoadConfig(pCfgPath)
 	}
-	if initCfg == nil {
-		initCfg = &SConfig{
-			FSettings: &SConfigSettings{
-				FMessagesCapacity: hlm_settings.CDefaultMessagesCapacity,
-				FLanguage:         hlm_settings.CDefaultLanguage,
-			},
-			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
-			FAddress: &SAddress{
-				FInternal: hlm_settings.CDefaultInternalAddress,
-				FExternal: hlm_settings.CDefaultExternalAddress,
-			},
-			FConnection: hls_settings.CDefaultInternalAddress,
-		}
+	if pInitCfg == nil {
+		pInitCfg = initConfig()
 	}
-	return BuildConfig(cfgPath, initCfg)
+	return BuildConfig(pCfgPath, pInitCfg)
+}
+
+func initConfig() *SConfig {
+	return &SConfig{
+		FSettings: &SConfigSettings{
+			FMessagesCapacity: hlm_settings.CDefaultMessagesCapacity,
+			FLanguage:         hlm_settings.CDefaultLanguage,
+		},
+		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
+		FAddress: &SAddress{
+			FInternal: hlm_settings.CDefaultInternalAddress,
+			FExternal: hlm_settings.CDefaultExternalAddress,
+		},
+		FConnection: hls_settings.CDefaultInternalAddress,
+	}
 }
