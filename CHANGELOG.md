@@ -9,6 +9,9 @@
 ### IMPROVEMENTS
 
 - `build`: hl_settings.yml, hl_networks.yml can rewrite default settings.yml, networks.yml
+
+### CHANGES
+
 - `cmd/hls`: move qbp_consumers, pow_parallel params -> build/settings.yml
 
 ### BUG FIXES
