@@ -39,10 +39,10 @@ type SSettings struct {
 		FKeeperPeriodMS  uint64 `yaml:"keeper_period_ms"`
 	} `yaml:"network_manager"`
 	FNetworkConnection struct {
-		FWriteTimeoutMS uint64 `yaml:"write_timeout_ms"`
-		FReadTimeoutMS  uint64 `yaml:"read_timeout_ms"`
-		FDialTimeoutMS  uint64 `yaml:"dial_timeout_ms"`
-		FWaitTimeoutMS  uint64 `yaml:"wait_timeout_ms"`
+		FSendTimeoutMS uint64 `yaml:"send_timeout_ms"`
+		FRecvTimeoutMS uint64 `yaml:"recv_timeout_ms"`
+		FDialTimeoutMS uint64 `yaml:"dial_timeout_ms"`
+		FWaitTimeoutMS uint64 `yaml:"wait_timeout_ms"`
 	} `yaml:"network_connection"`
 }
 
@@ -58,8 +58,8 @@ func (p SSettings) validate() error {
 		p.FNetworkManager.FKeeperPeriodMS == 0:
 		return errors.New("network_manager is invalid")
 	case
-		p.FNetworkConnection.FWriteTimeoutMS == 0,
-		p.FNetworkConnection.FReadTimeoutMS == 0,
+		p.FNetworkConnection.FSendTimeoutMS == 0,
+		p.FNetworkConnection.FRecvTimeoutMS == 0,
 		p.FNetworkConnection.FDialTimeoutMS == 0,
 		p.FNetworkConnection.FWaitTimeoutMS == 0:
 		return errors.New("network_connection is invalid")
@@ -71,12 +71,12 @@ func (p SSettings) GetKeeperPeriod() time.Duration {
 	return time.Duration(p.FNetworkManager.FKeeperPeriodMS) * time.Millisecond //nolint:gosec
 }
 
-func (p SSettings) GetWriteTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FWriteTimeoutMS) * time.Millisecond //nolint:gosec
+func (p SSettings) GetSendTimeout() time.Duration {
+	return time.Duration(p.FNetworkConnection.FSendTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
-func (p SSettings) GetReadTimeout() time.Duration {
-	return time.Duration(p.FNetworkConnection.FReadTimeoutMS) * time.Millisecond //nolint:gosec
+func (p SSettings) GetRecvTimeout() time.Duration {
+	return time.Duration(p.FNetworkConnection.FRecvTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p SSettings) GetDialTimeout() time.Duration {

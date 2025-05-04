@@ -30,8 +30,8 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 
 	settings.FNetworkConnection.FDialTimeoutMS = 5_000
-	settings.FNetworkConnection.FReadTimeoutMS = 5_000
-	settings.FNetworkConnection.FWriteTimeoutMS = 5_000
+	settings.FNetworkConnection.FRecvTimeoutMS = 5_000
+	settings.FNetworkConnection.FSendTimeoutMS = 5_000
 	settings.FNetworkConnection.FWaitTimeoutMS = 5_000_000
 	if err := settings.validate(); err != nil {
 		t.Error(err)
@@ -70,11 +70,11 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error(`GSettings.NetworkConnection.DialTimeoutMS != 5_000`)
 		return
 	}
-	if GSettings.FNetworkConnection.FReadTimeoutMS != 5_000 {
+	if GSettings.FNetworkConnection.FRecvTimeoutMS != 5_000 {
 		t.Error(`GSettings.NetworkConnection.ReadTimeoutMS != 5_000`)
 		return
 	}
-	if GSettings.FNetworkConnection.FWriteTimeoutMS != 5_000 {
+	if GSettings.FNetworkConnection.FSendTimeoutMS != 5_000 {
 		t.Error(`GSettings.NetworkConnection.WriteTimeoutMS != 5_000`)
 		return
 	}
@@ -87,9 +87,9 @@ func TestHiddenLakeSettings(t *testing.T) {
 		fallthrough
 	case GSettings.GetDialTimeout() != time.Duration(GSettings.FNetworkConnection.FDialTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case GSettings.GetReadTimeout() != time.Duration(GSettings.FNetworkConnection.FReadTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetRecvTimeout() != time.Duration(GSettings.FNetworkConnection.FRecvTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case GSettings.GetWriteTimeout() != time.Duration(GSettings.FNetworkConnection.FWriteTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetSendTimeout() != time.Duration(GSettings.FNetworkConnection.FSendTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
 	case GSettings.GetKeeperPeriod() != time.Duration(GSettings.FNetworkManager.FKeeperPeriodMS)*time.Millisecond: //nolint:gosec
 		t.Error("Get methods (settings) is not valid")

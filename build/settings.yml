@@ -9,7 +9,7 @@ network_manager:
   cache_hashes_cap: 2048
   keeper_period_ms: 10000 
 network_connection:
-  write_timeout_ms: 5000
-  read_timeout_ms:  5000
+  send_timeout_ms: 5000
+  recv_timeout_ms:  5000
   dial_timeout_ms:  5000
   wait_timeout_ms:  3600000
