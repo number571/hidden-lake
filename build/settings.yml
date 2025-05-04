@@ -7,9 +7,9 @@ queue_based_problem:
 network_manager:
   connects_limiter: 256
   cache_hashes_cap: 2048
-  keeper_period_ms: 10_000 
+  keeper_period_ms: 10000 
 network_connection:
-  write_timeout_ms: 5_000
-  read_timeout_ms:  5_000
-  dial_timeout_ms:  5_000
-  wait_timeout_ms:  3_600_000
+  write_timeout_ms: 5000
+  read_timeout_ms:  5000
+  dial_timeout_ms:  5000
+  wait_timeout_ms:  3600000
