@@ -10,6 +10,6 @@ network_manager:
   keeper_period_ms: 10000 
 network_connection:
   send_timeout_ms: 5000
-  recv_timeout_ms:  5000
-  dial_timeout_ms:  5000
-  wait_timeout_ms:  3600000
+  recv_timeout_ms: 5000
+  dial_timeout_ms: 5000
+  wait_timeout_ms: 3600000
