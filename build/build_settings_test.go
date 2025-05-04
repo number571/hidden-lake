@@ -14,10 +14,8 @@ func TestHiddenLakeSettings(t *testing.T) {
 		return
 	}
 
-	settings.FQueueBasedProblem.FMainPoolCap = 64
-	settings.FQueueBasedProblem.FRandPoolCap = 64
-	settings.FQueueBasedProblem.FQBPConsumers = 1
-	settings.FQueueBasedProblem.FPowParallels = 1
+	settings.FQueueProblem.FMainPoolCap = 64
+	settings.FQueueProblem.FRandPoolCap = 64
 	if err := settings.validate(); err == nil {
 		t.Error("success validate with invalid network manager")
 		return
@@ -32,92 +30,68 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 
 	settings.FNetworkConnection.FDialTimeoutMS = 5_000
-	settings.FNetworkConnection.FRecvTimeoutMS = 5_000
-	settings.FNetworkConnection.FSendTimeoutMS = 5_000
+	settings.FNetworkConnection.FReadTimeoutMS = 5_000
+	settings.FNetworkConnection.FWriteTimeoutMS = 5_000
 	settings.FNetworkConnection.FWaitTimeoutMS = 5_000_000
 	if err := settings.validate(); err != nil {
 		t.Error(err)
 		return
 	}
 
-	if gSettings.FProtoMask.FNetwork != 0x5f67705f {
-		t.Error(`gSettings.ProtoMask.Network != 0x5f67705f`)
+	if GSettings.FProtoMask.FNetwork != 0x5f67705f {
+		t.Error(`GSettings.ProtoMask.Network != 0x5f67705f`)
 		return
 	}
-	if gSettings.FProtoMask.FService != 0x5f686c5f {
+	if GSettings.FProtoMask.FService != 0x5f686c5f {
 		t.Error(`GGSettings.ProtoMask.Service != 0x5f686c5f`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FMainPoolCap != 256 {
-		t.Error(`gSettings.QueueCapacity.FMainPoolCap != 256`)
+	if GSettings.FQueueProblem.FMainPoolCap != 256 {
+		t.Error(`GSettings.QueueCapacity.FMainPoolCap != 256`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FRandPoolCap != 32 {
-		t.Error(`gSettings.QueueCapacity.FRandPoolCap != 32`)
+	if GSettings.FQueueProblem.FRandPoolCap != 32 {
+		t.Error(`GSettings.QueueCapacity.FRandPoolCap != 32`)
 		return
 	}
-	if gSettings.FNetworkManager.FCacheHashesCap != 2048 {
-		t.Error(`gSettings.NetworkManager.CacheHashesCap != 2048`)
+	if GSettings.FNetworkManager.FCacheHashesCap != 2048 {
+		t.Error(`GSettings.NetworkManager.CacheHashesCap != 2048`)
 		return
 	}
-	if gSettings.FNetworkManager.FConnectsLimiter != 256 {
-		t.Error(`gSettings.NetworkManager.ConnectsLimiter != 256`)
+	if GSettings.FNetworkManager.FConnectsLimiter != 256 {
+		t.Error(`GSettings.NetworkManager.ConnectsLimiter != 256`)
 		return
 	}
-	if gSettings.FNetworkManager.FKeeperPeriodMS != 10_000 {
-		t.Error(`gSettings.NetworkManager.KeeperPeriodMS != 10_000`)
+	if GSettings.FNetworkManager.FKeeperPeriodMS != 10_000 {
+		t.Error(`GSettings.NetworkManager.KeeperPeriodMS != 10_000`)
 		return
 	}
-	if gSettings.FNetworkConnection.FDialTimeoutMS != 5_000 {
-		t.Error(`gSettings.NetworkConnection.DialTimeoutMS != 5_000`)
+	if GSettings.FNetworkConnection.FDialTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.DialTimeoutMS != 5_000`)
 		return
 	}
-	if gSettings.FNetworkConnection.FRecvTimeoutMS != 5_000 {
-		t.Error(`gSettings.NetworkConnection.FRecvTimeoutMS != 5_000`)
+	if GSettings.FNetworkConnection.FReadTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.ReadTimeoutMS != 5_000`)
 		return
 	}
-	if gSettings.FNetworkConnection.FSendTimeoutMS != 5_000 {
-		t.Error(`gSettings.NetworkConnection.FSendTimeoutMS != 5_000`)
+	if GSettings.FNetworkConnection.FWriteTimeoutMS != 5_000 {
+		t.Error(`GSettings.NetworkConnection.WriteTimeoutMS != 5_000`)
 		return
 	}
-	if gSettings.FNetworkConnection.FWaitTimeoutMS != 3_600_000 {
-		t.Error(`gSettings.NetworkConnection.WaitTimeoutMS != 3_600_000`)
+	if GSettings.FNetworkConnection.FWaitTimeoutMS != 3_600_000 {
+		t.Error(`GSettings.NetworkConnection.WaitTimeoutMS != 3_600_000`)
 		return
 	}
 	switch {
-	case gSettings.GetWaitTimeout() != time.Duration(gSettings.FNetworkConnection.FWaitTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetWaitTimeout() != time.Duration(GSettings.FNetworkConnection.FWaitTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case gSettings.GetDialTimeout() != time.Duration(gSettings.FNetworkConnection.FDialTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetDialTimeout() != time.Duration(GSettings.FNetworkConnection.FDialTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case gSettings.GetRecvTimeout() != time.Duration(gSettings.FNetworkConnection.FRecvTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetReadTimeout() != time.Duration(GSettings.FNetworkConnection.FReadTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case gSettings.GetSendTimeout() != time.Duration(gSettings.FNetworkConnection.FSendTimeoutMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetWriteTimeout() != time.Duration(GSettings.FNetworkConnection.FWriteTimeoutMS)*time.Millisecond: //nolint:gosec
 		fallthrough
-	case gSettings.GetKeeperPeriod() != time.Duration(gSettings.FNetworkManager.FKeeperPeriodMS)*time.Millisecond: //nolint:gosec
+	case GSettings.GetKeeperPeriod() != time.Duration(GSettings.FNetworkManager.FKeeperPeriodMS)*time.Millisecond: //nolint:gosec
 		t.Error("Get methods (settings) is not valid")
-	}
-
-	newSettings := GetSettings()
-
-	newProtoMaskNetwork := uint32(0x1)
-	if newSettings.FProtoMask.FNetwork == newProtoMaskNetwork {
-		t.Error("new set value already equal")
-		return
-	}
-
-	newSettings.FProtoMask.FNetwork = newProtoMaskNetwork
-	if err := SetSettings(newSettings); err != nil {
-		t.Error(err)
-		return
-	}
-
-	if newSettings.FProtoMask.FNetwork != newProtoMaskNetwork {
-		t.Error("new set value not saved")
-		return
-	}
-
-	if err := SetSettings(SSettings{}); err == nil {
-		t.Error("success set incorrect settings")
-		return
 	}
 }

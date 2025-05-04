@@ -5,10 +5,6 @@ import "github.com/number571/hidden-lake/internal/utils/name"
 var GServiceName = name.LoadServiceName(CServiceFullName)
 
 const (
-	CServiceAdapterScheme = "http"
-)
-
-const (
 	CServiceFullName    = "hidden-lake-service"
 	CServiceDescription = "anonymizes traffic using the QB-problem"
 )

@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"net/url"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -14,22 +13,22 @@ import (
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func InitConfig(pCfgPath string, pInitCfg *SConfig, pUseNetwork string) (IConfig, error) {
-	if _, err := os.Stat(pCfgPath); !os.IsNotExist(err) {
-		cfg, err := LoadConfig(pCfgPath)
+func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, error) {
+	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
+		cfg, err := LoadConfig(cfgPath)
 		if err != nil {
 			return nil, errors.Join(ErrLoadConfig, err)
 		}
-		return rebuildConfig(cfg, pUseNetwork)
+		return rebuildConfig(cfg, useNetwork)
 	}
-	if pInitCfg == nil {
-		pInitCfg = initConfig()
+	if initCfg == nil {
+		initCfg = initConfig()
 	}
-	cfg, err := BuildConfig(pCfgPath, pInitCfg)
+	cfg, err := BuildConfig(cfgPath, initCfg)
 	if err != nil {
 		return nil, errors.Join(ErrBuildConfig, err)
 	}
-	return rebuildConfig(cfg, pUseNetwork)
+	return rebuildConfig(cfg, useNetwork)
 }
 
 func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
@@ -38,7 +37,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	cfg := pCfg.(*SConfig)
-	network, ok := build.GetNetwork(pUseNetwork)
+	network, ok := build.GNetworks[pUseNetwork]
 	if !ok {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
@@ -48,18 +47,6 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FQueuePeriodMS = network.FQueuePeriodMS
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
-
-	cfg.FEndpoints = make([]string, 0, len(network.FConnections))
-	for _, c := range network.FConnections {
-		u, err := url.Parse(c)
-		if err != nil {
-			return nil, errors.Join(ErrParseURL, err)
-		}
-		if u.Scheme != hls_settings.CServiceAdapterScheme {
-			continue
-		}
-		cfg.FEndpoints = append(cfg.FEndpoints, u.Host)
-	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)
@@ -74,7 +61,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,

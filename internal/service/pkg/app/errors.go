@@ -30,5 +30,4 @@ var (
 	ErrInvalidPsdPubKey = &SAppError{"invalid psd public key"}
 	ErrGetPsdPubKey     = &SAppError{"get psd pub key"}
 	ErrSetPsdPubKey     = &SAppError{"set psd pub key"}
-	ErrSetNetworks      = &SAppError{"set networks"}
 )

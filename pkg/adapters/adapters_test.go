@@ -13,7 +13,7 @@ func TestSettings(t *testing.T) {
 	t.Parallel()
 
 	sett := NewSettings(nil)
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 
 	if sett.GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {
 		t.Error("get invalid settings")

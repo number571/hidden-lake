@@ -9,28 +9,24 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
 
-func InitConfig(pCfgPath string, pInitCfg *SConfig) (IConfig, error) {
-	if _, err := os.Stat(pCfgPath); !os.IsNotExist(err) {
-		return LoadConfig(pCfgPath)
+func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
+	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
+		return LoadConfig(cfgPath)
 	}
-	if pInitCfg == nil {
-		pInitCfg = initConfig()
+	if initCfg == nil {
+		initCfg = &SConfig{
+			FSettings: &SConfigSettings{
+				FRetryNum:   hlf_settings.CDefaultRetryNum,
+				FPageOffset: hlf_settings.CDefaultPageOffset,
+				FLanguage:   hlf_settings.CDefaultLanguage,
+			},
+			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
+			FAddress: &SAddress{
+				FInternal: hlf_settings.CDefaultInternalAddress,
+				FExternal: hlf_settings.CDefaultExternalAddress,
+			},
+			FConnection: hls_settings.CDefaultInternalAddress,
+		}
 	}
-	return BuildConfig(pCfgPath, pInitCfg)
-}
-
-func initConfig() *SConfig {
-	return &SConfig{
-		FSettings: &SConfigSettings{
-			FRetryNum:   hlf_settings.CDefaultRetryNum,
-			FPageOffset: hlf_settings.CDefaultPageOffset,
-			FLanguage:   hlf_settings.CDefaultLanguage,
-		},
-		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
-		FAddress: &SAddress{
-			FInternal: hlf_settings.CDefaultInternalAddress,
-			FExternal: hlf_settings.CDefaultExternalAddress,
-		},
-		FConnection: hls_settings.CDefaultInternalAddress,
-	}
+	return BuildConfig(cfgPath, initCfg)
 }

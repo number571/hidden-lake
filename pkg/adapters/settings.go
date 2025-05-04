@@ -27,7 +27,7 @@ func NewSettings(pSett *SSettings) ISettings {
 }
 
 func (p *sSettings) useDefault() *sSettings {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
 	}

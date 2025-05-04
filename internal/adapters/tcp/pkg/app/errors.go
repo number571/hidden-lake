@@ -13,11 +13,9 @@ func (err *SAppError) Error() string {
 }
 
 var (
-	ErrRunning     = &SAppError{"app running"}
-	ErrService     = &SAppError{"service"}
-	ErrClose       = &SAppError{"close"}
-	ErrInitDB      = &SAppError{"init database"}
-	ErrExist       = &SAppError{"exist"}
-	ErrInitConfig  = &SAppError{"init config"}
-	ErrSetNetworks = &SAppError{"set networks"}
+	ErrRunning = &SAppError{"app running"}
+	ErrService = &SAppError{"service"}
+	ErrClose   = &SAppError{"close"}
+	ErrInitDB  = &SAppError{"init database"}
+	ErrExist   = &SAppError{"exist"}
 )

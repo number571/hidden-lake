@@ -12,26 +12,26 @@ import (
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func InitConfig(pCfgPath string, pInitCfg *SConfig, pUseNetwork string) (IConfig, error) {
-	if _, err := os.Stat(pCfgPath); !os.IsNotExist(err) {
-		cfg, err := LoadConfig(pCfgPath)
+func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, error) {
+	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
+		cfg, err := LoadConfig(cfgPath)
 		if err != nil {
 			return nil, errors.Join(ErrLoadConfig, err)
 		}
-		return rebuildConfig(cfg, pUseNetwork)
+		return rebuildConfig(cfg, useNetwork)
 	}
-	if pInitCfg == nil {
-		pInitCfg = initConfig()
+	if initCfg == nil {
+		initCfg = initConfig()
 	}
-	cfg, err := BuildConfig(pCfgPath, pInitCfg)
+	cfg, err := BuildConfig(cfgPath, initCfg)
 	if err != nil {
 		return nil, errors.Join(ErrBuildConfig, err)
 	}
-	return rebuildConfig(cfg, pUseNetwork)
+	return rebuildConfig(cfg, useNetwork)
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,
@@ -54,7 +54,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	}
 
 	cfg := pCfg.(*SConfig)
-	network, ok := build.GetNetwork(pUseNetwork)
+	network, ok := build.GNetworks[pUseNetwork]
 	if !ok {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}

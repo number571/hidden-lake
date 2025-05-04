@@ -23,6 +23,9 @@ type IConfigSettings interface {
 	GetMessageSizeBytes() uint64
 	GetFetchTimeout() time.Duration
 	GetQueuePeriod() time.Duration
+
+	GetPowParallel() uint64
+	GetQBPConsumers() uint64
 }
 
 type IConfig interface {

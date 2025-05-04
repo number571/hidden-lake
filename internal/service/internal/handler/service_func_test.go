@@ -210,7 +210,7 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 	)
 
 	node.HandleFunc(
-		build.GetSettings().FProtoMask.FService,
+		build.GSettings.FProtoMask.FService,
 		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
@@ -238,7 +238,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	}
 
 	pld := payload.NewPayload32(
-		build.GetSettings().FProtoMask.FService,
+		build.GSettings.FProtoMask.FService,
 		request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(tcServiceAddressInHLS).

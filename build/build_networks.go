@@ -4,32 +4,37 @@ package build
 import (
 	_ "embed"
 	"errors"
+	"fmt"
 	"net/url"
-	"sync"
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
 const (
-	CDefaultNetwork = ";"
+	CDefaultNetwork = "__default_network__"
 )
 
 var (
 	//go:embed networks.yml
-	GNetworksVal []byte
-	gNetworksMtx sync.RWMutex
-	gNetworks    = make(map[string]SNetwork, 16)
+	gNetworks []byte
+	GNetworks map[string]SNetwork
 )
 
 func init() {
 	networksYAML := &SNetworksYAML{}
-	if err := encoding.DeserializeYAML(GNetworksVal, networksYAML); err != nil {
+	if err := encoding.DeserializeYAML(gNetworks, networksYAML); err != nil {
 		panic(err)
 	}
-	networksYAML.FNetworks[CDefaultNetwork] = networksYAML.FSettings
-	if err := SetNetworks(networksYAML.FNetworks); err != nil {
-		panic(err) // build network should be always correct
+	if _, ok := networksYAML.FNetworks[CDefaultNetwork]; ok {
+		panic(fmt.Sprintf("network '%s' already exist", CDefaultNetwork))
+	}
+	GNetworks = networksYAML.FNetworks
+	GNetworks[CDefaultNetwork] = networksYAML.FSettings
+	for _, n := range GNetworks {
+		if err := n.validate(); err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -44,39 +49,6 @@ type SNetwork struct {
 	FQueuePeriodMS    uint64   `yaml:"queue_period_ms"`
 	FWorkSizeBits     uint64   `yaml:"work_size_bits"`
 	FConnections      []string `yaml:"connections"`
-}
-
-func GetNetwork(k string) (SNetwork, bool) {
-	gNetworksMtx.RLock()
-	v, ok := gNetworks[k]
-	gNetworksMtx.RUnlock()
-	return v, ok
-}
-
-func GetNetworks() map[string]SNetwork {
-	gNetworksMtx.RLock()
-	defer gNetworksMtx.RUnlock()
-
-	r := make(map[string]SNetwork, len(gNetworks))
-	for k, v := range gNetworks {
-		r[k] = v
-	}
-	return r
-}
-
-func SetNetworks(networksMap map[string]SNetwork) error {
-	if _, ok := networksMap[CDefaultNetwork]; !ok {
-		return errors.New("default network not found in map")
-	}
-	for _, v := range networksMap {
-		if err := v.validate(); err != nil {
-			return err
-		}
-	}
-	gNetworksMtx.Lock()
-	gNetworks = networksMap
-	gNetworksMtx.Unlock()
-	return nil
 }
 
 func (p SNetwork) validate() error {

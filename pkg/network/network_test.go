@@ -79,7 +79,7 @@ func TestSettings(t *testing.T) {
 
 	_ = NewSettingsByNetworkKey(build.CDefaultNetwork, nil)
 
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
+	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
 	sett := NewSettings(nil)
 
 	if sett.GetAdapterSettings().GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {
@@ -94,6 +94,16 @@ func TestSettings(t *testing.T) {
 
 	if sett.GetQueuePeriod() != defaultNetwork.GetQueuePeriod() {
 		t.Error("got invalid queue period by default settings")
+		return
+	}
+
+	if sett.GetQBPConsumers() != 1 {
+		t.Error("got invalid qbp_consumers by default")
+		return
+	}
+
+	if sett.GetPowParallel() != 1 {
+		t.Error("got invalid pow_parallel by default")
 		return
 	}
 

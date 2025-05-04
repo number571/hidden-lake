@@ -373,7 +373,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 	)
 
 	node.HandleFunc(
-		build.GetSettings().FProtoMask.FService,
+		build.GSettings.FProtoMask.FService,
 		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
 	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
