@@ -8,7 +8,7 @@
 
 ### IMPROVEMENTS
 
-- `build`: hl_settings.yml, hl_networks.yml can rewrite default settings.yml, networks.yml
+- `build`: hl_settings.yml, hl_networks.yml are created
 
 ### CHANGES
 

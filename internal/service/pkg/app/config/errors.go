@@ -30,4 +30,5 @@ var (
 	ErrBuildConfig         = &SConfigError{"build config"}
 	ErrRebuildConfig       = &SConfigError{"rebuild config"}
 	ErrNetworkNotFound     = &SConfigError{"network not found"}
+	ErrParseURL            = &SConfigError{"parse url"}
 )

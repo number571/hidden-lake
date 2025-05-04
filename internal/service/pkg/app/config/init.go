@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"net/url"
 	"os"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -47,6 +48,18 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FQueuePeriodMS = network.FQueuePeriodMS
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
+
+	cfg.FEndpoints = make([]string, 0, len(network.FConnections))
+	for _, c := range network.FConnections {
+		u, err := url.Parse(c)
+		if err != nil {
+			return nil, errors.Join(ErrParseURL, err)
+		}
+		if u.Scheme != hls_settings.CServiceAdapterScheme {
+			continue
+		}
+		cfg.FEndpoints = append(cfg.FEndpoints, u.Host)
+	}
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)

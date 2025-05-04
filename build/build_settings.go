@@ -12,14 +12,14 @@ import (
 
 var (
 	//go:embed settings.yml
-	gSettingsVal []byte
+	GSettingsVal []byte
 	gSettingsMtx sync.RWMutex
 	gSettings    SSettings
 )
 
 func init() {
 	settingsYAML := &SSettings{}
-	if err := encoding.DeserializeYAML(gSettingsVal, settingsYAML); err != nil {
+	if err := encoding.DeserializeYAML(GSettingsVal, settingsYAML); err != nil {
 		panic(err)
 	}
 	if err := SetSettings(*settingsYAML); err != nil {

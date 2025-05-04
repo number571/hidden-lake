@@ -48,8 +48,8 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 		return
 	}
 
-	if err := SetBuildByPath("__not_found_path"); err != nil {
-		t.Error(err)
+	if err := SetBuildByPath("__not_found_path"); err == nil {
+		t.Error("success set build with not exist path")
 		return
 	}
 

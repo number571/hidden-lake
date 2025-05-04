@@ -12,10 +12,10 @@ func setNetworks(pInputPath, pFilename string) error {
 	netPath := filepath.Join(pInputPath, pFilename)
 	netVal, err := os.ReadFile(netPath) //nolint:gosec
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
+		if !os.IsNotExist(err) {
+			return err
 		}
-		return err
+		return os.WriteFile(netPath, build.GNetworksVal, 0600)
 	}
 	networksYAML := &build.SNetworksYAML{}
 	if err := encoding.DeserializeYAML(netVal, networksYAML); err != nil {

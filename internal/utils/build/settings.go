@@ -12,10 +12,10 @@ func setSettings(pInputPath, pFilename string) error {
 	settPath := filepath.Join(pInputPath, pFilename)
 	settVal, err := os.ReadFile(settPath) //nolint:gosec
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
+		if !os.IsNotExist(err) {
+			return err
 		}
-		return err
+		return os.WriteFile(settPath, build.GSettingsVal, 0600)
 	}
 	settingsYAML := &build.SSettings{}
 	if err := encoding.DeserializeYAML(settVal, settingsYAML); err != nil {
