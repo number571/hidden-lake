@@ -9,6 +9,7 @@
 ## List of adapters
 
 1. [HLA=tcp](hla_tcp) - adapts HL traffic to a custom TCP connection
+2. [HLA=http](hla_http) - adapts HL traffic to a custom HTTP connection
 
 ## Installation
 

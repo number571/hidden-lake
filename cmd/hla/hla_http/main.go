@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/composite/pkg/app"
-	"github.com/number571/hidden-lake/internal/composite/pkg/settings"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/app"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )

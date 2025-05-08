@@ -163,8 +163,10 @@ func TestHTTPAdapter(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if err := client.ProduceMessage(ctx, netMsg); err == nil {
-		t.Error("success produce message duplicate")
+
+	// duplicate produce is ok (cache checker)
+	if err := client.ProduceMessage(ctx, netMsg); err != nil {
+		t.Error(err)
 		return
 	}
 

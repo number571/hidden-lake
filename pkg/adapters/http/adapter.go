@@ -203,8 +203,8 @@ func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 		WithSize(len(msg.ToBytes()))
 
 	if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
-		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogInfoExist))
-		w.WriteHeader(http.StatusLocked)
+		p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogInfoExist))
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 

@@ -1,0 +1,12 @@
+settings:
+  message_size_bytes: 8192
+logging:
+- info
+- warn
+- erro
+address:
+  internal: 127.0.0.1:8522
+endpoints: 
+- 127.0.0.1:8511
+connections:
+- send_hls:7521

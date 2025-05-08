@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/storage/database"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	utils_database "github.com/number571/hidden-lake/internal/utils/database"
 )
 

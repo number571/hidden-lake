@@ -12,6 +12,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
+	hla_http_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 )
 
@@ -68,9 +69,11 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 			continue
 		}
 		mapAdapters[scheme] = struct{}{}
-		switch scheme { // nolint: gocritic
+		switch scheme {
 		case hla_tcp_settings.CServiceAdapterScheme:
 			cfg.FServices = append(cfg.FServices, hla_tcp_settings.CServiceFullName)
+		case hla_http_settings.CServiceAdapterScheme:
+			cfg.FServices = append(cfg.FServices, hla_http_settings.CServiceFullName)
 		}
 	}
 
