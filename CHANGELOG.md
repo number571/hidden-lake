@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hla`: add hla_http service
+
 ### BUG FIXES
 
 - `cmd/hlm`: fix duplicate messages in WS receive
@@ -25,7 +29,7 @@
 
 ## v1.8.3
 
-*January 11, 2024*
+*January 11, 2025*
 
 ### IMPROVEMENTS
 
