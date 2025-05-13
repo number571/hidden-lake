@@ -1,4 +1,4 @@
-ROOPATH=./../../..
+ROOPATH=./../../../..
 .PHONY: default copy run clean stop
 default: copy run 
 copy:

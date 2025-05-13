@@ -3,6 +3,6 @@ default: clean
 clean:
 	make -C ./prod_test clean
 	make -C ./routing clean
-	make -C ./adapters clean
+	make -C ./modes clean
 request:
 	go run ./_request/main.go

@@ -11,7 +11,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/adapters/http_tcp/recv_hls
+      - SERVICE_PATH=examples/echo_service/modes/multiplicative/recv_hls
     networks:
       - local-network
       - hidden-lake
@@ -20,7 +20,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/adapters/http_tcp/send_hls
+      - SERVICE_PATH=examples/echo_service/modes/multiplicative/send_hls
     ports:
       - 7572:7572
     networks:
