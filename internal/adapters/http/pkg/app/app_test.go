@@ -124,7 +124,7 @@ func TestApp(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond)
 
-	client := client.NewClient(
+	intClient := client.NewClient(
 		client.NewRequester(
 			testutils.TgAddrs[21],
 			&http.Client{Timeout: time.Minute},
@@ -135,7 +135,7 @@ func TestApp(t *testing.T) {
 		50,
 		10*time.Millisecond,
 		func() error {
-			_, err := client.GetIndex(context.Background())
+			_, err := intClient.GetIndex(context.Background())
 			return err
 		},
 	)
@@ -156,7 +156,31 @@ func TestApp(t *testing.T) {
 		payload.NewPayload32(0x01, msgBytes),
 	)
 
-	if err := client.ProduceMessage(ctx, netMsg); err != nil {
+	if err := intClient.ProduceMessage(ctx, netMsg); err != nil {
+		t.Error(err)
+		return
+	}
+
+	extClient := client.NewClient(
+		client.NewRequester(
+			testutils.TgAddrs[22],
+			&http.Client{Timeout: time.Minute},
+		),
+	)
+
+	msg2Bytes := []byte("hello, world!")
+	msg2Bytes = append(msg2Bytes, random.NewRandom().GetBytes(uint64(8192-len(msg2Bytes)))...) //nolint:gosec
+	net2Msg := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{
+				FWorkSizeBits: 10,
+				FNetworkKey:   "_",
+			}),
+		}),
+		payload.NewPayload32(0x01, msg2Bytes),
+	)
+
+	if err := extClient.ProduceMessage(ctx, net2Msg); err != nil {
 		t.Error(err)
 		return
 	}
