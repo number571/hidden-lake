@@ -56,7 +56,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcPathConfig)
 	defer testDeleteFiles(tcPathConfig)
 
-	if err := os.WriteFile(tcPathConfig+"hla_tcp.yml", []byte(tcDataConfig), 0600); err != nil {
+	if err := os.WriteFile(tcPathConfig+"hla_http.yml", []byte(tcDataConfig), 0600); err != nil {
 		t.Error(err)
 		return
 	}
