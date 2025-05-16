@@ -27,6 +27,13 @@ func NewMessageBroker() IMessageBroker {
 	}
 }
 
+func (p *sMessageBroker) Clear() {
+	// clear the queue if there are no consumers
+	for len(p.fQueue) > 0 {
+		<-p.fQueue
+	}
+}
+
 func (p *sMessageBroker) Consume(pAddress string) (SMessage, bool) {
 	p.fMutex.Lock()
 	if p.fConsume {
@@ -49,10 +56,7 @@ func (p *sMessageBroker) Consume(pAddress string) (SMessage, bool) {
 }
 
 func (p *sMessageBroker) Produce(pAddress string, pMsg SMessage) {
-	// clear the queue if there are no consumers
-	for len(p.fQueue) > 0 {
-		<-p.fQueue
-	}
+	p.Clear()
 	p.fQueue <- sSubscribeMessage{
 		SSubscribe: SSubscribe{FAddress: pAddress},
 		SMessage:   pMsg,

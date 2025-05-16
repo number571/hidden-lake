@@ -14,6 +14,8 @@ func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 			return
 		}
 
+		pBroker.Clear()
+
 		for {
 			msg, ok := pBroker.Consume(subscribe.FAddress)
 			if !ok {

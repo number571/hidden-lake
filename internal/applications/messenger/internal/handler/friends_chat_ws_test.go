@@ -43,6 +43,8 @@ func TestFriendsChatWS(t *testing.T) {
 		return
 	}
 
+	time.Sleep(100 * time.Millisecond)
+
 	pMsg := msgdata.SMessage{
 		FFileName:  "file.txt",
 		FFileData:  "hello, world!",
