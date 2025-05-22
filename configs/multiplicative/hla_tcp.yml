@@ -1,0 +1,15 @@
+settings:
+  message_size_bytes: 8192
+  # work_size_bits: 0
+  # network_key: ""
+logging:
+- info
+- warn
+- erro
+address:
+  external: 127.0.0.1:9521
+  internal: 127.0.0.1:9522
+endpoints: 
+- 127.0.0.1:9511
+# connections:
+# - <tcp-address>

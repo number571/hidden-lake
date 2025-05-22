@@ -10,6 +10,10 @@
 
 - `cmd/hla`: add hla_http service
 
+### CHANGES
+
+- `configs`: add classic, adaptive, multiplicative modes configs
+
 ### BUG FIXES
 
 - `cmd/hlm`: fix duplicate messages in WS receive
