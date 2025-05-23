@@ -40,7 +40,7 @@ func NewSettings(pSett *SSettings) ISettings {
 }
 
 func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
-	network, ok := build.GNetworks[pNetworkKey]
+	network, ok := build.GetNetwork(pNetworkKey)
 	if !ok {
 		panic("network not found")
 	}
@@ -57,7 +57,7 @@ func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISe
 }
 
 func (p *sSettings) useDefault() *sSettings {
-	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
+	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 
 	if p.FAdapterSettings == nil {
 		p.FAdapterSettings = adapters.NewSettings(nil)

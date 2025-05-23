@@ -4,6 +4,7 @@ package build
 import (
 	_ "embed"
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -11,17 +12,36 @@ import (
 
 var (
 	//go:embed settings.yml
-	gSettings []byte
-	GSettings SSettings
+	GSettingsVal []byte
+	gSettingsMtx sync.RWMutex
+	gSettings    SSettings
 )
 
 func init() {
-	if err := encoding.DeserializeYAML(gSettings, &GSettings); err != nil {
+	settingsYAML := &SSettings{}
+	if err := encoding.DeserializeYAML(GSettingsVal, settingsYAML); err != nil {
 		panic(err)
 	}
-	if err := GSettings.validate(); err != nil {
+	if err := SetSettings(*settingsYAML); err != nil {
 		panic(err)
 	}
+}
+
+func GetSettings() SSettings {
+	gSettingsMtx.RLock()
+	defer gSettingsMtx.RUnlock()
+
+	return gSettings
+}
+
+func SetSettings(settings SSettings) error {
+	if err := settings.validate(); err != nil {
+		return err
+	}
+	gSettingsMtx.Lock()
+	gSettings = settings
+	gSettingsMtx.Unlock()
+	return nil
 }
 
 type SSettings struct {

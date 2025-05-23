@@ -196,7 +196,7 @@ func testNewWrapper(cfgPath string) config.IWrapper {
 
 func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, context.CancelFunc) {
 	_ = os.RemoveAll(dbPath)
-	node := testNewNode(dbPath, addr).HandleFunc(build.GSettings.FProtoMask.FService, nil)
+	node := testNewNode(dbPath, addr).HandleFunc(build.GetSettings().FProtoMask.FService, nil)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() { _ = node.Run(ctx) }()
 	return node, ctx, cancel
@@ -220,7 +220,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 					FMessageSizeBytes: tcMessageSize,
 				}),
 			}),
-			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
+			cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap),
 			func() []string { return nil },
 		),
 		func() database.IKVDatabase {
@@ -237,7 +237,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 						FWorkSizeBits: tcWorkSize,
 					}),
 				}),
-				FNetworkMask:  build.GSettings.FProtoMask.FNetwork,
+				FNetworkMask:  build.GetSettings().FProtoMask.FNetwork,
 				FQueuePeriod:  500 * time.Millisecond,
 				FConsumersCap: 1,
 				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
@@ -508,7 +508,7 @@ func (p *tsHiddenLakeNode) SendRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
-			uint64(build.GSettings.FProtoMask.FService),
+			uint64(build.GetSettings().FProtoMask.FService),
 			pRequest.ToBytes(),
 		),
 	)
@@ -523,7 +523,7 @@ func (p *tsHiddenLakeNode) FetchRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
-			build.GSettings.FProtoMask.FService,
+			build.GetSettings().FProtoMask.FService,
 			pRequest.ToBytes(),
 		),
 	)

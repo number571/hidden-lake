@@ -45,7 +45,7 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		return
 	}
 
-	network, ok := GNetworks[CDefaultNetwork]
+	network, ok := gNetworks[CDefaultNetwork]
 	if !ok {
 		t.Error("not found network _test_network_")
 		return
@@ -76,5 +76,46 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		fallthrough
 	case network.GetQueuePeriod() != time.Duration(5_000)*time.Millisecond:
 		t.Error("Get methods (networks) is not valid")
+	}
+
+	networks := GetNetworks()
+	newNetwork := networks[CDefaultNetwork]
+
+	newNetworkKey := "new_network"
+	newFetchTimeout := uint64(2_123)
+
+	if _, ok := networks[newNetworkKey]; ok {
+		t.Error("new network key already exist")
+		return
+	}
+	if newNetwork.FFetchTimeoutMS == newFetchTimeout {
+		t.Error("new set value already equal")
+		return
+	}
+
+	newNetwork.FFetchTimeoutMS = newFetchTimeout
+	networks[newNetworkKey] = newNetwork
+	if err := SetNetworks(networks); err != nil {
+		t.Error(err)
+		return
+	}
+
+	gotNetwork, ok := GetNetwork(newNetworkKey)
+	if !ok {
+		t.Error("new set network key not saved")
+		return
+	}
+	if gotNetwork.FFetchTimeoutMS != newFetchTimeout {
+		t.Error("new set value not saved")
+		return
+	}
+
+	if err := SetNetworks(map[string]SNetwork{}); err == nil {
+		t.Error("success set networks without default")
+		return
+	}
+	if err := SetNetworks(map[string]SNetwork{CDefaultNetwork: SNetwork{}}); err == nil {
+		t.Error("success set incorrect network")
+		return
 	}
 }

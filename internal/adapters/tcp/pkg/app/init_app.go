@@ -1,24 +1,33 @@
 package app
 
 import (
-	"fmt"
+	"errors"
 	"path/filepath"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/build"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
+	okLoaded, err := build.SetBuildByPath(inputPath)
+	if err != nil {
+		return nil, errors.Join(ErrSetNetworks, err)
+	}
 
-	cfgPath := filepath.Join(inputPath, settings.CPathYML)
+	cfgPath := filepath.Join(inputPath, hla_tcp_settings.CPathYML)
 	cfg, err := config.InitConfig(cfgPath, nil, pFlags.Get("-n").GetStringValue(pArgs))
 	if err != nil {
-		return nil, fmt.Errorf("init config: %w", err)
+		return nil, errors.Join(ErrInitConfig, err)
 	}
+
+	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
+	build.LogLoadedBuildFiles(hla_tcp_settings.GServiceName, stdfLogger, okLoaded)
 
 	return NewApp(cfg, inputPath), nil
 }

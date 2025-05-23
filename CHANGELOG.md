@@ -13,6 +13,7 @@
 ### CHANGES
 
 - `configs`: add classic, adaptive, multiplicative modes configs
+- `build`: add overwrite default networks.yml, settings.yml => hl_networks.yml, hl_settings.yml
 
 ### BUG FIXES
 

@@ -20,4 +20,5 @@ var (
 	ErrHasDuplicates  = &SAppError{"has duplicates"}
 	ErrGetRunners     = &SAppError{"get runners"}
 	ErrInitConfig     = &SAppError{"init config"}
+	ErrSetNetworks    = &SAppError{"set networks"}
 )

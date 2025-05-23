@@ -46,7 +46,7 @@ type sApp struct {
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 	logging := pCfg.GetLogging()
-	lruCache := cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap)
+	lruCache := cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
 		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
 		FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),

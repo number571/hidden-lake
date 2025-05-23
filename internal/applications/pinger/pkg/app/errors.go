@@ -13,7 +13,9 @@ func (err *SAppError) Error() string {
 }
 
 var (
-	ErrRunning = &SAppError{"app running"}
-	ErrService = &SAppError{"service"}
-	ErrClose   = &SAppError{"close"}
+	ErrRunning     = &SAppError{"app running"}
+	ErrService     = &SAppError{"service"}
+	ErrClose       = &SAppError{"close"}
+	ErrInitConfig  = &SAppError{"init config"}
+	ErrSetNetworks = &SAppError{"set networks"}
 )

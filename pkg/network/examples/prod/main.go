@@ -53,7 +53,7 @@ func main() {
 }
 
 func newNode(_ context.Context, name string) network.IHiddenLakeNode {
-	networkByKey := build.GNetworks[networkKey]
+	networkByKey, _ := build.GetNetwork(networkKey)
 	connects := make([]string, 0, len(networkByKey.FConnections))
 	for _, c := range networkByKey.FConnections {
 		u, err := url.Parse(c)

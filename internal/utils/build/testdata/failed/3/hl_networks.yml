@@ -1,0 +1,10 @@
+settings: &default_settings
+  message_size_bytes: 4096
+  fetch_timeout_ms: 10000
+  queue_period_ms: 1234
+networks:
+  __testdata__:
+    <<: *default_settings
+    work_size_bits: 20
+    connections: 
+      - tcp://1.1.1.1:9581

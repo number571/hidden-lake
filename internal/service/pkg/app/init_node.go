@@ -58,7 +58,7 @@ func (p *sApp) initAnonNode() error {
 				FAdapterSettings: adapterSettings,
 				FAddress:         cfg.GetAddress().GetExternal(),
 			}),
-			cache.NewLRUCache(build.GSettings.FNetworkManager.FCacheHashesCap),
+			cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap),
 			func() []string { return p.fCfgW.GetConfig().GetEndpoints() },
 		),
 		handler.HandleServiceFunc(cfg, p.fAnonLogger),

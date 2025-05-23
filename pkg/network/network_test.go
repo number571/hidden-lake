@@ -79,7 +79,7 @@ func TestSettings(t *testing.T) {
 
 	_ = NewSettingsByNetworkKey(build.CDefaultNetwork, nil)
 
-	defaultNetwork := build.GNetworks[build.CDefaultNetwork]
+	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	sett := NewSettings(nil)
 
 	if sett.GetAdapterSettings().GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {

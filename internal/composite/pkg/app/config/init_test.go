@@ -27,7 +27,7 @@ func TestRebuild(t *testing.T) {
 	}
 
 	network := ""
-	for k := range build.GNetworks {
+	for k := range build.GetNetworks() {
 		network = k
 		break
 	}
