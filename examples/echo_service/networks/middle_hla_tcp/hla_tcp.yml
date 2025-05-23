@@ -1,0 +1,8 @@
+settings:
+  message_size_bytes: 8192
+logging:
+- info
+- warn
+- erro
+address:
+  external: :6581

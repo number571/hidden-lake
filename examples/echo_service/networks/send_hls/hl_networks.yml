@@ -1,0 +1,10 @@
+settings: &default_settings
+  message_size_bytes: 8192
+  fetch_timeout_ms: 60000
+  queue_period_ms: 5000
+networks:
+  some_test_network:
+    <<: *default_settings
+    work_size_bits: 22 # custom
+    connections: 
+      - tcp://middle_hla_tcp:6581
