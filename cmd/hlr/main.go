@@ -35,7 +35,7 @@ func main() {
 	}
 
 	if gFlags.Get("-v").GetBoolValue(args) {
-		fmt.Println(build.GVersion)
+		fmt.Println(build.GetVersion())
 		return
 	}
 

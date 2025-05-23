@@ -24,14 +24,15 @@ func TestHiddenLakeVersion(t *testing.T) {
 		return
 	}
 
-	if strings.HasSuffix(build.GVersion, "~") {
-		if match[0][1] != build.GVersion {
+	version := build.GetVersion()
+	if strings.HasSuffix(version, "~") {
+		if match[0][1] != version {
 			t.Error("the versions do not match")
 			return
 		}
 	} else {
 		// current version is always previous version in the changelog
-		if match[1][1] != build.GVersion {
+		if match[1][1] != version {
 			t.Error("the versions do not match")
 			return
 		}

@@ -9,16 +9,20 @@ import (
 
 var (
 	//go:embed version.yml
-	gVersion []byte
-	GVersion string
+	gVersionVal []byte
+	gVersion    string
 )
 
 func init() {
 	var versionYAML struct {
 		FVersion string `yaml:"version"`
 	}
-	if err := encoding.DeserializeYAML(gVersion, &versionYAML); err != nil {
+	if err := encoding.DeserializeYAML(gVersionVal, &versionYAML); err != nil {
 		panic(err)
 	}
-	GVersion = versionYAML.FVersion
+	gVersion = versionYAML.FVersion
+}
+
+func GetVersion() string {
+	return gVersion
 }
