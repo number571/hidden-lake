@@ -172,14 +172,14 @@ $ curl -X GET 'http://localhost:9572/api/service/pubkey'
 > PubKey{...}
 ```
 
-After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API, or use the `GUI interface` of the `HLM` application, the internal address of which is specified in the configuration file `hlm.yml`.
+After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API.
 
 ```bash
-$ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "Alice", "public_key":"PubKey{...}"}'
+$ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "friend", "public_key":"PubKey{...}"}'
 > success: update friends
 ```
 
-__Success__. Now you can start communicating using the previously launched HLM application or also connect additional applications such as `HLF` (filesharer), `HLR` (remoter), if necessary.
+__Success__. Now you can start communicating using the previously launched `HLM` application or also connect additional applications such as `HLF` (filesharer), `HLR` (remoter), if necessary.
 
 > Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
 
