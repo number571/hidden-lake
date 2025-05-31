@@ -170,14 +170,14 @@ After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritt
 To communicate with other network participants, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the `HLS API` at the `internal address` provided in `hls.yml`.
 
 ```bash
-$ curl 'http://localhost:9572/api/service/pubkey'
+$ curl -X GET 'http://localhost:9572/api/service/pubkey'
 > PubKey{...}
 ```
 
 After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API, or use the `GUI interface` of the `HLM` application, the internal address of which is specified in the configuration file `hlm.yml`.
 
 ```bash
-$ curl -X POST http://localhost:9572/api/config/friends --data '{"alias_name": "Alice", "public_key":"PubKey{...}"}'
+$ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "Alice", "public_key":"PubKey{...}"}'
 > success: update friends
 ```
 
