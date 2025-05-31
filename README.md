@@ -178,6 +178,7 @@ After receiving the public key, it must be transferred to the future interlocuto
 
 ```bash
 $ curl -X POST http://localhost:9572/api/config/friends --data '{"alias_name": "Alice", "public_key":"PubKey{...}"}'
+> success: update friends
 ```
 
 Success. Now you can start communicating using the previously launched HLM application or also connect additional applications such as HLF (filesharer), HLR (remoter), if necessary.
