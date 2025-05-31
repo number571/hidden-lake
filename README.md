@@ -167,7 +167,7 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
-To communicate with other network participants, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the `HLS API` at the `internal address` provided in `hls.yml`.
+To communicate with other network participants, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal address` provided in `hls.yml`.
 
 ```bash
 $ curl -X GET 'http://localhost:9572/api/service/pubkey'
