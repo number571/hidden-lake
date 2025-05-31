@@ -138,7 +138,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 ## Build and run
 
-Launching an anonymous network is primarily the launch of an anonymizing `HLS and HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. In addition to the two services described above, HLC will also launch two application services by default: `HLM` (messenger) and `HLP` (pinger). You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
+Launching an anonymous network is primarily the launch of an anonymizing `HLS` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
@@ -181,7 +181,7 @@ $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":
 > success: update friends
 ```
 
-__Success__. Now you can start communicating using the previously launched `HLM` application or also connect additional applications such as `HLF` (filesharer), `HLR` (remoter), if necessary.
+__Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
 
 > Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
 
