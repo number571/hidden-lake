@@ -138,7 +138,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 ## Build and run
 
-Launching an anonymous network is primarily the launch of an anonymizing HLS and HLA=tcp services. Simultaneous launch of these services can be performed using the `HLC` application. There are two ways to run HLC: through `source code`, and through the `release version`. 
+Launching an anonymous network is primarily the launch of an anonymizing `HLS and HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. In addition to the two services described above, HLC will also launch two application services by default: `HLM` (messenger) and `HLP` (pinger). You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
@@ -157,7 +157,7 @@ $ ./hlc_amd64_linux
 
 ## Production
 
-The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
+The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed file `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
 
 ```bash
 $ hlc --network oi4r9NW9Le7fKF9d
@@ -167,7 +167,22 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
 
-> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
+To communicate with other network participants, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the HLS API at the `internal address` provided in hls.yml.
+
+```bash
+$ curl 'http://localhost:9572/api/service/pubkey'
+> PubKey{...}
+```
+
+After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API, or use the `GUI interface` of the `HLM` application, the internal address of which is specified in the configuration file `hlm.yml`.
+
+```bash
+$ curl -X POST http://localhost:9572/api/config/friends --data '{"alias_name": "Alice", "public_key":"PubKey{...}"}'
+```
+
+Success. Now you can start communicating using the previously launched HLM application or also connect additional applications such as HLF (filesharer), HLR (remoter), if necessary.
+
+> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
 
 ## Star History
 
