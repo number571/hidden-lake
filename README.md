@@ -157,7 +157,7 @@ $ ./hlc_amd64_linux
 
 ## Production
 
-The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed file `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
+The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
 
 ```bash
 $ hlc --network oi4r9NW9Le7fKF9d
@@ -165,9 +165,7 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 <p align="center"><img src="cmd/hls/images/hls_logger.gif" alt="hls_logger.gif"/></p>
 
-After such a launch, the hls.yml, hla_tcp.yml files will be created or overwritten (if it existed). The `settings` (hls.yml, hla_tcp.yml) and `connections` (hla_tcp.yml) fields will be substituted in it. When overwriting a file, only the above fields will be changed. The remaining fields of the `friends`, `services`, `address`, etc. type will not be overwritten.
-
-To communicate with other network participants, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal address` provided in `hls.yml`.
+To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal address` provided in `hls.yml`.
 
 ```bash
 $ curl -X GET 'http://localhost:9572/api/service/pubkey'
@@ -181,7 +179,7 @@ $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":
 > success: update friends
 ```
 
-Success. Now you can start communicating using the previously launched HLM application or also connect additional applications such as `HLF` (filesharer), `HLR` (remoter), if necessary.
+__Success__. Now you can start communicating using the previously launched HLM application or also connect additional applications such as `HLF` (filesharer), `HLR` (remoter), if necessary.
 
 > Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
 
