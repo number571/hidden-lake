@@ -21,6 +21,6 @@ func setNetworks(pInputPath, pFilename string) (bool, error) {
 	if err := encoding.DeserializeYAML(netVal, networksYAML); err != nil {
 		return false, err
 	}
-	networksYAML.FNetworks[build.CDefaultNetwork] = networksYAML.FSettings
+	networksYAML.FNetworks[build.CDefaultNetwork] = networksYAML.FDefault
 	return true, build.SetNetworks(networksYAML.FNetworks)
 }

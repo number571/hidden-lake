@@ -27,14 +27,14 @@ func init() {
 	if err := encoding.DeserializeYAML(GNetworksVal, networksYAML); err != nil {
 		panic(err)
 	}
-	networksYAML.FNetworks[CDefaultNetwork] = networksYAML.FSettings
+	networksYAML.FNetworks[CDefaultNetwork] = networksYAML.FDefault
 	if err := SetNetworks(networksYAML.FNetworks); err != nil {
 		panic(err) // build network should be always correct
 	}
 }
 
 type SNetworksYAML struct {
-	FSettings SNetwork            `yaml:"settings"`
+	FDefault  SNetwork            `yaml:"default"`
 	FNetworks map[string]SNetwork `yaml:"networks"`
 }
 
