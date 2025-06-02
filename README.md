@@ -183,8 +183,6 @@ $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":
 
 __Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
 
-> Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
-
 ## For developers
 
 The Hidden Lake anonymous network can be supplemented with new functions and features in several ways:
