@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
@@ -63,13 +64,17 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 		connects = append(connects, u.Host)
 	}
 	return network.NewHiddenLakeNode(
-		network.NewSettingsByNetworkKey(
-			networkKey,
-			&network.SSubSettings{
+		network.NewSettings(&network.SSettings{
+			FAdapterSettings: adapters.NewSettingsByNetworkKey(networkKey),
+			FQBPSettings: &network.SQBPSettings{
+				FFetchTimeout: 60 * time.Second,
+				FQueuePeriod:  5 * time.Second,
+			},
+			FSubSettings: &network.SSubSettings{
 				FServiceName: name,
 				FLogger:      getLogger(),
 			},
-		),
+		}),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {
 			kv, err := database.NewKVDatabase(name + ".db")

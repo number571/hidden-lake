@@ -4,7 +4,6 @@ import (
 	"time"
 
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
 )
 
@@ -12,19 +11,30 @@ var (
 	_ ISettings = &sSettings{}
 )
 
+const (
+	CDefaultFetchTimeout = 60 * time.Second
+	CDefaultQueuePeriod  = 5 * time.Second
+	CDefaultQBPConsumers = 1
+	CDefaultPowParallel  = 1
+)
+
 type SSettings sSettings
 type sSettings struct {
+	FQBPSettings     *SQBPSettings
 	FSubSettings     *SSubSettings
-	FQueuePeriod     time.Duration
-	FFetchTimeout    time.Duration
 	FAdapterSettings adapters.ISettings
 }
 
-type SSubSettings struct {
-	FLogger       gopeer_logger.ILogger
+type SQBPSettings struct {
+	FQueuePeriod  time.Duration
+	FFetchTimeout time.Duration
 	FPowParallel  uint64
 	FQBPConsumers uint64
-	FServiceName  string
+}
+
+type SSubSettings struct {
+	FLogger      gopeer_logger.ILogger
+	FServiceName string
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -33,42 +43,34 @@ func NewSettings(pSett *SSettings) ISettings {
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
-		FQueuePeriod:     pSett.FQueuePeriod,
-		FFetchTimeout:    pSett.FFetchTimeout,
+		FQBPSettings:     pSett.FQBPSettings,
 		FSubSettings:     pSett.FSubSettings,
 	}).useDefault()
 }
 
-func NewSettingsByNetworkKey(pNetworkKey string, pSubSettings *SSubSettings) ISettings {
-	network, ok := build.GetNetwork(pNetworkKey)
-	if !ok {
-		panic("network not found")
-	}
-	return NewSettings(&SSettings{
-		FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
-			FNetworkKey:       pNetworkKey,
-			FWorkSizeBits:     network.FWorkSizeBits,
-			FMessageSizeBytes: network.FMessageSizeBytes,
-		}),
-		FQueuePeriod:  network.GetQueuePeriod(),
-		FFetchTimeout: network.GetFetchTimeout(),
-		FSubSettings:  pSubSettings,
-	})
-}
-
 func (p *sSettings) useDefault() *sSettings {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
-
 	if p.FAdapterSettings == nil {
 		p.FAdapterSettings = adapters.NewSettings(nil)
 	}
 
-	if p.FQueuePeriod == 0 {
-		p.FQueuePeriod = defaultNetwork.GetQueuePeriod()
+	if p.FQBPSettings == nil {
+		p.FQBPSettings = &SQBPSettings{}
 	}
 
-	if p.FFetchTimeout == 0 {
-		p.FFetchTimeout = defaultNetwork.GetFetchTimeout()
+	if p.FQBPSettings.FQueuePeriod == 0 {
+		p.FQBPSettings.FQueuePeriod = CDefaultQueuePeriod
+	}
+
+	if p.FQBPSettings.FFetchTimeout == 0 {
+		p.FQBPSettings.FFetchTimeout = CDefaultFetchTimeout
+	}
+
+	if p.FQBPSettings.FPowParallel == 0 {
+		p.FQBPSettings.FPowParallel = CDefaultPowParallel
+	}
+
+	if p.FQBPSettings.FQBPConsumers == 0 {
+		p.FQBPSettings.FQBPConsumers = CDefaultQBPConsumers
 	}
 
 	if p.FSubSettings == nil {
@@ -77,14 +79,6 @@ func (p *sSettings) useDefault() *sSettings {
 
 	if p.FSubSettings.FServiceName == "" {
 		p.FSubSettings.FServiceName = "_"
-	}
-
-	if p.FSubSettings.FPowParallel == 0 {
-		p.FSubSettings.FPowParallel = 1
-	}
-
-	if p.FSubSettings.FQBPConsumers == 0 {
-		p.FSubSettings.FQBPConsumers = 1
 	}
 
 	if p.FSubSettings.FLogger == nil {
@@ -102,19 +96,19 @@ func (p *sSettings) GetAdapterSettings() adapters.ISettings {
 }
 
 func (p *sSettings) GetQueuePeriod() time.Duration {
-	return p.FQueuePeriod
+	return p.FQBPSettings.FQueuePeriod
 }
 
 func (p *sSettings) GetFetchTimeout() time.Duration {
-	return p.FFetchTimeout
+	return p.FQBPSettings.FFetchTimeout
 }
 
 func (p *sSettings) GetPowParallel() uint64 {
-	return p.FSubSettings.FPowParallel
+	return p.FQBPSettings.FPowParallel
 }
 
 func (p *sSettings) GetQBPConsumers() uint64 {
-	return p.FSubSettings.FQBPConsumers
+	return p.FQBPSettings.FQBPConsumers
 }
 
 func (p *sSettings) GetServiceName() string {

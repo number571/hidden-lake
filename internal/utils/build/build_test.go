@@ -43,7 +43,7 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 
 	networks := build.GetNetworks()
 	testNetwork, ok := networks["__testdata__"]
-	if !ok || testNetwork.FQueuePeriodMS != 1234 {
+	if !ok || testNetwork.FMessageSizeBytes != 4097 {
 		t.Error("networks are not saved")
 		return
 	}
@@ -61,7 +61,7 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 
 	networks = build.GetNetworks()
 	testNetwork, ok = networks["__testdata__"]
-	if !ok || testNetwork.FQueuePeriodMS != 1234 {
+	if !ok || testNetwork.FMessageSizeBytes != 4097 {
 		t.Error("networks are rewrites success with not found path")
 		return
 	}

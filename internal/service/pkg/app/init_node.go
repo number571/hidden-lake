@@ -42,13 +42,15 @@ func (p *sApp) initAnonNode() error {
 	node := network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapterSettings,
-			FQueuePeriod:     cfgSettings.GetQueuePeriod(),
-			FFetchTimeout:    cfgSettings.GetFetchTimeout(),
-			FSubSettings: &network.SSubSettings{
-				FServiceName:  hls_settings.GServiceName.Short(),
-				FLogger:       p.fAnonLogger,
+			FQBPSettings: &network.SQBPSettings{
+				FQueuePeriod:  cfgSettings.GetQueuePeriod(),
+				FFetchTimeout: cfgSettings.GetFetchTimeout(),
 				FPowParallel:  cfgSettings.GetPowParallel(),
 				FQBPConsumers: cfgSettings.GetQBPConsumers(),
+			},
+			FSubSettings: &network.SSubSettings{
+				FServiceName: hls_settings.GServiceName.Short(),
+				FLogger:      p.fAnonLogger,
 			},
 		}),
 		p.fPrivKey,

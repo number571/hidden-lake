@@ -59,11 +59,13 @@ func main() {
 func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
-			FQueuePeriod:  time.Second,
-			FFetchTimeout: time.Minute,
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
 				FMessageSizeBytes: msgSizeBytes,
 			}),
+			FQBPSettings: &network.SQBPSettings{
+				FQueuePeriod:  time.Second,
+				FFetchTimeout: time.Minute,
+			},
 			FSubSettings: &network.SSubSettings{
 				FLogger:      getLogger(),
 				FServiceName: name,

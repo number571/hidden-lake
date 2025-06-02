@@ -26,10 +26,25 @@ func NewSettings(pSett *SSettings) ISettings {
 	}).useDefault()
 }
 
+func NewSettingsByNetworkKey(pNetworkKey string) ISettings {
+	network, ok := build.GetNetwork(pNetworkKey)
+	if !ok {
+		panic("network key undefined")
+	}
+	return NewSettings(&SSettings{
+		FNetworkKey:       pNetworkKey,
+		FWorkSizeBits:     network.FWorkSizeBits,
+		FMessageSizeBytes: network.FMessageSizeBytes,
+	})
+}
+
 func (p *sSettings) useDefault() *sSettings {
 	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
+	}
+	if p.FWorkSizeBits == 0 {
+		p.FWorkSizeBits = defaultNetwork.FWorkSizeBits
 	}
 	return p
 }

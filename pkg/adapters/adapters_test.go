@@ -19,6 +19,21 @@ func TestSettings(t *testing.T) {
 		t.Error("get invalid settings")
 		return
 	}
+
+	_ = NewSettingsByNetworkKey(build.CDefaultNetwork)
+}
+
+func TestPanicSettings(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("nothing panics")
+			return
+		}
+	}()
+
+	_ = NewSettingsByNetworkKey("__test_unknown__")
 }
 
 func TestNewRunnerAdapter(t *testing.T) {

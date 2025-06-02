@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/url"
 	"sync"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
@@ -40,8 +39,6 @@ type SNetworksYAML struct {
 
 type SNetwork struct {
 	FMessageSizeBytes uint64   `yaml:"message_size_bytes"`
-	FFetchTimeoutMS   uint64   `yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS    uint64   `yaml:"queue_period_ms"`
 	FWorkSizeBits     uint64   `yaml:"work_size_bits"`
 	FConnections      []string `yaml:"connections"`
 }
@@ -80,13 +77,9 @@ func SetNetworks(networksMap map[string]SNetwork) error {
 }
 
 func (p SNetwork) validate() error {
-	switch {
+	switch { // nolint: gocritic, staticcheck
 	case p.FMessageSizeBytes == 0:
 		return errors.New("message_size_bytes = 0")
-	case p.FFetchTimeoutMS == 0:
-		return errors.New("fetch_timeout_ms = 0")
-	case p.FQueuePeriodMS == 0:
-		return errors.New("queue_period_ms = 0")
 	}
 	for _, c := range p.FConnections {
 		u, err := url.Parse(c)
@@ -95,12 +88,4 @@ func (p SNetwork) validate() error {
 		}
 	}
 	return nil
-}
-
-func (p SNetwork) GetFetchTimeout() time.Duration {
-	return time.Duration(p.FFetchTimeoutMS) * time.Millisecond //nolint:gosec
-}
-
-func (p SNetwork) GetQueuePeriod() time.Duration {
-	return time.Duration(p.FQueuePeriodMS) * time.Millisecond //nolint:gosec
 }

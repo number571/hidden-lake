@@ -1,7 +1,5 @@
 default: &default_network
-  message_size_bytes: 4096
-  fetch_timeout_ms: 10000
-  queue_period_ms: 1234
+  message_size_bytes: 4097
 networks:
   __testdata__:
     <<: *default_network

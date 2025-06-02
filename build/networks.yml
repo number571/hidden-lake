@@ -1,7 +1,5 @@
 default: &default_network
   message_size_bytes: 8192
-  fetch_timeout_ms: 60000
-  queue_period_ms: 5000
 networks:
   8Jkl93Mdk93md1bz:
     <<: *default_network

@@ -43,8 +43,10 @@ func TestPanicNode(t *testing.T) {
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
 				FMessageSizeBytes: 4570,
 			}),
-			FQueuePeriod:  time.Second,
-			FFetchTimeout: time.Second,
+			FQBPSettings: &SQBPSettings{
+				FQueuePeriod:  time.Second,
+				FFetchTimeout: time.Second,
+			},
 		}),
 		asymmetric.NewPrivKey(),
 		&tsDatabase{},
@@ -61,23 +63,8 @@ func TestPanicNode(t *testing.T) {
 	)
 }
 
-func TestPanicSettings(t *testing.T) {
-	t.Parallel()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
-		}
-	}()
-
-	_ = NewSettingsByNetworkKey("__test_unknown__", nil)
-}
-
 func TestSettings(t *testing.T) {
 	t.Parallel()
-
-	_ = NewSettingsByNetworkKey(build.CDefaultNetwork, nil)
 
 	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	sett := NewSettings(nil)
@@ -87,22 +74,27 @@ func TestSettings(t *testing.T) {
 		return
 	}
 
-	if sett.GetFetchTimeout() != defaultNetwork.GetFetchTimeout() {
+	if sett.GetAdapterSettings().GetWorkSizeBits() != defaultNetwork.FWorkSizeBits {
+		t.Error("got invalid message size by default settings")
+		return
+	}
+
+	if sett.GetFetchTimeout() != CDefaultFetchTimeout {
 		t.Error("got invalid fetch timeout by default settings")
 		return
 	}
 
-	if sett.GetQueuePeriod() != defaultNetwork.GetQueuePeriod() {
+	if sett.GetQueuePeriod() != CDefaultQueuePeriod {
 		t.Error("got invalid queue period by default settings")
 		return
 	}
 
-	if sett.GetQBPConsumers() != 1 {
+	if sett.GetQBPConsumers() != CDefaultQBPConsumers {
 		t.Error("got invalid qbp_consumers by default")
 		return
 	}
 
-	if sett.GetPowParallel() != 1 {
+	if sett.GetPowParallel() != CDefaultPowParallel {
 		t.Error("got invalid pow_parallel by default")
 		return
 	}
@@ -173,11 +165,13 @@ func TestHiddenLakeNode(t *testing.T) {
 func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) IHiddenLakeNode {
 	return NewHiddenLakeNode(
 		NewSettings(&SSettings{
-			FQueuePeriod:  time.Second,
-			FFetchTimeout: time.Minute,
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
 				FMessageSizeBytes: 8 << 10,
 			}),
+			FQBPSettings: &SQBPSettings{
+				FQueuePeriod:  time.Second,
+				FFetchTimeout: time.Minute,
+			},
 		}),
 		asymmetric.NewPrivKey(),
 		func() database.IKVDatabase {

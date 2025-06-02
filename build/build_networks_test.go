@@ -3,7 +3,6 @@ package build
 import (
 	_ "embed"
 	"testing"
-	"time"
 )
 
 func TestHiddenLakeNetworks(t *testing.T) {
@@ -16,20 +15,8 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	}
 
 	network.FMessageSizeBytes = 8192
-	if err := network.validate(); err == nil {
-		t.Error("success validate with invalid fetch_timeout_ms")
-		return
-	}
-
-	network.FFetchTimeoutMS = 60_000
-	if err := network.validate(); err == nil {
-		t.Error("success validate with invalid queue_period_ms")
-		return
-	}
-
-	network.FQueuePeriodMS = 5_000
 	if err := network.validate(); err != nil {
-		t.Error(err)
+		t.Error("error validate with exist message_size_bytes")
 		return
 	}
 
@@ -56,44 +43,27 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		return
 	}
 
-	if network.FFetchTimeoutMS != 60_000 {
-		t.Error("network.FFetchTimeoutMS != 60_000")
-		return
-	}
-
-	if network.FQueuePeriodMS != 5_000 {
-		t.Error("network.FQueuePeriodMS != 5_000")
-		return
-	}
-
 	if network.FWorkSizeBits != 0 {
 		t.Error("network.FWorkSizeBits != 0")
 		return
-	}
-
-	switch {
-	case network.GetFetchTimeout() != time.Duration(60_000)*time.Millisecond:
-		fallthrough
-	case network.GetQueuePeriod() != time.Duration(5_000)*time.Millisecond:
-		t.Error("Get methods (networks) is not valid")
 	}
 
 	networks := GetNetworks()
 	newNetwork := networks[CDefaultNetwork]
 
 	newNetworkKey := "new_network"
-	newFetchTimeout := uint64(2_123)
+	neMessageSize := uint64(9_123)
 
 	if _, ok := networks[newNetworkKey]; ok {
 		t.Error("new network key already exist")
 		return
 	}
-	if newNetwork.FFetchTimeoutMS == newFetchTimeout {
+	if newNetwork.FMessageSizeBytes == neMessageSize {
 		t.Error("new set value already equal")
 		return
 	}
 
-	newNetwork.FFetchTimeoutMS = newFetchTimeout
+	newNetwork.FMessageSizeBytes = neMessageSize
 	networks[newNetworkKey] = newNetwork
 	if err := SetNetworks(networks); err != nil {
 		t.Error(err)
@@ -105,7 +75,7 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		t.Error("new set network key not saved")
 		return
 	}
-	if gotNetwork.FFetchTimeoutMS != newFetchTimeout {
+	if gotNetwork.FMessageSizeBytes != neMessageSize {
 		t.Error("new set value not saved")
 		return
 	}
