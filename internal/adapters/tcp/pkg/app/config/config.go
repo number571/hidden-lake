@@ -15,7 +15,7 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
+	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
@@ -26,7 +26,7 @@ type SConfig struct {
 	fMutex    sync.RWMutex
 	fLogging  logger.ILogging
 
-	FSettings    *SConfigSettings `yaml:"settings"`
+	FSettings    *SConfigSettings `yaml:"settings,omitempty"`
 	FLogging     []string         `yaml:"logging,omitempty"`
 	FAddress     *SAddress        `yaml:"address,omitempty"`
 	FEndpoints   []string         `yaml:"endpoints,omitempty"`
@@ -79,8 +79,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 }
 
 func (p *SConfig) isValid() bool {
-	return true &&
-		p.FSettings.FMessageSizeBytes != 0
+	return true
 }
 
 func (p *SConfig) initConfig() error {

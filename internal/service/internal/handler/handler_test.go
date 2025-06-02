@@ -289,6 +289,7 @@ func (p *tsConfig) GetSettings() config.IConfigSettings {
 	return &config.SConfigSettings{}
 }
 
+func (p *tsConfig) GetQueuePoolCap() [2]uint64      { return [2]uint64{} }
 func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }
 func (p *tsConfig) GetAddress() config.IAddress     { return nil }
 func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {

@@ -18,14 +18,14 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes uint64    `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FFetchTimeoutMS   uint64    `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS    uint64    `json:"queue_period_ms" yaml:"queue_period_ms"`
+	FMessageSizeBytes uint64    `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
+	FFetchTimeoutMS   uint64    `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
+	FQueuePeriodMS    uint64    `json:"queue_period_ms,omitempty" yaml:"queue_period_ms,omitempty"`
 	FWorkSizeBits     uint64    `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FQBPConsumers     uint64    `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
 	FPowParallel      uint64    `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
-	FQueuePoolCap     [2]uint64 `json:"queue_pool_cap,omitempty" yaml:"queue_pool_cap,omitempty"`
 	FNetworkKey       string    `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FQueuePoolCap     [2]uint64 `json:"queue_pool_cap,omitempty" yaml:"queue_pool_cap,omitempty"`
 }
 
 type SConfig struct {
@@ -34,7 +34,7 @@ type SConfig struct {
 	fLogging  logger.ILogging
 	fFriends  map[string]asymmetric.IPubKey
 
-	FSettings  *SConfigSettings  `yaml:"settings"`
+	FSettings  *SConfigSettings  `yaml:"settings,omitempty"`
 	FLogging   []string          `yaml:"logging,omitempty"`
 	FAddress   *SAddress         `yaml:"address,omitempty"`
 	FServices  map[string]string `yaml:"services,omitempty"`
@@ -133,10 +133,7 @@ func (p *SConfig) isValid() bool {
 			return false
 		}
 	}
-	return true &&
-		p.FSettings.FMessageSizeBytes != 0 &&
-		p.FSettings.FQueuePeriodMS != 0 &&
-		p.FSettings.FFetchTimeoutMS != 0
+	return true
 }
 
 func (p *SConfig) initConfig() error {

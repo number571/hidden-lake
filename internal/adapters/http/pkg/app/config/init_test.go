@@ -66,13 +66,6 @@ func TestInit(t *testing.T) {
 
 	_ = os.Remove(configFile)
 
-	if _, err := InitConfig(configFile, &SConfig{}, ""); err == nil {
-		t.Error("success init config with invalid config structure (2)")
-		return
-	}
-
-	_ = os.Remove(configFile)
-
 	config2, err := InitConfig(configFile, config1.(*SConfig), "")
 	if err != nil {
 		t.Error(err)

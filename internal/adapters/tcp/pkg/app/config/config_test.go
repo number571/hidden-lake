@@ -100,11 +100,6 @@ func TestBuildConfig(t *testing.T) {
 		return
 	}
 
-	if _, err := BuildConfig(config2File, &SConfig{}); err == nil {
-		t.Error("success build config with void structure")
-		return
-	}
-
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err != nil {
 		t.Error(err)
 		return
@@ -133,10 +128,6 @@ func testIncorrectConfig(configFile string) error {
 	cfg1Bytes := []byte(strings.ReplaceAll(testNewConfigString(), "settings", "settings_v2"))
 	if err := os.WriteFile(configFile, cfg1Bytes, 0o600); err != nil {
 		return err
-	}
-
-	if _, err := LoadConfig(configFile); err == nil {
-		return errors.New("success load config with required fields (settings)") // nolint: err113
 	}
 
 	cfg2Bytes := []byte(strings.ReplaceAll(testNewConfigString(), "erro", "erro_v2"))
