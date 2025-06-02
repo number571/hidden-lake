@@ -4,7 +4,6 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -12,7 +11,6 @@ import (
 	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
 
-	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 )
@@ -22,11 +20,6 @@ func (p *sApp) initAnonNode() error {
 		cfg         = p.fCfgW.GetConfig()
 		cfgSettings = cfg.GetSettings()
 	)
-
-	client := client.NewClient(p.fPrivKey, cfgSettings.GetMessageSizeBytes())
-	if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-		return ErrMessageSizeLimit
-	}
 
 	kvDatabase, err := database.NewKVDatabase(filepath.Join(p.fPathTo, hls_settings.CPathDB))
 	if err != nil {
@@ -47,7 +40,10 @@ func (p *sApp) initAnonNode() error {
 				FFetchTimeout: cfgSettings.GetFetchTimeout(),
 				FPowParallel:  cfgSettings.GetPowParallel(),
 				FQBPConsumers: cfgSettings.GetQBPConsumers(),
-				FQueuePoolCap: cfgSettings.GetQueuePoolCap(),
+				FQueuePoolCap: [2]uint64{
+					cfgSettings.GetQueueMainCap(),
+					cfgSettings.GetQueueRandCap(),
+				},
 			},
 			FSrvSettings: &network.SSrvSettings{
 				FServiceName: hls_settings.GServiceName.Short(),

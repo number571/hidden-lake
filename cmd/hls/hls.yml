@@ -1,12 +1,13 @@
 # settings:
+#   message_size_bytes: 0 # -> 8192
 #   work_size_bits: 0
 #   network_key: ""
-#   message_size_bytes: 0 # -> 8192
 #   fetch_timeout_ms: 0 # -> 60000
 #   queue_period_ms: 0 # -> 5000
 #   pow_parallel: 0 # -> 1
 #   qbp_consumers: 0 # -> 1
-#   queue_pool_cap: [0, 0] # -> [256, 32]
+#   queue_main_cap: 0 # -> 256
+#   queue_rand_cap: 0 # -> 32
 logging:
 - info
 - warn

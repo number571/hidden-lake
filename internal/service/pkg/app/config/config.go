@@ -18,14 +18,15 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes uint64    `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
-	FFetchTimeoutMS   uint64    `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
-	FQueuePeriodMS    uint64    `json:"queue_period_ms,omitempty" yaml:"queue_period_ms,omitempty"`
-	FWorkSizeBits     uint64    `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FQBPConsumers     uint64    `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
-	FPowParallel      uint64    `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
-	FNetworkKey       string    `json:"network_key,omitempty" yaml:"network_key,omitempty"`
-	FQueuePoolCap     [2]uint64 `json:"queue_pool_cap,omitempty" yaml:"queue_pool_cap,omitempty"`
+	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
+	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
+	FQueuePeriodMS    uint64 `json:"queue_period_ms,omitempty" yaml:"queue_period_ms,omitempty"`
+	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FQBPConsumers     uint64 `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
+	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FQueueMainCap     uint64 `json:"queue_main_cap,omitempty" yaml:"queue_main_cap,omitempty"`
+	FQueueRandCap     uint64 `json:"queue_rand_cap,omitempty" yaml:"queue_rand_cap,omitempty"`
 }
 
 type SConfig struct {
@@ -119,8 +120,12 @@ func (p *SConfigSettings) GetPowParallel() uint64 {
 	return p.FPowParallel
 }
 
-func (p *SConfigSettings) GetQueuePoolCap() [2]uint64 {
-	return p.FQueuePoolCap
+func (p *SConfigSettings) GetQueueMainCap() uint64 {
+	return p.FQueueMainCap
+}
+
+func (p *SConfigSettings) GetQueueRandCap() uint64 {
+	return p.FQueueRandCap
 }
 
 func (p *SConfig) GetSettings() IConfigSettings {

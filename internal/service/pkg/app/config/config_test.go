@@ -61,7 +61,8 @@ const (
   network_key: %s
   qbp_consumers: %d
   pow_parallel: %d
-  queue_pool_cap: [%d, %d]
+  queue_main_cap: %d
+  queue_rand_cap: %d
 logging:
   - info
   - erro
@@ -258,8 +259,9 @@ func TestComplexConfig(t *testing.T) {
 		return
 	}
 
-	poolCap := cfg.GetSettings().GetQueuePoolCap()
-	if poolCap[0] != tcMainPoolCap || poolCap[1] != tcRandPoolCap {
+	mainCap := cfg.GetSettings().GetQueueMainCap()
+	randCap := cfg.GetSettings().GetQueueRandCap()
+	if mainCap != tcMainPoolCap || randCap != tcRandPoolCap {
 		t.Error("queue_pool_cap is invalid")
 		return
 	}

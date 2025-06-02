@@ -11,7 +11,6 @@ import (
 	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/network"
 )
 
 func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, error) {
@@ -60,14 +59,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	return &SConfig{
-		FSettings: &SConfigSettings{
-			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,
-			FWorkSizeBits:     defaultNetwork.FWorkSizeBits,
-			FQueuePeriodMS:    uint64(network.CDefaultQueuePeriod.Milliseconds()),  // nolint:gosec
-			FFetchTimeoutMS:   uint64(network.CDefaultFetchTimeout.Milliseconds()), // nolint:gosec
-		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
 			FExternal: hls_settings.CDefaultExternalAddress,
