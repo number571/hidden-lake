@@ -51,10 +51,10 @@ func NewSettings(pSett *SSettings) ISettings {
 		FAdapterSettings: pSett.FAdapterSettings,
 		FQBPSettings:     pSett.FQBPSettings,
 		FSrvSettings:     pSett.FSrvSettings,
-	}).useDefault()
+	}).initDefault()
 }
 
-func (p *sSettings) useDefault() *sSettings {
+func (p *sSettings) initDefault() *sSettings {
 	if p.FAdapterSettings == nil {
 		p.FAdapterSettings = adapters.NewSettings(nil)
 	}

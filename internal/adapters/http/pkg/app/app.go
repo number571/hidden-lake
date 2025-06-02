@@ -61,16 +61,20 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
 		fHTTPIntAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
-				FAddress:         pCfg.GetAddress().GetInternal(),
 				FAdapterSettings: adaptersSettings,
+				FSrvSettings: &hla_http.SSrvSettings{
+					FAddress: pCfg.GetAddress().GetInternal(),
+				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetEndpoints() },
 		),
 		fHTTPExtAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
-				FAddress:         pCfg.GetAddress().GetExternal(),
 				FAdapterSettings: adaptersSettings,
+				FSrvSettings: &hla_http.SSrvSettings{
+					FAddress: pCfg.GetAddress().GetExternal(),
+				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetConnections() },

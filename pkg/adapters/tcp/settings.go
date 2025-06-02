@@ -37,15 +37,15 @@ type SSrvSettings struct {
 
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
-		pSett = &SSettings{}
+		pSett = &SSettings{FAdapterSettings: adapters.NewSettings(nil)}
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
 		FSrvSettings:     pSett.FSrvSettings,
-	}).useDefault()
+	}).initDefault()
 }
 
-func (p *sSettings) useDefault() *sSettings {
+func (p *sSettings) initDefault() *sSettings {
 	if p.FSrvSettings == nil {
 		p.FSrvSettings = &SSrvSettings{}
 	}

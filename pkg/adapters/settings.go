@@ -23,7 +23,7 @@ func NewSettings(pSett *SSettings) ISettings {
 		FMessageSizeBytes: pSett.FMessageSizeBytes,
 		FWorkSizeBits:     pSett.FWorkSizeBits,
 		FNetworkKey:       pSett.FNetworkKey,
-	}).useDefault()
+	}).initDefault()
 }
 
 func NewSettingsByNetworkKey(pNetworkKey string) ISettings {
@@ -38,7 +38,7 @@ func NewSettingsByNetworkKey(pNetworkKey string) ISettings {
 	})
 }
 
-func (p *sSettings) useDefault() *sSettings {
+func (p *sSettings) initDefault() *sSettings {
 	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes

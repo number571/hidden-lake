@@ -59,7 +59,9 @@ func (p *sApp) initAnonNode() error {
 		http.NewHTTPAdapter(
 			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
-				FAddress:         cfg.GetAddress().GetExternal(),
+				FSrvSettings: &http.SSrvSettings{
+					FAddress: cfg.GetAddress().GetExternal(),
+				},
 			}),
 			cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap),
 			func() []string { return p.fCfgW.GetConfig().GetEndpoints() },

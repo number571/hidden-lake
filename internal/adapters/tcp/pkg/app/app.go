@@ -72,8 +72,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		),
 		fHTTPAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
-				FAddress:         pCfg.GetAddress().GetInternal(),
 				FAdapterSettings: adaptersSettings,
+				FSrvSettings: &hla_http.SSrvSettings{
+					FAddress: pCfg.GetAddress().GetInternal(),
+				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetEndpoints() },
