@@ -4,8 +4,8 @@ logging:
 - erro
 services:
 - hidden-lake-service
-- hidden-lake-pinger
-- hidden-lake-messenger
+# - hidden-lake-pinger
+# - hidden-lake-messenger
 # - hidden-lake-filesharer
 # - hidden-lake-remoter
 # - hidden-lake-adapter=tcp

@@ -13,12 +13,12 @@ logging:
 address:
   external: 127.0.0.1:9571
   internal: 127.0.0.1:9572
-services:
-  hidden-lake-pinger: 127.0.0.1:9552
-  hidden-lake-messenger: 127.0.0.1:9592
-  # hidden-lake-filesharer: 127.0.0.1:9542
-  # hidden-lake-remoter: 127.0.0.1:9532
-endpoints:
-- 127.0.0.1:9512
+# services:
+#   hidden-lake-pinger: 127.0.0.1:9552
+#   hidden-lake-messenger: 127.0.0.1:9592
+#   hidden-lake-filesharer: 127.0.0.1:9542
+#   hidden-lake-remoter: 127.0.0.1:9532
+# endpoints:
+# - <http-address>
 # friends:
 #   <friend-name>: <public-key>

@@ -10,6 +10,7 @@
 
 - `build/networks.yml`: rename settings, default_settings -> default, default_network
 - `build/networks.yml`: delete queue_period, fetch_timeout
+- `modes`: rename dir configs -> modes
 
 <!-- ... -->
 
