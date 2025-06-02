@@ -1,7 +1,14 @@
-settings:
-  message_size_bytes: 8192
-  # work_size_bits: 0
-  # network_key: ""
+# settings:
+#   message_size_bytes: 0 # -> 8192
+#   work_size_bits: 0
+#   network_key: ""
+#   database_enabled: false
+#   conn_num_limit: 0 # -> 256
+#   conn_keep_period_ms: 0 # -> 10000
+#   send_timeout_ms: 0 # -> 5000
+#   recv_timeout_ms: 0 # -> 5000
+#   dial_timeout_ms: 0 # -> 5000
+#   wait_timeout_ms: 0 # -> 3600000
 logging:
 - info
 - warn

@@ -31,12 +31,7 @@ func InitConfig(cfgPath string, initCfg *SConfig, useNetwork string) (IConfig, e
 }
 
 func initConfig() *SConfig {
-	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 	return &SConfig{
-		FSettings: &SConfigSettings{
-			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,
-			FWorkSizeBits:     defaultNetwork.FWorkSizeBits,
-		},
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FAddress: &SAddress{
 			FExternal: hla_settings.CDefaultExternalAddress,

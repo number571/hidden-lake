@@ -1,7 +1,8 @@
-settings:
-  message_size_bytes: 8192
-  # work_size_bits: 0
-  # network_key: ""
+# settings:
+#   message_size_bytes: 0 # -> 8192
+#   work_size_bits: 0
+#   network_key: ""
+#   database_enabled: false
 logging:
 - info
 - warn

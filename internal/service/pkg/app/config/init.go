@@ -72,6 +72,5 @@ func initConfig() *SConfig {
 		FEndpoints: []string{
 			hla_tcp_settings.CDefaultInternalAddress,
 		},
-		FFriends: map[string]string{},
 	}
 }
