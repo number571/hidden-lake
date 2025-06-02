@@ -39,28 +39,27 @@ func NewTCPAdapter(
 	pCache cache.ICache,
 	pConnsGetter func() []string,
 ) ITCPAdapter {
-	buildSettings := build.GetSettings()
 	adapterSettings := pSettings.GetAdapterSettings()
 	p := &sTCPAdapter{
 		fNetMsgChan: make(chan layer1.IMessage, netMessageChanSize),
 		fConnKeeper: connkeeper.NewConnKeeper(
 			connkeeper.NewSettings(&connkeeper.SSettings{
-				FDuration:    buildSettings.GetKeeperPeriod(),
+				FDuration:    pSettings.GetConnKeepPeriod(),
 				FConnections: pConnsGetter,
 			}),
 			network.NewNode(
 				network.NewSettings(&network.SSettings{
 					FAddress:      pSettings.GetAddress(),
-					FMaxConnects:  buildSettings.FNetworkManager.FConnectsLimiter,
-					FReadTimeout:  buildSettings.GetRecvTimeout(),
-					FWriteTimeout: buildSettings.GetSendTimeout(),
+					FMaxConnects:  pSettings.GetConnLimit(),
+					FReadTimeout:  pSettings.GetRecvTimeout(),
+					FWriteTimeout: pSettings.GetSendTimeout(),
 					FConnSettings: conn.NewSettings(&conn.SSettings{
 						FMessageSettings:       adapterSettings,
 						FLimitMessageSizeBytes: adapterSettings.GetMessageSizeBytes(),
-						FWaitReadTimeout:       buildSettings.GetWaitTimeout(),
-						FDialTimeout:           buildSettings.GetDialTimeout(),
-						FReadTimeout:           buildSettings.GetRecvTimeout(),
-						FWriteTimeout:          buildSettings.GetSendTimeout(),
+						FWaitReadTimeout:       pSettings.GetWaitTimeout(),
+						FDialTimeout:           pSettings.GetDialTimeout(),
+						FReadTimeout:           pSettings.GetRecvTimeout(),
+						FWriteTimeout:          pSettings.GetSendTimeout(),
 					}),
 				}),
 				pCache,
@@ -72,7 +71,7 @@ func NewTCPAdapter(
 		),
 	}
 	p.fConnKeeper.GetNetworkNode().HandleFunc(
-		buildSettings.FProtoMask.FNetwork,
+		build.GetSettings().FProtoMask.FNetwork,
 		func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
 			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 			p.fLogger.PushInfo(logBuilder.

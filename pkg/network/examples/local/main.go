@@ -90,10 +90,12 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 func newTCPAdapter(addr string, conns []string) adapters.IRunnerAdapter {
 	return tcp.NewTCPAdapter(
 		tcp.NewSettings(&tcp.SSettings{
-			FAddress: addr,
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
 				FMessageSizeBytes: msgSizeBytes,
 			}),
+			FSrvSettings: &tcp.SSrvSettings{
+				FAddress: addr,
+			},
 		}),
 		cache.NewLRUCache(1<<10),
 		func() []string { return conns },

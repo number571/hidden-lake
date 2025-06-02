@@ -62,8 +62,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
 		fTCPAdapter: hla_tcp.NewTCPAdapter(
 			hla_tcp.NewSettings(&hla_tcp.SSettings{
-				FAddress:         pCfg.GetAddress().GetExternal(),
 				FAdapterSettings: adaptersSettings,
+				FSrvSettings: &hla_tcp.SSrvSettings{
+					FAddress: pCfg.GetAddress().GetExternal(),
+				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetConnections() },

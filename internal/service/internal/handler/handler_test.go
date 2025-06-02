@@ -214,11 +214,13 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 		),
 		tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
-				FAddress: addr,
 				FAdapterSettings: hl_adapters.NewSettings(&hl_adapters.SSettings{
 					FWorkSizeBits:     tcWorkSize,
 					FMessageSizeBytes: tcMessageSize,
 				}),
+				FSrvSettings: &tcp.SSrvSettings{
+					FAddress: addr,
+				},
 			}),
 			cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap),
 			func() []string { return nil },

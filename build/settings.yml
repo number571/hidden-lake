@@ -1,11 +1,4 @@
 proto_mask:
   network: 0x5f67705f
 network_manager:
-  connects_limiter: 256
   cache_hashes_cap: 2048
-  keeper_period_ms: 10000 
-network_connection:
-  send_timeout_ms: 5000
-  recv_timeout_ms: 5000
-  dial_timeout_ms: 5000
-  wait_timeout_ms: 3600000
