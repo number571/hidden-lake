@@ -14,8 +14,6 @@ var (
 const (
 	CDefaultFetchTimeout = time.Minute
 	CDefaultQueuePeriod  = 5 * time.Second
-	CDefaultQBPConsumers = 1
-	CDefaultPowParallel  = 1
 )
 
 type SSettings sSettings
@@ -66,11 +64,11 @@ func (p *sSettings) useDefault() *sSettings {
 	}
 
 	if p.FQBPSettings.FPowParallel == 0 {
-		p.FQBPSettings.FPowParallel = CDefaultPowParallel
+		p.FQBPSettings.FPowParallel = 1
 	}
 
 	if p.FQBPSettings.FQBPConsumers == 0 {
-		p.FQBPSettings.FQBPConsumers = CDefaultQBPConsumers
+		p.FQBPSettings.FQBPConsumers = 1
 	}
 
 	if p.FSubSettings == nil {

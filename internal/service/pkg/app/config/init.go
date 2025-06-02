@@ -61,7 +61,6 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 
 func initConfig() *SConfig {
 	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
-
 	return &SConfig{
 		FSettings: &SConfigSettings{
 			FMessageSizeBytes: defaultNetwork.FMessageSizeBytes,

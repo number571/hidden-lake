@@ -89,12 +89,12 @@ func TestSettings(t *testing.T) {
 		return
 	}
 
-	if sett.GetQBPConsumers() != CDefaultQBPConsumers {
+	if sett.GetQBPConsumers() != 1 {
 		t.Error("got invalid qbp_consumers by default")
 		return
 	}
 
-	if sett.GetPowParallel() != CDefaultPowParallel {
+	if sett.GetPowParallel() != 1 {
 		t.Error("got invalid pow_parallel by default")
 		return
 	}
