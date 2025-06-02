@@ -72,7 +72,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing traffic and combines many other services (for example, `HLF` and `HLM`). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLF`, `HLM`, `HLR` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 ## Coverage map
 
@@ -184,6 +184,13 @@ $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":
 __Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
 
 > Examples of running HL apps in a prod environment: [echo_service](examples/echo_service/prod_test), [pinger](examples/pinger/prod_test), [messenger](examples/messenger/prod_test), [filesharer](examples/filesharer/prod_test).
+
+## For developers
+
+The anonymous Hidden Lake network can be supplemented with new functions and features in several ways:
+1. `High-level` method. Write applications and adapters through a micro-service architecture. With this method, you can write services in any convenient programming language or technology - you just need to adhere to the `HLS API`. [Examples](examples).
+2. `Middle-level` method. Use the `pkg/network` package, which is located inside the Hidden Lake project. With this method, you can write applications without using the micro-service architecture, but at the same time you gain a dependency on the Go programming language. [Examples](pkg/network/examples).
+3. `Low-level` method. Use the `go-peer` library. With this method, you can significantly change the work and specifics of the network, including the ability to eliminate traffic anonymization, leaving only E2E encryption. This approach should be chosen only if compatibility with the Hidden Lake anonymous network specification is not required. [Examples](https://github.com/number571/go-peer/tree/master/pkg/anonymity/examples).
 
 ## Star History
 
