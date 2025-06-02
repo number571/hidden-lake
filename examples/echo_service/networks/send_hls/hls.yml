@@ -1,5 +1,5 @@
 settings:
-  message_size_bytes: 8192
+  message_size_bytes: 1
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
 logging:

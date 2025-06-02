@@ -1,5 +1,5 @@
 settings:
-  message_size_bytes: 8192
+  message_size_bytes: 1
 logging:
 - info
 - warn
