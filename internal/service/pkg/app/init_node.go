@@ -49,7 +49,7 @@ func (p *sApp) initAnonNode() error {
 				FQBPConsumers: cfgSettings.GetQBPConsumers(),
 				FQueuePoolCap: cfgSettings.GetQueuePoolCap(),
 			},
-			FSubSettings: &network.SSubSettings{
+			FSrvSettings: &network.SSrvSettings{
 				FServiceName: hls_settings.GServiceName.Short(),
 				FLogger:      p.fAnonLogger,
 			},

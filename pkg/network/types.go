@@ -22,7 +22,7 @@ type IHiddenLakeNode interface {
 }
 
 type ISettings interface {
-	ISubSettings
+	ISrvSettings
 	IQBPSettings
 
 	GetAdapterSettings() adapters.ISettings
@@ -36,7 +36,8 @@ type IQBPSettings interface {
 	GetQueuePoolCap() [2]uint64
 }
 
-type ISubSettings interface {
+type ISrvSettings interface {
 	GetLogger() gopeer_logger.ILogger
+	GetServiceMask() uint32
 	GetServiceName() string
 }

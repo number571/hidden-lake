@@ -69,7 +69,7 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 				FQueuePeriod:  time.Second,
 				FFetchTimeout: time.Minute,
 			},
-			FSubSettings: &network.SSubSettings{
+			FSrvSettings: &network.SSrvSettings{
 				FLogger:      getLogger(),
 				FServiceName: name,
 			},

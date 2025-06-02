@@ -12,16 +12,20 @@ var (
 )
 
 const (
+	CDefaultServiceName  = "_"
+	CDefaultServiceMask  = uint32(0x5f686c5f)
 	CDefaultFetchTimeout = time.Minute
 	CDefaultQueuePeriod  = 5 * time.Second
 	CDefaultMainPoolCap  = 256
 	CDefaultRandPoolCap  = 32
+	CDefaultPowParallel  = 1
+	CDefaultQBPConsumers = 1
 )
 
 type SSettings sSettings
 type sSettings struct {
 	FQBPSettings     *SQBPSettings
-	FSubSettings     *SSubSettings
+	FSrvSettings     *SSrvSettings
 	FAdapterSettings adapters.ISettings
 }
 
@@ -33,8 +37,9 @@ type SQBPSettings struct {
 	FQueuePoolCap [2]uint64
 }
 
-type SSubSettings struct {
+type SSrvSettings struct {
 	FLogger      gopeer_logger.ILogger
+	FServiceMask uint32
 	FServiceName string
 }
 
@@ -45,7 +50,7 @@ func NewSettings(pSett *SSettings) ISettings {
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
 		FQBPSettings:     pSett.FQBPSettings,
-		FSubSettings:     pSett.FSubSettings,
+		FSrvSettings:     pSett.FSrvSettings,
 	}).useDefault()
 }
 
@@ -75,23 +80,27 @@ func (p *sSettings) useDefault() *sSettings {
 	}
 
 	if p.FQBPSettings.FPowParallel == 0 {
-		p.FQBPSettings.FPowParallel = 1
+		p.FQBPSettings.FPowParallel = CDefaultPowParallel
 	}
 
 	if p.FQBPSettings.FQBPConsumers == 0 {
-		p.FQBPSettings.FQBPConsumers = 1
+		p.FQBPSettings.FQBPConsumers = CDefaultQBPConsumers
 	}
 
-	if p.FSubSettings == nil {
-		p.FSubSettings = &SSubSettings{}
+	if p.FSrvSettings == nil {
+		p.FSrvSettings = &SSrvSettings{}
 	}
 
-	if p.FSubSettings.FServiceName == "" {
-		p.FSubSettings.FServiceName = "_"
+	if p.FSrvSettings.FServiceName == "" {
+		p.FSrvSettings.FServiceName = CDefaultServiceName
 	}
 
-	if p.FSubSettings.FLogger == nil {
-		p.FSubSettings.FLogger = gopeer_logger.NewLogger(
+	if p.FSrvSettings.FServiceMask == 0 {
+		p.FSrvSettings.FServiceMask = CDefaultServiceMask
+	}
+
+	if p.FSrvSettings.FLogger == nil {
+		p.FSrvSettings.FLogger = gopeer_logger.NewLogger(
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
 			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
@@ -124,10 +133,14 @@ func (p *sSettings) GetQueuePoolCap() [2]uint64 {
 	return p.FQBPSettings.FQueuePoolCap
 }
 
+func (p *sSettings) GetServiceMask() uint32 {
+	return p.FSrvSettings.FServiceMask
+}
+
 func (p *sSettings) GetServiceName() string {
-	return p.FSubSettings.FServiceName
+	return p.FSrvSettings.FServiceName
 }
 
 func (p *sSettings) GetLogger() gopeer_logger.ILogger {
-	return p.FSubSettings.FLogger
+	return p.FSrvSettings.FLogger
 }

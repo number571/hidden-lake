@@ -47,7 +47,6 @@ func SetSettings(settings SSettings) error {
 type SSettings struct {
 	FProtoMask struct {
 		FNetwork uint32 `yaml:"network"`
-		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
 	FNetworkManager struct {
 		FConnectsLimiter uint64 `yaml:"connects_limiter"`
