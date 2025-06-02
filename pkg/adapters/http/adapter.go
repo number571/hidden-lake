@@ -12,6 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
+	"github.com/number571/hidden-lake/build"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/internal/utils/name"
 	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
@@ -193,6 +194,12 @@ func (p *sHTTPAdapter) adapterHandler(w http.ResponseWriter, r *http.Request) {
 	msg, err := layer1.LoadMessage(adapterSettings, string(msgStr))
 	if err != nil {
 		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if msg.GetPayload().GetHead() != build.GetSettings().FProtoMask.FNetwork {
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnPayloadNull))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

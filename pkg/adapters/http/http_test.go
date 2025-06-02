@@ -15,6 +15,7 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
@@ -156,7 +157,7 @@ func TestHTTPAdapter(t *testing.T) {
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(0x01, msgBytes),
+		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
 	)
 
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {

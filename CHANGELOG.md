@@ -13,6 +13,10 @@
 - `modes`: rename dir configs -> modes
 - `build/settings.yml`: delete queue_based_problem -> move to pkg/network settings
 
+### BUG FIXES
+
+- `cmd/hla/hla_http`: add check network mask
+
 <!-- ... -->
 
 ## v1.8.5
