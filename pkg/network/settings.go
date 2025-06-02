@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	CDefaultFetchTimeout = 60 * time.Second
+	CDefaultFetchTimeout = time.Minute
 	CDefaultQueuePeriod  = 5 * time.Second
 	CDefaultQBPConsumers = 1
 	CDefaultPowParallel  = 1

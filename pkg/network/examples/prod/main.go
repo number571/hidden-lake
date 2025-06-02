@@ -40,6 +40,7 @@ func main() {
 	_, pubKey := exchangeKeys(node1, node2)
 
 	for {
+		timeNow := time.Now()
 		rsp, err := node1.FetchRequest(
 			ctx,
 			pubKey,
@@ -49,7 +50,7 @@ func main() {
 			fmt.Printf("error:(%s)\n", err.Error())
 			continue
 		}
-		fmt.Printf("response:(%s)\n", string(rsp.GetBody()))
+		fmt.Printf("response[%s]:(%s)\n", time.Since(timeNow), string(rsp.GetBody()))
 	}
 }
 
@@ -67,7 +68,7 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapters.NewSettingsByNetworkKey(networkKey),
 			FQBPSettings: &network.SQBPSettings{
-				FFetchTimeout: 60 * time.Second,
+				FFetchTimeout: time.Minute,
 				FQueuePeriod:  5 * time.Second,
 			},
 			FSubSettings: &network.SSubSettings{

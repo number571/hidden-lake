@@ -37,12 +37,15 @@ func main() {
 	go func() { _ = adapter.Run(ctx) }()
 	go func() { _ = runAsRelayer(ctx, adapter) }()
 
+	time.Sleep(time.Second)
+
 	go func() { _ = node1.Run(ctx) }()
 	go func() { _ = node2.Run(ctx) }()
 
 	_, pubKey := exchangeKeys(node1, node2)
 
 	for {
+		timeNow := time.Now()
 		rsp, err := node1.FetchRequest(
 			ctx,
 			pubKey,
@@ -52,7 +55,7 @@ func main() {
 			fmt.Printf("error:(%s)\n", err.Error())
 			continue
 		}
-		fmt.Printf("response:(%s)\n", string(rsp.GetBody()))
+		fmt.Printf("response[%s]:(%s)\n", time.Since(timeNow), string(rsp.GetBody()))
 	}
 }
 
