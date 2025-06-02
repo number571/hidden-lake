@@ -18,13 +18,14 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes uint64 `json:"message_size_bytes" yaml:"message_size_bytes"`
-	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
-	FQueuePeriodMS    uint64 `json:"queue_period_ms" yaml:"queue_period_ms"`
-	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FQBPConsumers     uint64 `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
-	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
-	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FMessageSizeBytes uint64    `json:"message_size_bytes" yaml:"message_size_bytes"`
+	FFetchTimeoutMS   uint64    `json:"fetch_timeout_ms" yaml:"fetch_timeout_ms"`
+	FQueuePeriodMS    uint64    `json:"queue_period_ms" yaml:"queue_period_ms"`
+	FWorkSizeBits     uint64    `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FQBPConsumers     uint64    `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
+	FPowParallel      uint64    `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
+	FQueuePoolCap     [2]uint64 `json:"queue_pool_cap,omitempty" yaml:"queue_pool_cap,omitempty"`
+	FNetworkKey       string    `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 }
 
 type SConfig struct {
@@ -116,6 +117,10 @@ func (p *SConfigSettings) GetQBPConsumers() uint64 {
 
 func (p *SConfigSettings) GetPowParallel() uint64 {
 	return p.FPowParallel
+}
+
+func (p *SConfigSettings) GetQueuePoolCap() [2]uint64 {
+	return p.FQueuePoolCap
 }
 
 func (p *SConfig) GetSettings() IConfigSettings {

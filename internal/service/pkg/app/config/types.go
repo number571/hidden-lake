@@ -26,6 +26,7 @@ type IConfigSettings interface {
 
 	GetPowParallel() uint64
 	GetQBPConsumers() uint64
+	GetQueuePoolCap() [2]uint64
 }
 
 type IConfig interface {

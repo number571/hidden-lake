@@ -14,6 +14,8 @@ var (
 const (
 	CDefaultFetchTimeout = time.Minute
 	CDefaultQueuePeriod  = 5 * time.Second
+	CDefaultMainPoolCap  = 256
+	CDefaultRandPoolCap  = 32
 )
 
 type SSettings sSettings
@@ -28,6 +30,7 @@ type SQBPSettings struct {
 	FFetchTimeout time.Duration
 	FPowParallel  uint64
 	FQBPConsumers uint64
+	FQueuePoolCap [2]uint64
 }
 
 type SSubSettings struct {
@@ -61,6 +64,14 @@ func (p *sSettings) useDefault() *sSettings {
 
 	if p.FQBPSettings.FFetchTimeout == 0 {
 		p.FQBPSettings.FFetchTimeout = CDefaultFetchTimeout
+	}
+
+	if p.FQBPSettings.FQueuePoolCap[0] == 0 {
+		p.FQBPSettings.FQueuePoolCap[0] = CDefaultMainPoolCap
+	}
+
+	if p.FQBPSettings.FQueuePoolCap[1] == 0 {
+		p.FQBPSettings.FQueuePoolCap[1] = CDefaultRandPoolCap
 	}
 
 	if p.FQBPSettings.FPowParallel == 0 {
@@ -107,6 +118,10 @@ func (p *sSettings) GetPowParallel() uint64 {
 
 func (p *sSettings) GetQBPConsumers() uint64 {
 	return p.FQBPSettings.FQBPConsumers
+}
+
+func (p *sSettings) GetQueuePoolCap() [2]uint64 {
+	return p.FQBPSettings.FQueuePoolCap
 }
 
 func (p *sSettings) GetServiceName() string {

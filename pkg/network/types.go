@@ -23,15 +23,20 @@ type IHiddenLakeNode interface {
 
 type ISettings interface {
 	ISubSettings
+	IQBPSettings
 
 	GetAdapterSettings() adapters.ISettings
-	GetQueuePeriod() time.Duration
+}
+
+type IQBPSettings interface {
+	GetPowParallel() uint64
+	GetQBPConsumers() uint64
 	GetFetchTimeout() time.Duration
+	GetQueuePeriod() time.Duration
+	GetQueuePoolCap() [2]uint64
 }
 
 type ISubSettings interface {
 	GetLogger() gopeer_logger.ILogger
-	GetPowParallel() uint64
-	GetQBPConsumers() uint64
 	GetServiceName() string
 }

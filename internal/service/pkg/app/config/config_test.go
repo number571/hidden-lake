@@ -33,6 +33,8 @@ const (
 	tcQueuePeriod     = 1000
 	tcQBPConsumers    = 5
 	tcPowParallel     = 8
+	tcMainPoolCap     = 32
+	tcRandPoolCap     = 16
 )
 
 var (
@@ -59,6 +61,7 @@ const (
   network_key: %s
   qbp_consumers: %d
   pow_parallel: %d
+  queue_pool_cap: [%d, %d]
 logging:
   - info
   - erro
@@ -87,6 +90,8 @@ func testNewConfigString() string {
 		tcNetwork,
 		tcQBPConsumers,
 		tcPowParallel,
+		tcMainPoolCap,
+		tcRandPoolCap,
 		tcAddressExternal,
 		tcAddressInternal,
 		tgAdapters[0],
@@ -259,6 +264,12 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetNetworkKey() != tcNetwork {
 		t.Error("network is invalid")
+		return
+	}
+
+	poolCap := cfg.GetSettings().GetQueuePoolCap()
+	if poolCap[0] != tcMainPoolCap || poolCap[1] != tcRandPoolCap {
+		t.Error("queue_pool_cap is invalid")
 		return
 	}
 

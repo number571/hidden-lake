@@ -47,6 +47,7 @@ func (p *sApp) initAnonNode() error {
 				FFetchTimeout: cfgSettings.GetFetchTimeout(),
 				FPowParallel:  cfgSettings.GetPowParallel(),
 				FQBPConsumers: cfgSettings.GetQBPConsumers(),
+				FQueuePoolCap: cfgSettings.GetQueuePoolCap(),
 			},
 			FSubSettings: &network.SSubSettings{
 				FServiceName: hls_settings.GServiceName.Short(),
