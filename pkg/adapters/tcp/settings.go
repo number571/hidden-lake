@@ -11,7 +11,7 @@ var (
 )
 
 const (
-	CDefaultConnLimit      = 256
+	CDefaultConnNumLimit   = 256
 	CDefaultConnKeepPeriod = 10 * time.Second
 	CDefaultSendTimeout    = 5 * time.Second
 	CDefaultRecvTimeout    = 5 * time.Second
@@ -27,7 +27,7 @@ type sSettings struct {
 
 type SSrvSettings struct {
 	FAddress        string
-	FConnLimit      uint64
+	FConnNumLimit   uint64
 	FConnKeepPeriod time.Duration
 	FSendTimeout    time.Duration
 	FRecvTimeout    time.Duration
@@ -49,8 +49,8 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FSrvSettings == nil {
 		p.FSrvSettings = &SSrvSettings{}
 	}
-	if p.FSrvSettings.FConnLimit == 0 {
-		p.FSrvSettings.FConnLimit = CDefaultConnLimit
+	if p.FSrvSettings.FConnNumLimit == 0 {
+		p.FSrvSettings.FConnNumLimit = CDefaultConnNumLimit
 	}
 	if p.FSrvSettings.FConnKeepPeriod == 0 {
 		p.FSrvSettings.FConnKeepPeriod = CDefaultConnKeepPeriod
@@ -74,8 +74,8 @@ func (p *sSettings) GetAddress() string {
 	return p.FSrvSettings.FAddress
 }
 
-func (p *sSettings) GetConnLimit() uint64 {
-	return p.FSrvSettings.FConnLimit
+func (p *sSettings) GetConnNumLimit() uint64 {
+	return p.FSrvSettings.FConnNumLimit
 }
 
 func (p *sSettings) GetConnKeepPeriod() time.Duration {

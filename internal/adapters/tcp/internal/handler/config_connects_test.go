@@ -201,6 +201,13 @@ func (p *tsConfigSettings) GetNetworkKey() string       { return "_" }
 func (p *tsConfigSettings) GetMessageSizeBytes() uint64 { return 8192 }
 func (p *tsConfigSettings) GetDatabaseEnabled() bool    { return false }
 
+func (p *tsConfigSettings) GetConnNumLimit() uint64          { return 256 }
+func (p *tsConfigSettings) GetConnKeepPeriod() time.Duration { return 10 * time.Second }
+func (p *tsConfigSettings) GetSendTimeout() time.Duration    { return 5 * time.Second }
+func (p *tsConfigSettings) GetRecvTimeout() time.Duration    { return 5 * time.Second }
+func (p *tsConfigSettings) GetDialTimeout() time.Duration    { return 5 * time.Second }
+func (p *tsConfigSettings) GetWaitTimeout() time.Duration    { return time.Hour }
+
 type tsNetworkNode struct {
 	fWithFail bool
 }

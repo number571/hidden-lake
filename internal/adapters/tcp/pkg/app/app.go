@@ -47,11 +47,12 @@ type sApp struct {
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 	logging := pCfg.GetLogging()
+	cfgSettings := pCfg.GetSettings()
 	lruCache := cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
-		FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
-		FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
+		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
+		FNetworkKey:       cfgSettings.GetNetworkKey(),
 	})
 	return &sApp{
 		fState:      state.NewBoolState(),
@@ -64,7 +65,13 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_tcp.NewSettings(&hla_tcp.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FSrvSettings: &hla_tcp.SSrvSettings{
-					FAddress: pCfg.GetAddress().GetExternal(),
+					FAddress:        pCfg.GetAddress().GetExternal(),
+					FConnNumLimit:   cfgSettings.GetConnNumLimit(),
+					FConnKeepPeriod: cfgSettings.GetConnKeepPeriod(),
+					FSendTimeout:    cfgSettings.GetSendTimeout(),
+					FRecvTimeout:    cfgSettings.GetRecvTimeout(),
+					FDialTimeout:    cfgSettings.GetDialTimeout(),
+					FWaitTimeout:    cfgSettings.GetWaitTimeout(),
 				},
 			}),
 			lruCache,

@@ -50,7 +50,7 @@ func NewTCPAdapter(
 			network.NewNode(
 				network.NewSettings(&network.SSettings{
 					FAddress:      pSettings.GetAddress(),
-					FMaxConnects:  pSettings.GetConnLimit(),
+					FMaxConnects:  pSettings.GetConnNumLimit(),
 					FReadTimeout:  pSettings.GetRecvTimeout(),
 					FWriteTimeout: pSettings.GetSendTimeout(),
 					FConnSettings: conn.NewSettings(&conn.SSettings{

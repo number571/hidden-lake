@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -19,6 +20,12 @@ type SConfigSettings struct {
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
+	FConnNumLimit     uint64 `json:"conn_num_limit,omitempty" yaml:"conn_num_limit,omitempty"`
+	FConnKeepPeriodMS uint64 `json:"conn_keep_period_ms,omitempty" yaml:"conn_keep_period_ms,omitempty"`
+	FSendTimeoutMS    uint64 `json:"send_timeout_ms,omitempty" yaml:"send_timeout_ms,omitempty"`
+	FRecvTimeoutMS    uint64 `json:"recv_timeout_ms,omitempty" yaml:"recv_timeout_ms,omitempty"`
+	FDialTimeoutMS    uint64 `json:"dial_timeout_ms,omitempty" yaml:"dial_timeout_ms,omitempty"`
+	FWaitTimeoutMS    uint64 `json:"wait_timeout_ms,omitempty" yaml:"wait_timeout_ms,omitempty"`
 }
 
 type SConfig struct {
@@ -156,4 +163,28 @@ func (p *SAddress) GetExternal() string {
 
 func (p *SAddress) GetInternal() string {
 	return p.FInternal
+}
+
+func (p *SConfigSettings) GetConnNumLimit() uint64 {
+	return p.FConnNumLimit
+}
+
+func (p *SConfigSettings) GetConnKeepPeriod() time.Duration {
+	return time.Duration(p.FConnKeepPeriodMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetSendTimeout() time.Duration {
+	return time.Duration(p.FSendTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetRecvTimeout() time.Duration {
+	return time.Duration(p.FRecvTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetDialTimeout() time.Duration {
+	return time.Duration(p.FDialTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetWaitTimeout() time.Duration {
+	return time.Duration(p.FWaitTimeoutMS) * time.Millisecond // nolint: gosec
 }

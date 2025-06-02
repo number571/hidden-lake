@@ -24,7 +24,7 @@ type ISettings interface {
 
 type ISrvSettings interface {
 	GetAddress() string
-	GetConnLimit() uint64
+	GetConnNumLimit() uint64
 	GetConnKeepPeriod() time.Duration
 	GetSendTimeout() time.Duration
 	GetRecvTimeout() time.Duration
