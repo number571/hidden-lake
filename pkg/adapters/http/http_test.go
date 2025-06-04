@@ -51,7 +51,7 @@ func TestHTTPAdapter(t *testing.T) {
 	adapter2 := NewHTTPAdapter(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
-			FSrvSettings: &SSrvSettings{
+			FServeSettings: &SServeSettings{
 				FAddress: testutils.TgAddrs[19],
 			},
 		}),
@@ -62,7 +62,7 @@ func TestHTTPAdapter(t *testing.T) {
 	adapter1 := NewHTTPAdapter(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
-			FSrvSettings: &SSrvSettings{
+			FServeSettings: &SServeSettings{
 				FAddress: testutils.TgAddrs[18],
 			},
 		}),

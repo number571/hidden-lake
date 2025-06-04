@@ -62,7 +62,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fHTTPIntAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FSrvSettings: &hla_http.SSrvSettings{
+				FServeSettings: &hla_http.SServeSettings{
 					FAddress: pCfg.GetAddress().GetInternal(),
 				},
 			}),
@@ -72,7 +72,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fHTTPExtAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FSrvSettings: &hla_http.SSrvSettings{
+				FServeSettings: &hla_http.SServeSettings{
 					FAddress: pCfg.GetAddress().GetExternal(),
 				},
 			}),

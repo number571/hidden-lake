@@ -64,7 +64,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fTCPAdapter: hla_tcp.NewTCPAdapter(
 			hla_tcp.NewSettings(&hla_tcp.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FSrvSettings: &hla_tcp.SSrvSettings{
+				FServeSettings: &hla_tcp.SServeSettings{
 					FAddress:        pCfg.GetAddress().GetExternal(),
 					FConnNumLimit:   cfgSettings.GetConnNumLimit(),
 					FConnKeepPeriod: cfgSettings.GetConnKeepPeriod(),
@@ -80,7 +80,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fHTTPAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FSrvSettings: &hla_http.SSrvSettings{
+				FServeSettings: &hla_http.SServeSettings{
 					FAddress: pCfg.GetAddress().GetInternal(),
 				},
 			}),

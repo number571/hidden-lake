@@ -69,7 +69,7 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 				FQueuePeriod:  time.Second,
 				FFetchTimeout: time.Minute,
 			},
-			FSrvSettings: &network.SSrvSettings{
+			FServeSettings: &network.SServeSettings{
 				FLogger:      getLogger(),
 				FServiceName: name,
 			},
@@ -93,7 +93,7 @@ func newTCPAdapter(addr string, conns []string) adapters.IRunnerAdapter {
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
 				FMessageSizeBytes: msgSizeBytes,
 			}),
-			FSrvSettings: &tcp.SSrvSettings{
+			FServeSettings: &tcp.SServeSettings{
 				FAddress: addr,
 			},
 		}),

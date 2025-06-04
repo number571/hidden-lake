@@ -45,7 +45,7 @@ func (p *sApp) initAnonNode() error {
 					cfgSettings.GetQueueRandCap(),
 				},
 			},
-			FSrvSettings: &network.SSrvSettings{
+			FServeSettings: &network.SServeSettings{
 				FServiceName: hls_settings.GServiceName.Short(),
 				FLogger:      p.fAnonLogger,
 			},
@@ -55,7 +55,7 @@ func (p *sApp) initAnonNode() error {
 		http.NewHTTPAdapter(
 			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
-				FSrvSettings: &http.SSrvSettings{
+				FServeSettings: &http.SServeSettings{
 					FAddress: cfg.GetAddress().GetExternal(),
 				},
 			}),

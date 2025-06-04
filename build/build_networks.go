@@ -38,9 +38,23 @@ type SNetworksYAML struct {
 }
 
 type SNetwork struct {
-	FMessageSizeBytes uint64   `yaml:"message_size_bytes"`
-	FWorkSizeBits     uint64   `yaml:"work_size_bits"`
-	FConnections      []string `yaml:"connections"`
+	FMessageSizeBytes uint64       `yaml:"message_size_bytes"`
+	FWorkSizeBits     uint64       `yaml:"work_size_bits"`
+	FConnections      SConnections `yaml:"connections"`
+}
+
+type SConnections []string
+
+func (p SConnections) GetByScheme(pScheme string) []string {
+	connects := make([]string, 0, len(p))
+	for _, c := range p {
+		u, err := url.Parse(c)
+		if err != nil || u.Scheme != pScheme {
+			continue
+		}
+		connects = append(connects, u.Host)
+	}
+	return connects
 }
 
 func GetNetwork(k string) (SNetwork, bool) {

@@ -218,7 +218,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 					FWorkSizeBits:     tcWorkSize,
 					FMessageSizeBytes: tcMessageSize,
 				}),
-				FSrvSettings: &tcp.SSrvSettings{
+				FServeSettings: &tcp.SServeSettings{
 					FAddress: addr,
 				},
 			}),

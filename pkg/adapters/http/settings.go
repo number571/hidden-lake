@@ -11,10 +11,10 @@ var (
 type SSettings sSettings
 type sSettings struct {
 	FAdapterSettings adapters.ISettings
-	FSrvSettings     *SSrvSettings
+	FServeSettings   *SServeSettings
 }
 
-type SSrvSettings struct {
+type SServeSettings struct {
 	FAddress string
 }
 
@@ -24,19 +24,19 @@ func NewSettings(pSett *SSettings) ISettings {
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
-		FSrvSettings:     pSett.FSrvSettings,
+		FServeSettings:   pSett.FServeSettings,
 	}).initDefault()
 }
 
 func (p *sSettings) initDefault() *sSettings {
-	if p.FSrvSettings == nil {
-		p.FSrvSettings = &SSrvSettings{}
+	if p.FServeSettings == nil {
+		p.FServeSettings = &SServeSettings{}
 	}
 	return p
 }
 
 func (p *sSettings) GetAddress() string {
-	return p.FSrvSettings.FAddress
+	return p.FServeSettings.FAddress
 }
 
 func (p *sSettings) GetAdapterSettings() adapters.ISettings {

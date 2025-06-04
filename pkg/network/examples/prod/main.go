@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"os"
 	"time"
 
@@ -19,6 +18,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/response"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 )
 
 const (
@@ -55,23 +55,11 @@ func main() {
 }
 
 func newNode(_ context.Context, name string) network.IHiddenLakeNode {
-	networkByKey, _ := build.GetNetwork(networkKey)
-	connects := make([]string, 0, len(networkByKey.FConnections))
-	for _, c := range networkByKey.FConnections {
-		u, err := url.Parse(c)
-		if err != nil || u.Scheme != "tcp" {
-			continue
-		}
-		connects = append(connects, u.Host)
-	}
+	adapterSettings := adapters.NewSettingsByNetworkKey(networkKey)
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
-			FAdapterSettings: adapters.NewSettingsByNetworkKey(networkKey),
-			FQBPSettings: &network.SQBPSettings{
-				FFetchTimeout: time.Minute,
-				FQueuePeriod:  5 * time.Second,
-			},
-			FSrvSettings: &network.SSrvSettings{
+			FAdapterSettings: adapterSettings,
+			FServeSettings: &network.SServeSettings{
 				FServiceName: name,
 				FLogger:      getLogger(),
 			},
@@ -86,14 +74,13 @@ func newNode(_ context.Context, name string) network.IHiddenLakeNode {
 		}(),
 		tcp.NewTCPAdapter(
 			tcp.NewSettings(&tcp.SSettings{
-				FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
-					FNetworkKey:       networkKey,
-					FMessageSizeBytes: networkByKey.FMessageSizeBytes,
-					FWorkSizeBits:     networkByKey.FWorkSizeBits,
-				}),
+				FAdapterSettings: adapterSettings,
 			}),
 			cache.NewLRUCache(1<<10),
-			func() []string { return connects },
+			func() []string {
+				networkByKey, _ := build.GetNetwork(networkKey)
+				return networkByKey.FConnections.GetByScheme(hla_tcp_settings.CServiceAdapterScheme)
+			},
 		),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte("echo: " + string(r.GetBody()))

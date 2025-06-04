@@ -25,7 +25,7 @@ const (
 type SSettings sSettings
 type sSettings struct {
 	FQBPSettings     *SQBPSettings
-	FSrvSettings     *SSrvSettings
+	FServeSettings   *SServeSettings
 	FAdapterSettings adapters.ISettings
 }
 
@@ -37,7 +37,7 @@ type SQBPSettings struct {
 	FQueuePoolCap [2]uint64
 }
 
-type SSrvSettings struct {
+type SServeSettings struct {
 	FLogger      gopeer_logger.ILogger
 	FServiceMask uint32
 	FServiceName string
@@ -50,7 +50,7 @@ func NewSettings(pSett *SSettings) ISettings {
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
 		FQBPSettings:     pSett.FQBPSettings,
-		FSrvSettings:     pSett.FSrvSettings,
+		FServeSettings:   pSett.FServeSettings,
 	}).initDefault()
 }
 
@@ -87,20 +87,20 @@ func (p *sSettings) initDefault() *sSettings {
 		p.FQBPSettings.FQBPConsumers = CDefaultQBPConsumers
 	}
 
-	if p.FSrvSettings == nil {
-		p.FSrvSettings = &SSrvSettings{}
+	if p.FServeSettings == nil {
+		p.FServeSettings = &SServeSettings{}
 	}
 
-	if p.FSrvSettings.FServiceName == "" {
-		p.FSrvSettings.FServiceName = CDefaultServiceName
+	if p.FServeSettings.FServiceName == "" {
+		p.FServeSettings.FServiceName = CDefaultServiceName
 	}
 
-	if p.FSrvSettings.FServiceMask == 0 {
-		p.FSrvSettings.FServiceMask = CDefaultServiceMask
+	if p.FServeSettings.FServiceMask == 0 {
+		p.FServeSettings.FServiceMask = CDefaultServiceMask
 	}
 
-	if p.FSrvSettings.FLogger == nil {
-		p.FSrvSettings.FLogger = gopeer_logger.NewLogger(
+	if p.FServeSettings.FLogger == nil {
+		p.FServeSettings.FLogger = gopeer_logger.NewLogger(
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
 			func(_ gopeer_logger.ILogArg) string { return "" },
 		)
@@ -134,13 +134,13 @@ func (p *sSettings) GetQueuePoolCap() [2]uint64 {
 }
 
 func (p *sSettings) GetServiceMask() uint32 {
-	return p.FSrvSettings.FServiceMask
+	return p.FServeSettings.FServiceMask
 }
 
 func (p *sSettings) GetServiceName() string {
-	return p.FSrvSettings.FServiceName
+	return p.FServeSettings.FServiceName
 }
 
 func (p *sSettings) GetLogger() gopeer_logger.ILogger {
-	return p.FSrvSettings.FLogger
+	return p.FServeSettings.FLogger
 }

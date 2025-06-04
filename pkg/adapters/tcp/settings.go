@@ -22,10 +22,10 @@ const (
 type SSettings sSettings
 type sSettings struct {
 	FAdapterSettings adapters.ISettings
-	FSrvSettings     *SSrvSettings
+	FServeSettings   *SServeSettings
 }
 
-type SSrvSettings struct {
+type SServeSettings struct {
 	FAddress        string
 	FConnNumLimit   uint64
 	FConnKeepPeriod time.Duration
@@ -41,61 +41,61 @@ func NewSettings(pSett *SSettings) ISettings {
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
-		FSrvSettings:     pSett.FSrvSettings,
+		FServeSettings:   pSett.FServeSettings,
 	}).initDefault()
 }
 
 func (p *sSettings) initDefault() *sSettings {
-	if p.FSrvSettings == nil {
-		p.FSrvSettings = &SSrvSettings{}
+	if p.FServeSettings == nil {
+		p.FServeSettings = &SServeSettings{}
 	}
-	if p.FSrvSettings.FConnNumLimit == 0 {
-		p.FSrvSettings.FConnNumLimit = CDefaultConnNumLimit
+	if p.FServeSettings.FConnNumLimit == 0 {
+		p.FServeSettings.FConnNumLimit = CDefaultConnNumLimit
 	}
-	if p.FSrvSettings.FConnKeepPeriod == 0 {
-		p.FSrvSettings.FConnKeepPeriod = CDefaultConnKeepPeriod
+	if p.FServeSettings.FConnKeepPeriod == 0 {
+		p.FServeSettings.FConnKeepPeriod = CDefaultConnKeepPeriod
 	}
-	if p.FSrvSettings.FSendTimeout == 0 {
-		p.FSrvSettings.FSendTimeout = CDefaultSendTimeout
+	if p.FServeSettings.FSendTimeout == 0 {
+		p.FServeSettings.FSendTimeout = CDefaultSendTimeout
 	}
-	if p.FSrvSettings.FRecvTimeout == 0 {
-		p.FSrvSettings.FRecvTimeout = CDefaultRecvTimeout
+	if p.FServeSettings.FRecvTimeout == 0 {
+		p.FServeSettings.FRecvTimeout = CDefaultRecvTimeout
 	}
-	if p.FSrvSettings.FDialTimeout == 0 {
-		p.FSrvSettings.FDialTimeout = CDefaultDialTimeout
+	if p.FServeSettings.FDialTimeout == 0 {
+		p.FServeSettings.FDialTimeout = CDefaultDialTimeout
 	}
-	if p.FSrvSettings.FWaitTimeout == 0 {
-		p.FSrvSettings.FWaitTimeout = CDefaultWaitTimeout
+	if p.FServeSettings.FWaitTimeout == 0 {
+		p.FServeSettings.FWaitTimeout = CDefaultWaitTimeout
 	}
 	return p
 }
 
 func (p *sSettings) GetAddress() string {
-	return p.FSrvSettings.FAddress
+	return p.FServeSettings.FAddress
 }
 
 func (p *sSettings) GetConnNumLimit() uint64 {
-	return p.FSrvSettings.FConnNumLimit
+	return p.FServeSettings.FConnNumLimit
 }
 
 func (p *sSettings) GetConnKeepPeriod() time.Duration {
-	return p.FSrvSettings.FConnKeepPeriod
+	return p.FServeSettings.FConnKeepPeriod
 }
 
 func (p *sSettings) GetSendTimeout() time.Duration {
-	return p.FSrvSettings.FSendTimeout
+	return p.FServeSettings.FSendTimeout
 }
 
 func (p *sSettings) GetRecvTimeout() time.Duration {
-	return p.FSrvSettings.FRecvTimeout
+	return p.FServeSettings.FRecvTimeout
 }
 
 func (p *sSettings) GetDialTimeout() time.Duration {
-	return p.FSrvSettings.FDialTimeout
+	return p.FServeSettings.FDialTimeout
 }
 
 func (p *sSettings) GetWaitTimeout() time.Duration {
-	return p.FSrvSettings.FWaitTimeout
+	return p.FServeSettings.FWaitTimeout
 }
 
 func (p *sSettings) GetAdapterSettings() adapters.ISettings {
