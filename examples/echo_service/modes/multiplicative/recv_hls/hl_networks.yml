@@ -1,0 +1,9 @@
+default: &default_network
+  message_size_bytes: 8192
+networks:
+  some_test_network:
+    <<: *default_network
+    work_size_bits: 22 # custom
+    connections: 
+      - http://127.0.0.1:8522
+      - tcp://send_hls:7521

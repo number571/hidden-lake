@@ -1,5 +1,3 @@
-settings:
-  message_size_bytes: 8192
 logging:
 - info
 - warn

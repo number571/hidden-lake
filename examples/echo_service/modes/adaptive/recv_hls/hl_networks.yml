@@ -4,3 +4,5 @@ networks:
   some_test_network:
     <<: *default_network
     work_size_bits: 22 # custom
+    connections: 
+      - tcp://send_hls:7521

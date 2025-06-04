@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/internal/adapters"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
 	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -84,7 +85,7 @@ func getServicesWithoutAdapters(cfg IConfig) []string {
 	services := cfg.GetServices()
 	result := make([]string, 0, len(services))
 	for _, s := range services {
-		if strings.HasPrefix(s, "hidden-lake-adapter") {
+		if strings.HasPrefix(s, adapters.CServicePrefix) {
 			continue
 		}
 		result = append(result, s)

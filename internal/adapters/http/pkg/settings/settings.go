@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"github.com/number571/hidden-lake/internal/adapters"
 	"github.com/number571/hidden-lake/internal/utils/name"
 )
 
@@ -13,7 +14,7 @@ const (
 )
 
 const (
-	CServiceFullName    = "hidden-lake-adapter=" + CServiceAdapterScheme
+	CServiceFullName    = adapters.CServicePrefix + "=" + CServiceAdapterScheme
 	CServiceDescription = "adapts HL traffic to a custom HTTP connection"
 )
 

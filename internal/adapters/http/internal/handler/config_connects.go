@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/adapters/http/pkg/app/config"
-	pkg_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
@@ -21,7 +21,7 @@ func HandleConfigConnectsAPI(
 	pLogger logger.ILogger,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hla_settings.GServiceName.Short(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -53,7 +53,7 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 			return
 		}
-		if u.Scheme != pkg_settings.CServiceAdapterScheme {
+		if u.Scheme != hla_settings.CServiceAdapterScheme {
 			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return

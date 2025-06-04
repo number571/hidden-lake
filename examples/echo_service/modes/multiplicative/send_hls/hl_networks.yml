@@ -5,4 +5,5 @@ networks:
     <<: *default_network
     work_size_bits: 22 # custom
     connections: 
-      - tcp://middle_hla_tcp:6581
+      - http://127.0.0.1:7522
+      - tcp://_ # HLC creates tcp adapter

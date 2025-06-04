@@ -11,6 +11,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
+      - SERVICE_NETWORK=some_test_network
       - SERVICE_PATH=examples/echo_service/modes/adaptive/recv_hls
     networks:
       - local-network
@@ -20,6 +21,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
+      - SERVICE_NETWORK=some_test_network
       - SERVICE_PATH=examples/echo_service/modes/adaptive/send_hls
     ports:
       - 7572:7572
