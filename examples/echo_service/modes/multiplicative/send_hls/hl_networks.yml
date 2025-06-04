@@ -6,4 +6,3 @@ networks:
     work_size_bits: 22 # custom
     connections: 
       - http://127.0.0.1:7522
-      - tcp://_ # HLC creates tcp adapter

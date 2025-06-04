@@ -7,7 +7,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/adapters"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -65,7 +64,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		if err != nil {
 			return nil, errors.Join(ErrParseURL, err)
 		}
-		if u.Scheme != hla_settings.CServiceAdapterScheme || u.Host == adapters.CVoidHost {
+		if u.Scheme != hla_settings.CServiceAdapterScheme {
 			continue
 		}
 		cfg.FConnections = append(cfg.FConnections, u.Host)

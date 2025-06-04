@@ -21,11 +21,6 @@ func TestRebuild(t *testing.T) {
 
 	testConfigDefaultInit(configFile)
 
-	if _, err := InitConfig(configFile, nil, "test_rebuild_config_network"); err == nil {
-		t.Error("success init config with rebuild for unknown network")
-		return
-	}
-
 	network := ""
 	for k := range build.GetNetworks() {
 		network = k

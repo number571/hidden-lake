@@ -12,6 +12,7 @@
 - `build/networks.yml`: delete queue_period, fetch_timeout
 - `modes`: rename dir configs -> modes
 - `build/settings.yml`: delete queue_based_problem -> move to pkg/network settings
+- `cmd/hlc`: adapters not insert in the config if app run with network key
 
 ### BUG FIXES
 
