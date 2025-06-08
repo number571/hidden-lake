@@ -11,7 +11,7 @@
 - `build/networks.yml`: rename settings, default_settings -> default, default_network
 - `build/networks.yml`: delete queue_period, fetch_timeout
 - `build/settings.yml`: replace many non global values to pkgs, services
-- `cmd/hls,cmd/hla_tcp,cmd/hla_http`: message_size_bytes now optionally param (use default value)
+- `cmd/hls,cmd/hla_tcp,cmd/hla_http`: message_size_bytes now optionally param (used default value)
 - `modes`: rename dir configs -> modes
 
 ### BUG FIXES
