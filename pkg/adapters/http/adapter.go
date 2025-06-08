@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"sync"
-	"time"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/logger"
@@ -90,7 +89,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 	httpServer := &http.Server{
 		Addr:        address,
 		Handler:     mux,
-		ReadTimeout: (5 * time.Second),
+		ReadTimeout: p.fSettings.GetRecvTimeout(),
 	}
 	go func() {
 		<-pCtx.Done()
@@ -126,8 +125,9 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 	for i, url := range connects {
 		go func(i int, url string) {
 			defer wg.Done()
+			httpClient := &http.Client{Timeout: p.fSettings.GetSendTimeout()}
 			errs[i] = hla_client.NewClient(
-				hla_client.NewRequester(url, &http.Client{Timeout: 5 * time.Second}),
+				hla_client.NewRequester(url, httpClient),
 			).ProduceMessage(pCtx, pNetMsg)
 		}(i, url)
 	}

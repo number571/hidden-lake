@@ -23,6 +23,10 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error(`gSettings.ProtoMask.Network != 0x5f67705f`)
 		return
 	}
+	if gSettings.FProtoMask.FService != 0x5f686c5f {
+		t.Error(`gSettings.ProtoMask.Service != 0x5f686c5f`)
+		return
+	}
 	if gSettings.FNetworkManager.FCacheHashesCap != 2048 {
 		t.Error(`gSettings.NetworkManager.CacheHashesCap != 2048`)
 		return

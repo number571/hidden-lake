@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/utils/name"
@@ -19,4 +20,6 @@ type IHTTPAdapter interface {
 type ISettings interface {
 	GetAdapterSettings() adapters.ISettings
 	GetAddress() string
+	GetSendTimeout() time.Duration
+	GetRecvTimeout() time.Duration
 }

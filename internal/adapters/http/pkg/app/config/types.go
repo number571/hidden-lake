@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/number571/go-peer/pkg/message/layer1"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -28,6 +30,8 @@ type IConfigSettings interface {
 
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
+	GetSendTimeout() time.Duration
+	GetRecvTimeout() time.Duration
 }
 
 type IAddress interface {

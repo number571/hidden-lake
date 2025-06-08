@@ -1,4 +1,5 @@
 proto_mask:
   network: 0x5f67705f
+  service: 0x5f686c5f
 network_manager:
   cache_hashes_cap: 2048

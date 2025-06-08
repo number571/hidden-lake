@@ -68,7 +68,7 @@ func NewHiddenLakeNode(
 				}(),
 			),
 		).HandleFunc(
-			pSettings.GetServiceMask(),
+			buildSettings.FProtoMask.FService,
 			handler.RequestHandler(pHandlerF),
 		),
 	}
@@ -119,11 +119,12 @@ func (p *sHiddenLakeNode) SendRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) error {
+	buildSettings := build.GetSettings()
 	err := p.fOriginNode.SendPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
-			uint64(p.fSettings.GetServiceMask()),
+			uint64(buildSettings.FProtoMask.FService),
 			pRequest.ToBytes(),
 		),
 	)
@@ -138,11 +139,12 @@ func (p *sHiddenLakeNode) FetchRequest(
 	pPubKey asymmetric.IPubKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
+	buildSettings := build.GetSettings()
 	rspBytes, err := p.fOriginNode.FetchPayload(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
-			p.fSettings.GetServiceMask(),
+			buildSettings.FProtoMask.FService,
 			pRequest.ToBytes(),
 		),
 	)

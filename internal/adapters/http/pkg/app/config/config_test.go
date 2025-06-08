@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 const (
@@ -20,6 +21,8 @@ const (
 	tcDatabaseEnabled = true
 	tcAddressExternal = "external_address"
 	tcAddressInternal = "internal_address"
+	tcSendTimeoutMS   = 6_000
+	tcRecvTimeoutMS   = 7_000
 )
 
 var (
@@ -39,6 +42,8 @@ const (
   work_size_bits: %d
   network_key: %s
   database_enabled: %t
+  send_timeout_ms: %d
+  recv_timeout_ms: %d
 logging:
   - info
   - erro
@@ -61,6 +66,8 @@ func testNewConfigString() string {
 		tcWorkSize,
 		tcNetwork,
 		tcDatabaseEnabled,
+		tcSendTimeoutMS,
+		tcRecvTimeoutMS,
 		tcAddressExternal,
 		tcAddressInternal,
 		tgEndpoints[0],
@@ -177,6 +184,16 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetDatabaseEnabled() != tcDatabaseEnabled {
 		t.Error("settings message database_enabled is invalid")
+		return
+	}
+
+	if cfg.GetSettings().GetSendTimeout() != time.Duration(tcSendTimeoutMS)*time.Millisecond {
+		t.Error("settings message send_timeout_ms is invalid")
+		return
+	}
+
+	if cfg.GetSettings().GetRecvTimeout() != time.Duration(tcRecvTimeoutMS)*time.Millisecond {
+		t.Error("settings message recv_timeout_ms is invalid")
 		return
 	}
 

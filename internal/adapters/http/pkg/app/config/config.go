@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -19,6 +20,8 @@ type SConfigSettings struct {
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
+	FSendTimeoutMS    uint64 `json:"send_timeout_ms,omitempty" yaml:"send_timeout_ms,omitempty"`
+	FRecvTimeoutMS    uint64 `json:"recv_timeout_ms,omitempty" yaml:"recv_timeout_ms,omitempty"`
 }
 
 type SConfig struct {
@@ -140,6 +143,14 @@ func (p *SConfigSettings) GetNetworkKey() string {
 
 func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
+}
+
+func (p *SConfigSettings) GetSendTimeout() time.Duration {
+	return time.Duration(p.FSendTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetRecvTimeout() time.Duration {
+	return time.Duration(p.FRecvTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {

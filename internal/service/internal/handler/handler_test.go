@@ -196,7 +196,7 @@ func testNewWrapper(cfgPath string) config.IWrapper {
 
 func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, context.CancelFunc) {
 	_ = os.RemoveAll(dbPath)
-	node := testNewNode(dbPath, addr).HandleFunc(hiddenlake_network.CDefaultServiceMask, nil)
+	node := testNewNode(dbPath, addr).HandleFunc(build.GetSettings().FProtoMask.FService, nil)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() { _ = node.Run(ctx) }()
 	return node, ctx, cancel
@@ -511,7 +511,7 @@ func (p *tsHiddenLakeNode) SendRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload64(
-			uint64(hiddenlake_network.CDefaultServiceMask),
+			uint64(build.GetSettings().FProtoMask.FService),
 			pRequest.ToBytes(),
 		),
 	)
@@ -526,7 +526,7 @@ func (p *tsHiddenLakeNode) FetchRequest(
 		pCtx,
 		pPubKey,
 		payload.NewPayload32(
-			hiddenlake_network.CDefaultServiceMask,
+			build.GetSettings().FProtoMask.FService,
 			pRequest.ToBytes(),
 		),
 	)

@@ -13,7 +13,6 @@ var (
 
 const (
 	CDefaultServiceName  = "_"
-	CDefaultServiceMask  = uint32(0x5f686c5f)
 	CDefaultFetchTimeout = time.Minute
 	CDefaultQueuePeriod  = 5 * time.Second
 	CDefaultMainPoolCap  = 256
@@ -39,7 +38,6 @@ type SQBPSettings struct {
 
 type SServeSettings struct {
 	FLogger      gopeer_logger.ILogger
-	FServiceMask uint32
 	FServiceName string
 }
 
@@ -95,10 +93,6 @@ func (p *sSettings) initDefault() *sSettings {
 		p.FServeSettings.FServiceName = CDefaultServiceName
 	}
 
-	if p.FServeSettings.FServiceMask == 0 {
-		p.FServeSettings.FServiceMask = CDefaultServiceMask
-	}
-
 	if p.FServeSettings.FLogger == nil {
 		p.FServeSettings.FLogger = gopeer_logger.NewLogger(
 			gopeer_logger.NewSettings(&gopeer_logger.SSettings{}),
@@ -131,10 +125,6 @@ func (p *sSettings) GetQBPConsumers() uint64 {
 
 func (p *sSettings) GetQueuePoolCap() [2]uint64 {
 	return p.FQBPSettings.FQueuePoolCap
-}
-
-func (p *sSettings) GetServiceMask() uint32 {
-	return p.FServeSettings.FServiceMask
 }
 
 func (p *sSettings) GetServiceName() string {
