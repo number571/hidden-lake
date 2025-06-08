@@ -3,3 +3,6 @@ proto_mask:
   service: 0x5f686c5f
 network_manager:
   cache_hashes_cap: 2048
+queue_based_problem:
+  main_pool_cap: 256
+  rand_pool_cap: 32

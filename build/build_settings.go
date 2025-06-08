@@ -49,15 +49,23 @@ type SSettings struct {
 		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
 	FNetworkManager struct {
-		FCacheHashesCap uint64 `yaml:"cache_hashes_cap"` //
+		FCacheHashesCap uint64 `yaml:"cache_hashes_cap"`
 	} `yaml:"network_manager"`
+	FQueueBasedProblem struct {
+		FMainPoolCap uint64 `yaml:"main_pool_cap"`
+		FRandPoolCap uint64 `yaml:"rand_pool_cap"`
+	} `yaml:"queue_based_problem"`
 }
 
 func (p SSettings) validate() error {
-	switch { // nolint: gocritic, staticcheck
+	switch {
 	case
 		p.FNetworkManager.FCacheHashesCap == 0:
 		return errors.New("network_manager is invalid")
+	case
+		p.FQueueBasedProblem.FMainPoolCap == 0,
+		p.FQueueBasedProblem.FRandPoolCap == 0:
+		return errors.New("queue_based_problem is invalid")
 	}
 	return nil
 }

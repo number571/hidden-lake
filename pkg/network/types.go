@@ -33,7 +33,6 @@ type IQBPSettings interface {
 	GetQBPConsumers() uint64
 	GetFetchTimeout() time.Duration
 	GetQueuePeriod() time.Duration
-	GetQueuePoolCap() [2]uint64
 }
 
 type ISrvSettings interface {

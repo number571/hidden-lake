@@ -57,7 +57,10 @@ func NewHiddenLakeNode(
 					FNetworkMask:  buildSettings.FProtoMask.FNetwork,
 					FQueuePeriod:  pSettings.GetQueuePeriod(),
 					FConsumersCap: pSettings.GetQBPConsumers(),
-					FQueuePoolCap: pSettings.GetQueuePoolCap(),
+					FQueuePoolCap: [2]uint64{
+						buildSettings.FQueueBasedProblem.FMainPoolCap,
+						buildSettings.FQueueBasedProblem.FRandPoolCap,
+					},
 				}),
 				func() client.IClient {
 					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())

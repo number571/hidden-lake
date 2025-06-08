@@ -25,8 +25,6 @@ type SConfigSettings struct {
 	FQBPConsumers     uint64 `json:"qbp_consumers,omitempty" yaml:"qbp_consumers,omitempty"`
 	FPowParallel      uint64 `json:"pow_parallel,omitempty" yaml:"pow_parallel,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
-	FQueueMainCap     uint64 `json:"queue_main_cap,omitempty" yaml:"queue_main_cap,omitempty"`
-	FQueueRandCap     uint64 `json:"queue_rand_cap,omitempty" yaml:"queue_rand_cap,omitempty"`
 }
 
 type SConfig struct {
@@ -118,14 +116,6 @@ func (p *SConfigSettings) GetQBPConsumers() uint64 {
 
 func (p *SConfigSettings) GetPowParallel() uint64 {
 	return p.FPowParallel
-}
-
-func (p *SConfigSettings) GetQueueMainCap() uint64 {
-	return p.FQueueMainCap
-}
-
-func (p *SConfigSettings) GetQueueRandCap() uint64 {
-	return p.FQueueRandCap
 }
 
 func (p *SConfig) GetSettings() IConfigSettings {

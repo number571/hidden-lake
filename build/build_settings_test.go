@@ -9,11 +9,18 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings := SSettings{}
 	if err := settings.validate(); err == nil {
-		t.Error("success validate with invalid queue capacity")
+		t.Error("success validate with invalid network_manager")
 		return
 	}
 
 	settings.FNetworkManager.FCacheHashesCap = 2048
+	if err := settings.validate(); err == nil {
+		t.Error("success validate with invalid queue_based_problem")
+		return
+	}
+
+	settings.FQueueBasedProblem.FMainPoolCap = 256
+	settings.FQueueBasedProblem.FRandPoolCap = 32
 	if err := settings.validate(); err != nil {
 		t.Error(err)
 		return
@@ -29,6 +36,14 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 	if gSettings.FNetworkManager.FCacheHashesCap != 2048 {
 		t.Error(`gSettings.NetworkManager.CacheHashesCap != 2048`)
+		return
+	}
+	if gSettings.FQueueBasedProblem.FMainPoolCap != 256 {
+		t.Error(`gSettings.FQueueBasedProblem.FMainPoolCap != 256`)
+		return
+	}
+	if gSettings.FQueueBasedProblem.FRandPoolCap != 32 {
+		t.Error(`gSettings.FQueueBasedProblem.FRandPoolCap != 32`)
 		return
 	}
 
