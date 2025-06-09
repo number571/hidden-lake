@@ -14,16 +14,17 @@ const (
 )
 
 const (
-	tcLogging         = true
-	tcMessageSize     = 8192
-	tcWorkSize        = 10
-	tcNetwork         = "_"
-	tcDatabaseEnabled = true
-	tcAddressExternal = "external_address"
-	tcAddressInternal = "internal_address"
-	tcReadTimeoutMS   = 6_000
-	tcWriteTimeoutMS  = 7_000
-	tcHandleTimeoutMS = 8_000
+	tcLogging          = true
+	tcMessageSize      = 8192
+	tcWorkSize         = 10
+	tcNetwork          = "_"
+	tcDatabaseEnabled  = true
+	tcAddressExternal  = "external_address"
+	tcAddressInternal  = "internal_address"
+	tcReadTimeoutMS    = 6_000
+	tcWriteTimeoutMS   = 7_000
+	tcRequestTimeoutMS = 8_000
+	tcHandleTimeoutMS  = 9_000
 )
 
 var (
@@ -45,6 +46,7 @@ const (
   database_enabled: %t
   read_timeout_ms: %d
   write_timeout_ms: %d
+  request_timeout_ms: %d
   handle_timeout_ms: %d
 logging:
   - info
@@ -70,6 +72,7 @@ func testNewConfigString() string {
 		tcDatabaseEnabled,
 		tcReadTimeoutMS,
 		tcWriteTimeoutMS,
+		tcRequestTimeoutMS,
 		tcHandleTimeoutMS,
 		tcAddressExternal,
 		tcAddressInternal,
@@ -197,6 +200,11 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetWriteTimeout() != time.Duration(tcWriteTimeoutMS)*time.Millisecond {
 		t.Error("settings message write_timeout_ms is invalid")
+		return
+	}
+
+	if cfg.GetSettings().GetRequestTimeout() != time.Duration(tcRequestTimeoutMS)*time.Millisecond {
+		t.Error("settings message request_timeout_ms is invalid")
 		return
 	}
 

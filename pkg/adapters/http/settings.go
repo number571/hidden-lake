@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	CDefaultReadTimeout   = 5 * time.Second
-	CDefaultWriteTimeout  = 5 * time.Second
-	CDefaultHandleTimeout = 30 * time.Second
+	CDefaultReadTimeout    = 5 * time.Second
+	CDefaultWriteTimeout   = 5 * time.Second
+	CDefaultHandleTimeout  = 30 * time.Second
+	CDefaultRequestTimeout = 5 * time.Second
 )
 
 var (
@@ -23,10 +24,11 @@ type sSettings struct {
 }
 
 type SServeSettings struct {
-	FAddress       string
-	FReadTimeout   time.Duration
-	FWriteTimeout  time.Duration
-	FHandleTimeout time.Duration
+	FAddress        string
+	FReadTimeout    time.Duration
+	FWriteTimeout   time.Duration
+	FHandleTimeout  time.Duration
+	FRequestTimeout time.Duration
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -49,6 +51,9 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings.FWriteTimeout == 0 {
 		p.FServeSettings.FWriteTimeout = CDefaultWriteTimeout
 	}
+	if p.FServeSettings.FRequestTimeout == 0 {
+		p.FServeSettings.FRequestTimeout = CDefaultRequestTimeout
+	}
 	if p.FServeSettings.FHandleTimeout == 0 {
 		p.FServeSettings.FHandleTimeout = CDefaultHandleTimeout
 	}
@@ -69,6 +74,10 @@ func (p *sSettings) GetReadTimeout() time.Duration {
 
 func (p *sSettings) GetWriteTimeout() time.Duration {
 	return p.FServeSettings.FWriteTimeout
+}
+
+func (p *sSettings) GetRequestTimeout() time.Duration {
+	return p.FServeSettings.FRequestTimeout
 }
 
 func (p *sSettings) GetHandleTimeout() time.Duration {

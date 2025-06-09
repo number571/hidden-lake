@@ -68,10 +68,11 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress:       pCfg.GetAddress().GetInternal(),
-					FReadTimeout:   settings.GetReadTimeout(),
-					FWriteTimeout:  settings.GetWriteTimeout(),
-					FHandleTimeout: settings.GetHandleTimeout(),
+					FAddress:        pCfg.GetAddress().GetInternal(),
+					FReadTimeout:    settings.GetReadTimeout(),
+					FWriteTimeout:   settings.GetWriteTimeout(),
+					FHandleTimeout:  settings.GetHandleTimeout(),
+					FRequestTimeout: settings.GetRequestTimeout(),
 				},
 			}),
 			lruCache,
@@ -81,10 +82,11 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress:       pCfg.GetAddress().GetExternal(),
-					FReadTimeout:   settings.GetReadTimeout(),
-					FWriteTimeout:  settings.GetWriteTimeout(),
-					FHandleTimeout: settings.GetHandleTimeout(),
+					FAddress:        pCfg.GetAddress().GetExternal(),
+					FReadTimeout:    settings.GetReadTimeout(),
+					FWriteTimeout:   settings.GetWriteTimeout(),
+					FHandleTimeout:  settings.GetHandleTimeout(),
+					FRequestTimeout: settings.GetRequestTimeout(),
 				},
 			}),
 			lruCache,

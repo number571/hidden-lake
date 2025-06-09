@@ -29,9 +29,10 @@ func (p *sApp) initExternalServiceHTTP(
 
 	buildSettings := build.GetSettings()
 	p.fExtServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetExternal(),
-		Handler:     http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
-		ReadTimeout: buildSettings.GetHttpReadTimeout(),
+		Addr:         p.fConfig.GetAddress().GetExternal(),
+		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
+		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
+		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
 	}
 }
 
@@ -59,9 +60,10 @@ func (p *sApp) initInternalServiceHTTP(
 
 	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetInternal(),
-		Handler:     mux, // http.TimeoutHandler send panic from websocket use
-		ReadTimeout: buildSettings.GetHttpReadTimeout(),
+		Addr:         p.fConfig.GetAddress().GetInternal(),
+		Handler:      mux, // http.TimeoutHandler send panic from websocket use
+		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
+		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
 	}
 }
 

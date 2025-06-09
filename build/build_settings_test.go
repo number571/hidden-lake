@@ -16,6 +16,7 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings.FNetworkManager.FCacheHashesCap = 2048
 	settings.FNetworkManager.FHttpReadTimeoutMS = 5000
+	settings.FNetworkManager.FHttpWriteTimeoutMS = 5000
 	settings.FNetworkManager.FHttpHandleTimeoutMS = 30000
 	if err := settings.validate(); err == nil {
 		t.Error("success validate with invalid queue_based_problem")
@@ -42,6 +43,10 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 	if gSettings.GetHttpReadTimeout() != time.Duration(5_000)*time.Millisecond {
 		t.Error(`gSettings.GetHttpReadTimeout() != time.Duration(5_000)*time.Millisecond`)
+		return
+	}
+	if gSettings.GetHttpWriteTimeout() != time.Duration(5_000)*time.Millisecond {
+		t.Error(`gSettings.GetHttpWriteTimeout() != time.Duration(5_000)*time.Millisecond`)
 		return
 	}
 	if gSettings.GetHttpHandleTimeout() != time.Duration(30_000)*time.Millisecond {

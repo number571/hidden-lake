@@ -23,6 +23,7 @@ type SConfigSettings struct {
 	FReadTimeoutMS    uint64 `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
 	FWriteTimeoutMS   uint64 `json:"write_timeout_ms,omitempty" yaml:"write_timeout_ms,omitempty"`
 	FHandleTimeoutMS  uint64 `json:"handle_timeout_ms,omitempty" yaml:"handle_timeout_ms,omitempty"`
+	FRequestTimeoutMS uint64 `json:"request_timeout_ms,omitempty" yaml:"request_timeout_ms,omitempty"`
 }
 
 type SConfig struct {
@@ -156,6 +157,10 @@ func (p *SConfigSettings) GetWriteTimeout() time.Duration {
 
 func (p *SConfigSettings) GetHandleTimeout() time.Duration {
 	return time.Duration(p.FHandleTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetRequestTimeout() time.Duration {
+	return time.Duration(p.FRequestTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {

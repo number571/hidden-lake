@@ -34,8 +34,9 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux.HandleFunc(hls_settings.CHandleNetworkRequestPath, handler.HandleNetworkRequestAPI(pCtx, cfg, p.fHTTPLogger, p.fNode))
 
 	p.fServiceHTTP = &http.Server{
-		Addr:        cfg.GetAddress().GetInternal(),
-		Handler:     mux, // no need http_handle_timeout (PoW HandleNetworkRequestAPI)
-		ReadTimeout: buildSettings.GetHttpReadTimeout(),
+		Addr:         cfg.GetAddress().GetInternal(),
+		Handler:      mux, // no need http_handle_timeout (PoW HandleNetworkRequestAPI)
+		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
+		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
 	}
 }

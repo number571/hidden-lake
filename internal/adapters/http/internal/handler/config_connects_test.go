@@ -196,13 +196,14 @@ func (p *tsEditor) UpdateConnections([]string) error {
 
 type tsConfigSettings struct{}
 
-func (p *tsConfigSettings) GetWorkSizeBits() uint64         { return 10 }
-func (p *tsConfigSettings) GetNetworkKey() string           { return "_" }
-func (p *tsConfigSettings) GetMessageSizeBytes() uint64     { return 8192 }
-func (p *tsConfigSettings) GetDatabaseEnabled() bool        { return false }
-func (p *tsConfigSettings) GetReadTimeout() time.Duration   { return 5 * time.Second }
-func (p *tsConfigSettings) GetWriteTimeout() time.Duration  { return 5 * time.Second }
-func (p *tsConfigSettings) GetHandleTimeout() time.Duration { return 30 * time.Second }
+func (p *tsConfigSettings) GetWorkSizeBits() uint64          { return 10 }
+func (p *tsConfigSettings) GetNetworkKey() string            { return "_" }
+func (p *tsConfigSettings) GetMessageSizeBytes() uint64      { return 8192 }
+func (p *tsConfigSettings) GetDatabaseEnabled() bool         { return false }
+func (p *tsConfigSettings) GetReadTimeout() time.Duration    { return 5 * time.Second }
+func (p *tsConfigSettings) GetWriteTimeout() time.Duration   { return 5 * time.Second }
+func (p *tsConfigSettings) GetRequestTimeout() time.Duration { return 5 * time.Second }
+func (p *tsConfigSettings) GetHandleTimeout() time.Duration  { return 30 * time.Second }
 
 type tsNetworkNode struct {
 	fWithFail bool
