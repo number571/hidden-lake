@@ -30,8 +30,9 @@ type IConfigSettings interface {
 
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
-	GetSendTimeout() time.Duration
-	GetRecvTimeout() time.Duration
+	GetReadTimeout() time.Duration
+	GetWriteTimeout() time.Duration
+	GetHandleTimeout() time.Duration
 }
 
 type IAddress interface {

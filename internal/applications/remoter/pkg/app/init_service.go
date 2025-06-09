@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"net/http"
-	"time"
 
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/remoter/internal/handler"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 )
@@ -16,10 +16,12 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context) {
 		handler.HandleIncomingExecHTTP(pCtx, p.fConfig, p.fHTTPLogger),
 	) // POST
 
+	buildSettings := build.GetSettings()
 	execTimeout := p.fConfig.GetSettings().GetExecTimeout()
 	p.fExtServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetExternal(),
-		Handler:     http.TimeoutHandler(mux, 2*execTimeout, "timeout"),
-		ReadTimeout: (5 * time.Second),
+		Addr: p.fConfig.GetAddress().GetExternal(),
+		// no need http_handle_timeout -> used custom exec_timeout
+		Handler:     http.TimeoutHandler(mux, 2*execTimeout, "handle timeout"),
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }

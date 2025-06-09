@@ -88,8 +88,8 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 
 	httpServer := &http.Server{
 		Addr:        address,
-		Handler:     mux,
-		ReadTimeout: p.fSettings.GetRecvTimeout(),
+		Handler:     http.TimeoutHandler(mux, p.fSettings.GetHandleTimeout(), "handle timeout"),
+		ReadTimeout: p.fSettings.GetReadTimeout(),
 	}
 	go func() {
 		<-pCtx.Done()
@@ -125,7 +125,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 	for i, url := range connects {
 		go func(i int, url string) {
 			defer wg.Done()
-			httpClient := &http.Client{Timeout: p.fSettings.GetSendTimeout()}
+			httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
 			errs[i] = hla_client.NewClient(
 				hla_client.NewRequester(url, httpClient),
 			).ProduceMessage(pCtx, pNetMsg)

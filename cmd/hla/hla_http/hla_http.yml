@@ -3,6 +3,9 @@
 #   work_size_bits: 0
 #   network_key: ""
 #   database_enabled: false
+#   send_timeout_ms: 0 # -> 5000
+#   recv_timeout_ms: 0 # -> 5000
+#   handle_timeout_ms: 0 # -> 30000
 logging:
 - info
 - warn

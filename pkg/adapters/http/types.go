@@ -20,6 +20,7 @@ type IHTTPAdapter interface {
 type ISettings interface {
 	GetAdapterSettings() adapters.ISettings
 	GetAddress() string
-	GetSendTimeout() time.Duration
-	GetRecvTimeout() time.Duration
+	GetReadTimeout() time.Duration
+	GetWriteTimeout() time.Duration
+	GetHandleTimeout() time.Duration
 }

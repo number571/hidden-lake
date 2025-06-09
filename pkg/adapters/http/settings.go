@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	CDefaultRecvTimeout = 5 * time.Second
-	CDefaultSendTimeout = 5 * time.Second
+	CDefaultReadTimeout   = 5 * time.Second
+	CDefaultWriteTimeout  = 5 * time.Second
+	CDefaultHandleTimeout = 30 * time.Second
 )
 
 var (
@@ -22,9 +23,10 @@ type sSettings struct {
 }
 
 type SServeSettings struct {
-	FAddress     string
-	FRecvTimeout time.Duration
-	FSendTimeout time.Duration
+	FAddress       string
+	FReadTimeout   time.Duration
+	FWriteTimeout  time.Duration
+	FHandleTimeout time.Duration
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -41,11 +43,14 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings == nil {
 		p.FServeSettings = &SServeSettings{}
 	}
-	if p.FServeSettings.FRecvTimeout == 0 {
-		p.FServeSettings.FRecvTimeout = CDefaultRecvTimeout
+	if p.FServeSettings.FReadTimeout == 0 {
+		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
 	}
-	if p.FServeSettings.FSendTimeout == 0 {
-		p.FServeSettings.FSendTimeout = CDefaultSendTimeout
+	if p.FServeSettings.FWriteTimeout == 0 {
+		p.FServeSettings.FWriteTimeout = CDefaultWriteTimeout
+	}
+	if p.FServeSettings.FHandleTimeout == 0 {
+		p.FServeSettings.FHandleTimeout = CDefaultHandleTimeout
 	}
 	return p
 }
@@ -58,10 +63,14 @@ func (p *sSettings) GetAdapterSettings() adapters.ISettings {
 	return p.FAdapterSettings
 }
 
-func (p *sSettings) GetRecvTimeout() time.Duration {
-	return p.FServeSettings.FRecvTimeout
+func (p *sSettings) GetReadTimeout() time.Duration {
+	return p.FServeSettings.FReadTimeout
 }
 
-func (p *sSettings) GetSendTimeout() time.Duration {
-	return p.FServeSettings.FSendTimeout
+func (p *sSettings) GetWriteTimeout() time.Duration {
+	return p.FServeSettings.FWriteTimeout
+}
+
+func (p *sSettings) GetHandleTimeout() time.Duration {
+	return p.FServeSettings.FHandleTimeout
 }

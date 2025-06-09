@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"errors"
 	"sync"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
@@ -49,7 +50,9 @@ type SSettings struct {
 		FService uint32 `yaml:"service"`
 	} `yaml:"proto_mask"`
 	FNetworkManager struct {
-		FCacheHashesCap uint64 `yaml:"cache_hashes_cap"`
+		FCacheHashesCap      uint64 `yaml:"cache_hashes_cap"`
+		FHttpReadTimeoutMS   uint64 `yaml:"http_read_timeout_ms"`
+		FHttpHandleTimeoutMS uint64 `yaml:"http_handle_timeout_ms"`
 	} `yaml:"network_manager"`
 	FQueueBasedProblem struct {
 		FPoolCap [2]uint64 `yaml:"pool_cap"`
@@ -59,7 +62,9 @@ type SSettings struct {
 func (p SSettings) validate() error {
 	switch {
 	case
-		p.FNetworkManager.FCacheHashesCap == 0:
+		p.FNetworkManager.FCacheHashesCap == 0,
+		p.FNetworkManager.FHttpReadTimeoutMS == 0,
+		p.FNetworkManager.FHttpHandleTimeoutMS == 0:
 		return errors.New("network_manager is invalid")
 	case
 		p.FQueueBasedProblem.FPoolCap[0] == 0,
@@ -67,4 +72,12 @@ func (p SSettings) validate() error {
 		return errors.New("queue_based_problem is invalid")
 	}
 	return nil
+}
+
+func (p SSettings) GetHttpReadTimeout() time.Duration {
+	return time.Duration(p.FNetworkManager.FHttpReadTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p SSettings) GetHttpHandleTimeout() time.Duration {
+	return time.Duration(p.FNetworkManager.FHttpHandleTimeoutMS) * time.Millisecond // nolint: gosec
 }

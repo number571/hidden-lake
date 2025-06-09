@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/internal/handler"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 	hlf_settings "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/settings"
@@ -26,10 +26,11 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fStgPath),
 	) // POST
 
+	buildSettings := build.GetSettings()
 	p.fExtServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetExternal(),
-		Handler:     http.TimeoutHandler(mux, time.Minute/2, "timeout"),
-		ReadTimeout: (5 * time.Second),
+		Handler:     http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }
 
@@ -48,10 +49,11 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 	mux.HandleFunc(hlf_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))        // GET, POST, DELETE
 	mux.HandleFunc(hlf_settings.CHandleFriendsStoragePath, handler.StoragePage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient)) // GET, POST, DELETE
 
+	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetInternal(),
 		Handler:     mux, // http.TimeoutHandler returns bug with progress bar of file downloading
-		ReadTimeout: (5 * time.Second),
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }
 

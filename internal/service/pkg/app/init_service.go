@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 )
 
 func (p *sApp) initServiceHTTP(pCtx context.Context) {
+	buildSettings := build.GetSettings()
+
 	mux := http.NewServeMux()
 	cfg := p.fCfgW.GetConfig()
 	origNode := p.fNode.GetOriginNode()
@@ -32,7 +35,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 
 	p.fServiceHTTP = &http.Server{
 		Addr:        cfg.GetAddress().GetInternal(),
-		Handler:     mux,
-		ReadTimeout: (5 * time.Second),
+		Handler:     mux, // no need http_handle_timeout (PoW HandleNetworkRequestAPI)
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }

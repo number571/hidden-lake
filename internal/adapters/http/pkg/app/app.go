@@ -45,13 +45,18 @@ type sApp struct {
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
-	logging := pCfg.GetLogging()
-	lruCache := cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
+	var (
+		logging  = pCfg.GetLogging()
+		settings = pCfg.GetSettings()
+		lruCache = cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
+	)
+
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: pCfg.GetSettings().GetMessageSizeBytes(),
-		FWorkSizeBits:     pCfg.GetSettings().GetWorkSizeBits(),
-		FNetworkKey:       pCfg.GetSettings().GetNetworkKey(),
+		FMessageSizeBytes: settings.GetMessageSizeBytes(),
+		FWorkSizeBits:     settings.GetWorkSizeBits(),
+		FNetworkKey:       settings.GetNetworkKey(),
 	})
+
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fPathTo:     pPathTo,
@@ -63,7 +68,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress: pCfg.GetAddress().GetInternal(),
+					FAddress:       pCfg.GetAddress().GetInternal(),
+					FReadTimeout:   settings.GetReadTimeout(),
+					FWriteTimeout:  settings.GetWriteTimeout(),
+					FHandleTimeout: settings.GetHandleTimeout(),
 				},
 			}),
 			lruCache,
@@ -73,7 +81,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress: pCfg.GetAddress().GetExternal(),
+					FAddress:       pCfg.GetAddress().GetExternal(),
+					FReadTimeout:   settings.GetReadTimeout(),
+					FWriteTimeout:  settings.GetWriteTimeout(),
+					FHandleTimeout: settings.GetHandleTimeout(),
 				},
 			}),
 			lruCache,

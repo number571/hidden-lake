@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
@@ -27,10 +27,11 @@ func (p *sApp) initExternalServiceHTTP(
 		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlsClient),
 	) // POST
 
+	buildSettings := build.GetSettings()
 	p.fExtServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetExternal(),
-		Handler:     http.TimeoutHandler(mux, time.Minute/2, "timeout"),
-		ReadTimeout: (5 * time.Second),
+		Handler:     http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }
 
@@ -56,10 +57,11 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.Handle(hlm_settings.CHandleFriendsChatWSPath, websocket.Handler(handler.FriendsChatWS(pMsgBroker)))
 
+	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{
 		Addr:        p.fConfig.GetAddress().GetInternal(),
 		Handler:     mux, // http.TimeoutHandler send panic from websocket use
-		ReadTimeout: (5 * time.Second),
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
 	}
 }
 

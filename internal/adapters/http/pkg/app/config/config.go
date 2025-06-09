@@ -20,8 +20,9 @@ type SConfigSettings struct {
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
-	FSendTimeoutMS    uint64 `json:"send_timeout_ms,omitempty" yaml:"send_timeout_ms,omitempty"`
-	FRecvTimeoutMS    uint64 `json:"recv_timeout_ms,omitempty" yaml:"recv_timeout_ms,omitempty"`
+	FReadTimeoutMS    uint64 `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
+	FWriteTimeoutMS   uint64 `json:"write_timeout_ms,omitempty" yaml:"write_timeout_ms,omitempty"`
+	FHandleTimeoutMS  uint64 `json:"handle_timeout_ms,omitempty" yaml:"handle_timeout_ms,omitempty"`
 }
 
 type SConfig struct {
@@ -145,12 +146,16 @@ func (p *SConfigSettings) GetWorkSizeBits() uint64 {
 	return p.FWorkSizeBits
 }
 
-func (p *SConfigSettings) GetSendTimeout() time.Duration {
-	return time.Duration(p.FSendTimeoutMS) * time.Millisecond // nolint: gosec
+func (p *SConfigSettings) GetReadTimeout() time.Duration {
+	return time.Duration(p.FReadTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
-func (p *SConfigSettings) GetRecvTimeout() time.Duration {
-	return time.Duration(p.FRecvTimeoutMS) * time.Millisecond // nolint: gosec
+func (p *SConfigSettings) GetWriteTimeout() time.Duration {
+	return time.Duration(p.FWriteTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetHandleTimeout() time.Duration {
+	return time.Duration(p.FHandleTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {
