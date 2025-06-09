@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/internal/handler"
@@ -21,7 +20,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	endpoints := cfg.GetEndpoints()
 	epClients := make([]client.IClient, 0, len(endpoints))
 	for _, ep := range endpoints {
-		requester := client.NewRequester(ep, &http.Client{Timeout: 5 * time.Second})
+		requester := client.NewRequester(ep, &http.Client{Timeout: buildSettings.GetHttpHandleTimeout()})
 		epClients = append(epClients, client.NewClient(requester))
 	}
 
@@ -35,7 +34,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 
 	p.fServiceHTTP = &http.Server{
 		Addr:         cfg.GetAddress().GetInternal(),
-		Handler:      mux, // no need http_handle_timeout (PoW HandleNetworkRequestAPI)
+		Handler:      mux, // no need http_handle_timeout (PoW in HandleNetworkRequestAPI)
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
 		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
 	}

@@ -5,7 +5,7 @@
 #   database_enabled: false
 #   read_timeout_ms: 0 # -> 5000
 #   write_timeout_ms: 0 # -> 5000
-#   handle_timeout_ms: 0 # -> 30000
+#   handle_timeout_ms: 0 # -> 5000
 logging:
 - info
 - warn

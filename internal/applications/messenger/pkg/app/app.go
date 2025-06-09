@@ -7,12 +7,12 @@ import (
 	"io"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/applications/messenger/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
@@ -105,7 +105,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_client.NewBuilder(),
 			hls_client.NewRequester(
 				p.fConfig.GetConnection(),
-				&http.Client{Timeout: time.Hour},
+				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 			),
 		)
 

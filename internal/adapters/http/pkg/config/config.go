@@ -12,10 +12,9 @@ func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
 			FWorkSizeBits:     sett.GetMessageSizeBytes(),
 			FNetworkKey:       sett.GetNetworkKey(),
 			FDatabaseEnabled:  sett.GetDatabaseEnabled(),
-			FReadTimeoutMS:    uint64(sett.GetReadTimeout().Milliseconds()),    // nolint: gosec
-			FWriteTimeoutMS:   uint64(sett.GetWriteTimeout().Milliseconds()),   // nolint: gosec
-			FHandleTimeoutMS:  uint64(sett.GetHandleTimeout().Milliseconds()),  // nolint: gosec
-			FRequestTimeoutMS: uint64(sett.GetRequestTimeout().Milliseconds()), // nolint: gosec
+			FReadTimeoutMS:    uint64(sett.GetReadTimeout().Milliseconds()),   // nolint: gosec
+			FWriteTimeoutMS:   uint64(sett.GetWriteTimeout().Milliseconds()),  // nolint: gosec
+			FHandleTimeoutMS:  uint64(sett.GetHandleTimeout().Milliseconds()), // nolint: gosec
 		},
 	}
 }

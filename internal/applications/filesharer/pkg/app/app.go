@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"path/filepath"
 	"sync"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/filesharer/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/applications/filesharer/pkg/config"
@@ -98,7 +98,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hls_client.NewBuilder(),
 			hls_client.NewRequester(
 				p.fConfig.GetConnection(),
-				&http.Client{Timeout: time.Hour},
+				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 			),
 		)
 

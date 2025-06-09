@@ -7,10 +7,9 @@ import (
 )
 
 const (
-	CDefaultReadTimeout    = 5 * time.Second
-	CDefaultWriteTimeout   = 5 * time.Second
-	CDefaultHandleTimeout  = 30 * time.Second
-	CDefaultRequestTimeout = 5 * time.Second
+	CDefaultReadTimeout   = 5 * time.Second
+	CDefaultWriteTimeout  = 5 * time.Second
+	CDefaultHandleTimeout = 5 * time.Second
 )
 
 var (

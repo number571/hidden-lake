@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"sort"
+	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
 	pkg_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -27,25 +29,31 @@ func HandleNetworkOnlineAPI(
 			return
 		}
 
+		lenEPClients := len(pEPClients)
+		errorList := make([]error, lenEPClients)
+
 		switch pR.Method {
 		case http.MethodGet:
-			inOnline := make([]string, 0, 128)
-			for _, client := range pEPClients {
-				gotConns, err := client.GetOnlines(pCtx)
-				if err != nil {
-					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
-					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
-					return
-				}
-				inOnline = append(inOnline, gotConns...)
+			inOnlines := make([][]string, lenEPClients)
+
+			wg := &sync.WaitGroup{}
+			wg.Add(lenEPClients)
+			for i, c := range pEPClients {
+				go func(i int, c client.IClient) {
+					defer wg.Done()
+					inOnlines[i], errorList[i] = c.GetOnlines(pCtx)
+				}(i, c)
+			}
+			wg.Wait()
+
+			if err := errors.Join(errorList...); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
+				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
+				return
 			}
 
-			sort.SliceStable(inOnline, func(i, j int) bool {
-				return inOnline[i] < inOnline[j]
-			})
-
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, inOnline)
+			_ = api.Response(pW, http.StatusOK, mergeAndSortOnlines(inOnlines))
 		case http.MethodDelete:
 			connectBytes, err := io.ReadAll(pR.Body)
 			if err != nil {
@@ -54,16 +62,39 @@ func HandleNetworkOnlineAPI(
 				return
 			}
 
-			for _, client := range pEPClients {
-				if err := client.DelOnline(pCtx, string(connectBytes)); err != nil {
-					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
-					return
-				}
+			wg := &sync.WaitGroup{}
+			wg.Add(lenEPClients)
+			for i, c := range pEPClients {
+				go func(i int, c client.IClient) {
+					defer wg.Done()
+					errorList[i] = c.DelOnline(pCtx, string(connectBytes))
+				}(i, c)
+			}
+			wg.Wait()
+
+			if err := errors.Join(errorList...); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
+				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
+				return
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete online connection")
 		}
 	}
+}
+
+func mergeAndSortOnlines(inOnlines [][]string) []string {
+	size := 0
+	for _, v := range inOnlines {
+		size += len(v)
+	}
+	mergeInOnlines := make([]string, 0, size)
+	for _, s := range inOnlines {
+		mergeInOnlines = append(mergeInOnlines, s...)
+	}
+	sort.SliceStable(mergeInOnlines, func(i, j int) bool {
+		return mergeInOnlines[i] < mergeInOnlines[j]
+	})
+	return mergeInOnlines
 }

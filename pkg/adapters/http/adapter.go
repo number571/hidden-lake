@@ -136,9 +136,10 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 
 	onlines := make([]string, 0, N)
 	for i := range errs {
-		if errs[i] == nil {
-			onlines = append(onlines, connects[i])
+		if errs[i] != nil {
+			continue
 		}
+		onlines = append(onlines, connects[i])
 	}
 
 	p.fOnlines.fMutex.Lock()
