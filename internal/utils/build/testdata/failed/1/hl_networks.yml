@@ -1,5 +1,5 @@
 default: &default_network
-  message_size_bytes: 0
+  message_size_bytes: 4096
 networks:
   __testdata__:
     <<: *default_network

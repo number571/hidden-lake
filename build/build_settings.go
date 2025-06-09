@@ -52,8 +52,7 @@ type SSettings struct {
 		FCacheHashesCap uint64 `yaml:"cache_hashes_cap"`
 	} `yaml:"network_manager"`
 	FQueueBasedProblem struct {
-		FMainPoolCap uint64 `yaml:"main_pool_cap"`
-		FRandPoolCap uint64 `yaml:"rand_pool_cap"`
+		FPoolCap [2]uint64 `yaml:"pool_cap"`
 	} `yaml:"queue_based_problem"`
 }
 
@@ -63,8 +62,8 @@ func (p SSettings) validate() error {
 		p.FNetworkManager.FCacheHashesCap == 0:
 		return errors.New("network_manager is invalid")
 	case
-		p.FQueueBasedProblem.FMainPoolCap == 0,
-		p.FQueueBasedProblem.FRandPoolCap == 0:
+		p.FQueueBasedProblem.FPoolCap[0] == 0,
+		p.FQueueBasedProblem.FPoolCap[1] == 0:
 		return errors.New("queue_based_problem is invalid")
 	}
 	return nil

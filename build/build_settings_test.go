@@ -19,8 +19,7 @@ func TestHiddenLakeSettings(t *testing.T) {
 		return
 	}
 
-	settings.FQueueBasedProblem.FMainPoolCap = 256
-	settings.FQueueBasedProblem.FRandPoolCap = 32
+	settings.FQueueBasedProblem.FPoolCap = [2]uint64{256, 32}
 	if err := settings.validate(); err != nil {
 		t.Error(err)
 		return
@@ -38,12 +37,12 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error(`gSettings.NetworkManager.CacheHashesCap != 2048`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FMainPoolCap != 256 {
-		t.Error(`gSettings.FQueueBasedProblem.FMainPoolCap != 256`)
+	if gSettings.FQueueBasedProblem.FPoolCap[0] != 256 {
+		t.Error(`gSettings.FQueueBasedProblem.FPoolCap[0] != 256`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FRandPoolCap != 32 {
-		t.Error(`gSettings.FQueueBasedProblem.FRandPoolCap != 32`)
+	if gSettings.FQueueBasedProblem.FPoolCap[1] != 32 {
+		t.Error(`gSettings.FQueueBasedProblem.FPoolCap[1] != 32`)
 		return
 	}
 
