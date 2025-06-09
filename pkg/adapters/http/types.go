@@ -23,5 +23,4 @@ type ISettings interface {
 	GetReadTimeout() time.Duration
 	GetWriteTimeout() time.Duration
 	GetHandleTimeout() time.Duration
-	GetRequestTimeout() time.Duration
 }

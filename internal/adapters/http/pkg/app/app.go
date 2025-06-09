@@ -48,15 +48,16 @@ type sApp struct {
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 	var (
-		logging  = pCfg.GetLogging()
-		settings = pCfg.GetSettings()
-		lruCache = cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
+		logging       = pCfg.GetLogging()
+		cfgSettings   = pCfg.GetSettings()
+		buildSettings = build.GetSettings()
+		lruCache      = cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
 	)
 
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: settings.GetMessageSizeBytes(),
-		FWorkSizeBits:     settings.GetWorkSizeBits(),
-		FNetworkKey:       settings.GetNetworkKey(),
+		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
+		FNetworkKey:       cfgSettings.GetNetworkKey(),
 	})
 
 	return &sApp{
@@ -66,33 +67,31 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fAnonLogger: std_logger.NewStdLogger(logging, anon_logger.GetLogFunc()),
 		fStdfLogger: std_logger.NewStdLogger(logging, std_logger.GetLogFunc()),
 		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
-		fHTTPIntAdapter: hla_http.NewHTTPAdapter(
-			hla_http.NewSettings(&hla_http.SSettings{
-				FAdapterSettings: adaptersSettings,
-				FServeSettings: &hla_http.SServeSettings{
-					FAddress:        pCfg.GetAddress().GetInternal(),
-					FReadTimeout:    settings.GetReadTimeout(),
-					FWriteTimeout:   settings.GetWriteTimeout(),
-					FHandleTimeout:  settings.GetHandleTimeout(),
-					FRequestTimeout: settings.GetRequestTimeout(),
-				},
-			}),
-			lruCache,
-			func() []string { return pCfg.GetEndpoints() },
-		),
 		fHTTPExtAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress:        pCfg.GetAddress().GetExternal(),
-					FReadTimeout:    settings.GetReadTimeout(),
-					FWriteTimeout:   settings.GetWriteTimeout(),
-					FHandleTimeout:  settings.GetHandleTimeout(),
-					FRequestTimeout: settings.GetRequestTimeout(),
+					FAddress:       pCfg.GetAddress().GetExternal(),
+					FReadTimeout:   cfgSettings.GetReadTimeout(),
+					FWriteTimeout:  cfgSettings.GetWriteTimeout(),
+					FHandleTimeout: cfgSettings.GetHandleTimeout(),
 				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetConnections() },
+		),
+		fHTTPIntAdapter: hla_http.NewHTTPAdapter(
+			hla_http.NewSettings(&hla_http.SSettings{
+				FAdapterSettings: adaptersSettings,
+				FServeSettings: &hla_http.SServeSettings{
+					FAddress:       pCfg.GetAddress().GetInternal(),
+					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
+					FWriteTimeout:  buildSettings.GetHttpWriteTimeout(),
+					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
+				},
+			}),
+			lruCache,
+			func() []string { return pCfg.GetEndpoints() },
 		),
 	}
 }

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/service/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/handler"
@@ -55,7 +55,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		pushReq.Header.Set(hls_settings.CHeaderPublicKey, pSender.ToString())
 
 		// send request and receive response from service
-		httpClient := &http.Client{Timeout: time.Minute}
+		httpClient := &http.Client{Timeout: build.GetSettings().GetHttpHandleTimeout()}
 		resp, err := httpClient.Do(pushReq)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestToService))

@@ -48,14 +48,19 @@ type sApp struct {
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
-	logging := pCfg.GetLogging()
-	cfgSettings := pCfg.GetSettings()
-	lruCache := cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
+	var (
+		logging       = pCfg.GetLogging()
+		cfgSettings   = pCfg.GetSettings()
+		buildSettings = build.GetSettings()
+		lruCache      = cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
+	)
+
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
 		FNetworkKey:       cfgSettings.GetNetworkKey(),
 	})
+
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fPathTo:     pPathTo,
@@ -83,7 +88,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FAddress: pCfg.GetAddress().GetInternal(),
+					FAddress:       pCfg.GetAddress().GetInternal(),
+					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
+					FWriteTimeout:  buildSettings.GetHttpWriteTimeout(),
+					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},
 			}),
 			lruCache,

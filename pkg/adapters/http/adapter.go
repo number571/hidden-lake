@@ -126,7 +126,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 	for i, url := range connects {
 		go func(i int, url string) {
 			defer wg.Done()
-			httpClient := &http.Client{Timeout: p.fSettings.GetRequestTimeout()}
+			httpClient := &http.Client{Timeout: p.fSettings.GetHandleTimeout()}
 			errs[i] = hla_client.NewClient(
 				hla_client.NewRequester(url, httpClient),
 			).ProduceMessage(pCtx, pNetMsg)
