@@ -42,7 +42,7 @@ func main() {
 	}
 
 	if gFlags.Get("-h").GetBoolValue(args) {
-		help.Println(settings.GServiceName, settings.CServiceDescription, gFlags)
+		help.Println(settings.GetServiceName(), settings.CServiceDescription, gFlags)
 		return
 	}
 

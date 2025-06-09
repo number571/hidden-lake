@@ -6,8 +6,12 @@ import (
 )
 
 var (
-	GServiceName = name.LoadServiceName(CServiceFullName)
+	gServiceName = name.LoadServiceName(CServiceFullName)
 )
+
+func GetServiceName() name.IServiceName {
+	return gServiceName
+}
 
 const (
 	CServiceAdapterScheme = "tcp"

@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"os"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -15,8 +14,7 @@ var (
 )
 
 type SConfigSettings struct {
-	FExecTimeoutMS uint64 `json:"exec_timeout_ms" yaml:"exec_timeout_ms"`
-	FPassword      string `json:"password,omitempty" yaml:"password,omitempty"`
+	FPassword string `json:"password,omitempty" yaml:"password,omitempty"`
 }
 
 type SConfig struct {
@@ -72,7 +70,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FAddress.FExternal != "" &&
-		p.FSettings.FExecTimeoutMS != 0
+		p.FSettings.FPassword != ""
 }
 
 func (p *SConfig) initConfig() error {
@@ -106,10 +104,6 @@ func (p *SConfig) loadLogging() error {
 
 func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
-}
-
-func (p *SConfigSettings) GetExecTimeout() time.Duration {
-	return time.Duration(p.FExecTimeoutMS) * time.Millisecond //nolint:gosec
 }
 
 func (p *SConfigSettings) GetPassword() string {

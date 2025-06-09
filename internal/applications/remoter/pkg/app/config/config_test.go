@@ -3,7 +3,6 @@ package config
 import (
 	"os"
 	"testing"
-	"time"
 )
 
 const (
@@ -12,6 +11,7 @@ const (
 	tcLogging     = true
 	tcAddress1    = "test_address1"
 	tcAddress2    = "test_address2"
+	tcPassword    = "test_password"
 )
 
 func TestError(t *testing.T) {
@@ -28,7 +28,7 @@ func TestError(t *testing.T) {
 func testConfigDefaultInit(configPath string) {
 	_, _ = BuildConfig(configPath, &SConfig{
 		FSettings: &SConfigSettings{
-			FExecTimeoutMS: tcExecTimeout,
+			FPassword: tcPassword,
 		},
 		FLogging: []string{"info", "erro"},
 		FAddress: &SAddress{
@@ -69,8 +69,8 @@ func TestConfig(t *testing.T) {
 		return
 	}
 
-	if cfg.GetSettings().GetExecTimeout() != time.Duration(tcExecTimeout)*time.Millisecond {
-		t.Error("settings.exec_timeout_ms is invalid")
+	if cfg.GetSettings().GetPassword() != tcPassword {
+		t.Error("settings.password is invalid")
 		return
 	}
 }

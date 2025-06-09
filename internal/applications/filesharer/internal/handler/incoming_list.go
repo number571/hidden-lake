@@ -23,7 +23,7 @@ func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pStgPat
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hlf_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hlf_settings.GetServiceName().Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

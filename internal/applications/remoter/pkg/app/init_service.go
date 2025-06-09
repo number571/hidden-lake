@@ -17,11 +17,10 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context) {
 	) // POST
 
 	buildSettings := build.GetSettings()
-	execTimeout := p.fConfig.GetSettings().GetExecTimeout()
 	p.fExtServiceHTTP = &http.Server{
 		Addr: p.fConfig.GetAddress().GetExternal(),
 		// no need http_handle_timeout -> used custom exec_timeout
-		Handler:      http.TimeoutHandler(mux, 2*execTimeout, "handle timeout"),
+		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
 		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
 	}

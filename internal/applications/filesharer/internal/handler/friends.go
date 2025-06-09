@@ -29,7 +29,7 @@ func FriendsPage(
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hlf_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hlf_settings.GetServiceName().Short(), pR)
 
 		if pR.URL.Path != "/friends" {
 			NotFoundPage(pLogger, pCfg)(pW, pR)

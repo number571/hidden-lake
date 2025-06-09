@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/applications/remoter/pkg/app/config"
 	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
 	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
@@ -20,7 +21,7 @@ func HandleIncomingExecHTTP(pCtx context.Context, pConfig config.IConfig, pLogge
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hls_settings.CHeaderResponseMode, hls_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hlr_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hlr_settings.GetServiceName().Short(), pR)
 
 		if pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -49,7 +50,7 @@ func HandleIncomingExecHTTP(pCtx context.Context, pConfig config.IConfig, pLogge
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(pCtx, sett.GetExecTimeout())
+		ctx, cancel := context.WithTimeout(pCtx, build.GetSettings().GetHttpHandleTimeout())
 		defer cancel()
 
 		cmdSplited := strings.Split(cmdStr, hlr_settings.CExecSeparator)

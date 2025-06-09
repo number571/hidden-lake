@@ -1,5 +1,4 @@
 settings:
-  exec_timeout_ms: 5000
   password: <insert-password>
 logging:
 - info

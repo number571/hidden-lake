@@ -2,7 +2,13 @@ package settings
 
 import "github.com/number571/hidden-lake/internal/utils/name"
 
-var GServiceName = name.LoadServiceName(CServiceFullName)
+var (
+	gServiceName = name.LoadServiceName(CServiceFullName)
+)
+
+func GetServiceName() name.IServiceName {
+	return gServiceName
+}
 
 const (
 	CServiceFullName    = "hidden-lake-service"

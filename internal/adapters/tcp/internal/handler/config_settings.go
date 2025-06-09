@@ -5,6 +5,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
+	hla_tcp_config "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -15,7 +16,7 @@ func HandleConfigSettingsAPI(
 	pLogger logger.ILogger,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetServiceName().Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -24,6 +25,6 @@ func HandleConfigSettingsAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, pConfig.GetSettings())
+		_ = api.Response(pW, http.StatusOK, hla_tcp_config.GetConfigSettings(pConfig))
 	}
 }

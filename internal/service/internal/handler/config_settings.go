@@ -18,7 +18,7 @@ func HandleConfigSettingsAPI(
 	pNode anonymity.INode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetServiceName().Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

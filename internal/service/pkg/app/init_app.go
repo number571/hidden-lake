@@ -30,7 +30,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hls_settings.GServiceName, stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hls_settings.GetServiceName(), stdfLogger, okLoaded)
 
 	keyPath := filepath.Join(inputPath, hls_settings.CPathKey)
 	privKey, err := privkey.GetPrivKey(keyPath)

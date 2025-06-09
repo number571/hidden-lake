@@ -28,7 +28,7 @@ func HandleNetworkRequestAPI(
 	pNode network.IHiddenLakeNode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GServiceName.Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetServiceName().Short(), pR)
 
 		var vRequest pkg_settings.SRequest
 

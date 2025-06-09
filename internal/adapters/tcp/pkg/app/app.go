@@ -7,6 +7,7 @@ import (
 	"io"
 	"sync"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/state"
@@ -15,6 +16,7 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
+	hla_tcp_config "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
@@ -133,7 +135,13 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is started",
-			hla_tcp_settings.GServiceName.Short(),
+			hla_tcp_settings.GetServiceName().Short(),
+		))
+
+		p.fStdfLogger.PushInfo(fmt.Sprintf(
+			"%s is started; %s",
+			hla_tcp_settings.GetServiceName().Short(),
+			encoding.SerializeJSON(hla_tcp_config.GetConfigSettings(p.fWrapper.GetConfig())),
 		))
 		return nil
 	}
@@ -146,7 +154,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hla_tcp_settings.GServiceName.Short(),
+			hla_tcp_settings.GetServiceName().Short(),
 		))
 		return p.stop()
 	}

@@ -54,7 +54,7 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FExecTimeoutMS: 5000,
+			FPassword: "test_password",
 		},
 		FAddress: &config.SAddress{
 			FExternal: testutils.TgAddrs[35],

@@ -107,7 +107,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
-			hlf_settings.GServiceName.Short(),
+			hlf_settings.GetServiceName().Short(),
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(p.fConfig)),
 		))
 		return nil
@@ -121,7 +121,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hlf_settings.GServiceName.Short(),
+			hlf_settings.GetServiceName().Short(),
 		))
 		return p.stop()
 	}
