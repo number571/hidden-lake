@@ -8,7 +8,7 @@
 
 ### IMPROVEMENTS
 
-- `test/prod`: add test prod env relayer nodes
+- `test/prod`: add test prod env
 
 ### CHANGES
 
