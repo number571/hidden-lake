@@ -169,7 +169,7 @@ You can also create your own networks by copying the contents of the networks.ym
 
 ### Communication
 
-To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal address` provided in `hls.yml`.
+To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal` address provided in `hls.yml` (by default `localhost:9572`).
 
 ```bash
 $ curl -X GET 'http://localhost:9572/api/service/pubkey'
@@ -181,7 +181,7 @@ After receiving the public key, it must be transferred to the future interlocuto
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
+__Success__. Now you can start communicating using the default `HLM` application (open `internal` address in the browser from `hlm.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
 
 ## Star History
 
