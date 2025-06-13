@@ -183,13 +183,6 @@ $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":
 
 __Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
 
-## For developers
-
-The Hidden Lake anonymous network can be supplemented with new functions and features in several ways:
-1. `High-level` method. Write applications and adapters through a micro-service architecture. With this method, you can write services in any convenient programming language or technology - you just need to adhere to the `HLS API`. [Examples](examples).
-2. `Middle-level` method. Use the `pkg/network` package, which is located inside the Hidden Lake project. With this method, you can write applications without using the micro-service architecture, but at the same time you gain a dependency on the Go programming language. [Examples](pkg/network/examples).
-3. `Low-level` method. Use the `go-peer` library. With this method, you can significantly change the work and specifics of the network, including the ability to eliminate traffic anonymization, leaving only E2E encryption. This approach should be chosen only if compatibility with the Hidden Lake anonymous network specification is not required. [Examples](https://github.com/number571/go-peer/tree/master/pkg/anonymity/examples).
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=number571/hidden-lake&type=Date)](https://star-history.com/#number571/hidden-lake&Date)
