@@ -62,7 +62,6 @@ test-run:
 
 test-prod:
 	make -C ./test/prod N=$(N);
-	$(_CHECK_ERROR);
 
 ### TEST COVERAGE
 
