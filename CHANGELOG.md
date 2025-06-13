@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `test/prod`: add test prod env relayer nodes
+
 ### CHANGES
 
 - `build/networks.yml`: rename settings, default_settings -> default, default_network

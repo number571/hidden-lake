@@ -29,8 +29,8 @@ func main() {
 	defer cancel()
 
 	var (
-		node1   = newNode(ctx, "node1")
-		node2   = newNode(ctx, "node2")
+		node1   = newNode("node1")
+		node2   = newNode("node2")
 		adapter = newTCPAdapter(relayerAddress, nil)
 	)
 
@@ -59,7 +59,7 @@ func main() {
 	}
 }
 
-func newNode(_ context.Context, name string) network.IHiddenLakeNode {
+func newNode(name string) network.IHiddenLakeNode {
 	return network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{

@@ -14,11 +14,12 @@ _GO_TEST_LIST=\
 	go list ./... | \
 	grep -vsE '/cmd/' | \
 	grep -vsE '/examples/' | \
+	grep -vsE '/test/prod' | \
 	grep -vsE '/test/utils' 
 
 .PHONY: default \
 	build clean \
-	lint-run test-run \
+	lint-run test-run test-prod \
 	test-coverage test-coverage-view test-coverage-treemap test-coverage-badge \
 	go-fmt-vet \
 	git-status git-push \
@@ -58,6 +59,10 @@ test-run:
 		$(_CHECK_ERROR); \
 	done; \
 	echo "Build took $$(($$(date +%s)-d)) seconds";
+
+test-prod:
+	make -C ./test/prod N=$(N);
+	$(_CHECK_ERROR);
 
 ### TEST COVERAGE
 
