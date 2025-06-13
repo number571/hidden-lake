@@ -1,18 +1,19 @@
 package msgdata
 
-import (
-	"sync"
-)
+import "sync"
 
 var (
 	_ IMessageBroker = &sMessageBroker{}
 )
 
 type sMessageBroker struct {
-	fQueue   chan sSubscribeMessage
-	fCancel  chan struct{}
-	fMutex   sync.Mutex
-	fConsume bool
+	fMapping map[string]*sMapQueue
+	fMutexes [3]sync.Mutex
+}
+
+type sMapQueue struct {
+	fMQueue chan sSubscribeMessage
+	fClosed chan struct{}
 }
 
 type sSubscribeMessage struct {
@@ -22,43 +23,95 @@ type sSubscribeMessage struct {
 
 func NewMessageBroker() IMessageBroker {
 	return &sMessageBroker{
-		fQueue:  make(chan sSubscribeMessage, 1),
-		fCancel: make(chan struct{}),
+		fMapping: make(map[string]*sMapQueue, 128),
 	}
 }
 
-func (p *sMessageBroker) Clear() {
-	// clear the queue if there are no consumers
-	for len(p.fQueue) > 0 {
-		<-p.fQueue
+func (p *sMessageBroker) Close(pAddress string) bool {
+	p.fMutexes[0].Lock()
+	defer p.fMutexes[0].Unlock()
+
+	mq, ok := p.loadAndDeleteMapQueue(pAddress)
+	if ok {
+		p.close(mq)
 	}
+	return ok
 }
 
 func (p *sMessageBroker) Consume(pAddress string) (SMessage, bool) {
-	p.fMutex.Lock()
-	if p.fConsume {
-		p.fCancel <- struct{}{}
+	p.fMutexes[0].Lock()
+	mq, ok := p.loadMapQueue(pAddress)
+	if ok {
+		p.close(mq)
 	}
-	p.fConsume = true
-	p.fMutex.Unlock()
-
+	mq = p.createMapQueue(pAddress)
+	p.fMutexes[0].Unlock()
 	select {
-	case msg, ok := <-p.fQueue:
-		p.fMutex.Lock()
-		p.fConsume = false
-		p.fMutex.Unlock()
-		return msg.SMessage, ok && msg.FAddress == pAddress
-	case <-p.fCancel:
-		// no need set consume = false,
-		// one consumer close another consumer
+	case <-mq.fClosed:
 		return SMessage{}, false
+	case msg := <-mq.fMQueue:
+		return msg.SMessage, true
 	}
 }
 
 func (p *sMessageBroker) Produce(pAddress string, pMsg SMessage) {
-	p.Clear()
-	p.fQueue <- sSubscribeMessage{
+	p.fMutexes[1].Lock()
+	defer p.fMutexes[1].Unlock()
+
+	mq, ok := p.loadMapQueue(pAddress)
+	if !ok {
+		return
+	}
+
+	p.clear(mq) // only one can produce value
+
+	mq.fMQueue <- sSubscribeMessage{
 		SSubscribe: SSubscribe{FAddress: pAddress},
 		SMessage:   pMsg,
 	}
+}
+
+func (p *sMessageBroker) close(mq *sMapQueue) {
+	p.clear(mq)
+	close(mq.fClosed)
+}
+
+func (p *sMessageBroker) clear(mq *sMapQueue) {
+	if len(mq.fMQueue) > 0 {
+		<-mq.fMQueue
+	}
+}
+
+func (p *sMessageBroker) loadMapQueue(pAddress string) (*sMapQueue, bool) {
+	p.fMutexes[2].Lock()
+	defer p.fMutexes[2].Unlock()
+
+	mq, ok := p.fMapping[pAddress]
+	return mq, ok
+}
+
+func (p *sMessageBroker) createMapQueue(pAddress string) *sMapQueue {
+	p.fMutexes[2].Lock()
+	defer p.fMutexes[2].Unlock()
+
+	mq := &sMapQueue{
+		fMQueue: make(chan sSubscribeMessage, 1),
+		fClosed: make(chan struct{}),
+	}
+
+	p.fMapping[pAddress] = mq
+	return mq
+}
+
+func (p *sMessageBroker) loadAndDeleteMapQueue(pAddress string) (*sMapQueue, bool) {
+	p.fMutexes[2].Lock()
+	defer p.fMutexes[2].Unlock()
+
+	mq, ok := p.fMapping[pAddress]
+	if !ok {
+		return nil, false
+	}
+
+	delete(p.fMapping, pAddress)
+	return mq, false
 }

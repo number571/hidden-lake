@@ -14,12 +14,10 @@ func FriendsChatWS(pBroker msgdata.IMessageBroker) func(pWS *websocket.Conn) {
 			return
 		}
 
-		pBroker.Clear()
-
 		for {
 			msg, ok := pBroker.Consume(subscribe.FAddress)
 			if !ok {
-				return
+				return // created new consumer
 			}
 			if err := websocket.JSON.Send(pWS, msg); err != nil {
 				return

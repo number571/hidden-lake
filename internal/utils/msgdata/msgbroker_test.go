@@ -31,6 +31,8 @@ func TestMessageBroker(t *testing.T) {
 		return
 	}
 
+	msgReceiver.Close(addr)
+
 	msgReceiver2 := NewMessageBroker()
 
 	go func() {
