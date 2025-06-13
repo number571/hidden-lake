@@ -10,11 +10,12 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings := SSettings{}
 	if err := settings.validate(); err == nil {
-		t.Error("success validate with invalid settings")
+		t.Error("success validate with invalid storage_manager")
 		return
 	}
 
 	settings.FStorageManager.FCacheHashesCap = 2048
+	settings.FStorageManager.FQueuePoolCap = [2]uint64{256, 32}
 	if err := settings.validate(); err == nil {
 		t.Error("success validate with invalid network_manager")
 		return
@@ -23,12 +24,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 	settings.FNetworkManager.FHttpReadTimeoutMS = 5000
 	settings.FNetworkManager.FHttpHandleTimeoutMS = 5000
 	settings.FNetworkManager.FHttpCallbackTimeoutMS = 3600000
-	if err := settings.validate(); err == nil {
-		t.Error("success validate with invalid queue_based_problem")
-		return
-	}
-
-	settings.FQueueBasedProblem.FPoolCap = [2]uint64{256, 32}
 	if err := settings.validate(); err != nil {
 		t.Error(err)
 		return
@@ -58,12 +53,12 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error(`gSettings.GetHttpCallbackTimeout() != time.Duration(3_600_000)*time.Millisecond`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FPoolCap[0] != 256 {
-		t.Error(`gSettings.FQueueBasedProblem.FPoolCap[0] != 256`)
+	if gSettings.FStorageManager.FQueuePoolCap[0] != 256 {
+		t.Error(`gSettings.FStorageManager.FQueuePoolCap[0] != 256`)
 		return
 	}
-	if gSettings.FQueueBasedProblem.FPoolCap[1] != 32 {
-		t.Error(`gSettings.FQueueBasedProblem.FPoolCap[1] != 32`)
+	if gSettings.FStorageManager.FQueuePoolCap[1] != 32 {
+		t.Error(`gSettings.FStorageManager.FQueuePoolCap[1] != 32`)
 		return
 	}
 

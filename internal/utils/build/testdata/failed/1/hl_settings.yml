@@ -1,9 +1,8 @@
 proto_mask:
   network: 0x1
   service: 0x2
-queue_based_problem:
-  pool_cap: [0, 2]
 storage_manager:
+  queue_pool_cap: [0, 2]
   cache_hashes_cap: 2
 network_manager:
   http_read_timeout_ms: 5000
