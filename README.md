@@ -171,14 +171,12 @@ To communicate with other network nodes, you must first obtain your public key, 
 
 ```bash
 $ curl -X GET 'http://localhost:9572/api/service/pubkey'
-> PubKey{...}
 ```
 
 After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API.
 
 ```bash
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "friend", "public_key":"PubKey{...}"}'
-> success: update friends
 ```
 
 __Success__. Now you can start communicating using the default `HLM` application (open `internal address` in the browser from `hlm.yml`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
