@@ -6,14 +6,14 @@ networks:
     work_size_bits: 22 # custom
     connections: 
       # provider=vdsina.ru
-      # expired=30.07.2027
+      # expired=?(eternal)
       - tcp://94.103.91.81:9581
   kf92j74Nof92n9F4:
     <<: *default_network
     work_size_bits: 20 # custom
     connections: 
       # provider=ruvds.ru
-      # expired=?(eternal)
+      # expired=30.07.2027
       - tcp://195.133.1.126:9581
   oi4r9NW9Le7fKF9d:
     <<: *default_network
