@@ -10,7 +10,7 @@
 
 - `build/networks.yml`: rename settings, default_settings -> default, default_network
 - `build/networks.yml`: delete queue_period, fetch_timeout
-- `build/settings.yml`: replace many non global values to pkgs, services
+- `build/settings.yml`: replace many non global values to pkgs, services, add http timeouts
 - `cmd/hls,cmd/hla_tcp,cmd/hla_http`: message_size_bytes now optionally param (used default value)
 - `modes`: rename dir configs -> modes
 - `cmd/hlr`: add check password != ""

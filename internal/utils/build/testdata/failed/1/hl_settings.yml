@@ -6,6 +6,5 @@ queue_based_problem:
 network_manager:
   cache_hashes_cap: 2
   http_read_timeout_ms: 5000
-  http_write_timeout_ms: 5000
   http_handle_timeout_ms: 30000
   http_callback_timeout_ms: 3600000
