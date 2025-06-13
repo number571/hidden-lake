@@ -21,5 +21,5 @@ PUSH_FORMAT='{
     }
 }';
 
-curl -i -X PUT -H 'Accept: application/json' http://localhost:7572/api/network/request --data "${PUSH_FORMAT}";
+curl -i -X PUT http://localhost:7572/api/network/request --data "${PUSH_FORMAT}";
 echo 
