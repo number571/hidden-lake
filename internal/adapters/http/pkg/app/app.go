@@ -51,9 +51,9 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		logging       = pCfg.GetLogging()
 		cfgSettings   = pCfg.GetSettings()
 		buildSettings = build.GetSettings()
-		lruCache      = cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap)
 	)
 
+	lruCache := cache.NewLRUCache(buildSettings.FStorageManager.FCacheHashesCap)
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),

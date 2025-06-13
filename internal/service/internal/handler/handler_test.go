@@ -222,7 +222,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 					FAddress: addr,
 				},
 			}),
-			cache.NewLRUCache(build.GetSettings().FNetworkManager.FCacheHashesCap),
+			cache.NewLRUCache(build.GetSettings().FStorageManager.FCacheHashesCap),
 			func() []string { return nil },
 		),
 		func() database.IKVDatabase {

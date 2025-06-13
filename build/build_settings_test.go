@@ -10,11 +10,16 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings := SSettings{}
 	if err := settings.validate(); err == nil {
+		t.Error("success validate with invalid settings")
+		return
+	}
+
+	settings.FStorageManager.FCacheHashesCap = 2048
+	if err := settings.validate(); err == nil {
 		t.Error("success validate with invalid network_manager")
 		return
 	}
 
-	settings.FNetworkManager.FCacheHashesCap = 2048
 	settings.FNetworkManager.FHttpReadTimeoutMS = 5000
 	settings.FNetworkManager.FHttpHandleTimeoutMS = 5000
 	settings.FNetworkManager.FHttpCallbackTimeoutMS = 3600000
@@ -37,8 +42,8 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Error(`gSettings.ProtoMask.Service != 0x5f686c5f`)
 		return
 	}
-	if gSettings.FNetworkManager.FCacheHashesCap != 2048 {
-		t.Error(`gSettings.NetworkManager.CacheHashesCap != 2048`)
+	if gSettings.FStorageManager.FCacheHashesCap != 2048 {
+		t.Error(`gSettings.FStorageManager.CacheHashesCap != 2048`)
 		return
 	}
 	if gSettings.GetHttpReadTimeout() != time.Duration(5_000)*time.Millisecond {

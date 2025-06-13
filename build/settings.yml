@@ -3,8 +3,9 @@ proto_mask:
   service: 0x5f686c5f
 queue_based_problem:
   pool_cap: [256, 32]
-network_manager:
+storage_manager:
   cache_hashes_cap: 2048
+network_manager:
   http_read_timeout_ms: 5000
   http_handle_timeout_ms: 5000
   http_callback_timeout_ms: 3600000
