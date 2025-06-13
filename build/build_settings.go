@@ -52,7 +52,6 @@ type SSettings struct {
 	FNetworkManager struct {
 		FCacheHashesCap        uint64 `yaml:"cache_hashes_cap"`
 		FHttpReadTimeoutMS     uint64 `yaml:"http_read_timeout_ms"`
-		FHttpWriteTimeoutMS    uint64 `yaml:"http_write_timeout_ms"`
 		FHttpHandleTimeoutMS   uint64 `yaml:"http_handle_timeout_ms"`
 		FHttpCallbackTimeoutMS uint64 `yaml:"http_callback_timeout_ms"`
 	} `yaml:"network_manager"`
@@ -66,7 +65,6 @@ func (p SSettings) validate() error {
 	case
 		p.FNetworkManager.FCacheHashesCap == 0,
 		p.FNetworkManager.FHttpReadTimeoutMS == 0,
-		p.FNetworkManager.FHttpWriteTimeoutMS == 0,
 		p.FNetworkManager.FHttpHandleTimeoutMS == 0,
 		p.FNetworkManager.FHttpCallbackTimeoutMS == 0:
 		return errors.New("network_manager is invalid")
@@ -80,10 +78,6 @@ func (p SSettings) validate() error {
 
 func (p SSettings) GetHttpReadTimeout() time.Duration {
 	return time.Duration(p.FNetworkManager.FHttpReadTimeoutMS) * time.Millisecond // nolint: gosec
-}
-
-func (p SSettings) GetHttpWriteTimeout() time.Duration {
-	return time.Duration(p.FNetworkManager.FHttpWriteTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
 func (p SSettings) GetHttpHandleTimeout() time.Duration {

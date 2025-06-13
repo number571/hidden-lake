@@ -31,7 +31,7 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 		Addr:         p.fConfig.GetAddress().GetExternal(),
 		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
+		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
 	}
 }
 
@@ -52,10 +52,10 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 
 	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{
-		Addr:         p.fConfig.GetAddress().GetInternal(),
-		Handler:      mux, // http.TimeoutHandler returns bug with progress bar of file downloading
-		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
+		Addr:        p.fConfig.GetAddress().GetInternal(),
+		Handler:     mux,
+		ReadTimeout: buildSettings.GetHttpReadTimeout(),
+		// WriteTimeout not set (downloading a file may take a long time)
 	}
 }
 

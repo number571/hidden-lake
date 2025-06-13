@@ -16,7 +16,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 
 	settings.FNetworkManager.FCacheHashesCap = 2048
 	settings.FNetworkManager.FHttpReadTimeoutMS = 5000
-	settings.FNetworkManager.FHttpWriteTimeoutMS = 5000
 	settings.FNetworkManager.FHttpHandleTimeoutMS = 5000
 	settings.FNetworkManager.FHttpCallbackTimeoutMS = 3600000
 	if err := settings.validate(); err == nil {
@@ -44,10 +43,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 	if gSettings.GetHttpReadTimeout() != time.Duration(5_000)*time.Millisecond {
 		t.Error(`gSettings.GetHttpReadTimeout() != time.Duration(5_000)*time.Millisecond`)
-		return
-	}
-	if gSettings.GetHttpWriteTimeout() != time.Duration(5_000)*time.Millisecond {
-		t.Error(`gSettings.GetHttpWriteTimeout() != time.Duration(5_000)*time.Millisecond`)
 		return
 	}
 	if gSettings.GetHttpHandleTimeout() != time.Duration(5_000)*time.Millisecond {

@@ -32,7 +32,7 @@ func (p *sApp) initExternalServiceHTTP(
 		Addr:         p.fConfig.GetAddress().GetExternal(),
 		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
+		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
 	}
 }
 
@@ -63,7 +63,7 @@ func (p *sApp) initInternalServiceHTTP(
 		Addr:         p.fConfig.GetAddress().GetInternal(),
 		Handler:      mux, // http.TimeoutHandler send panic from websocket use
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
+		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
 	}
 }
 

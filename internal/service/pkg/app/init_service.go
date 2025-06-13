@@ -32,10 +32,13 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux.HandleFunc(hls_settings.CHandleServicePubKeyPath, handler.HandleServicePubKeyAPI(p.fHTTPLogger, origNode))
 	mux.HandleFunc(hls_settings.CHandleNetworkRequestPath, handler.HandleNetworkRequestAPI(pCtx, cfg, p.fHTTPLogger, p.fNode))
 
+	// response can take a long time to complete (x2 time QB-problem period)
+	callbackTimeout := buildSettings.GetHttpCallbackTimeout()
+
 	p.fServiceHTTP = &http.Server{
 		Addr:         cfg.GetAddress().GetInternal(),
-		Handler:      mux, // no need http_handle_timeout (PoW in HandleNetworkRequestAPI)
+		Handler:      http.TimeoutHandler(mux, callbackTimeout, "handle timeout"),
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpWriteTimeout(),
+		WriteTimeout: callbackTimeout,
 	}
 }
