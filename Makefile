@@ -9,7 +9,7 @@ _CODE_LINES_FLOOR=_
 _TEST_UTILS_PATH=./test/utils
 _TEST_RESULT_PATH=./test/result
 
-_CHECK_ERROR=if [ $$? != 0 ]; then exit 1; fi
+_CHECK_ERROR_FUNC=if [ $$? != 0 ]; then exit 1; fi
 _GO_TEST_LIST=\
 	go list ./... | \
 	grep -vsE '/cmd/' | \
@@ -45,18 +45,18 @@ install-deps:
 
 lint-run: clean go-fmt-vet
 	golangci-lint run -E "gosec,unconvert,goconst,gocyclo,err113,ineffassign,unparam,unused,bodyclose,noctx,perfsprint,prealloc,gocritic,govet,staticcheck,errcheck,errorlint,nestif,maintidx"
+	$(_CHECK_ERROR_FUNC);
 
 ### TEST
 # example run: make test-run N=10
 # for i in {1..100}; do echo $i; go test -shuffle=on -count=1 ./...; done;
 
 test-run:
-	$(_CHECK_ERROR);
 	d=$$(date +%s); \
 	for i in {1..$(N)}; do \
 		echo $$i; \
 		go test -cover -count=1 -shuffle=on `$(_GO_TEST_LIST)`; \
-		$(_CHECK_ERROR); \
+		$(_CHECK_ERROR_FUNC); \
 	done; \
 	echo "Build took $$(($$(date +%s)-d)) seconds";
 
@@ -67,7 +67,7 @@ test-prod:
 
 test-coverage: clean
 	go test -coverpkg=./... -coverprofile=$(_TEST_RESULT_PATH)/coverage.out -count=1 `$(_GO_TEST_LIST)`
-	$(_CHECK_ERROR)
+	$(_CHECK_ERROR_FUNC)
 
 test-coverage-view:
 	go tool cover -html=$(_TEST_RESULT_PATH)/coverage.out
