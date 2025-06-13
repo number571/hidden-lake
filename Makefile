@@ -30,6 +30,7 @@ build:
 	make -C ./cmd build
 clean:
 	make -C ./cmd clean
+	make -C ./test/prod clean
 
 go-fmt-vet:
 	go fmt ./...

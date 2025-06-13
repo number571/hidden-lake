@@ -4,6 +4,9 @@ N=1
 default: test 
 
 test: 
-	make -C ./tcp N=$(N)
+	for i in {1..$(N)}; \
+		do echo $$i; \
+		go run ./tcp; \
+	done;
 clean: 
-	make -C ./tcp clean 
+	ls | grep -xv ".gitignore" | grep -xv "Makefile" | grep -xv "tcp" | xargs rm | true
