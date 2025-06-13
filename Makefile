@@ -27,7 +27,7 @@ _GO_TEST_LIST=\
 
 default: lint-run test-run
 build:
-	make -C ./cmd build
+	make -C ./cmd 
 clean:
 	make -C ./cmd clean
 	make -C ./test/prod clean
