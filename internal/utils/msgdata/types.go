@@ -6,7 +6,7 @@ import (
 
 type IMessageBroker interface {
 	Close(string) bool
-	Produce(string, SMessage)
+	Produce(string, SMessage) bool
 	Consume(string) (SMessage, bool)
 }
 

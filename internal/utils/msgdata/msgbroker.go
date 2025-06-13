@@ -54,13 +54,13 @@ func (p *sMessageBroker) Consume(pAddress string) (SMessage, bool) {
 	}
 }
 
-func (p *sMessageBroker) Produce(pAddress string, pMsg SMessage) {
+func (p *sMessageBroker) Produce(pAddress string, pMsg SMessage) bool {
 	p.fMutexes[1].Lock()
 	defer p.fMutexes[1].Unlock()
 
 	mq, ok := p.loadMapQueue(pAddress)
 	if !ok {
-		return
+		return false
 	}
 
 	p.clear(mq) // only one can produce value
@@ -69,6 +69,7 @@ func (p *sMessageBroker) Produce(pAddress string, pMsg SMessage) {
 		SSubscribe: SSubscribe{FAddress: pAddress},
 		SMessage:   pMsg,
 	}
+	return true
 }
 
 func (p *sMessageBroker) close(mq *sMapQueue) {
