@@ -169,7 +169,7 @@ You can also create your own networks by copying the contents of the networks.ym
 
 ## Communication
 
-To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md) at the `internal` address provided in `hls.yml` (by default `localhost:9572`).
+To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md#hls-api) at the `internal` address provided in `hls.yml` (by default `localhost:9572`).
 
 ```bash
 $ curl -X GET 'http://localhost:9572/api/service/pubkey'
