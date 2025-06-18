@@ -138,6 +138,9 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 ## Build and run
 
+> [!IMPORTANT]
+> As an additional level of security, it is recommended to run the Hidden Lake anonymous network in a virtual machine. This will make it possible to secure the main execution environment if vulnerabilities are found in HL, and it will also hide the operation/interaction of HL services from the main execution environment.
+
 Launching an anonymous network is primarily the launch of an anonymizing `HLS` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
