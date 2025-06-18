@@ -13,8 +13,7 @@ func TestPanicGetMessageBytes(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -31,8 +30,7 @@ func TestGetUploadFile(t *testing.T) {
 	formData := url.Values{"input_file": {""}}
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(formData.Encode()))
 	if _, _, err := getUploadFile(req); err == nil {
-		t.Error("success upload invalid file")
-		return
+		t.Fatal("success upload invalid file")
 	}
 }
 
@@ -40,11 +38,9 @@ func TestGetMessage(t *testing.T) {
 	t.Parallel()
 
 	if _, err := GetMessage(wrapText(""), ""); err == nil {
-		t.Error("success get void message")
-		return
+		t.Fatal("success get void message")
 	}
 	if _, err := GetMessage(wrapFile("", []byte{}), ""); err == nil {
-		t.Error("success get void file")
-		return
+		t.Fatal("success get void file")
 	}
 }

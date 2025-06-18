@@ -28,8 +28,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -72,8 +71,7 @@ func TestHTTPAdapter(t *testing.T) {
 
 	onlines := adapter1.GetOnlines()
 	if len(onlines) != 1 || onlines[0] != testutils.TgAddrs[19] {
-		t.Error("adapter: get onlines")
-		return
+		t.Fatal("adapter: get onlines")
 	}
 
 	adapter1.WithHandlers(map[string]http.HandlerFunc{
@@ -111,48 +109,39 @@ func TestHTTPAdapter(t *testing.T) {
 				return err
 			}
 			if res != "http-adapter" {
-				t.Error()
 				return errors.New("failed get index") // nolint: err113
 			}
 			return nil
 		},
 	)
 	if err1 != nil {
-		t.Error(err1)
-		return
+		t.Fatal(err1)
 	}
 
 	conns, err := client.GetConnections(ctx)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if len(conns) != 1 || conns[0] != "tcp://abc_1" {
-		t.Error("invalid connections")
-		return
+		t.Fatal("invalid connections")
 	}
 
 	onlines, err = client.GetOnlines(ctx)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if len(onlines) != 1 || onlines[0] != "tcp://abc_2" {
-		t.Error("invalid onlines")
-		return
+		t.Fatal("invalid onlines")
 	}
 
 	if err := client.AddConnection(ctx, "tcp://new"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := client.DelConnection(ctx, "tcp://new"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := client.DelOnline(ctx, "tcp://new"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	msgBytes := []byte("hello, world!")
@@ -165,14 +154,12 @@ func TestHTTPAdapter(t *testing.T) {
 	)
 
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	// duplicate produce is ok (cache checker)
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	netMsg2 := layer1.NewMessage(
@@ -182,33 +169,27 @@ func TestHTTPAdapter(t *testing.T) {
 		payload.NewPayload32(0x01, []byte{1}),
 	)
 	if err := client.ProduceMessage(ctx, netMsg2); err == nil {
-		t.Error("success produce invalid size message")
-		return
+		t.Fatal("success produce invalid size message")
 	}
 
 	if err := testCustomProduceMessage(ctx, http.MethodGet, testutils.TgAddrs[18], netMsg.ToString()); err == nil {
-		t.Error("success produce message with invalid method")
-		return
+		t.Fatal("success produce message with invalid method")
 	}
 	invalidMsg := random.NewRandom().GetString(8192 << 1)
 	if err := testCustomProduceMessage(ctx, http.MethodPost, testutils.TgAddrs[18], invalidMsg); err == nil {
-		t.Error("success produce message with invalid message")
-		return
+		t.Fatal("success produce message with invalid message")
 	}
 
 	msg, err := adapter1.Consume(ctx)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if !bytes.HasPrefix(msg.GetPayload().GetBody(), msgBytes) {
-		t.Error("get invalid message bytes")
-		return
+		t.Fatal("get invalid message bytes")
 	}
 
 	if err := adapter1.Produce(ctx, msg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -234,7 +215,6 @@ func TestSettings(t *testing.T) {
 
 	sett := NewSettings(nil)
 	if sett.GetAdapterSettings() == nil {
-		t.Error("invalid adapter settings")
-		return
+		t.Fatal("invalid adapter settings")
 	}
 }

@@ -17,8 +17,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SUtilsError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -27,17 +26,14 @@ func TestUtils(t *testing.T) {
 
 	limit, err := GetMessageLimit(context.Background(), newTsHLSClient(1024))
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if limit != 1024-gRespSize {
-		t.Error("limit != 1024-gRespSize")
-		return
+		t.Fatal("limit != 1024-gRespSize")
 	}
 
 	if _, err := GetMessageLimit(context.Background(), newTsHLSClient(gRespSize)); err == nil {
-		t.Error("success get message limit with gRespSize >= limit")
-		return
+		t.Fatal("success get message limit with gRespSize >= limit")
 	}
 }
 

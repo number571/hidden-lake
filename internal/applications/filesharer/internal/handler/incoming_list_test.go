@@ -17,8 +17,7 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -37,17 +36,14 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 	handler := HandleIncomingListHTTP(httpLogger, config.GetConfig(), "./testdata")
 
 	if err := incomingListRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := incomingListRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 	if err := incomingListRequestPage(handler); err == nil {
-		t.Error("request success with invalid page")
-		return
+		t.Fatal("request success with invalid page")
 	}
 }
 

@@ -10,20 +10,16 @@ func TestFailedSetBuildByPath(t *testing.T) {
 	t.Parallel()
 
 	if _, err := SetBuildByPath("testdata/failed/1"); err == nil {
-		t.Error("success set build with invalid settings")
-		return
+		t.Fatal("success set build with invalid settings")
 	}
 	if _, err := SetBuildByPath("testdata/failed/2"); err == nil {
-		t.Error("success set build with invalid networks")
-		return
+		t.Fatal("success set build with invalid networks")
 	}
 	if _, err := SetBuildByPath("testdata/failed/3"); err == nil {
-		t.Error("success set build with invalid settings (yaml)")
-		return
+		t.Fatal("success set build with invalid settings (yaml)")
 	}
 	if _, err := SetBuildByPath("testdata/failed/4"); err == nil {
-		t.Error("success set build with invalid networks (yaml)")
-		return
+		t.Fatal("success set build with invalid networks (yaml)")
 	}
 }
 
@@ -31,38 +27,32 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 	t.Parallel()
 
 	if _, err := SetBuildByPath("testdata/success"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	settings := build.GetSettings()
 	if settings.FProtoMask.FNetwork != 0x01 {
-		t.Error("settings are not saved")
-		return
+		t.Fatal("settings are not saved")
 	}
 
 	networks := build.GetNetworks()
 	testNetwork, ok := networks["__testdata__"]
 	if !ok || testNetwork.FMessageSizeBytes != 4097 {
-		t.Error("networks are not saved")
-		return
+		t.Fatal("networks are not saved")
 	}
 
 	if oks, err := SetBuildByPath("__not_found_path"); err != nil || oks[0] || oks[1] {
-		t.Error("success build not found path")
-		return
+		t.Fatal("success build not found path")
 	}
 
 	settings = build.GetSettings()
 	if settings.FProtoMask.FNetwork != 0x01 {
-		t.Error("settings are rewrites success with not found path")
-		return
+		t.Fatal("settings are rewrites success with not found path")
 	}
 
 	networks = build.GetNetworks()
 	testNetwork, ok = networks["__testdata__"]
 	if !ok || testNetwork.FMessageSizeBytes != 4097 {
-		t.Error("networks are rewrites success with not found path")
-		return
+		t.Fatal("networks are rewrites success with not found path")
 	}
 }

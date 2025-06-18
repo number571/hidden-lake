@@ -73,8 +73,7 @@ func TestHandleServiceFunc(t *testing.T) {
 		Build()
 
 	if _, err := handler(ctx, pubKey, reqx); err == nil {
-		t.Error("success handle request with invalid service")
-		return
+		t.Fatal("success handle request with invalid service")
 	}
 
 	reqy := request.NewRequestBuilder().
@@ -84,8 +83,7 @@ func TestHandleServiceFunc(t *testing.T) {
 		Build()
 
 	if _, err := handler(ctx, pubKey, reqy); err == nil {
-		t.Error("success handle request with invalid do request")
-		return
+		t.Fatal("success handle request with invalid do request")
 	}
 
 	req := request.NewRequestBuilder().
@@ -96,13 +94,11 @@ func TestHandleServiceFunc(t *testing.T) {
 
 	rsp, err := handler(ctx, pubKey, req)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if string(rsp.GetBody()) != rspMsg {
-		t.Error("string(rsp.GetBody()) != rspMsg")
-		return
+		t.Fatal("string(rsp.GetBody()) != rspMsg")
 	}
 
 	req2 := request.NewRequestBuilder().
@@ -113,12 +109,10 @@ func TestHandleServiceFunc(t *testing.T) {
 
 	rsp2Bytes, err := handler(ctx, pubKey, req2)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if rsp2Bytes != nil {
-		t.Error("rsp2Bytes != nil")
-		return
+		t.Fatal("rsp2Bytes != nil")
 	}
 
 	req3 := request.NewRequestBuilder().
@@ -128,8 +122,7 @@ func TestHandleServiceFunc(t *testing.T) {
 		Build()
 
 	if _, err := handler(ctx, pubKey, req3); err == nil {
-		t.Error("success response with unknown response mode")
-		return
+		t.Fatal("success response with unknown response mode")
 	}
 }
 
@@ -155,8 +148,7 @@ func TestHLS(t *testing.T) {
 	// service
 	nodeService, nodeCancel, err := testStartNodeHLS()
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() {
 		nodeCancel()
@@ -168,8 +160,7 @@ func TestHLS(t *testing.T) {
 	// client
 	nodeClient, clientCancel, err := testStartClientHLS()
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() {
 		clientCancel()

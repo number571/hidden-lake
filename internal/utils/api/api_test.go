@@ -44,8 +44,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SApiError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -53,8 +52,7 @@ func TestResponseAPI(t *testing.T) {
 	t.Parallel()
 
 	if err := Response(&tsResponseWriter{}, 200, []byte{123}); err == nil {
-		t.Error("success response with invalid response writer")
-		return
+		t.Fatal("success response with invalid response writer")
 	}
 }
 
@@ -62,8 +60,7 @@ func TestLoadResponse(t *testing.T) {
 	t.Parallel()
 
 	if _, err := loadResponse(0, &tsReadCloser{}); err == nil {
-		t.Error("success load response with invalid readCloser")
-		return
+		t.Fatal("success load response with invalid readCloser")
 	}
 }
 
@@ -81,13 +78,11 @@ func TestErrorsAPI(t *testing.T) {
 	defer func() { _ = srv.Close() }()
 
 	if _, err := Request(context.Background(), client, http.MethodGet, addr, nil); err == nil {
-		t.Error("success request on incorrect url address")
-		return
+		t.Fatal("success request on incorrect url address")
 	}
 
 	if _, err := Request(context.Background(), client, http.MethodGet, unknownURL, nil); err == nil {
-		t.Error("success request on unknown url address")
-		return
+		t.Fatal("success request on unknown url address")
 	}
 }
 
@@ -105,67 +100,56 @@ func TestRequestResponseAPI(t *testing.T) {
 	defer func() { _ = srv.Close() }()
 
 	if _, err := Request(context.Background(), client, http.MethodGet, "\n\t\a", nil); err == nil {
-		t.Error("success request on invalid url")
-		return
+		t.Fatal("success request on invalid url")
 	}
 
 	if _, err := Request(context.Background(), client, http.MethodPatch, testURL, nil); err == nil {
-		t.Error("PATCH: success request on method not allowed")
-		return
+		t.Fatal("PATCH: success request on method not allowed")
 	}
 
 	respGET, err := Request(context.Background(), client, http.MethodGet, testURL, nil)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	x := new(tsResponse)
 	if err := encoding.DeserializeJSON(respGET, x); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if x.FMessage != tcMessage {
-		t.Error("GET: got message is invalid")
-		return
+		t.Fatal("GET: got message is invalid")
 	}
 
 	// bytes
 	respPOST1, err := Request(context.Background(), client, http.MethodPost, testURL, []byte(tcMessage))
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if !bytes.Equal(respPOST1, bytes.Join([][]byte{[]byte("echo"), []byte(tcMessage)}, []byte{1})) {
-		t.Error("POST1: got message is invalid")
-		return
+		t.Fatal("POST1: got message is invalid")
 	}
 
 	// string
 	respPOST2, err := Request(context.Background(), client, http.MethodPost, testURL, tcMessage)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if !bytes.Equal(respPOST2, bytes.Join([][]byte{[]byte("echo"), []byte(tcMessage)}, []byte{1})) {
-		t.Error("POST2: got message is invalid")
-		return
+		t.Fatal("POST2: got message is invalid")
 	}
 
 	// struct
 	respPOST3, err := Request(context.Background(), client, http.MethodPost, testURL, tsRequest{FMessage: tcMessage})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	msg := fmt.Sprintf(`{"message":"%s"}`, tcMessage)
 	if !bytes.Equal(respPOST3, bytes.Join([][]byte{[]byte("echo"), []byte(msg)}, []byte{1})) {
-		t.Error("POST3: got message is invalid")
-		return
+		t.Fatal("POST3: got message is invalid")
 	}
 }
 

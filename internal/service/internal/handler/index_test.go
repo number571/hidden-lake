@@ -30,68 +30,55 @@ func TestErrorsAPI(t *testing.T) {
 	)
 
 	if err := client.AddConnection(context.Background(), ""); err == nil {
-		t.Error("success add connection with unknown host")
-		return
+		t.Fatal("success add connection with unknown host")
 	}
 
 	if err := client.DelConnection(context.Background(), ""); err == nil {
-		t.Error("success del connection with unknown host")
-		return
+		t.Fatal("success del connection with unknown host")
 	}
 
 	if err := client.AddFriend(context.Background(), "", tgPrivKey1.GetPubKey()); err == nil {
-		t.Error("success add friend with unknown host")
-		return
+		t.Fatal("success add friend with unknown host")
 	}
 
 	if err := client.DelFriend(context.Background(), ""); err == nil {
-		t.Error("success del friend with unknown host")
-		return
+		t.Fatal("success del friend with unknown host")
 	}
 
 	if err := client.SendRequest(context.Background(), "", request.NewRequestBuilder().Build()); err == nil {
-		t.Error("success send request with unknown host")
-		return
+		t.Fatal("success send request with unknown host")
 	}
 
 	if _, err := client.FetchRequest(context.Background(), "", request.NewRequestBuilder().Build()); err == nil {
-		t.Error("success fetch request with unknown host")
-		return
+		t.Fatal("success fetch request with unknown host")
 	}
 
 	if _, err := client.GetIndex(context.Background()); err == nil {
-		t.Error("success get index with unknown host")
-		return
+		t.Fatal("success get index with unknown host")
 	}
 
 	if _, err := client.GetConnections(context.Background()); err == nil {
-		t.Error("success get connections with unknown host")
-		return
+		t.Fatal("success get connections with unknown host")
 	}
 
 	if _, err := client.GetFriends(context.Background()); err == nil {
-		t.Error("success get friends with unknown host")
-		return
+		t.Fatal("success get friends with unknown host")
 	}
 
 	if _, err := client.GetOnlines(context.Background()); err == nil {
-		t.Error("success get onlines with unknown host")
-		return
+		t.Fatal("success get onlines with unknown host")
 	}
 
 	if _, err := client.GetPubKey(context.Background()); err == nil {
-		t.Error("success get pub key with unknown host")
-		return
+		t.Fatal("success get pub key with unknown host")
 	}
 
 	if _, err := client.GetSettings(context.Background()); err == nil {
-		t.Error("success get settings with unknown host")
-		return
+		t.Fatal("success get settings with unknown host")
 	}
 
 	if err := client.DelOnline(context.Background(), "test"); err == nil {
-		t.Error("success del online key with unknown host")
-		return
+		t.Fatal("success del online key with unknown host")
 	}
 }
 
@@ -113,8 +100,7 @@ func TestHandleIndexAPI2(t *testing.T) {
 
 	handler := HandleIndexAPI(httpLogger)
 	if err := indexAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -157,12 +143,10 @@ func TestHandleIndexAPI(t *testing.T) {
 
 	title, err := client.GetIndex(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if title != pkg_settings.CServiceFullName {
-		t.Error("incorrect title pattern")
-		return
+		t.Fatal("incorrect title pattern")
 	}
 }

@@ -40,8 +40,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SConfigError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -67,48 +66,39 @@ func TestConfig(t *testing.T) {
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if cfg.GetSettings().GetMessagesCapacity() != tcMessagesCapacity {
-		t.Error("settings message capacity size is invalid")
-		return
+		t.Fatal("settings message capacity size is invalid")
 	}
 
 	if cfg.GetSettings().GetLanguage() != language.CLangRUS {
-		t.Error("settings language is invalid")
-		return
+		t.Fatal("settings language is invalid")
 	}
 
 	if cfg.GetLogging().HasInfo() != tcLogging {
-		t.Error("logging.info is invalid")
-		return
+		t.Fatal("logging.info is invalid")
 	}
 
 	if cfg.GetLogging().HasErro() != tcLogging {
-		t.Error("logging.erro is invalid")
-		return
+		t.Fatal("logging.erro is invalid")
 	}
 
 	if cfg.GetLogging().HasWarn() == tcLogging {
-		t.Error("logging.warn is invalid")
-		return
+		t.Fatal("logging.warn is invalid")
 	}
 
 	if cfg.GetAddress().GetInternal() != tcAddressInterface {
-		t.Error("address.interface is invalid")
-		return
+		t.Fatal("address.interface is invalid")
 	}
 
 	if cfg.GetAddress().GetExternal() != tcAddressIncoming {
-		t.Error("address.incoming is invalid")
-		return
+		t.Fatal("address.incoming is invalid")
 	}
 
 	if cfg.GetConnection() != tcConnectionService {
-		t.Error("connection.service is invalid")
-		return
+		t.Fatal("connection.service is invalid")
 	}
 
 }

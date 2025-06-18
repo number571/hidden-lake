@@ -34,12 +34,10 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 func testGetNetworkKey(t *testing.T, client hls_client.IClient, networkKey string) {
 	settings, err := client.GetSettings(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if settings.GetNetworkKey() != networkKey {
-		t.Error("got network key != networkKey")
-		return
+		t.Fatal("got network key != networkKey")
 	}
 }

@@ -34,13 +34,11 @@ func TestHandleConfigSettingsAPI2(t *testing.T) {
 
 	handler := HandleConfigSettingsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true))
 	if err := settingsAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := settingsAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 }
 
@@ -102,22 +100,18 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 
 	sett, err := client.GetSettings(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if sett.GetQueuePeriod() != time.Second {
-		t.Error("invalid queue period")
-		return
+		t.Fatal("invalid queue period")
 	}
 
 	if sett.GetMessageSizeBytes() != (8 << 10) {
-		t.Error("invalid message size")
-		return
+		t.Fatal("invalid message size")
 	}
 
 	if sett.GetWorkSizeBits() != 22 {
-		t.Error("invalid work size")
-		return
+		t.Fatal("invalid work size")
 	}
 }

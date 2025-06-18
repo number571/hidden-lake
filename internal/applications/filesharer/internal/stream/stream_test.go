@@ -21,8 +21,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SStreamError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -47,8 +46,7 @@ func TestStream(t *testing.T) {
 		}(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	r := make([]byte, 0, 128)
@@ -60,19 +58,16 @@ func TestStream(t *testing.T) {
 				r = append(r, b[0])
 				break
 			}
-			t.Error(err)
-			return
+			t.Fatal(err)
 		}
 		if n != 1 {
-			t.Error("n != 1")
-			return
+			t.Fatal("n != 1")
 		}
 		r = append(r, b[0])
 	}
 
 	if string(r) != string(fileBytes) {
-		t.Error("string(r) != string(fileBytes)")
-		return
+		t.Fatal("string(r) != string(fileBytes)")
 	}
 }
 

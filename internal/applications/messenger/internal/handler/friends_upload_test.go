@@ -18,8 +18,7 @@ func TestFriendsUploadPage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -38,13 +37,11 @@ func TestFriendsUploadPage(t *testing.T) {
 
 	handler := FriendsUploadPage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
 	if err := friendsUploadOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := friendsUploadRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 }
 

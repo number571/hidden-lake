@@ -10,42 +10,35 @@ func TestHiddenLakeNetworks(t *testing.T) {
 
 	network := SNetwork{}
 	if err := network.validate(); err == nil {
-		t.Error("success validate with invalid message_size_bytes")
-		return
+		t.Fatal("success validate with invalid message_size_bytes")
 	}
 
 	network.FMessageSizeBytes = 8192
 	if err := network.validate(); err != nil {
-		t.Error("error validate with exist message_size_bytes")
-		return
+		t.Fatal("error validate with exist message_size_bytes")
 	}
 
 	network.FConnections = []string{"127.0.0.1:8080"}
 	if err := network.validate(); err == nil {
-		t.Error("success validate with invalid connections (1)")
-		return
+		t.Fatal("success validate with invalid connections (1)")
 	}
 
 	network.FConnections = []string{"127.0.0.1"}
 	if err := network.validate(); err == nil {
-		t.Error("success validate with invalid connections (2)")
-		return
+		t.Fatal("success validate with invalid connections (2)")
 	}
 
 	network, ok := gNetworks[CDefaultNetwork]
 	if !ok {
-		t.Error("not found network _test_network_")
-		return
+		t.Fatal("not found network _test_network_")
 	}
 
 	if network.FMessageSizeBytes != 8192 {
-		t.Error("network.FMessageSizeBytes != 8192")
-		return
+		t.Fatal("network.FMessageSizeBytes != 8192")
 	}
 
 	if network.FWorkSizeBits != 0 {
-		t.Error("network.FWorkSizeBits != 0")
-		return
+		t.Fatal("network.FWorkSizeBits != 0")
 	}
 
 	networks := GetNetworks()
@@ -55,37 +48,30 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	neMessageSize := uint64(9_123)
 
 	if _, ok := networks[newNetworkKey]; ok {
-		t.Error("new network key already exist")
-		return
+		t.Fatal("new network key already exist")
 	}
 	if newNetwork.FMessageSizeBytes == neMessageSize {
-		t.Error("new set value already equal")
-		return
+		t.Fatal("new set value already equal")
 	}
 
 	newNetwork.FMessageSizeBytes = neMessageSize
 	networks[newNetworkKey] = newNetwork
 	if err := SetNetworks(networks); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	gotNetwork, ok := GetNetwork(newNetworkKey)
 	if !ok {
-		t.Error("new set network key not saved")
-		return
+		t.Fatal("new set network key not saved")
 	}
 	if gotNetwork.FMessageSizeBytes != neMessageSize {
-		t.Error("new set value not saved")
-		return
+		t.Fatal("new set value not saved")
 	}
 
 	if err := SetNetworks(map[string]SNetwork{}); err == nil {
-		t.Error("success set networks without default")
-		return
+		t.Fatal("success set networks without default")
 	}
 	if err := SetNetworks(map[string]SNetwork{CDefaultNetwork: SNetwork{}}); err == nil {
-		t.Error("success set incorrect network")
-		return
+		t.Fatal("success set incorrect network")
 	}
 }

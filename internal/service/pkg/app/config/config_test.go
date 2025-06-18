@@ -112,8 +112,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SConfigError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -128,19 +127,16 @@ func TestBuildConfig(t *testing.T) {
 
 	cfg, err := LoadConfig(config1File)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() { _ = os.Remove(config2File) }()
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err == nil {
-		t.Error("success build already exist config")
-		return
+		t.Fatal("success build already exist config")
 	}
 }
 
@@ -202,97 +198,80 @@ func TestComplexConfig(t *testing.T) {
 	defer func() { _ = os.Remove(configFile) }()
 
 	if err := testIncorrectConfig(configFile); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if cfg.GetSettings().GetWorkSizeBits() != tcWorkSize {
-		t.Error("settings work size is invalid")
-		return
+		t.Fatal("settings work size is invalid")
 	}
 
 	if cfg.GetSettings().GetMessageSizeBytes() != tcMessageSize {
-		t.Error("settings message size is invalid")
-		return
+		t.Fatal("settings message size is invalid")
 	}
 
 	if cfg.GetSettings().GetFetchTimeout() != time.Duration(tcFetchTimeout)*time.Millisecond {
-		t.Error("settings fetch timeout is invalid")
-		return
+		t.Fatal("settings fetch timeout is invalid")
 	}
 
 	if cfg.GetSettings().GetQueuePeriod() != time.Duration(tcQueuePeriod)*time.Millisecond {
-		t.Error("settings queue period is invalid")
-		return
+		t.Fatal("settings queue period is invalid")
 	}
 
 	if cfg.GetLogging().HasInfo() != tcLogging {
-		t.Error("logging.info is invalid")
-		return
+		t.Fatal("logging.info is invalid")
 	}
 
 	if cfg.GetLogging().HasErro() != tcLogging {
-		t.Error("logging.erro is invalid")
-		return
+		t.Fatal("logging.erro is invalid")
 	}
 
 	if cfg.GetLogging().HasWarn() == tcLogging {
-		t.Error("logging.warn is invalid")
-		return
+		t.Fatal("logging.warn is invalid")
 	}
 
 	if cfg.GetSettings().GetNetworkKey() != tcNetwork {
-		t.Error("network is invalid")
-		return
+		t.Fatal("network is invalid")
 	}
 
 	if cfg.GetSettings().GetQBPConsumers() != tcQBPConsumers {
-		t.Error("qbp_consumers is invalid")
-		return
+		t.Fatal("qbp_consumers is invalid")
 	}
 
 	if cfg.GetSettings().GetPowParallel() != tcPowParallel {
-		t.Error("pow_parallel is invalid")
-		return
+		t.Fatal("pow_parallel is invalid")
 	}
 
 	if cfg.GetAddress().GetExternal() != tcAddressExternal {
-		t.Error("address_external is invalid")
-		return
+		t.Fatal("address_external is invalid")
 	}
 
 	if cfg.GetAddress().GetInternal() != tcAddressInternal {
-		t.Error("address_internal is invalid")
-		return
+		t.Fatal("address_internal is invalid")
 	}
 
 	if len(cfg.GetEndpoints()) != 2 {
-		t.Error("len connections != 2")
-		return
+		t.Fatal("len connections != 2")
 	}
+
 	for i, v := range cfg.GetEndpoints() {
 		if v != tgAdapters[i] {
-			t.Errorf("connection '%d' is invalid", i)
-			return
+			t.Fatalf("connection '%d' is invalid", i)
 		}
 	}
 
 	for k, v := range tgServices {
 		v1, ok := cfg.GetService(k)
 		if !ok {
-			t.Errorf("service undefined '%s'", k)
-			return
+			t.Fatalf("service undefined '%s'", k)
 		}
 		if v != v1 {
-			t.Errorf("service host is invalid '%s'", v1)
-			return
+			t.Fatalf("service host is invalid '%s'", v1)
 		}
 	}
 
@@ -300,8 +279,7 @@ func TestComplexConfig(t *testing.T) {
 		v1 := cfg.GetFriends()[name]
 		pubKey := asymmetric.LoadPubKey(pubStr)
 		if pubKey.ToString() != v1.ToString() {
-			t.Errorf("public key is invalid '%s'", v1)
-			return
+			t.Fatalf("public key is invalid '%s'", v1)
 		}
 	}
 }
@@ -316,31 +294,26 @@ func TestWrapper(t *testing.T) {
 
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(cfg.GetFriends()) == 0 {
-		t.Error("list of friends should be is not nil for tests")
-		return
+		t.Fatal("list of friends should be is not nil for tests")
 	}
 
 	wrapper := NewWrapper(cfg)
 	_ = wrapper.GetEditor().UpdateFriends(nil)
 
 	if len(cfg.GetFriends()) != 0 {
-		t.Error("friends is not nil for current config")
-		return
+		t.Fatal("friends is not nil for current config")
 	}
 
 	cfg, err = LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(cfg.GetFriends()) != 0 {
-		t.Error("friends is not nil for loaded config")
-		return
+		t.Fatal("friends is not nil for loaded config")
 	}
 }

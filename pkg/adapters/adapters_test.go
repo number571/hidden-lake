@@ -16,8 +16,7 @@ func TestSettings(t *testing.T) {
 	defaultNetwork, _ := build.GetNetwork(build.CDefaultNetwork)
 
 	if sett.GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {
-		t.Error("get invalid settings")
-		return
+		t.Fatal("get invalid settings")
 	}
 
 	_ = NewSettingsByNetworkKey(build.CDefaultNetwork)
@@ -28,8 +27,7 @@ func TestPanicSettings(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 

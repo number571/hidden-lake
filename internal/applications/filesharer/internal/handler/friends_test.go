@@ -21,8 +21,7 @@ func TestFriendsPage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -41,28 +40,23 @@ func TestFriendsPage(t *testing.T) {
 
 	handler := FriendsPage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
 	if err := friendsRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsRequestDeleteOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := friendsRequestPostPubKey(handler); err == nil {
-		t.Error("request success with invalid pubkey")
-		return
+		t.Fatal("request success with invalid pubkey")
 	}
 	if err := friendsRequestPostPubKeyVoid(handler); err == nil {
-		t.Error("request success with invalid pubkey (void)")
-		return
+		t.Fatal("request success with invalid pubkey (void)")
 	}
 	if err := friendsRequestDeleteAliasName(handler); err == nil {
-		t.Error("request success with invalid alias_name")
+		t.Fatal("request success with invalid alias_name")
 	}
 	if err := friendsRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 }
 

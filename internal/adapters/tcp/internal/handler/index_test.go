@@ -29,33 +29,27 @@ func TestErrorsAPI(t *testing.T) {
 	)
 
 	if err := client.AddConnection(context.Background(), ""); err == nil {
-		t.Error("success add connection with unknown host")
-		return
+		t.Fatal("success add connection with unknown host")
 	}
 
 	if err := client.DelConnection(context.Background(), ""); err == nil {
-		t.Error("success del connection with unknown host")
-		return
+		t.Fatal("success del connection with unknown host")
 	}
 
 	if _, err := client.GetIndex(context.Background()); err == nil {
-		t.Error("success get index with unknown host")
-		return
+		t.Fatal("success get index with unknown host")
 	}
 
 	if _, err := client.GetConnections(context.Background()); err == nil {
-		t.Error("success get connections with unknown host")
-		return
+		t.Fatal("success get connections with unknown host")
 	}
 
 	if _, err := client.GetOnlines(context.Background()); err == nil {
-		t.Error("success get onlines with unknown host")
-		return
+		t.Fatal("success get onlines with unknown host")
 	}
 
 	if err := client.DelOnline(context.Background(), "test"); err == nil {
-		t.Error("success del online key with unknown host")
-		return
+		t.Fatal("success del online key with unknown host")
 	}
 }
 
@@ -69,8 +63,7 @@ func TestHandleIndexAPI2(t *testing.T) {
 
 	handler := HandleIndexAPI(log)
 	if err := indexAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -108,12 +101,12 @@ func indexAPIRequestOK(handler http.HandlerFunc) error {
 
 // 	title, err := client.GetIndex(context.Background())
 // 	if err != nil {
-// 		t.Error(err)
+// 		t.Fatal(err)
 // 		return
 // 	}
 
 // 	if title != settings.CServiceFullName {
-// 		t.Error("incorrect title pattern")
+// 		t.Fatal("incorrect title pattern")
 // 		return
 // 	}
 // }

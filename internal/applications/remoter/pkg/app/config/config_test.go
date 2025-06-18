@@ -20,8 +20,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SConfigError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -45,32 +44,26 @@ func TestConfig(t *testing.T) {
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if cfg.GetLogging().HasInfo() != tcLogging {
-		t.Error("logging.info is invalid")
-		return
+		t.Fatal("logging.info is invalid")
 	}
 
 	if cfg.GetLogging().HasErro() != tcLogging {
-		t.Error("logging.erro is invalid")
-		return
+		t.Fatal("logging.erro is invalid")
 	}
 
 	if cfg.GetLogging().HasWarn() == tcLogging {
-		t.Error("logging.warn is invalid")
-		return
+		t.Fatal("logging.warn is invalid")
 	}
 
 	if cfg.GetAddress().GetExternal() != tcAddress1 {
-		t.Error("address incoming is invalid")
-		return
+		t.Fatal("address incoming is invalid")
 	}
 
 	if cfg.GetSettings().GetPassword() != tcPassword {
-		t.Error("settings.password is invalid")
-		return
+		t.Fatal("settings.password is invalid")
 	}
 }

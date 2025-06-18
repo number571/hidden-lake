@@ -21,8 +21,7 @@ func TestSettingsPage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -42,55 +41,44 @@ func TestSettingsPage(t *testing.T) {
 	handler := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, true))
 
 	if err := settingsRequestPutOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := settingsRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := settingsRequestDeleteOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := settingsRequestDeleteAddress(handler); err == nil {
-		t.Error("request success with invalid address")
-		return
+		t.Fatal("request success with invalid address")
 	}
 	if err := settingsRequestPostHostPort(handler); err == nil {
-		t.Error("request success with invalid host:port")
-		return
+		t.Fatal("request success with invalid host:port")
 	}
 	if err := settingsRequestPutLanguage(handler); err == nil {
-		t.Error("request success with invalid language")
-		return
+		t.Fatal("request success with invalid language")
 	}
 	if err := settingsRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 
 	handlerx := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg, fWithFail: true}, newTsHLSClient(true, true))
 	if err := settingsRequestPutOK(handlerx); err == nil {
-		t.Error("success update language with invalid update config")
-		return
+		t.Fatal("success update language with invalid update config")
 	}
 
 	handlery := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, false))
 	if err := settingsRequestPostOK(handlery); err == nil {
-		t.Error("success update conns with invalid add_connection")
-		return
+		t.Fatal("success update conns with invalid add_connection")
 	}
 	if err := settingsRequestDeleteOK(handlery); err == nil {
-		t.Error("success update conns with invalid del_connection")
-		return
+		t.Fatal("success update conns with invalid del_connection")
 	}
 
 	handler1 := SettingsPage(ctx, httpLogger, &tsWrapper{fCfg: cfg}, newTsHLSClient(true, false))
 	if err := settingsRequestOK(handler1); err == nil {
-		t.Error("success get settings with invalid get_pub_key")
-		return
+		t.Fatal("success get settings with invalid get_pub_key")
 	}
 }
 

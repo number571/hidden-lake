@@ -38,51 +38,40 @@ func TestHandleFriendsAPI2(t *testing.T) {
 
 	handler := HandleConfigFriendsAPI(newTsWrapper(true), httpLogger, newTsNode(true, true, true))
 	if err := friendsAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsAPIRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsAPIRequestDeleteOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := friendsAPIRequestNotFound(handler); err == nil {
-		t.Error("request success with not found alias_name")
-		return
+		t.Fatal("request success with not found alias_name")
 	}
 	if err := friendsAPIRequestPubKey(handler); err == nil {
-		t.Error("request success with invalid pubkey")
-		return
+		t.Fatal("request success with invalid pubkey")
 	}
 	if err := friendsAPIRequestExist(handler); err == nil {
-		t.Error("request success with exist alias_name")
-		return
+		t.Fatal("request success with exist alias_name")
 	}
 	if err := friendsAPIRequestAliasName(handler); err == nil {
-		t.Error("request success with invalid alias_name")
-		return
+		t.Fatal("request success with invalid alias_name")
 	}
 	if err := friendsAPIRequestDecode(handler); err == nil {
-		t.Error("request success with invalid decode")
-		return
+		t.Fatal("request success with invalid decode")
 	}
 	if err := friendsAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 
 	handlerx := HandleConfigFriendsAPI(newTsWrapper(false), httpLogger, newTsNode(true, true, true))
 	if err := friendsAPIRequestPostOK(handlerx); err == nil {
-		t.Error("request success with invalid update editor (post)")
-		return
+		t.Fatal("request success with invalid update editor (post)")
 	}
 	if err := friendsAPIRequestDeleteOK(handlerx); err == nil {
-		t.Error("request success with invalid update editor (post)")
-		return
+		t.Fatal("request success with invalid update editor (post)")
 	}
 }
 
@@ -322,24 +311,20 @@ func TestHandleFriendsAPI(t *testing.T) {
 func testGetFriends(t *testing.T, client hls_client.IClient, cfg config.IConfig) {
 	friends, err := client.GetFriends(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(friends) != 2 {
-		t.Error("length of friends != 2")
-		return
+		t.Fatal("length of friends != 2")
 	}
 
 	for k, v := range friends {
 		v1, ok := cfg.GetFriends()[k]
 		if !ok {
-			t.Errorf("undefined friend '%s'", k)
-			return
+			t.Fatalf("undefined friend '%s'", k)
 		}
 		if v.ToString() != v1.ToString() {
-			t.Errorf("public keys not equals for '%s'", k)
-			return
+			t.Fatalf("public keys not equals for '%s'", k)
 		}
 	}
 }
@@ -351,37 +336,31 @@ func testAddFriend(t *testing.T, client hls_client.IClient, aliasName string) {
 		tgPrivKey3.GetPubKey(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	friends, err := client.GetFriends(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, ok := friends[aliasName]; !ok {
-		t.Errorf("undefined new public key by '%s'", aliasName)
-		return
+		t.Fatalf("undefined new public key by '%s'", aliasName)
 	}
 }
 
 func testDelFriend(t *testing.T, client hls_client.IClient, aliasName string) {
 	err := client.DelFriend(context.Background(), aliasName)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	friends, err := client.GetFriends(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, ok := friends[aliasName]; ok {
-		t.Errorf("deleted public key exists for '%s'", aliasName)
-		return
+		t.Fatalf("deleted public key exists for '%s'", aliasName)
 	}
 }

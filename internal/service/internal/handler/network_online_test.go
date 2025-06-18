@@ -42,17 +42,14 @@ func TestHandleOnlineAPI2(t *testing.T) {
 
 	handler := HandleNetworkOnlineAPI(ctx, httpLogger, epClients)
 	if err := onlineAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := onlineAPIRequestDeleteOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := onlineAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 
 	epClientsx := []client.IClient{
@@ -61,12 +58,10 @@ func TestHandleOnlineAPI2(t *testing.T) {
 
 	handlerx := HandleNetworkOnlineAPI(ctx, httpLogger, epClientsx)
 	if err := onlineAPIRequestOK(handlerx); err == nil {
-		t.Error("request success with get error")
-		return
+		t.Fatal("request success with get error")
 	}
 	if err := onlineAPIRequestDeleteOK(handlerx); err == nil {
-		t.Error("request success with delete error")
-		return
+		t.Fatal("request success with delete error")
 	}
 }
 
@@ -151,18 +146,15 @@ func TestHandleOnlineAPI(t *testing.T) {
 func testGetOnlines(t *testing.T, client hls_client.IClient) {
 	onlines, err := client.GetOnlines(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if len(onlines) != 2 || onlines[0] != tgConnections[0] {
-		t.Error("len(onlines) != 2 || onlines[0] != tgConnections[0]")
-		return
+		t.Fatal("len(onlines) != 2 || onlines[0] != tgConnections[0]")
 	}
 }
 
 func testDelOnline(t *testing.T, client hls_client.IClient) {
 	if err := client.DelOnline(context.Background(), "tcp://bbb"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }

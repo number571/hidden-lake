@@ -8,7 +8,6 @@ func TestConfig(t *testing.T) {
 		FPayloadSizeBytes: v,
 	}
 	if c.GetPayloadSizeBytes() != v {
-		t.Error("payload size bytes != v")
-		return
+		t.Fatal("payload size bytes != v")
 	}
 }

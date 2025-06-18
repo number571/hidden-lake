@@ -37,8 +37,7 @@ func TestPanicEditor(t *testing.T) {
 func testPanicEditor(t *testing.T, n int) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 	switch n {
@@ -58,8 +57,7 @@ func TestEditor(t *testing.T) {
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	wrapper := NewWrapper(cfg)
@@ -68,18 +66,15 @@ func TestEditor(t *testing.T) {
 	editor := wrapper.GetEditor()
 
 	if err := editor.UpdateConnections(tgNewConnections); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	afterConnections := config.GetConnections()
 	if len(afterConnections) != 2 {
-		t.Error("failed deduplicate public keys (friends)")
-		return
+		t.Fatal("failed deduplicate public keys (friends)")
 	}
 	for i := range afterConnections {
 		if tgNewConnections[i] != afterConnections[i] {
-			t.Error("invalid new connections")
-			return
+			t.Fatal("invalid new connections")
 		}
 	}
 }
@@ -93,8 +88,7 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	wrapper := NewWrapper(cfg)
@@ -105,7 +99,6 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 	config.fFilepath = random.NewRandom().GetString(32)
 
 	if err := editor.UpdateConnections(tgNewConnections); err == nil {
-		t.Error("success update friends with incorrect filepath")
-		return
+		t.Fatal("success update friends with incorrect filepath")
 	}
 }

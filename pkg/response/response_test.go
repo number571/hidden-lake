@@ -26,8 +26,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SResponseError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -35,8 +34,7 @@ func TestInvalidResponse(t *testing.T) {
 	t.Parallel()
 
 	if _, err := LoadResponse([]byte{123}); err == nil {
-		t.Error("success load invalid response bytes")
-		return
+		t.Fatal("success load invalid response bytes")
 	}
 
 	bytesJoiner := joiner.NewBytesJoiner32([][]byte{
@@ -44,18 +42,15 @@ func TestInvalidResponse(t *testing.T) {
 		{byte(111)},
 	})
 	if _, err := LoadResponse(bytesJoiner); err == nil {
-		t.Error("success load invalid response bytes joiner")
-		return
+		t.Fatal("success load invalid response bytes joiner")
 	}
 
 	if _, err := LoadResponse("123"); err == nil {
-		t.Error("success load invalid response string")
-		return
+		t.Fatal("success load invalid response string")
 	}
 
 	if _, err := LoadResponse(struct{}{}); err == nil {
-		t.Error("success load invalid response type")
-		return
+		t.Fatal("success load invalid response type")
 	}
 }
 
@@ -70,20 +65,17 @@ func TestResponse(t *testing.T) {
 
 	resp1, err := LoadResponse(resp.ToBytes())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	respStr := resp.ToString()
 	if respStr != tcResponse {
-		t.Error("string response is invalid")
-		return
+		t.Fatal("string response is invalid")
 	}
 
 	resp2, err := LoadResponse(respStr)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	testResponse(t, resp)
@@ -93,27 +85,22 @@ func TestResponse(t *testing.T) {
 
 func testResponse(t *testing.T, resp IResponse) {
 	if resp.GetCode() != 200 {
-		t.Error("resp code is invalid")
-		return
+		t.Fatal("resp code is invalid")
 	}
 	if !bytes.Equal(resp.GetBody(), []byte(tcBody)) {
-		t.Error("resp body is invalid")
-		return
+		t.Fatal("resp body is invalid")
 	}
 	if len(resp.GetHead()) != 3 {
-		t.Error("resp head size is invalid")
-		return
+		t.Fatal("resp head size is invalid")
 	}
 
 	for k, v := range resp.GetHead() {
 		v1, ok := tgHead[k]
 		if !ok {
-			t.Error("undefined value in orig head")
-			return
+			t.Fatal("undefined value in orig head")
 		}
 		if v1 != v {
-			t.Error("resp head value is invalid")
-			return
+			t.Fatal("resp head value is invalid")
 		}
 	}
 }

@@ -41,8 +41,7 @@ func TestPanicEditor(t *testing.T) {
 func testPanicEditor(t *testing.T, n int) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 	switch n {
@@ -62,8 +61,7 @@ func TestEditor(t *testing.T) {
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	wrapper := NewWrapper(cfg)
@@ -71,12 +69,10 @@ func TestEditor(t *testing.T) {
 
 	res, err := language.ToILanguage("RUS")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := editor.UpdateLanguage(res); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -89,8 +85,7 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	wrapper := NewWrapper(cfg)
@@ -102,11 +97,9 @@ func TestIncorrectFilepathEditor(t *testing.T) {
 
 	res, err := language.ToILanguage("RUS")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := editor.UpdateLanguage(res); err == nil {
-		t.Error("success update network key with incorrect filepath")
-		return
+		t.Fatal("success update network key with incorrect filepath")
 	}
 }

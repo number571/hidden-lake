@@ -29,38 +29,30 @@ func TestHandleConfigConnectsAPI(t *testing.T) {
 
 	handler := HandleConfigConnectsAPI(ctx, &tsConfigWrapper{}, log)
 	if err := configConnectsRequestMethod(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestGET(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestURLParse(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestURLScheme(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestAddConnection(handler, http.StatusOK); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestDelConnection(handler, http.StatusOK); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	handlerx := HandleConfigConnectsAPI(ctx, &tsConfigWrapper{fWithFail: true}, log)
 	if err := configConnectsRequestAddConnection(handlerx, http.StatusInternalServerError); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := configConnectsRequestDelConnection(handlerx, http.StatusInternalServerError); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

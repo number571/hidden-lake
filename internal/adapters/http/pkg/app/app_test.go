@@ -41,8 +41,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -58,14 +57,12 @@ func TestInitApp(t *testing.T) {
 	defer testDeleteFiles(tcPathConfig)
 
 	if err := os.WriteFile(tcPathConfig+"hla_http.yml", []byte(tcDataConfig), 0600); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	app, err := InitApp([]string{"--path", tcPathConfig}, tgFlags)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -74,7 +71,6 @@ func TestInitApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 
@@ -107,8 +103,7 @@ func TestApp(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	app := NewApp(cfg, ".")
@@ -119,7 +114,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 
@@ -141,8 +135,7 @@ func TestApp(t *testing.T) {
 		},
 	)
 	if err1 != nil {
-		t.Error(err1)
-		return
+		t.Fatal(err1)
 	}
 
 	msgBytes := []byte("hello, world!")
@@ -158,8 +151,7 @@ func TestApp(t *testing.T) {
 	)
 
 	if err := intClient.ProduceMessage(ctx, netMsg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	extClient := client.NewClient(
@@ -182,15 +174,13 @@ func TestApp(t *testing.T) {
 	)
 
 	if err := extClient.ProduceMessage(ctx, net2Msg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	// try twice running
 	go func() {
 		if err := app.Run(ctx); err == nil {
 			t.Error("success double run")
-			return
 		}
 	}()
 
@@ -205,7 +195,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx1); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 	time.Sleep(100 * time.Millisecond)

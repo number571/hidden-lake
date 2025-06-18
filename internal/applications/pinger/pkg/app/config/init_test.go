@@ -22,43 +22,36 @@ func TestInit(t *testing.T) {
 
 	config1, err := InitConfig(configFile, nil)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if config1.GetAddress().GetExternal() != tcAddress1 {
-		t.Error("got invalid field with exist config (1)")
-		return
+		t.Fatal("got invalid field with exist config (1)")
 	}
 
 	_ = os.Remove(configFile)
 	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, err := InitConfig(configFile, nil); err == nil {
-		t.Error("success init config with invalid config structure (1)")
-		return
+		t.Fatal("success init config with invalid config structure (1)")
 	}
 
 	_ = os.Remove(configFile)
 
 	if _, err := InitConfig(configFile, &SConfig{}); err == nil {
-		t.Error("success init config with invalid config structure (2)")
-		return
+		t.Fatal("success init config with invalid config structure (2)")
 	}
 
 	_ = os.Remove(configFile)
 
 	config3, err := InitConfig(configFile, nil)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if config3.GetAddress().GetExternal() != hlp_settings.CDefaultExternalAddress {
-		t.Error("got invalid field with exist config (3)")
-		return
+		t.Fatal("got invalid field with exist config (3)")
 	}
 }

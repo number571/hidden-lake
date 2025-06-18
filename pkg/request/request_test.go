@@ -30,8 +30,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SRequestError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -39,8 +38,7 @@ func TestInvalidRequest(t *testing.T) {
 	t.Parallel()
 
 	if _, err := LoadRequest([]byte{123}); err == nil {
-		t.Error("success load invalid request bytes")
-		return
+		t.Fatal("success load invalid request bytes")
 	}
 
 	bytesJoiner := joiner.NewBytesJoiner32([][]byte{
@@ -48,18 +46,15 @@ func TestInvalidRequest(t *testing.T) {
 		{byte(111)},
 	})
 	if _, err := LoadRequest(bytesJoiner); err == nil {
-		t.Error("success load invalid request bytes joiner")
-		return
+		t.Fatal("success load invalid request bytes joiner")
 	}
 
 	if _, err := LoadRequest("123"); err == nil {
-		t.Error("success load invalid request string")
-		return
+		t.Fatal("success load invalid request string")
 	}
 
 	if _, err := LoadRequest(struct{}{}); err == nil {
-		t.Error("success load invalid request type")
-		return
+		t.Fatal("success load invalid request type")
 	}
 }
 
@@ -75,35 +70,29 @@ func TestRequest(t *testing.T) {
 		Build()
 
 	if request.GetHost() != tcHost {
-		t.Error("host is not equals")
-		return
+		t.Fatal("host is not equals")
 	}
 
 	if request.GetPath() != tcPath {
-		t.Error("path is not equals")
-		return
+		t.Fatal("path is not equals")
 	}
 
 	if request.GetMethod() != tcMethod {
-		t.Error("method is not equals")
-		return
+		t.Fatal("method is not equals")
 	}
 
 	for k, v := range request.GetHead() {
 		v1, ok := tgHead[k]
 		if !ok {
-			t.Errorf("header undefined '%s'", k)
-			return
+			t.Fatalf("header undefined '%s'", k)
 		}
 		if v != v1 {
-			t.Errorf("header is invalid '%s'", v1)
-			return
+			t.Fatalf("header is invalid '%s'", v1)
 		}
 	}
 
 	if !bytes.Equal(request.GetBody(), tgBody) {
-		t.Error("body is not equals")
-		return
+		t.Fatal("body is not equals")
 	}
 }
 
@@ -121,53 +110,44 @@ func TestLoadRequest(t *testing.T) {
 
 	request1, err := LoadRequest(brequest)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	request2, err := LoadRequest(tgBRequest)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	reqStr := request2.ToString()
 	if reqStr != tgBRequest {
 		fmt.Println(reqStr)
 		fmt.Println(tgBRequest)
-		t.Error("string request is invalid")
-		return
+		t.Fatal("string request is invalid")
 	}
 
 	if request1.GetHost() != request2.GetHost() {
-		t.Error("host is not equals")
-		return
+		t.Fatal("host is not equals")
 	}
 
 	if request1.GetPath() != request2.GetPath() {
-		t.Error("path is not equals")
-		return
+		t.Fatal("path is not equals")
 	}
 
 	if request1.GetMethod() != request2.GetMethod() {
-		t.Error("method is not equals")
-		return
+		t.Fatal("method is not equals")
 	}
 
 	for k, v := range request1.GetHead() {
 		v1, ok := request2.GetHead()[k]
 		if !ok {
-			t.Errorf("header undefined '%s'", k)
-			return
+			t.Fatalf("header undefined '%s'", k)
 		}
 		if v != v1 {
-			t.Errorf("header is invalid '%s'", v1)
-			return
+			t.Fatalf("header is invalid '%s'", v1)
 		}
 	}
 
 	if !bytes.Equal(request1.GetBody(), request2.GetBody()) {
-		t.Error("body is not equals")
-		return
+		t.Fatal("body is not equals")
 	}
 }

@@ -19,8 +19,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SDatabaseError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -32,8 +31,7 @@ func TestDatabase(t *testing.T) {
 
 	db, err := NewKeyValueDB(tcPath)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() { _ = db.Close() }()
 
@@ -43,34 +41,28 @@ func TestDatabase(t *testing.T) {
 	rel := NewRelation(iam, friend)
 	err1 := db.Push(rel, NewMessage(true, []byte(tcBody)))
 	if err1 != nil {
-		t.Error(err1)
-		return
+		t.Fatal(err1)
 	}
 
 	size := db.Size(rel)
 	if size != 1 {
-		t.Error("size != 1")
-		return
+		t.Fatal("size != 1")
 	}
 
 	msgs, err := db.Load(rel, 0, size)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(msgs) != 1 {
-		t.Error("len(msgs) != 1")
-		return
+		t.Fatal("len(msgs) != 1")
 	}
 
 	if !msgs[0].IsIncoming() {
-		t.Error("!msgs[0].IsIncoming()")
-		return
+		t.Fatal("!msgs[0].IsIncoming()")
 	}
 
 	if !bytes.Equal(msgs[0].GetMessage(), []byte(tcBody)) {
-		t.Error("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
-		return
+		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 	}
 }

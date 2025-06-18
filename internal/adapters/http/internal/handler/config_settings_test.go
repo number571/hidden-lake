@@ -20,13 +20,11 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 
 	handler := HandleConfigSettingsAPI(&tsConfig{}, log)
 	if err := settingsAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := settingsAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 }
 

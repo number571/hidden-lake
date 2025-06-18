@@ -32,15 +32,13 @@ func TestFriendsChatWS(t *testing.T) {
 
 	conn, err := websocket.Dial("ws://"+addr, "ws", "http://localhost")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() { _ = conn.Close() }()
 
 	subAddr := "abc"
 	if err := websocket.JSON.Send(conn, msgdata.SSubscribe{FAddress: subAddr}); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	time.Sleep(100 * time.Millisecond)
@@ -54,20 +52,16 @@ func TestFriendsChatWS(t *testing.T) {
 
 	cMsg := msgdata.SMessage{}
 	if err := websocket.JSON.Receive(conn, &cMsg); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if pMsg.FFileName != cMsg.FFileName {
-		t.Error(`pMsg.FFileName != cMsg.FFileName`)
-		return
+		t.Fatal(`pMsg.FFileName != cMsg.FFileName`)
 	}
 	if pMsg.FFileData != cMsg.FFileData {
-		t.Error(`pMsg.FFileData != cMsg.FFileData`)
-		return
+		t.Fatal(`pMsg.FFileData != cMsg.FFileData`)
 	}
 	if pMsg.FTimestamp != cMsg.FTimestamp {
-		t.Error(`pMsg.FTimestamp != cMsg.FTimestamp`)
-		return
+		t.Fatal(`pMsg.FTimestamp != cMsg.FTimestamp`)
 	}
 }

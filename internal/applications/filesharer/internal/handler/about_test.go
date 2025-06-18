@@ -18,8 +18,7 @@ func TestAboutPage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -36,13 +35,11 @@ func TestAboutPage(t *testing.T) {
 	})
 
 	if err := aboutRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := aboutRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 }
 

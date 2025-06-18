@@ -52,29 +52,23 @@ func TestHandleRequestAPI2(t *testing.T) {
 		newTsHiddenLakeNode(newTsNode(true, true, true)),
 	)
 	if err := requestAPIRequestPutOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := requestAPIRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := requestAPIRequestReqData(handler); err == nil {
-		t.Error("request success with invalid reqData")
-		return
+		t.Fatal("request success with invalid reqData")
 	}
 	if err := requestAPIRequestNotFound(handler); err == nil {
-		t.Error("request success with not found alias_name")
-		return
+		t.Fatal("request success with not found alias_name")
 	}
 	if err := requestAPIRequestDecode(handler); err == nil {
-		t.Error("request success with invalid decode")
-		return
+		t.Fatal("request success with invalid decode")
 	}
 	if err := requestAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 
 	handlerx := HandleNetworkRequestAPI(
@@ -84,12 +78,10 @@ func TestHandleRequestAPI2(t *testing.T) {
 		newTsHiddenLakeNode(newTsNode(false, false, true)),
 	)
 	if err := requestAPIRequestPutOK(handlerx); err == nil {
-		t.Error("request success with put error")
-		return
+		t.Fatalf("request success with put error")
 	}
 	if err := requestAPIRequestPostOK(handlerx); err == nil {
-		t.Error("request success with post error")
-		return
+		t.Fatalf("request success with post error")
 	}
 
 	handlery := HandleNetworkRequestAPI(
@@ -99,8 +91,7 @@ func TestHandleRequestAPI2(t *testing.T) {
 		newTsHiddenLakeNode(newTsNode(true, true, false)),
 	)
 	if err := requestAPIRequestPostOK(handlery); err == nil {
-		t.Error("request success with post error (load response)")
-		return
+		t.Fatal("request success with post error (load response)")
 	}
 }
 
@@ -291,8 +282,7 @@ func testSend(t *testing.T, client hls_client.IClient) {
 			Build(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -311,14 +301,12 @@ func testFetch(t *testing.T, client hls_client.IClient) {
 			Build(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	body := res.GetBody()
 	if string(body) != "{\"echo\":\"hello, world!\",\"error\":0}\n" {
-		t.Errorf("result does not match; got '%s'", string(body))
-		return
+		t.Fatalf("result does not match; got '%s'", string(body))
 	}
 }
 

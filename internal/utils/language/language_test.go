@@ -8,16 +8,14 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SLanguageError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
 func TestPanicFromLanguage(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -27,51 +25,41 @@ func TestPanicFromLanguage(t *testing.T) {
 func TestToLanguage(t *testing.T) {
 	lang, err := ToILanguage("ENG")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if lang != CLangENG {
-		t.Error("got invalid ENG")
-		return
+		t.Fatal("got invalid ENG")
 	}
 
 	lang, err = ToILanguage("RUS")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if lang != CLangRUS {
-		t.Error("got invalid RUS")
-		return
+		t.Fatal("got invalid RUS")
 	}
 
 	lang, err = ToILanguage("ESP")
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if lang != CLangESP {
-		t.Error("got invalid ESP")
-		return
+		t.Fatal("got invalid ESP")
 	}
 
 	if _, err := ToILanguage("???"); err == nil {
-		t.Error("success unknown type to language")
-		return
+		t.Fatal("success unknown type to language")
 	}
 }
 
 func TestFromLanguage(t *testing.T) {
 	if FromILanguage(CLangENG) != "ENG" {
-		t.Error("got invalid ENG")
-		return
+		t.Fatal("got invalid ENG")
 	}
 	if FromILanguage(CLangRUS) != "RUS" {
-		t.Error("got invalid RUS")
-		return
+		t.Fatal("got invalid RUS")
 	}
 	if FromILanguage(CLangESP) != "ESP" {
-		t.Error("got invalid ESP")
-		return
+		t.Fatal("got invalid ESP")
 	}
 }

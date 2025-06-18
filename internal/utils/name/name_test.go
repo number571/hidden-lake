@@ -5,21 +5,17 @@ import "testing"
 func TestServiceName(t *testing.T) {
 	serviceName := LoadServiceName("hidden-lake-service")
 	if serviceName.Format() != "Hidden Lake Service" {
-		t.Error("invalid format name")
-		return
+		t.Fatal("invalid format name")
 	}
 	if serviceName.Short() != "HLS" {
-		t.Error("invalid short name")
-		return
+		t.Fatal("invalid short name")
 	}
 
 	serviceWithSubName := LoadServiceName("hidden-lake-adapters=common")
 	if serviceWithSubName.Format() != "Hidden Lake Adapters = Common" {
-		t.Error("invalid format name (with subname)")
-		return
+		t.Fatal("invalid format name (with subname)")
 	}
 	if serviceWithSubName.Short() != "HLA=common" {
-		t.Error("invalid short name (with subname)")
-		return
+		t.Fatal("invalid short name (with subname)")
 	}
 }

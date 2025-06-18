@@ -26,24 +26,19 @@ func TestHandleIncomingExecHTTP(t *testing.T) {
 	handler := HandleIncomingExecHTTP(ctx, &tsConfig{}, log)
 
 	if err := incomingRequestMethod(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := incomingRequestInvalidPassword(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := incomingRequestNotGraphicChars(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := incomingRequestExecCommand(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := incomingRequestSuccess(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

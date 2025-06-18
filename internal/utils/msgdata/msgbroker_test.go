@@ -23,12 +23,10 @@ func TestMessageBroker(t *testing.T) {
 
 	msg, ok := msgReceiver.Consume(addr)
 	if !ok {
-		t.Error("got not ok recv")
-		return
+		t.Fatal("got not ok recv")
 	}
 	if msg.FTextData != msgData {
-		t.Error("msg.FTextData != msgData")
-		return
+		t.Fatal("msg.FTextData != msgData")
 	}
 
 	msgReceiver.Close(addr)
@@ -43,14 +41,12 @@ func TestMessageBroker(t *testing.T) {
 	go func() {
 		if _, ok := msgReceiver2.Consume(addr); ok {
 			t.Error("success consume with canceled")
-			return
 		}
 	}()
 
 	time.Sleep(100 * time.Millisecond)
 	if _, ok := msgReceiver2.Consume(addr); !ok {
-		t.Error("got not ok recv")
-		return
+		t.Fatal("got not ok recv")
 	}
 }
 
@@ -62,8 +58,7 @@ func TestReplaceTextToEmoji(t *testing.T) {
 	want := "hello 🙂 !"
 
 	if got != want {
-		t.Error("got incorrect replace text to emoji")
-		return
+		t.Fatal("got incorrect replace text to emoji")
 	}
 }
 
@@ -75,7 +70,6 @@ func TestReplaceTextToURLs(t *testing.T) {
 	want := "hello <a style='background-color:#b9cdcf;color:black;' target='_blank' href='https://github.com/number571/github'>https://github.com/number571/github</a> !"
 
 	if got != want {
-		t.Error("got incorrect replace text to urls")
-		return
+		t.Fatal("got incorrect replace text to urls")
 	}
 }

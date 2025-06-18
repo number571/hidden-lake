@@ -8,8 +8,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SStdError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -18,23 +17,18 @@ func TestLogging(t *testing.T) {
 
 	logging, err := LoadLogging([]string{"info", "erro"})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if !logging.HasInfo() {
-		t.Error("failed has info")
-		return
+		t.Fatal("failed has info")
 	}
 	if logging.HasWarn() {
-		t.Error("failed has warn")
-		return
+		t.Fatal("failed has warn")
 	}
 	if !logging.HasErro() {
-		t.Error("failed has erro")
-		return
+		t.Fatal("failed has erro")
 	}
 	if _, err := LoadLogging([]string{"info", "unknown"}); err == nil {
-		t.Error("success load invalid logging")
-		return
+		t.Fatal("success load invalid logging")
 	}
 }

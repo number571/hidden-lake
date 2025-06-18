@@ -21,8 +21,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SConfigError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -41,35 +40,29 @@ func TestConfig(t *testing.T) {
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if cfg.GetLogging().HasInfo() != true {
-		t.Error("invalid logging info")
-		return
+		t.Fatal("invalid logging info")
 	}
 
 	if cfg.GetLogging().HasWarn() != false {
-		t.Error("invalid logging warn")
-		return
+		t.Fatal("invalid logging warn")
 	}
 
 	if cfg.GetLogging().HasErro() != true {
-		t.Error("invalid logging erro")
-		return
+		t.Fatal("invalid logging erro")
 	}
 
 	services := cfg.GetServices()
 	if len(services) != 3 {
-		t.Error("settings value is invalid")
-		return
+		t.Fatal("settings value is invalid")
 	}
 
 	for i := range services {
 		if services[i] != tgServices[i] {
-			t.Error("got invalid service")
-			return
+			t.Fatal("got invalid service")
 		}
 	}
 }
@@ -81,8 +74,7 @@ func TestComplexConfig(t *testing.T) {
 	defer func() { _ = os.Remove(configFile) }()
 
 	if err := testIncorrectConfig(configFile); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

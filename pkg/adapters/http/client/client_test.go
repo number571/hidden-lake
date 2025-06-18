@@ -8,7 +8,6 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SClientError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }

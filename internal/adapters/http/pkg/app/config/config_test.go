@@ -90,8 +90,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SConfigError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -106,19 +105,16 @@ func TestBuildConfig(t *testing.T) {
 
 	cfg, err := LoadConfig(config1File)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	defer func() { _ = os.Remove(config2File) }()
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err == nil {
-		t.Error("success build already exist config")
-		return
+		t.Fatal("success build already exist config")
 	}
 }
 
@@ -159,96 +155,78 @@ func TestComplexConfig(t *testing.T) {
 	defer func() { _ = os.Remove(configFile) }()
 
 	if err := testIncorrectConfig(configFile); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	testConfigDefaultInit(configFile)
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if cfg.GetSettings().GetWorkSizeBits() != tcWorkSize {
-		t.Error("settings work size is invalid")
-		return
+		t.Fatal("settings work size is invalid")
 	}
 
 	if cfg.GetSettings().GetMessageSizeBytes() != tcMessageSize {
-		t.Error("settings message size is invalid")
-		return
+		t.Fatal("settings message size is invalid")
 	}
 
 	if cfg.GetSettings().GetNetworkKey() != tcNetwork {
-		t.Error("settings message network_key is invalid")
-		return
+		t.Fatal("settings message network_key is invalid")
 	}
 
 	if cfg.GetSettings().GetDatabaseEnabled() != tcDatabaseEnabled {
-		t.Error("settings message database_enabled is invalid")
-		return
+		t.Fatal("settings message database_enabled is invalid")
 	}
 
 	if cfg.GetSettings().GetReadTimeout() != time.Duration(tcReadTimeoutMS)*time.Millisecond {
-		t.Error("settings message read_timeout_ms is invalid")
-		return
+		t.Fatal("settings message read_timeout_ms is invalid")
 	}
 
 	if cfg.GetSettings().GetWriteTimeout() != time.Duration(tcWriteTimeoutMS)*time.Millisecond {
-		t.Error("settings message write_timeout_ms is invalid")
-		return
+		t.Fatal("settings message write_timeout_ms is invalid")
 	}
 
 	if cfg.GetSettings().GetHandleTimeout() != time.Duration(tcHandleTimeoutMS)*time.Millisecond {
-		t.Error("settings message handle_timeout_ms is invalid")
-		return
+		t.Fatal("settings message handle_timeout_ms is invalid")
 	}
 
 	if cfg.GetLogging().HasInfo() != tcLogging {
-		t.Error("logging.info is invalid")
-		return
+		t.Fatal("logging.info is invalid")
 	}
 
 	if cfg.GetLogging().HasErro() != tcLogging {
-		t.Error("logging.erro is invalid")
-		return
+		t.Fatal("logging.erro is invalid")
 	}
 
 	if cfg.GetLogging().HasWarn() == tcLogging {
-		t.Error("logging.warn is invalid")
-		return
+		t.Fatal("logging.warn is invalid")
 	}
 
 	if cfg.GetSettings().GetNetworkKey() != tcNetwork {
-		t.Error("network is invalid")
-		return
+		t.Fatal("network is invalid")
 	}
 
 	if cfg.GetAddress().GetExternal() != tcAddressExternal {
-		t.Error("address_external is invalid")
-		return
+		t.Fatal("address_external is invalid")
 	}
 
 	if cfg.GetAddress().GetInternal() != tcAddressInternal {
-		t.Error("address_internal is invalid")
-		return
+		t.Fatal("address_internal is invalid")
 	}
 
 	if len(cfg.GetEndpoints()) != 2 {
-		t.Error("len connections != 2")
-		return
+		t.Fatal("len connections != 2")
 	}
 	for i, v := range cfg.GetEndpoints() {
 		if v != tgEndpoints[i] {
-			t.Errorf("connection '%d' is invalid", i)
-			return
+			t.Fatalf("connection '%d' is invalid", i)
 		}
 	}
 	for i, v := range cfg.GetConnections() {
 		if v != tgConnections[i] {
-			t.Errorf("connection '%d' is invalid", i)
-			return
+			t.Fatalf("connection '%d' is invalid", i)
 		}
 	}
 }
@@ -263,31 +241,26 @@ func TestWrapper(t *testing.T) {
 
 	cfg, err := LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(cfg.GetConnections()) == 0 {
-		t.Error("list of connections should be is not nil for tests")
-		return
+		t.Fatal("list of connections should be is not nil for tests")
 	}
 
 	wrapper := NewWrapper(cfg)
 	_ = wrapper.GetEditor().UpdateConnections(nil)
 
 	if len(cfg.GetConnections()) != 0 {
-		t.Error("connections is not nil for current config")
-		return
+		t.Fatal("connections is not nil for current config")
 	}
 
 	cfg, err = LoadConfig(configFile)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(cfg.GetConnections()) != 0 {
-		t.Error("connections is not nil for loaded config")
-		return
+		t.Fatal("connections is not nil for loaded config")
 	}
 }

@@ -17,8 +17,7 @@ func TestGetAliasesList(t *testing.T) {
 	aliases := GetAliasesList(mapKeys)
 	for _, alias := range aliases {
 		if _, ok := mapKeys[alias]; !ok {
-			t.Error("alias not found in map")
-			return
+			t.Fatal("alias not found in map")
 		}
 	}
 }
@@ -34,11 +33,9 @@ func TestGetAliasByPubKey(t *testing.T) {
 	}
 	alias := GetAliasByPubKey(mapKeys, bbbKey)
 	if alias != "BBB" {
-		t.Error("get invalid alias name")
-		return
+		t.Fatal("get invalid alias name")
 	}
 	if GetAliasByPubKey(mapKeys, asymmetric.NewPrivKey().GetPubKey()) != "" {
-		t.Error("get alias by unknown pub key")
-		return
+		t.Fatal("get alias by unknown pub key")
 	}
 }

@@ -51,8 +51,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -63,13 +62,11 @@ func TestInitApp(t *testing.T) {
 	defer testDeleteFiles(tcTestdataPath)
 
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, err := InitApp([]string{"--path", "./not_exist/path/to/hls"}, tgFlags); err == nil {
-		t.Error("success init app with undefined dir key")
-		return
+		t.Fatal("success init app with undefined dir key")
 	}
 }
 
@@ -97,8 +94,7 @@ func TestApp(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	privKey := asymmetric.NewPrivKey()
@@ -110,7 +106,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 
@@ -131,26 +126,22 @@ func TestApp(t *testing.T) {
 		},
 	)
 	if err1 != nil {
-		t.Error(err1)
-		return
+		t.Fatal(err1)
 	}
 
 	// Check public key of node
 	pubKey, err := client.GetPubKey(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if pubKey.ToString() != privKey.GetPubKey().ToString() {
-		t.Errorf("public keys are not equals")
-		return
+		t.Fatalf("public keys are not equals")
 	}
 
 	// try twice running
 	go func() {
 		if err := app.Run(ctx); err == nil {
 			t.Error("success double run")
-			return
 		}
 	}()
 
@@ -165,7 +156,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx1); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 	time.Sleep(100 * time.Millisecond)

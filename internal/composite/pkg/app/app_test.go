@@ -48,8 +48,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -80,8 +79,7 @@ func TestApp(t *testing.T) {
 		FServices: []string{"test"},
 	})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	app := NewApp(cfg, []types.IRunner{&tsRunner{}})
@@ -92,7 +90,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 
@@ -102,7 +99,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx); err == nil {
 			t.Error("success double run")
-			return
 		}
 	}()
 
@@ -117,7 +113,6 @@ func TestApp(t *testing.T) {
 	go func() {
 		if err := app.Run(ctx1); err != nil && !errors.Is(err, context.Canceled) {
 			t.Error(err)
-			return
 		}
 	}()
 	time.Sleep(100 * time.Millisecond)
@@ -130,12 +125,10 @@ func TestInitApp(t *testing.T) {
 	defer testDeleteFiles(tcTestdataPath)
 
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if _, err := InitApp([]string{"--path", "./not_exist/path/to/hlc"}, tgFlags); err == nil {
-		t.Error("success init app with undefined dir key")
-		return
+		t.Fatal("success init app with undefined dir key")
 	}
 }

@@ -23,8 +23,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -33,8 +32,7 @@ func TestPanicNode(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -70,38 +68,31 @@ func TestSettings(t *testing.T) {
 	sett := NewSettings(nil)
 
 	if sett.GetAdapterSettings().GetMessageSizeBytes() != defaultNetwork.FMessageSizeBytes {
-		t.Error("got invalid message size by default settings")
-		return
+		t.Fatal("got invalid message size by default settings")
 	}
 
 	if sett.GetAdapterSettings().GetWorkSizeBits() != defaultNetwork.FWorkSizeBits {
-		t.Error("got invalid message size by default settings")
-		return
+		t.Fatal("got invalid message size by default settings")
 	}
 
 	if sett.GetFetchTimeout() != CDefaultFetchTimeout {
-		t.Error("got invalid fetch timeout by default settings")
-		return
+		t.Fatal("got invalid fetch timeout by default settings")
 	}
 
 	if sett.GetQueuePeriod() != CDefaultQueuePeriod {
-		t.Error("got invalid queue period by default settings")
-		return
+		t.Fatal("got invalid queue period by default settings")
 	}
 
 	if sett.GetQBPConsumers() != 1 {
-		t.Error("got invalid qbp_consumers by default")
-		return
+		t.Fatal("got invalid qbp_consumers by default")
 	}
 
 	if sett.GetPowParallel() != 1 {
-		t.Error("got invalid pow_parallel by default")
-		return
+		t.Fatal("got invalid pow_parallel by default")
 	}
 
 	if sett.GetServiceName() != "_" {
-		t.Error("got invalid service_name by default")
-		return
+		t.Fatal("got invalid service_name by default")
 	}
 
 	sett.GetLogger().PushInfo("___")
@@ -143,8 +134,7 @@ func TestHiddenLakeNode(t *testing.T) {
 		request.NewRequestBuilder().WithMethod(http.MethodPost).Build(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	rsp, err := node1.FetchRequest(
@@ -153,12 +143,10 @@ func TestHiddenLakeNode(t *testing.T) {
 		request.NewRequestBuilder().WithMethod(http.MethodPut).Build(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if rsp.GetCode() != http.StatusAccepted {
-		t.Error("got invalid status code")
-		return
+		t.Fatal("got invalid status code")
 	}
 }
 

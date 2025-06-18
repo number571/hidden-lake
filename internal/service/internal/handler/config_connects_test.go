@@ -48,25 +48,20 @@ func TestHandleConnectsAPI2(t *testing.T) {
 
 	handler := HandleConfigConnectsAPI(ctx, httpLogger, epClients)
 	if err := connectsAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := connectsAPIRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := connectsAPIRequestDeleteOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := connectsAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 	if err := connectsAPIRequestPostConnect(handler); err == nil {
-		t.Error("request success with invalid connect")
-		return
+		t.Fatal("request success with invalid connect")
 	}
 
 	epClientsx := []client.IClient{
@@ -75,16 +70,13 @@ func TestHandleConnectsAPI2(t *testing.T) {
 
 	handlerx := HandleConfigConnectsAPI(ctx, httpLogger, epClientsx)
 	if err := connectsAPIRequestOK(handlerx); err == nil {
-		t.Error("request success with invalid get connections")
-		return
+		t.Fatal("request success with invalid get connections")
 	}
 	if err := connectsAPIRequestPostOK(handlerx); err == nil {
-		t.Error("request success with invalid update editor (post)")
-		return
+		t.Fatal("request success with invalid update editor (post)")
 	}
 	if err := connectsAPIRequestDeleteOK(handlerx); err == nil {
-		t.Error("request success with invalid update editor (delete)")
-		return
+		t.Fatal("request success with invalid update editor (delete)")
 	}
 }
 
@@ -208,27 +200,23 @@ func TestHandleConnectsAPI(t *testing.T) {
 func testGetConnects(t *testing.T, client hls_client.IClient) {
 	connects, err := client.GetConnections(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if len(connects) != 2 || connects[0] != tgConnections[0] {
-		t.Error("len(connects) != 2 || connects[0] != tgConnections[0]")
-		return
+		t.Fatal("len(connects) != 2 || connects[0] != tgConnections[0]")
 	}
 }
 
 func testAddConnect(t *testing.T, client hls_client.IClient) {
 	if err := client.AddConnection(context.Background(), "tcp://aaa"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 
 func testDelConnect(t *testing.T, client hls_client.IClient) {
 	if err := client.DelConnection(context.Background(), "tcp://bbb"); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

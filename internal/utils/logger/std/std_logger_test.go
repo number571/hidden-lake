@@ -27,14 +27,12 @@ func TestGetLogFunc(t *testing.T) {
 
 	f := GetLogFunc()
 	if l := f("string"); l != "string" {
-		t.Error("incorrect logger work")
-		return
+		t.Fatal("incorrect logger work")
 	}
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 	_ = f(struct{}{})

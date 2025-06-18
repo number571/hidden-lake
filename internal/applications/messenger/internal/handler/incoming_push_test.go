@@ -26,8 +26,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -42,32 +41,26 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
 
 	if err := incomingPushRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := incomingPushRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 	if err := incomingPushRequestPubKey(handler); err == nil {
-		t.Error("request success with invalid pubkey")
-		return
+		t.Fatal("request success with invalid pubkey")
 	}
 	if err := incomingPushRequestMessage(handler); err == nil {
-		t.Error("request success with invalid message")
-		return
+		t.Fatal("request success with invalid message")
 	}
 
 	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false, true))
 	if err := incomingPushRequestOK(handlerx); err == nil {
-		t.Error("request success with invalid my pubkey")
-		return
+		t.Fatal("request success with invalid my pubkey")
 	}
 	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true, true))
 	if err := incomingPushRequestOK(handlery); err == nil {
-		t.Error("request success with invalid push message")
-		return
+		t.Fatal("request success with invalid push message")
 	}
 }
 

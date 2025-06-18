@@ -31,14 +31,12 @@ func TestLayer3(t *testing.T) {
 		msg.ToBytes(),
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	rawMsgBytes, err := ExtractMessageBody(rawMsg)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	decMsg, err := layer1.LoadMessage(
@@ -48,19 +46,16 @@ func TestLayer3(t *testing.T) {
 		rawMsgBytes,
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	decMsgBytes, err := ExtractMessageBody(decMsg)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if !bytes.Equal(decMsgBytes, body) {
-		t.Error("invalid body bytes")
-		return
+		t.Fatal("invalid body bytes")
 	}
 }
 
@@ -74,8 +69,7 @@ func TestInvalidLayer3(t *testing.T) {
 		payload.NewPayload32(1, []byte{123}),
 	)
 	if _, err := ExtractMessageBody(msg1); err == nil {
-		t.Error("success extract message with invalid salt size")
-		return
+		t.Fatal("success extract message with invalid salt size")
 	}
 
 	msg2 := layer1.NewMessage(
@@ -88,8 +82,7 @@ func TestInvalidLayer3(t *testing.T) {
 		)),
 	)
 	if _, err := ExtractMessageBody(msg2); err == nil {
-		t.Error("success extract message with invalid crc32 sum")
-		return
+		t.Fatal("success extract message with invalid crc32 sum")
 	}
 }
 
@@ -99,7 +92,6 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }

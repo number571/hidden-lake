@@ -23,15 +23,13 @@ func TestGetMessage(t *testing.T) {
 
 	ctx := context.Background()
 	if _, err := utils.GetMessageLimit(ctx, newTsHLSClient(true, false)); err == nil {
-		t.Error("success get message limit with settings failed")
-		return
+		t.Fatal("success get message limit with settings failed")
 	}
 
 	hlsClient := newTsHLSClient(true, false)
 	hlsClient.fPldSize = 10
 	if _, err := utils.GetMessageLimit(ctx, hlsClient); err == nil {
-		t.Error("success get message limit with payload limit")
-		return
+		t.Fatal("success get message limit with payload limit")
 	}
 }
 
@@ -47,8 +45,7 @@ func TestFriendsChatPage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -70,63 +67,50 @@ func TestFriendsChatPage(t *testing.T) {
 
 	handler := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(true, true))
 	if err := friendsChatRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsChatRequestPostOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsChatRequestPutOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := friendsChatRequestPostPingOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := friendsChatRequestPutSizeFile(handler); err == nil {
-		t.Error("request success with invalid file size")
-		return
+		t.Fatal("request success with invalid file size")
 	}
 	if err := friendsChatRequestHasNotGraphicChars(handler); err == nil {
-		t.Error("request success with invalid (has not grpahic chars)")
-		return
+		t.Fatal("request success with invalid (has not grpahic chars)")
 	}
 	if err := friendsChatRequestInputMessage(handler); err == nil {
-		t.Error("request success with invalid input_message")
-		return
+		t.Fatal("request success with invalid input_message")
 	}
 	if err := friendsChatRequestAliasNameNotFound(handler); err == nil {
-		t.Error("request success with not found alias_name")
-		return
+		t.Fatal("request success with not found alias_name")
 	}
 	if err := friendsChatRequestAliasName(handler); err == nil {
-		t.Error("request success with invalid alias_name")
-		return
+		t.Fatal("request success with invalid alias_name")
 	}
 	if err := friendsChatRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 
 	handlerx := FriendsChatPage(ctx, httpLogger, cfg, db, newTsHLSClient(false, true))
 	if err := friendsChatRequestPostOK(handlerx); err == nil {
-		t.Error("request success with invalid my pubkey")
-		return
+		t.Fatal("request success with invalid my pubkey")
 	}
 
 	handlery := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(false, true), newTsHLSClient(true, true))
 	if err := friendsChatRequestPostOK(handlery); err == nil {
-		t.Error("request success with invalid push message")
-		return
+		t.Fatal("request success with invalid push message")
 	}
 
 	handlerz := FriendsChatPage(ctx, httpLogger, cfg, newTsDatabase(true, false), newTsHLSClient(true, true))
 	if err := friendsChatRequestOK(handlerz); err == nil {
-		t.Error("request success with invalid load message")
-		return
+		t.Fatal("request success with invalid load message")
 	}
 }
 

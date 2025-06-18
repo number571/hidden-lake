@@ -20,8 +20,7 @@ func TestStoragePage(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -40,26 +39,21 @@ func TestStoragePage(t *testing.T) {
 	ctx := context.Background()
 	handler := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
 	if err := storageRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := storageRequestDownloadOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := storageRequest404(handler); err == nil {
-		t.Error("request success with invalid path")
-		return
+		t.Fatal("request success with invalid path")
 	}
 	if err := storageRequestAliasName(handler); err == nil {
-		t.Error("request success with alias_name")
-		return
+		t.Fatal("request success with alias_name")
 	}
 	handlerx := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(false, true))
 	if err := storageRequestOK(handlerx); err == nil {
-		t.Error("request success with fetch failed")
-		return
+		t.Fatal("request success with fetch failed")
 	}
 }
 

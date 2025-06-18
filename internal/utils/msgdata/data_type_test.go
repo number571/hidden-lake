@@ -16,86 +16,68 @@ func TestDataType(t *testing.T) {
 	t.Parallel()
 
 	if text := unwrapText([]byte{}); text != "" {
-		t.Error("unwrapText([]byte{}) = ok")
-		return
+		t.Fatal("unwrapText([]byte{}) = ok")
 	}
 	if unwrapText(wrapText("\001")) != "" {
-		t.Error(`unwrapText: wrapText("\001")) != ""`)
-		return
+		t.Fatal(`unwrapText: wrapText("\001")) != ""`)
 	}
 
 	if file, _ := unwrapFile([]byte{}); file != "" {
-		t.Error("unwrapFile([]byte{}) = ok")
-		return
+		t.Fatal("unwrapFile([]byte{}) = ok")
 	}
 	if file, _ := unwrapFile([]byte{cIsFile, 0x01}); file != "" {
-		t.Error("unwrapFile([]byte{cIsFile, 0x01}) = ok")
-		return
+		t.Fatal("unwrapFile([]byte{cIsFile, 0x01}) = ok")
 	}
 
 	if isText([]byte{}) {
-		t.Error("isText([]byte{}) = ok")
-		return
+		t.Fatal("isText([]byte{}) = ok")
 	}
 	if isFile([]byte{}) {
-		t.Error("isFile([]byte{}) = ok")
-		return
+		t.Fatal("isFile([]byte{}) = ok")
 	}
 
 	wt := wrapText(tcText)
 	if !isText(wt) {
-		t.Error("wrapText: !isText(wt)")
-		return
+		t.Fatal("wrapText: !isText(wt)")
 	}
 	if isFile(wt) {
-		t.Error("wrapText: isFile(wt)")
-		return
+		t.Fatal("wrapText: isFile(wt)")
 	}
 	if wt[0] != cIsText {
-		t.Error("wrapText:  wt[0] != cIsText")
-		return
+		t.Fatal("wrapText:  wt[0] != cIsText")
 	}
 	if unwrapText(wt) != tcTextEscaped {
-		t.Error("wrapText: unwrapText(wt, true) != tcTextEscaped")
-		return
+		t.Fatal("wrapText: unwrapText(wt, true) != tcTextEscaped")
 	}
 
 	wf := wrapFile(tcFile, []byte(tcText))
 	if !isFile(wf) {
-		t.Error("wrapFile: !isFile(wf)")
-		return
+		t.Fatal("wrapFile: !isFile(wf)")
 	}
 	if isText(wf) {
-		t.Error("wrapFile: isText(wf)")
-		return
+		t.Fatal("wrapFile: isText(wf)")
 	}
 	if wf[0] != cIsFile || wf[len(tcFile)+1] != cIsFile {
-		t.Error("wrapFile: wf[0] != cIsFile || wf[len(tcFile)+1] != cIsFile")
-		return
+		t.Fatal("wrapFile: wf[0] != cIsFile || wf[len(tcFile)+1] != cIsFile")
 	}
 	if f, b := unwrapFile(wf); f != tcFile || b != base64.StdEncoding.EncodeToString([]byte(tcText)) {
-		t.Error("wrapText: f, b := unwrapFile(wf, false); f != tcFile || b != base64.StdEncoding.EncodeToString([]byte(tcText))")
-		return
+		t.Fatal("wrapText: f, b := unwrapFile(wf, false); f != tcFile || b != base64.StdEncoding.EncodeToString([]byte(tcText))")
 	}
 
 	wfx := wrapFile(tcFile+"<b>some</b>"+".txt", []byte(tcText))
 	if f, b := unwrapFile(wfx); f != tcFileEscaped || b != base64.StdEncoding.EncodeToString([]byte(tcText)) {
-		t.Error("wrapText: f, b := unwrapFile(wf, true); f != tcFileEscaped || b != base64.StdEncoding.EncodeToString([]byte(tcText))")
-		return
+		t.Fatal("wrapText: f, b := unwrapFile(wf, true); f != tcFileEscaped || b != base64.StdEncoding.EncodeToString([]byte(tcText))")
 	}
 
 	if f, b := unwrapFile([]byte{1}); f != "" || b != "" {
-		t.Error(`wrapFile: f, b := unwrapFile([]byte{1}, false); f != "" || b != ""`)
-		return
+		t.Fatal(`wrapFile: f, b := unwrapFile([]byte{1}, false); f != "" || b != ""`)
 	}
 	wf2 := wrapFile(tcFile+"\x01"+".txt", []byte(tcText))
 	if f, b := unwrapFile(wf2); f != "" || b != "" {
-		t.Error(`wrapFile: f, b := unwrapFile(wf2, false); f != "" || b != ""`)
-		return
+		t.Fatal(`wrapFile: f, b := unwrapFile(wf2, false); f != "" || b != ""`)
 	}
 	wf3 := wrapFile(tcFile, []byte{})
 	if f, b := unwrapFile(wf3); f != "" || b != "" {
-		t.Error(`wrapFile: f, b := unwrapFile(wf3, false); f != "" || b != ""`)
-		return
+		t.Fatal(`wrapFile: f, b := unwrapFile(wf3, false); f != "" || b != ""`)
 	}
 }

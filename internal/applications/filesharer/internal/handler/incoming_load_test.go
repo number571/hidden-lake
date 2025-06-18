@@ -22,8 +22,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	httpLogger := std_logger.NewStdLogger(
@@ -37,43 +36,34 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 
 	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, true))
 	if err := incomingLoadRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := incomingLoadRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 	if err := incomingLoadRequestChunk(handler); err == nil {
-		t.Error("request success with invalid chunk")
-		return
+		t.Fatal("request success with invalid chunk")
 	}
 	if err := incomingLoadRequestName(handler); err == nil {
-		t.Error("request success with invalid name")
-		return
+		t.Fatal("request success with invalid name")
 	}
 	if err := incomingLoadRequestFile(handler); err == nil {
-		t.Error("request success with invalid file")
-		return
+		t.Fatal("request success with invalid file")
 	}
 	if err := incomingLoadRequestSize(handler); err == nil {
-		t.Error("request success with invalid size")
-		return
+		t.Fatal("request success with invalid size")
 	}
 	if err := incomingLoadRequestNotFound(handler); err == nil {
-		t.Error("request success with not found file")
-		return
+		t.Fatal("request success with not found file")
 	}
 	if err := incomingLoadRequestBigChunk(handler); err == nil {
-		t.Error("request success with big chunk number")
-		return
+		t.Fatal("request success with big chunk number")
 	}
 
 	handlerx := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, false))
 	if err := incomingLoadRequestOK(handlerx); err == nil {
-		t.Error("success request with failed get message size")
-		return
+		t.Fatal("success request with failed get message size")
 	}
 }
 

@@ -20,13 +20,11 @@ func TestCloser(t *testing.T) {
 		testNewCloser(false),
 	})
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := CloseAll([]io.Closer{testNewCloser(true)}); err == nil {
-		t.Error("nothing error?")
-		return
+		t.Fatal("nothing error?")
 	}
 }
 

@@ -16,8 +16,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SClientError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -31,8 +30,7 @@ func TestClient(t *testing.T) {
 
 	ctx := context.Background()
 	if err := client.PushMessage(ctx, "alias_name", []byte("hello, world!")); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

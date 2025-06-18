@@ -11,7 +11,7 @@ func TestGetPubKey(t *testing.T) {
 
 	hash := GetPubKeyHash(asymmetric.LoadPubKey(tcPubKey))
 	if hash != "f1f6a4b1c893be76f30a489b5281c2549aef830a2033ffe331604462883bfc989e5c8d42a9e8604473690415399dccc5" {
-		t.Error("hash of public key is invalid")
+		t.Fatal("hash of public key is invalid")
 	}
 }
 

@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `*_test.go`: replace t.Error(); return -> t.Fatal()
+
 <!-- ... -->
 
 ## v1.8.6

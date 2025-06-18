@@ -19,8 +19,7 @@ func TestPanicFlagsGet(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -35,8 +34,7 @@ func TestPanicFlagsBuilder(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -52,19 +50,15 @@ func TestFlagsValidate(t *testing.T) {
 	t.Parallel()
 
 	if ok := tgFlags.Validate([]string{"-p"}); ok {
-		t.Error("success with void string value")
-		return
+		t.Fatal("success with void string value")
 	}
 	if ok := tgFlags.Validate([]string{"-q"}); ok {
-		t.Error("success with not found flag")
-		return
+		t.Fatal("success with not found flag")
 	}
 	if ok := tgFlags.Validate([]string{"-p", "."}); !ok {
-		t.Error("failed with success string flag")
-		return
+		t.Fatal("failed with success string flag")
 	}
 	if ok := tgFlags.Validate([]string{"-v"}); !ok {
-		t.Error("failed with success bool flag")
-		return
+		t.Fatal("failed with success bool flag")
 	}
 }

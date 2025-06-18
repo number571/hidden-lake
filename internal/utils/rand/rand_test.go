@@ -7,8 +7,7 @@ func TestRandIntn(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 		if UniformUint64n(10) >= 10 {
-			t.Error("get invalid rand value")
-			return
+			t.Fatal("get invalid rand value")
 		}
 	}
 }

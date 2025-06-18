@@ -24,24 +24,19 @@ func TestHandleNetworkOnlineAPI(t *testing.T) {
 
 	handler := HandleNetworkOnlineAPI(log, &tsHTTPAdapter{})
 	if err := networkOnlineRequestMethod(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := networkOnlineRequestGET(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := networkOnlineRequestURLParse(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := networkOnlineRequestURLScheme(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := networkOnlineRequestDelConnection(handler, http.StatusNoContent); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

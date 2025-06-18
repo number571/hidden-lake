@@ -21,12 +21,10 @@ func TestHandleIncomingPingHTTP(t *testing.T) {
 	handler := HandleIncomingPingHTTP(&tsConfig{}, log)
 
 	if err := incomingRequestMethod(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if err := incomingRequestSuccess(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 }
 

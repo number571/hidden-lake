@@ -16,8 +16,7 @@ func TestPanicLogger(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 
@@ -35,8 +34,7 @@ func TestLogger(t *testing.T) {
 		nil,
 	)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	req.RemoteAddr = "127.0.0.1:55555"
 
@@ -44,33 +42,27 @@ func TestLogger(t *testing.T) {
 	logFunc := GetLogFunc()
 
 	if l := logFunc(logBuilder); l != tcFmtLog {
-		t.Error("got invalid format")
-		return
+		t.Fatal("got invalid format")
 	}
 
 	logGetter := logBuilder.Build()
 	if logGetter.GetConn() != "127.0.0.1:55555" {
-		t.Error("got conn != conn")
-		return
+		t.Fatal("got conn != conn")
 	}
 
 	if logGetter.GetMessage() != "hello_world" {
-		t.Error("got message != message")
-		return
+		t.Fatal("got message != message")
 	}
 
 	if logGetter.GetMethod() != "GET" {
-		t.Error("got method != method")
-		return
+		t.Fatal("got method != method")
 	}
 
 	if logGetter.GetPath() != "/api/index" {
-		t.Error("got path != path")
-		return
+		t.Fatal("got path != path")
 	}
 
 	if logGetter.GetService() != "TST" {
-		t.Error("got service != service")
-		return
+		t.Fatal("got service != service")
 	}
 }

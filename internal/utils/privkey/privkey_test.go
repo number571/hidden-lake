@@ -27,8 +27,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SAppError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -40,39 +39,31 @@ func TestGetPrivKey(t *testing.T) {
 
 	privKey, err := GetPrivKey(tcPrivKeyPath)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if privKey.ToString() != asymmetric.LoadPrivKey(tcPrivKey).ToString() {
-		t.Error("diff private keys")
-		return
+		t.Fatal("diff private keys")
 	}
 
 	if _, err := GetPrivKey(tcInvalidPrivKeyPath); err == nil {
-		t.Error("success get invalid private key")
-		return
+		t.Fatal("success get invalid private key")
 	}
 	if _, err := GetPrivKey("./random/not_exist/path/57199u140291724y121291d1/priv.key"); err == nil {
-		t.Error("success get private key with not exist directory")
-		return
+		t.Fatal("success get private key with not exist directory")
 	}
 	if _, err := GetPrivKey(tcTestdataDirPath); err == nil {
-		t.Error("success get private key as directory")
-		return
+		t.Fatal("success get private key as directory")
 	}
 
 	tmpPrivKey, err := GetPrivKey(tcTmpPrivKeyPath)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	tmpPrivKeyX, err := GetPrivKey(tcTmpPrivKeyPath)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if tmpPrivKey.ToString() != tmpPrivKeyX.ToString() {
-		t.Error("diff tmp private keys")
-		return
+		t.Fatal("diff tmp private keys")
 	}
 }

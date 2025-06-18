@@ -9,8 +9,7 @@ func TestPanicFlagValue(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 	argsSlice := []string{
@@ -29,33 +28,27 @@ func TestBoolFlagValue(t *testing.T) {
 	}
 
 	if !NewFlagBuilder("--key").Build().GetBoolValue(argsSlice) {
-		t.Error("!key")
-		return
+		t.Fatal("!key")
 	}
 
 	if !NewFlagBuilder("123").Build().GetBoolValue(argsSlice) {
-		t.Error("!123")
-		return
+		t.Fatal("!123")
 	}
 
 	if !NewFlagBuilder("-name").Build().GetBoolValue(argsSlice) {
-		t.Error("!name")
-		return
+		t.Fatal("!name")
 	}
 
 	if !NewFlagBuilder("value").Build().GetBoolValue(argsSlice) {
-		t.Error("!value")
-		return
+		t.Fatal("!value")
 	}
 
 	if !NewFlagBuilder("571").Build().GetBoolValue(argsSlice) {
-		t.Error("!571")
-		return
+		t.Fatal("!571")
 	}
 
 	if NewFlagBuilder("undefined").Build().GetBoolValue(argsSlice) {
-		t.Error("success get undefined value")
-		return
+		t.Fatal("success get undefined value")
 	}
 }
 
@@ -70,22 +63,18 @@ func TestStringFlagValue(t *testing.T) {
 	}
 
 	if NewFlagBuilder("--key").Build().GetStringValue(argsSlice) != "123" {
-		t.Error("key != 123")
-		return
+		t.Fatal("key != 123")
 	}
 
 	if NewFlagBuilder("-name").Build().GetStringValue(argsSlice) != "number" {
-		t.Error("name != number")
-		return
+		t.Fatal("name != number")
 	}
 
 	if NewFlagBuilder("value").Build().GetStringValue(argsSlice) != "571" {
-		t.Error("value != 571")
-		return
+		t.Fatal("value != 571")
 	}
 
 	if NewFlagBuilder("unknown").WithDefinedValue("7").Build().GetStringValue(argsSlice) != "7" {
-		t.Error("unknown != 7")
-		return
+		t.Fatal("unknown != 7")
 	}
 }

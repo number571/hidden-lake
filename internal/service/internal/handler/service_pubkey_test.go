@@ -34,13 +34,11 @@ func TestHandlePubKeyAPI2(t *testing.T) {
 
 	handler := HandleServicePubKeyAPI(httpLogger, newTsNode(true, true, true))
 	if err := pubkeyAPIRequestOK(handler); err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if err := pubkeyAPIRequestMethod(handler); err == nil {
-		t.Error("request success with invalid method")
-		return
+		t.Fatal("request success with invalid method")
 	}
 }
 
@@ -101,12 +99,10 @@ func TestHandlePubKeyAPI(t *testing.T) {
 
 	pubKey, err := client.GetPubKey(context.Background())
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 
 	if pubKey.ToString() != node.GetQBProcessor().GetClient().GetPrivKey().GetPubKey().ToString() {
-		t.Error("public keys not equals")
-		return
+		t.Fatal("public keys not equals")
 	}
 }

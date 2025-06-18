@@ -33,8 +33,7 @@ func TestError(t *testing.T) {
 	str := "value"
 	err := &SHandlerError{str}
 	if err.Error() != errPrefix+str {
-		t.Error("incorrect err.Error()")
-		return
+		t.Fatal("incorrect err.Error()")
 	}
 }
 
@@ -45,40 +44,33 @@ func TestRequestHandler(t *testing.T) {
 	node := &tsNode{}
 
 	if _, err := RequestHandler(testHandler(2))(ctx, node, tgPubKey, []byte{}); err == nil {
-		t.Error("success handle with invalid bytes")
-		return
+		t.Fatal("success handle with invalid bytes")
 	}
 
 	msg := []byte("hello")
 	req := request.NewRequestBuilder().WithBody(msg).Build().ToBytes()
 	rspb, err := RequestHandler(testHandler(2))(ctx, node, tgPubKey, req)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	rsp, err := response.LoadResponse(rspb)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if !bytes.Equal(rsp.GetBody(), msg) {
-		t.Error("invalid response bytes")
-		return
+		t.Fatal("invalid response bytes")
 	}
 
 	rspb2, err := RequestHandler(testHandler(1))(ctx, node, tgPubKey, req)
 	if err != nil {
-		t.Error(err)
-		return
+		t.Fatal(err)
 	}
 	if rspb2 != nil {
-		t.Error("get response bytes with return nil")
-		return
+		t.Fatal("get response bytes with return nil")
 	}
 
 	if _, err := RequestHandler(testHandler(0))(ctx, node, tgPubKey, req); err == nil {
-		t.Error("success handle with invalid response")
-		return
+		t.Fatal("success handle with invalid response")
 	}
 }
 

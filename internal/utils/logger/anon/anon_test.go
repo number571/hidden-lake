@@ -64,8 +64,7 @@ func TestLoggerPanic(t *testing.T) {
 func testLoggerPanic(t *testing.T, f logger.ILogFunc, n int) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Error("nothing panics")
-			return
+			t.Fatal("nothing panics")
 		}
 	}()
 	switch n {
@@ -89,8 +88,7 @@ func TestLogger(t *testing.T) {
 	logFunc := GetLogFunc()
 	if l := logFunc(logger); l != tcFmtLog {
 		t.Log(l)
-		t.Error("result fmtLog != tcFmtLog")
-		return
+		t.Fatal("result fmtLog != tcFmtLog")
 	}
 }
 
