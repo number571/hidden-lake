@@ -90,7 +90,7 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 		Addr:         address,
 		Handler:      http.TimeoutHandler(mux, p.fSettings.GetHandleTimeout(), "handle timeout"),
 		ReadTimeout:  p.fSettings.GetReadTimeout(),
-		WriteTimeout: p.fSettings.GetWriteTimeout(),
+		WriteTimeout: p.fSettings.GetHandleTimeout(),
 	}
 	go func() {
 		<-pCtx.Done()

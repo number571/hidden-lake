@@ -22,7 +22,6 @@ const (
 	tcAddressExternal = "external_address"
 	tcAddressInternal = "internal_address"
 	tcReadTimeoutMS   = 6_000
-	tcWriteTimeoutMS  = 7_000
 	tcHandleTimeoutMS = 9_000
 )
 
@@ -44,7 +43,6 @@ const (
   network_key: %s
   database_enabled: %t
   read_timeout_ms: %d
-  write_timeout_ms: %d
   handle_timeout_ms: %d
 logging:
   - info
@@ -69,7 +67,6 @@ func testNewConfigString() string {
 		tcNetwork,
 		tcDatabaseEnabled,
 		tcReadTimeoutMS,
-		tcWriteTimeoutMS,
 		tcHandleTimeoutMS,
 		tcAddressExternal,
 		tcAddressInternal,
@@ -182,10 +179,6 @@ func TestComplexConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetReadTimeout() != time.Duration(tcReadTimeoutMS)*time.Millisecond {
 		t.Fatal("settings message read_timeout_ms is invalid")
-	}
-
-	if cfg.GetSettings().GetWriteTimeout() != time.Duration(tcWriteTimeoutMS)*time.Millisecond {
-		t.Fatal("settings message write_timeout_ms is invalid")
 	}
 
 	if cfg.GetSettings().GetHandleTimeout() != time.Duration(tcHandleTimeoutMS)*time.Millisecond {

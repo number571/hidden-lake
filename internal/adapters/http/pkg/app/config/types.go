@@ -31,7 +31,6 @@ type IConfigSettings interface {
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
 	GetReadTimeout() time.Duration
-	GetWriteTimeout() time.Duration
 	GetHandleTimeout() time.Duration
 }
 

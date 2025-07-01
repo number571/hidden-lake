@@ -90,7 +90,6 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 				FServeSettings: &hla_http.SServeSettings{
 					FAddress:       pCfg.GetAddress().GetInternal(),
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
-					FWriteTimeout:  buildSettings.GetHttpHandleTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},
 			}),

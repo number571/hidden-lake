@@ -21,6 +21,5 @@ type ISettings interface {
 	GetAdapterSettings() adapters.ISettings
 	GetAddress() string
 	GetReadTimeout() time.Duration
-	GetWriteTimeout() time.Duration
 	GetHandleTimeout() time.Duration
 }

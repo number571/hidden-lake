@@ -8,7 +8,6 @@ import (
 
 const (
 	CDefaultReadTimeout   = 5 * time.Second
-	CDefaultWriteTimeout  = 5 * time.Second
 	CDefaultHandleTimeout = 5 * time.Second
 )
 
@@ -25,7 +24,6 @@ type sSettings struct {
 type SServeSettings struct {
 	FAddress       string
 	FReadTimeout   time.Duration
-	FWriteTimeout  time.Duration
 	FHandleTimeout time.Duration
 }
 
@@ -46,9 +44,6 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings.FReadTimeout == 0 {
 		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
 	}
-	if p.FServeSettings.FWriteTimeout == 0 {
-		p.FServeSettings.FWriteTimeout = CDefaultWriteTimeout
-	}
 	if p.FServeSettings.FHandleTimeout == 0 {
 		p.FServeSettings.FHandleTimeout = CDefaultHandleTimeout
 	}
@@ -65,10 +60,6 @@ func (p *sSettings) GetAdapterSettings() adapters.ISettings {
 
 func (p *sSettings) GetReadTimeout() time.Duration {
 	return p.FServeSettings.FReadTimeout
-}
-
-func (p *sSettings) GetWriteTimeout() time.Duration {
-	return p.FServeSettings.FWriteTimeout
 }
 
 func (p *sSettings) GetHandleTimeout() time.Duration {

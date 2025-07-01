@@ -9,10 +9,12 @@
 ### CHANGES
 
 - `*_test.go`: replace t.Error(); return -> t.Fatal()
+- `cmd/hla/hla_http`: delete write_timeout_ms
 
 ### BUG FIXES
 
 - `cmd/*`: fix print information about version, help
+- `cmd/hla/hla_http`: delete request_timeout_ms
 
 <!-- ... -->
 
