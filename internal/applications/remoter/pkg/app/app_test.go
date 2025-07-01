@@ -16,9 +16,9 @@ import (
 var (
 	tgFlags = flag.NewFlagsBuilder(
 		flag.NewFlagBuilder("-v", "--version").
-			WithDescription("print information about service"),
-		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print version of service"),
+		flag.NewFlagBuilder("-h", "--help").
+			WithDescription("print information about service"),
 		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefinedValue("."),

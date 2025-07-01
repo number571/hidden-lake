@@ -11,9 +11,9 @@ func ExamplePrintln() {
 		"adapts HL traffic to a custom HTTP server",
 		flag.NewFlagsBuilder(
 			flag.NewFlagBuilder("-v", "--version").
-				WithDescription("print information about service"),
-			flag.NewFlagBuilder("-h", "--help").
 				WithDescription("print version of service"),
+			flag.NewFlagBuilder("-h", "--help").
+				WithDescription("print information about service"),
 			flag.NewFlagBuilder("-p", "--path").
 				WithDescription("set path to config, database files").
 				WithDefinedValue("."),
@@ -26,8 +26,8 @@ func ExamplePrintln() {
 	// <Hidden Lake Adapter = Common (HLA=common)>
 	// Description: adapts HL traffic to a custom HTTP server
 	// Arguments:
-	// [ -v, --version ] = print information about service
-	// [ -h, --help ] = print version of service
+	// [ -v, --version ] = print version of service
+	// [ -h, --help ] = print information about service
 	// [ -p, --path ] = set path to config, database files
 	// [ -n, --network ] = set network key of connections from build
 }

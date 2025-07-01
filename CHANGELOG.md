@@ -10,6 +10,10 @@
 
 - `*_test.go`: replace t.Error(); return -> t.Fatal()
 
+### BUG FIXES
+
+- `cmd/*`: fix print information about version, help
+
 <!-- ... -->
 
 ## v1.8.6
