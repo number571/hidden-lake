@@ -14,6 +14,7 @@ _GO_TEST_LIST=\
 	go list ./... | \
 	grep -vsE '/cmd/' | \
 	grep -vsE '/examples/' | \
+	grep -vsE '/projects/' | \
 	grep -vsE '/test/prod' | \
 	grep -vsE '/test/utils' 
 

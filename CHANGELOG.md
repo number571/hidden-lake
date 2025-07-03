@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `console`: add side-project hl-chat
+
 ### CHANGES
 
 - `*_test.go`: replace t.Error(); return -> t.Fatal()
