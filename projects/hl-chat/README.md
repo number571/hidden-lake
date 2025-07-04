@@ -3,7 +3,9 @@
 ### Install
 
 ```bash
-$ go install github.com/number571/hidden-lake/projects/hl-chat/cmd/hl-chat
+$ git clone https://github.com/number571/hidden-lake
+$ cd hidden-lake/projects/hl-chat
+$ go install ./cmd/hl-chat
 ```
 
 ### Run
