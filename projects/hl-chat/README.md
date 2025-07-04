@@ -11,5 +11,5 @@ $ go install ./cmd/hl-chat
 ### Run
 
 ```bash
-$ hl-chat -n "<network-key>"
+$ hl-chat -n "<network-key>" -f "<database-file>"
 ```

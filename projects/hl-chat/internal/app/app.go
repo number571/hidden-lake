@@ -27,7 +27,8 @@ const (
 )
 
 type sApp struct {
-	fNK string
+	fDBPath     string
+	fNetworkKey string
 
 	fDB  database.IDatabase
 	fApp *tview.Application
@@ -36,17 +37,18 @@ type sApp struct {
 	fChanKey asymmetric.IPrivKey
 }
 
-func NewApp(pNK string) IApp {
+func NewApp(pNetworkKey string, pDBPath string) IApp {
 	return &sApp{
-		fNK:  pNK,
-		fApp: tview.NewApplication(),
+		fDBPath:     pDBPath,
+		fNetworkKey: pNetworkKey,
+		fApp:        tview.NewApplication(),
 	}
 }
 
 func (p *sApp) Run(ctx context.Context) error {
 	pages := tview.NewPages()
 	pages.AddAndSwitchToPage("auth", p.getAuthPage(ctx, pages), true)
-	return p.fApp.SetRoot(pages, true).SetFocus(pages).EnableMouse(true).Run()
+	return p.fApp.SetRoot(pages, true).SetFocus(pages).Run()
 }
 
 func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form {
@@ -90,7 +92,7 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 			keyBuilder := keybuilder.NewKeyBuilder(1<<20, []byte("priv"))
 			buildBytes := keyBuilder.Build(private, seedSize+dkeySize)
 			p.fPrivKey = ed25519.NewKeyFromSeed(buildBytes[:seedSize])
-			db, err := database.NewDatabase("hl_chat.db", buildBytes[seedSize:])
+			db, err := database.NewDatabase(p.fDBPath, buildBytes[seedSize:])
 			if err != nil {
 				panic(err)
 			}
@@ -123,23 +125,28 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 		SetChangedFunc(func() {
 			p.fApp.Draw()
 		})
-	textView.SetText(
-		strings.Join(
-			[]string{
-				strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""),
-				fmt.Sprintf("[yellow]Public Key: %X\n", pubKey),
-			},
-			"",
-		),
-	)
+
+	textView.SetText(strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""))
 	textView.SetFocusFunc(func() { p.fApp.SetFocus(inputField) })
 
-	node := p.getHLNode(p.fNK, textView)
+	node := p.getHLNode(p.fNetworkKey, textView)
 	go func() {
 		if err := node.Run(ctx); err != nil {
 			panic(err)
 		}
 	}()
+
+	inputField.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyUp {
+			row, column := textView.GetScrollOffset()
+			textView.ScrollTo(row-1, column)
+		}
+		if event.Key() == tcell.KeyDown {
+			row, column := textView.GetScrollOffset()
+			textView.ScrollTo(row+1, column)
+		}
+		return event
+	})
 
 	inputField.SetDoneFunc(func(key tcell.Key) {
 		if key != tcell.KeyEnter {
