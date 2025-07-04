@@ -55,32 +55,27 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 	var (
 		private = ""
 		channel = ""
-		tabbed  = false
 	)
 
 	form := tview.NewForm().
-		AddPasswordField("Private", "", 32, '*', func(text string) {
-			private = text
-		}).
-		AddPasswordField("Channel", "", 32, '*', func(text string) {
-			channel = text
-		})
+		AddPasswordField("Private", "", 32, '*', func(text string) { private = text }).
+		AddPasswordField("Channel", "", 32, '*', func(text string) { channel = text })
+
+	nextField := false
+
 	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() != tcell.KeyEnter {
 			return event
 		}
 
-		if channel == "" && !tabbed {
-			tabbed = true
+		if channel == "" && !nextField {
+			nextField = true
 			return tcell.NewEventKey(tcell.KeyTab, '_', tcell.ModNone)
 		}
 
 		{
-			const (
-				seedSize = asymmetric.CKeySeedSize
-			)
 			keyBuilder := keybuilder.NewKeyBuilder(1<<20, []byte("chan"))
-			seed := keyBuilder.Build(channel, seedSize)
+			seed := keyBuilder.Build(channel, asymmetric.CKeySeedSize)
 			p.fChanKey = asymmetric.NewPrivKeyFromSeed(seed)
 		}
 
@@ -89,13 +84,16 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 				seedSize = 32
 				dkeySize = 2 * symmetric.CCipherKeySize
 			)
+
 			keyBuilder := keybuilder.NewKeyBuilder(1<<20, []byte("priv"))
 			buildBytes := keyBuilder.Build(private, seedSize+dkeySize)
+
 			p.fPrivKey = ed25519.NewKeyFromSeed(buildBytes[:seedSize])
 			db, err := database.NewDatabase(p.fDBPath, buildBytes[seedSize:])
 			if err != nil {
 				panic(err)
 			}
+
 			p.fDB = db
 		}
 

@@ -15,7 +15,7 @@ func main() {
 	flag.Parse()
 
 	if *pv {
-		fmt.Println("v1.0.0")
+		fmt.Println("v0.0.1")
 		return
 	}
 
