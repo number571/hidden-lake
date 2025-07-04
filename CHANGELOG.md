@@ -8,7 +8,7 @@
 
 ### IMPROVEMENTS
 
-- `console`: add side-project hl-chat
+- `projects/hl-chat`: add side-project hl-chat
 
 ### CHANGES
 

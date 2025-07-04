@@ -58,18 +58,19 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 	)
 
 	form := tview.NewForm().
-		AddPasswordField("Private", "", 32, '*', func(text string) { private = text }).
-		AddPasswordField("Channel", "", 32, '*', func(text string) { channel = text })
+		AddPasswordField("[white]Private", "", 32, '*', func(text string) { private = text }).
+		AddPasswordField("[white]Channel", "", 32, '*', func(text string) { channel = text })
 
-	nextField := false
+	form.SetFieldBackgroundColor(tcell.ColorGray)
 
 	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() != tcell.KeyEnter {
+			form.SetFieldBackgroundColor(tcell.ColorGray)
 			return event
 		}
 
-		if channel == "" && !nextField {
-			nextField = true
+		if channel == "" || private == "" {
+			form.SetFieldBackgroundColor(tcell.ColorRed)
 			return tcell.NewEventKey(tcell.KeyTab, '_', tcell.ModNone)
 		}
 
