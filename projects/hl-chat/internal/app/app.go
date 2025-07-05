@@ -24,8 +24,8 @@ import (
 const (
 	cPrintNCharsPubKey     = 16
 	cHiddenLakeProjectHost = "hidden-lake-project=chat"
-	cSendMessageTemplate   = "[fuchsia][%X][white]: %s [gray]%s[white]\n"
-	cRecvMessageTeamplte   = "[aqua][%X][white]: %s [gray]%s[white]\n"
+	cSendMessageTemplate   = "[fuchsia]%X[white]: %s [gray]%s[white]\n"
+	cRecvMessageTeamplte   = "[aqua]%X[white]: %s [gray]%s[white]\n"
 )
 
 type sApp struct {
@@ -187,6 +187,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 		}
 
 		msg := database.SMessage{FSender: pubKey, FMessage: textToSend, FSendTime: time.Now()}
+
 		if err := p.fDB.Insert(channelPubKey, msg); err != nil {
 			panic(err)
 		}
