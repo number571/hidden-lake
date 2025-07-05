@@ -44,9 +44,10 @@ func (p *sApp) getHLNode(
 			func() []string { return connections },
 		),
 		func(_ context.Context, pk asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
-			if r.GetHost() != cHiddenLakeChatHost {
+			if r.GetHost() != cHiddenLakeProjectHost {
 				return nil, nil // ignore message
 			}
+
 			pubKey, ok := validateSignature(r.GetHead(), r.GetBody())
 			if !ok {
 				return nil, nil // ignore message

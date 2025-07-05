@@ -12,6 +12,5 @@
 ```bash
 $ git clone https://github.com/number571/hidden-lake
 $ cd hidden-lake/projects/hl-chat
-$ go install ./cmd/hl-chat
-$ hl-chat -n "<network-key>" -f "<database-file>"
+$ go run ./cmd/hl-chat -n "<network-key>" -f "<database-file>"
 ```

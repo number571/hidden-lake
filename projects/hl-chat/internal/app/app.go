@@ -22,10 +22,10 @@ import (
 )
 
 const (
-	cPrintNCharsPubKey   = 16
-	cHiddenLakeChatHost  = "hidden-lake-chat"
-	cSendMessageTemplate = "[fuchsia][%X][white]: %s [gray]%s[white]\n"
-	cRecvMessageTeamplte = "[aqua][%X][white]: %s [gray]%s[white]\n"
+	cPrintNCharsPubKey     = 16
+	cHiddenLakeProjectHost = "hidden-lake-project=chat"
+	cSendMessageTemplate   = "[fuchsia][%X][white]: %s [gray]%s[white]\n"
+	cRecvMessageTeamplte   = "[aqua][%X][white]: %s [gray]%s[white]\n"
 )
 
 type sApp struct {
@@ -135,7 +135,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 	}()
 
 	initText := fmt.Sprintf(
-		"%s{\n\t[yellow]Public key[white]: %X\n\t[yellow]Message size limit[white]: %d\n}\n",
+		"%s{\n\t[yellow]ED25519 public key[white]: %X\n\t[yellow]Message bytes limit[white]: %d\n}\n",
 		strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""),
 		pubKey,
 		p.getMessageLimitSize(node, p.newRequest([]byte{}).Build()),
@@ -223,7 +223,7 @@ func (p *sApp) newRequest(body []byte) request.IRequestBuilder {
 	hash := hashing.NewHMACHasher(salt, body).ToBytes()
 	sign := ed25519.Sign(p.fPrivKey, hash)
 	return request.NewRequestBuilder().
-		WithHost(cHiddenLakeChatHost).
+		WithHost(cHiddenLakeProjectHost).
 		WithHead(map[string]string{
 			"pubk": hex.EncodeToString(p.fPrivKey.Public().(ed25519.PublicKey)),
 			"salt": hex.EncodeToString(salt),
