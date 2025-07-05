@@ -14,6 +14,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/keybuilder"
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
+	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/projects/hl-chat/internal/database"
 	"github.com/rivo/tview"
@@ -53,13 +55,13 @@ func (p *sApp) Run(ctx context.Context) error {
 
 func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form {
 	var (
-		private = ""
 		channel = ""
+		private = ""
 	)
 
 	form := tview.NewForm().
-		AddPasswordField("[white]Private", "", 32, '*', func(text string) { private = text }).
-		AddPasswordField("[white]Channel", "", 32, '*', func(text string) { channel = text })
+		AddPasswordField("[white]Channel", "", 32, '*', func(text string) { channel = text }).
+		AddPasswordField("[white]Private", "", 32, '*', func(text string) { private = text })
 
 	form.SetFieldBackgroundColor(tcell.ColorGray)
 
@@ -125,15 +127,22 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 			p.fApp.Draw()
 		})
 
-	textView.SetText(strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""))
-	textView.SetFocusFunc(func() { p.fApp.SetFocus(inputField) })
-
 	node := p.getHLNode(p.fNetworkKey, textView)
 	go func() {
 		if err := node.Run(ctx); err != nil {
 			panic(err)
 		}
 	}()
+
+	initText := fmt.Sprintf(
+		"%s{\n\t[yellow]Public key[white]: %X\n\t[yellow]Message size limit[white]: %d\n}\n",
+		strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""),
+		pubKey,
+		p.getMessageLimitSize(node, p.newRequest([]byte{}).Build()),
+	)
+
+	textView.SetText(initText)
+	textView.SetFocusFunc(func() { p.fApp.SetFocus(inputField) })
 
 	inputField.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyUp {
@@ -167,23 +176,10 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 			return
 		}
 
-		salt := random.NewRandom().GetBytes(16)
-		body := []byte(textToSend)
-		hash := hashing.NewHMACHasher(salt, body).ToBytes()
-		sign := ed25519.Sign(p.fPrivKey, hash)
-
 		err := node.SendRequest(
 			ctx,
 			channelPubKey,
-			request.NewRequestBuilder().
-				WithHost(cHiddenLakeChatHost).
-				WithHead(map[string]string{
-					"pubk": hex.EncodeToString(pubKey),
-					"salt": hex.EncodeToString(salt),
-					"sign": hex.EncodeToString(sign),
-				}).
-				WithBody(body).
-				Build(),
+			p.newRequest([]byte(textToSend)).Build(),
 		)
 		if err != nil {
 			fmt.Fprintf(textView, "[red]%s[white]: %s\n", "failed send message")
@@ -211,6 +207,29 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 
 	chat.SetFocusFunc(func() { p.fApp.SetFocus(inputField) })
 	return chat
+}
+
+func (p *sApp) getMessageLimitSize(node network.IHiddenLakeNode, req request.IRequest) uint64 {
+	reqBytesLen := uint64(len(req.ToBytes()))
+	payloadLimit := node.GetOriginNode().GetQBProcessor().GetClient().GetPayloadLimit()
+	if payloadLimit < (reqBytesLen + encoding.CSizeUint64) {
+		panic("payload limit < header size of message")
+	}
+	return payloadLimit - reqBytesLen - encoding.CSizeUint64
+}
+
+func (p *sApp) newRequest(body []byte) request.IRequestBuilder {
+	salt := random.NewRandom().GetBytes(16)
+	hash := hashing.NewHMACHasher(salt, body).ToBytes()
+	sign := ed25519.Sign(p.fPrivKey, hash)
+	return request.NewRequestBuilder().
+		WithHost(cHiddenLakeChatHost).
+		WithHead(map[string]string{
+			"pubk": hex.EncodeToString(p.fPrivKey.Public().(ed25519.PublicKey)),
+			"salt": hex.EncodeToString(salt),
+			"sign": hex.EncodeToString(sign),
+		}).
+		WithBody(body)
 }
 
 func (p *sApp) getLoadMessages(pChannelPubKey asymmetric.IPubKey, pPubKey ed25519.PublicKey) []string {

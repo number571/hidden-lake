@@ -9,9 +9,12 @@ import (
 )
 
 func main() {
-	pv := flag.Bool("v", false, "print version")
-	nk := flag.String("n", "oi4r9NW9Le7fKF9d", "network key")
-	df := flag.String("f", "hl-chat.db", "database file")
+	var (
+		pv = flag.Bool("v", false, "print version")
+		nk = flag.String("n", "oi4r9NW9Le7fKF9d", "network key")
+		df = flag.String("f", "hl-chat.db", "database file")
+	)
+
 	flag.Parse()
 
 	if *pv {

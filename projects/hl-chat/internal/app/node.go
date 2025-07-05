@@ -58,8 +58,9 @@ func (p *sApp) getHLNode(
 			}
 
 			if err := p.fDB.Insert(pk, msg); err != nil {
-				panic(err)
+				return nil, nil // ignore message
 			}
+
 			fmt.Fprintf(
 				pWriter,
 				cRecvMessageTeamplte,
