@@ -240,23 +240,16 @@ func (p *sApp) getLoadMessages(pChannelPubKey asymmetric.IPubKey, pPubKey ed2551
 		panic(err)
 	}
 	for _, msg := range msgs {
-		initMsg := ""
+		tmpl := cRecvMessageTeamplte
 		if pPubKey.Equal(msg.FSender) {
-			initMsg = fmt.Sprintf(
-				cSendMessageTemplate,
-				pPubKey[:cPrintNCharsPubKey],
-				msg.FMessage,
-				msg.FSendTime.Format(time.DateTime),
-			)
-		} else {
-			initMsg = fmt.Sprintf(
-				cRecvMessageTeamplte,
-				msg.FSender[:cPrintNCharsPubKey],
-				msg.FMessage,
-				msg.FSendTime.Format(time.DateTime),
-			)
+			tmpl = cSendMessageTemplate
 		}
-		initMsgs = append(initMsgs, initMsg)
+		initMsgs = append(initMsgs, fmt.Sprintf(
+			tmpl,
+			msg.FSender[:cPrintNCharsPubKey],
+			msg.FMessage,
+			msg.FSendTime.Format(time.DateTime),
+		))
 	}
 	return initMsgs
 }
