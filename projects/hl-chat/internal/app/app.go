@@ -28,8 +28,8 @@ var (
 const (
 	cPrintNCharsPubKey     = 16
 	cHiddenLakeProjectHost = "hidden-lake-project=chat"
-	cSendMessageTemplate   = "[fuchsia]%X[white]:\n%s\n[gray]%s[white]\n\n"
-	cRecvMessageTeamplte   = "[aqua]%X[white]:\n%s\n[gray]%s[white]\n\n"
+	cSendMessageTemplate   = "[fuchsia]%X[white]\n%s\n[gray]%s[white]\n\n"
+	cRecvMessageTeamplte   = "[aqua]%X[white]\n%s\n[gray]%s[white]\n\n"
 )
 
 type sApp struct {

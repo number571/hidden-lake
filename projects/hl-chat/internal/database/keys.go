@@ -14,7 +14,7 @@ const (
 func (p *sDatabase) keyCountMsgs(pChannel asymmetric.IPubKey) []byte {
 	return []byte(fmt.Sprintf(
 		keyCountMsgsTemplate,
-		p.authKeyHash(),
+		p.fAKH,
 		pChannel.GetHasher().ToBytes(),
 	))
 }
@@ -22,7 +22,7 @@ func (p *sDatabase) keyCountMsgs(pChannel asymmetric.IPubKey) []byte {
 func (p *sDatabase) keyGetMsg(pChannel asymmetric.IPubKey, i uint64) []byte {
 	return []byte(fmt.Sprintf(
 		keyGetMsgTemplate,
-		p.authKeyHash(),
+		p.fAKH,
 		pChannel.GetHasher().ToBytes(),
 		i,
 	))

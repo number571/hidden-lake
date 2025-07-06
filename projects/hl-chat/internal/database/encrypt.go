@@ -8,10 +8,6 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 )
 
-func (p *sDatabase) authKeyHash() []byte {
-	return hashing.NewHMACHasher(p.fKey[0], []byte("hash")).ToBytes()
-}
-
 func (p *sDatabase) encryptBytes(pBytes []byte) []byte {
 	cipher := symmetric.NewCipher(p.fKey[1])
 	encMsg := cipher.EncryptBytes(pBytes)

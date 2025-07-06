@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	gp_database "github.com/number571/go-peer/pkg/storage/database"
 )
@@ -18,6 +19,7 @@ type sDatabase struct {
 	fMtx *sync.Mutex
 	fKVD gp_database.IKVDatabase
 	fKey [2][]byte
+	fAKH []byte
 }
 
 func NewDatabase(pPath string, pKey []byte) (IDatabase, error) {
@@ -28,10 +30,13 @@ func NewDatabase(pPath string, pKey []byte) (IDatabase, error) {
 	if err != nil {
 		return nil, err
 	}
+	authKey := pKey[:symmetric.CCipherKeySize]
+	encrKey := pKey[symmetric.CCipherKeySize:]
 	return &sDatabase{
 		fMtx: &sync.Mutex{},
 		fKVD: kvDB,
-		fKey: [2][]byte{pKey[:symmetric.CCipherKeySize], pKey[symmetric.CCipherKeySize:]},
+		fKey: [2][]byte{authKey, encrKey},
+		fAKH: hashing.NewHMACHasher(authKey, []byte("hash")).ToBytes(),
 	}, nil
 }
 
