@@ -25,9 +25,12 @@ func (p *sApp) getHLNode(
 	pNetworkKey string,
 	pWriter io.Writer,
 ) network.IHiddenLakeNode {
-	adapterSettings := adapters.NewSettingsByNetworkKey(pNetworkKey)
+	networkByKey, ok := build.GetNetwork(pNetworkKey)
+	if !ok {
+		panic("network key undefined")
+	}
 
-	networkByKey, _ := build.GetNetwork(pNetworkKey)
+	adapterSettings := adapters.NewSettingsByNetworkKey(pNetworkKey)
 	connections := networkByKey.FConnections.GetByScheme("tcp")
 
 	node := network.NewHiddenLakeNode(
@@ -40,7 +43,7 @@ func (p *sApp) getHLNode(
 			tcp.NewSettings(&tcp.SSettings{
 				FAdapterSettings: adapterSettings,
 			}),
-			cache.NewLRUCache(1<<10),
+			cache.NewLRUCache(2<<10),
 			func() []string { return connections },
 		),
 		func(_ context.Context, pk asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
@@ -65,13 +68,14 @@ func (p *sApp) getHLNode(
 			fmt.Fprintf(
 				pWriter,
 				cRecvMessageTeamplte,
-				pubKey[:cPrintNCharsPubKey],
+				pubKey,
 				msg.FMessage,
 				msg.FSendTime.Format(time.DateTime),
 			)
 			return nil, nil
 		},
 	)
+
 	node.GetOriginNode().GetMapPubKeys().SetPubKey(p.fChanKey.GetPubKey())
 	return node
 }

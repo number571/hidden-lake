@@ -21,11 +21,15 @@ import (
 	"github.com/rivo/tview"
 )
 
+var (
+	_ IApp = &sApp{}
+)
+
 const (
 	cPrintNCharsPubKey     = 16
 	cHiddenLakeProjectHost = "hidden-lake-project=chat"
-	cSendMessageTemplate   = "[fuchsia]%X[white]: %s [gray]%s[white]\n"
-	cRecvMessageTeamplte   = "[aqua]%X[white]: %s [gray]%s[white]\n"
+	cSendMessageTemplate   = "[fuchsia]%X[white]:\n%s\n[gray]%s[white]\n\n"
+	cRecvMessageTeamplte   = "[aqua]%X[white]:\n%s\n[gray]%s[white]\n\n"
 )
 
 type sApp struct {
@@ -135,7 +139,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 	}()
 
 	initText := fmt.Sprintf(
-		"%s{\n\t[yellow]ED25519 public key[white]: %X\n\t[yellow]Message bytes limit[white]: %d\n}\n",
+		"%s{\n\t[yellow]ED25519 public key[white]: %X\n\t[yellow]Message bytes limit[white]: %d\n}\n\n",
 		strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""),
 		pubKey,
 		p.getMessageLimitSize(node, p.newRequest([]byte{}).Build()),
@@ -195,7 +199,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 		fmt.Fprintf(
 			textView,
 			cSendMessageTemplate,
-			msg.FSender[:cPrintNCharsPubKey],
+			msg.FSender,
 			msg.FMessage,
 			msg.FSendTime.Format(time.DateTime),
 		)
@@ -246,7 +250,7 @@ func (p *sApp) getLoadMessages(pChannelPubKey asymmetric.IPubKey, pPubKey ed2551
 		}
 		initMsgs = append(initMsgs, fmt.Sprintf(
 			tmpl,
-			msg.FSender[:cPrintNCharsPubKey],
+			msg.FSender,
 			msg.FMessage,
 			msg.FSendTime.Format(time.DateTime),
 		))
