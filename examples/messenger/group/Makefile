@@ -4,18 +4,18 @@ default: copy run
 copy:
 	cp \
 		$(ROOPATH)/examples/_keys/priv_node1.key \
-		./node1_hlm/hls.key
+		./node1_hlm/hlk.key
 	cp \
 		$(ROOPATH)/examples/_keys/priv_node1.key \
-		./node2_hlm/hls.key
+		./node2_hlm/hlk.key
 	cp \
 		$(ROOPATH)/examples/_keys/priv_node1.key \
-		./node3_hlm/hls.key
+		./node3_hlm/hlk.key
 run:
 	docker-compose build
 	docker-compose up
 clean:
-	rm -f ./node1_hlm/hls.yml ./node2_hlm/hls.yml ./node3_hlm/hls.yml
+	rm -f ./node1_hlm/hlk.yml ./node2_hlm/hlk.yml ./node3_hlm/hlk.yml
 stop:
 	docker-compose down 
 	docker-compose rm -f

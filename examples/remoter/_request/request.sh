@@ -8,7 +8,7 @@ PUSH_FORMAT='{
     "receiver":"Bob",
     "req_data":{
         "method":"POST",
-		"host":"hidden-lake-remoter",
+		"host":"hidden-lake-service=remoter",
 		"path":"/exec",
         "head":{
             "Hl-Remoter-Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"

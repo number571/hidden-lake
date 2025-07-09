@@ -3,11 +3,11 @@ package name
 import "testing"
 
 func TestServiceName(t *testing.T) {
-	serviceName := LoadServiceName("hidden-lake-service")
-	if serviceName.Format() != "Hidden Lake Service" {
+	serviceName := LoadServiceName("hidden-lake-kernel")
+	if serviceName.Format() != "Hidden Lake Kernel" {
 		t.Fatal("invalid format name")
 	}
-	if serviceName.Short() != "HLS" {
+	if serviceName.Short() != "HLK" {
 		t.Fatal("invalid short name")
 	}
 

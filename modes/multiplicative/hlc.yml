@@ -5,8 +5,8 @@ logging:
 services:
 - hidden-lake-adapter=tcp
 - hidden-lake-adapter=http
-- hidden-lake-service
-# - hidden-lake-pinger
-# - hidden-lake-messenger
-# - hidden-lake-filesharer
-# - hidden-lake-remoter
+- hidden-lake-kernel
+# - hidden-lake-service=pinger
+# - hidden-lake-service=messenger
+# - hidden-lake-service=filesharer
+# - hidden-lake-service=remoter

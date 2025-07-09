@@ -4,7 +4,7 @@ PUSH_FORMAT='{
     "receiver":"Bob",
     "req_data":{
         "method":"GET",
-		"host":"hidden-lake-pinger",
+		"host":"hidden-lake-service=pinger",
 		"path":"/ping"
     }
 }';

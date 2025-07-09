@@ -6,7 +6,7 @@ PUSH_FORMAT='{
     "receiver":"Bob",
     "req_data":{
         "method":"GET",
-        "host":"hidden-lake-filesharer",
+        "host":"hidden-lake-service=filesharer",
         "path":"/list?page=0"
     }
 }';

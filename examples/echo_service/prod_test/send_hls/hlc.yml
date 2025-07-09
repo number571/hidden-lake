@@ -3,5 +3,5 @@ logging:
   - warn
   - erro
 services:
-  - hidden-lake-service
+  - hidden-lake-kernel
   - hidden-lake-adapter=tcp

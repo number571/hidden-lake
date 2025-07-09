@@ -9,11 +9,11 @@ import (
 
 	"github.com/number571/go-peer/pkg/types"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
 	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
@@ -35,11 +35,11 @@ var (
 const (
 	tcTestdataPath     = "./testdata/"
 	tcPathConfigHLC    = hlc_settings.CPathYML
-	tcPathConfigHLS    = hls_settings.CPathYML
-	tcPathConfigHLM    = hlm_settings.CPathYML
-	tcPathConfigHLP    = hlp_settings.CPathYML
+	tcPathConfigHLS    = hlk_settings.CPathYML
+	tcPathConfigHLM    = hls_messenger_settings.CPathYML
+	tcPathConfigHLP    = hls_pinger_settings.CPathYML
 	tcPathConfigHLAtcp = hla_tcp_settings.CPathYML
-	tcPathKeyHLS       = hls_settings.CPathKey
+	tcPathKeyHLS       = hlk_settings.CPathKey
 )
 
 func TestError(t *testing.T) {

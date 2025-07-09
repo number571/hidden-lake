@@ -1,0 +1,24 @@
+# settings:
+#   message_size_bytes: 0 # -> 8192
+#   work_size_bits: 0
+#   network_key: ""
+#   fetch_timeout_ms: 0 # -> 60000
+#   queue_period_ms: 0 # -> 5000
+#   pow_parallel: 0 # -> 1
+#   qbp_consumers: 0 # -> 1
+logging:
+- info
+- warn
+- erro
+address:
+  external: 127.0.0.1:9571
+  internal: 127.0.0.1:9572
+# services:
+#   hidden-lake-service=pinger: 127.0.0.1:9552
+#   hidden-lake-service=messenger: 127.0.0.1:9592
+#   hidden-lake-service=filesharer: 127.0.0.1:9542
+#   hidden-lake-service=remoter: 127.0.0.1:9532
+# endpoints:
+# - <http-address>
+# friends:
+#   <friend-name>: <public-key>

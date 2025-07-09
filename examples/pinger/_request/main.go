@@ -13,7 +13,7 @@ const (
         "receiver":"%s",
         "req_data":{
 			"method":"GET",
-			"host":"hidden-lake-pinger",
+			"host":"hidden-lake-service=pinger",
 			"path":"/ping"
 		}
 	}`

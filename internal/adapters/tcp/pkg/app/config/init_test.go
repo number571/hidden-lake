@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/number571/hidden-lake/build"
-	hls_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hlk_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 )
 
 func TestRebuild(t *testing.T) {
@@ -76,7 +76,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config3.GetAddress().GetExternal() != hls_settings.CDefaultExternalAddress {
+	if config3.GetAddress().GetExternal() != hlk_settings.CDefaultExternalAddress {
 		t.Fatal("got invalid field with exist config (3)")
 	}
 }

@@ -56,9 +56,6 @@
         <a href="https://github.com/redecentralize/alternative-internet">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Alternative-Internet" />
 		</a>
-        <a href="https://github.com/number571/awesome-anonymity">
-        	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Anonymity" />
-		</a>
 		<a href="https://vk.me/join/6Px6b0Qh/uZIK4ixUYWQm4Krepzq5xbYjYw=">
         	<img src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white" alt="VKontakte" />
 		</a>
@@ -72,7 +69,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLS` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLF`, `HLM`, `HLR` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLK` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLS=filesharer`, `HLS=messenger`, `HLS=remoter` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 ## Coverage map
 
@@ -84,9 +81,9 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 
 ## Dependencies
 
-1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hls`)
-2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hlm`)
-3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hlm,cmd/hlf`)
+1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hlk`)
+2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hls/hls_messenger`)
+3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`)
 
 ### Makefile
 
@@ -127,21 +124,21 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 ## List of applications
 
 1. Basic:
-   * [HLS](cmd/hls) - anonymizes traffic using the QB-problem
+   * [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
    * [HLC](cmd/hlc) - runs many HL services as one application
    * [HLA](cmd/hla) - adapts HL traffic to external environments
 2. Applied:
-   * [HLM](cmd/hlm) - messenger with a web interface
-   * [HLF](cmd/hlf) - file sharing with a web interface
-   * [HLR](cmd/hlr) - executes remote access commands
-   * [HLP](cmd/hlp) - ping the node to check the online status
+   * [HLS=messenger](cmd/hls/hls_messenger) - messenger with a web interface
+   * [HLS=filesharer](cmd/hls/hls_filesharer) - file sharing with a web interface
+   * [HLS=remoter](cmd/hls/hls_remoter) - executes remote access commands
+   * [HLS=pinger](cmd/hls/hls_pinger) - ping the node to check the online status
 
 ## Build and run
 
 > [!IMPORTANT]
 > As an additional level of security, it is recommended to run the Hidden Lake anonymous network in a virtual machine. This will make it possible to secure the main execution environment if vulnerabilities are found in HL, and it will also hide the operation/interaction of HL services from the main execution environment.
 
-Launching an anonymous network is primarily the launch of an anonymizing `HLS` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
+Launching an anonymous network is primarily the launch of an anonymizing `HLK` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
@@ -160,7 +157,7 @@ $ ./hlc_amd64_linux
 
 ## Production
 
-The HLS node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. 
+The HLK node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. 
 
 ```bash
 $ hlc --network oi4r9NW9Le7fKF9d
@@ -168,23 +165,23 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
 
-<p align="center"><img src="cmd/hls/images/hls_logger.gif" alt="hls_logger.gif"/></p>
+<p align="center"><img src="cmd/hlk/images/hls_logger.gif" alt="hls_logger.gif"/></p>
 
 ## Communication
 
-To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLS. To do this, you need to access the [HLS API](cmd/hls/README.md#hls-api) at the `internal` address provided in `hls.yml` (by default `localhost:9572`).
+To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLK. To do this, you need to access the [HLK API](cmd/hlk/README.md#hlk-api) at the `internal` address provided in `hlk.yml` (by default `localhost:9572`).
 
 ```bash
-$ curl -X GET 'http://localhost:9572/api/service/pubkey'
+$ curl -X GET 'http://localhost:9572/api/kernel/pubkey'
 ```
 
-After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLS API.
+After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLK API.
 
 ```bash
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating using the default `HLM` application (open `internal` address in the browser from `hlm.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLF` (file sharing), `HLR` (remote access).
+__Success__. Now you can start communicating using the default `HLS=messenger` application (open `internal` address in the browser from `hls_messenger.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLS=filesharer` (file sharing), `HLS=remoter` (remote access).
 
 ## Star History
 

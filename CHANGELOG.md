@@ -2,7 +2,7 @@
 
 <!-- ... -->
 
-## v1.8.7~
+## v1.9.0~
 
 *??? ??, ????*
 
@@ -12,8 +12,9 @@
 
 ### CHANGES
 
-- `*_test.go`: replace t.Error(); return -> t.Fatal()
+- `*_test.go`: replace {t.Error(); return} -> {t.Fatal()}
 - `cmd/hla/hla_http`: delete write_timeout_ms
+- `cmd`: renames hls -> hlk; hlm, hlf, hlr, hlp -> hls_messenger, hls_filesharer, hls_remoter, hls_pinger
 
 ### BUG FIXES
 
@@ -37,7 +38,7 @@
 - `build/settings.yml`: replace many non global values to pkgs, services, add http timeouts
 - `cmd/hls,cmd/hla_tcp,cmd/hla_http`: message_size_bytes now optionally param (used default value)
 - `modes`: rename dir configs -> modes
-- `cmd/hlr`: add check password != ""
+- `cmd/hls/hls_remoter`: add check password != ""
 
 ### BUG FIXES
 
@@ -61,7 +62,7 @@
 
 ### BUG FIXES
 
-- `cmd/hlm`: fix duplicate messages in WS receive
+- `cmd/hls/hls_messenger`: fix duplicate messages in WS receive
 
 <!-- ... -->
 
@@ -82,7 +83,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hlp`: new service - pinger
+- `cmd/hls/hls_pinger`: new service - pinger
 
 ### CHANGES
 
@@ -138,14 +139,14 @@
 - `cmd/*`: change log.Fatal -> panic (args validate)
 - `cmd/*`: add *.yml default configs
 - `cmd/hlt`: delete default config connection 127.0.0.1:9571
-- `cmd/hls,cmd/hlc`: delete default config service hidden-lake-filesharer
+- `cmd/hls,cmd/hlc`: delete default config service hidden-lake-service=filesharer
 - `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
 - `cmd/hlt,cmd/hll,cmd/hle,cmd/hla/common`: deleted
 - `go.mod`: update go-peer version: v1.7.6 -> v1.7.8
 
 ### BUG FIXES
 
-- `cmd/hlm, cmd/hlf`: rename dir _daemon -> daemon
+- `cmd/hls/hls_messenger, cmd/hls/hls_filesharer`: rename dir _daemon -> daemon
 
 <!-- ... -->
 
@@ -155,13 +156,13 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hlm`: add support URL links
+- `cmd/hls/hls_messenger`: add support URL links
 
 ### CHANGES
 
 - `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
 - `go.mod` [!]: update go-peer version: v1.7.3 -> v1.7.6
-- `cmd/hlm,cmd/hlf`: move webui static, template paths to internal/webui
+- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: move webui static, template paths to internal/webui
 - `pkg/request,pkg/response`: update interfaces: IRequestBuilder, IResponseBuilder
 - `hidden-lake`: move GVersion, GSettings, GNetworks from root dir -> to build/ dir
 - `build`: default work_size_bits=22 -> work_size_bits=0
@@ -171,7 +172,7 @@
 ### BUG FIXES
 
 - `cmd/hle, cmd/hlt, cmd/hll`: fix serviceName in handlers
-- `cmd/hlm`: fix bug downloadBase64File: filename can contains last char \
+- `cmd/hls/hls_messenger`: fix bug downloadBase64File: filename can contains last char \
 
 <!-- ... -->
 
@@ -227,15 +228,15 @@
 
 ### CHANGES
 
-- `cmd/hlm,cmd/hlf`: add HLR,HLC,HLA links to HL services in /about page
-- `cmd/hlm,cmd/hlf`: add target="_blank" to external links
-- `cmd/hlf`: file hashing: sha256 -> sha384
-- `cmd/hlm,cmd/hlf`: hash(pubkey.bytes()) -> hash(pubkey.string())
+- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: add HLS=remoter,HLC,HLA links to HL services in /about page
+- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: add target="_blank" to external links
+- `cmd/hls/hls_filesharer`: file hashing: sha256 -> sha384
+- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: hash(pubkey.bytes()) -> hash(pubkey.string())
 
 ### BUG FIXES
 
-- `cmd/hlm,cmd/hlf`: fix links to HL services in /about page
-- `cmd/hlm`: fix emoji replacer
+- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: fix links to HL services in /about page
+- `cmd/hls/hls_messenger`: fix emoji replacer
 
 <!-- ... -->
 
@@ -278,7 +279,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hlm`: add ping message
+- `cmd/hls/hls_messenger`: add ping message
 - `cmd`: RSA-4096 -> ML-KEM-768, ML-DSA-65
 
 <!-- ... -->

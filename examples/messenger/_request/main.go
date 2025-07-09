@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 
-	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
+	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
         "receiver":"%s",
         "req_data":{
 			"method":"POST",
-			"host":"hidden-lake-messenger",
+			"host":"hidden-lake-service=messenger",
 			"path":"/push",
 			"body":"%s"
 		}
@@ -71,7 +71,7 @@ func getRandomMessageType(pMessage string) []byte {
 	if random.NewRandom().GetBool() { // isText
 		return bytes.Join(
 			[][]byte{
-				{hlm_settings.CIsText},
+				{hls_messenger_settings.CIsText},
 				[]byte(pMessage),
 			},
 			[]byte{},
@@ -80,9 +80,9 @@ func getRandomMessageType(pMessage string) []byte {
 	// isFile
 	return bytes.Join(
 		[][]byte{
-			{hlm_settings.CIsFile},
+			{hls_messenger_settings.CIsFile},
 			[]byte("example.txt"),
-			{hlm_settings.CIsFile},
+			{hls_messenger_settings.CIsFile},
 			[]byte(pMessage),
 		},
 		[]byte{},

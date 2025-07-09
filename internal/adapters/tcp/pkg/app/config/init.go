@@ -7,7 +7,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -37,7 +37,7 @@ func initConfig() *SConfig {
 			FInternal: hla_settings.CDefaultInternalAddress,
 		},
 		FEndpoints: []string{
-			hls_settings.CDefaultExternalAddress,
+			hlk_settings.CDefaultExternalAddress,
 		},
 	}
 }

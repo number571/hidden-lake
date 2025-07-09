@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	hlr_settings "github.com/number571/hidden-lake/internal/applications/remoter/pkg/settings"
+	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
         "receiver":"%s",
         "req_data":{
 			"method":"POST",
-			"host":"hidden-lake-remoter",
+			"host":"hidden-lake-service=remoter",
 			"path":"/exec",
 			"head":{
 				"Hl-Remoter-Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"
@@ -35,7 +35,7 @@ func main() {
 	}()
 
 	receiver := "Bob"
-	message := fmt.Sprintf("bash%[1]s-c%[1]secho 'hello, world' >> file.txt && cat file.txt", hlr_settings.CExecSeparator)
+	message := fmt.Sprintf("bash%[1]s-c%[1]secho 'hello, world' >> file.txt && cat file.txt", hls_remoter_settings.CExecSeparator)
 
 	sendMessage(receiver, []byte(message))
 }

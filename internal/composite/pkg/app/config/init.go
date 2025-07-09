@@ -4,9 +4,9 @@ import (
 	"errors"
 	"os"
 
-	hlm_settings "github.com/number571/hidden-lake/internal/applications/messenger/pkg/settings"
-	hlp_settings "github.com/number571/hidden-lake/internal/applications/pinger/pkg/settings"
-	hls_settings "github.com/number571/hidden-lake/internal/service/pkg/settings"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
@@ -35,9 +35,9 @@ func initConfig() *SConfig {
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FServices: []string{
 			hla_tcp_settings.CServiceFullName,
-			hls_settings.CServiceFullName,
-			hlp_settings.CServiceFullName,
-			hlm_settings.CServiceFullName,
+			hlk_settings.CServiceFullName,
+			hls_pinger_settings.CServiceFullName,
+			hls_messenger_settings.CServiceFullName,
 		},
 	}
 }
