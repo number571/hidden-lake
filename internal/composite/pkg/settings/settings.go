@@ -12,7 +12,7 @@ func GetServiceName() name.IServiceName {
 
 const (
 	CServiceFullName    = "hidden-lake-composite"
-	CServiceDescription = "runs many HL services as one application"
+	CServiceDescription = "runs many HL applications as one application"
 )
 
 const (

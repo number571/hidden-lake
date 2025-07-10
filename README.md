@@ -125,7 +125,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 1. Basic:
    * [kernel](cmd/hlk) - anonymizes traffic using the QB-problem
-   * [composite](cmd/hlc) - runs many HL services as one application
+   * [composite](cmd/hlc) - runs many HL applications as one application
 2. Adapters (HLA):
    * [tcp](cmd/hla/hla_tcp) - adapts HL traffic over TCP protocol
    * [http](cmd/hla/hla_http) - adapts HL traffic over HTTP ptotocol
