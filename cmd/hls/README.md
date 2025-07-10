@@ -25,8 +25,8 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls_<service>@latest
 
 ...
 
-<p align="center"><img src="images/hla_arch.png" alt="hla_arch.png"/></p>
-<p align="center">Figure 1. Architecture of HLA</p>
+<p align="center"><img src="images/hls_arch.png" alt="hls_arch.png"/></p>
+<p align="center">Figure 1. Architecture of HLS</p>
 
 ## Supported platforms
 
