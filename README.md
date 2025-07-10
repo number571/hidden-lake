@@ -126,14 +126,14 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 1. Basic:
    * [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
    * [HLC](cmd/hlc) - runs many HL services as one application
-2. Applied:
-   * [HLS=messenger](cmd/hls/hls_messenger) - messenger with a web interface
-   * [HLS=filesharer](cmd/hls/hls_filesharer) - file sharing with a web interface
-   * [HLS=remoter](cmd/hls/hls_remoter) - executes remote access commands
-   * [HLS=pinger](cmd/hls/hls_pinger) - ping the node to check the online status
-3. Adapters:
-   * [HLA=tcp](cmd/hla/hla_tcp) - adapts HL traffic over TCP protocol
-   * [HLA=http](cmd/hla/hla_http) - adapts HL traffic over HTTP ptotocol
+2. Adapters (HLA):
+   * [tcp](cmd/hla/hla_tcp) - adapts HL traffic over TCP protocol
+   * [http](cmd/hla/hla_http) - adapts HL traffic over HTTP ptotocol
+3. Services (HLS):
+   * [messenger](cmd/hls/hls_messenger) - messenger with a web interface
+   * [filesharer](cmd/hls/hls_filesharer) - file sharing with a web interface
+   * [remoter](cmd/hls/hls_remoter) - executes remote access commands
+   * [pinger](cmd/hls/hls_pinger) - ping the node to check the online status
 
 ## Build and run
 
