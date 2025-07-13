@@ -1,6 +1,9 @@
 package settings
 
-import "github.com/number571/hidden-lake/internal/utils/name"
+import (
+	"github.com/number571/hidden-lake/internal/services"
+	"github.com/number571/hidden-lake/internal/utils/name"
+)
 
 var (
 	gServiceName = name.LoadServiceName(CServiceFullName)
@@ -11,7 +14,8 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceFullName    = "hidden-lake-service=remoter"
+	CServiceName        = "remoter"
+	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "executes remote access commands"
 )
 
