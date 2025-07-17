@@ -8,13 +8,13 @@ copy:
 	cp \
 		$(ROOPATH)/examples/_keys/priv_node2.key \
 		./node2_hlf/hlk.key
-	mkdir ./node2_hlf/hls/hls_filesharer.stg | true
-	cp $(ROOPATH)/examples/filesharer/_storage/* ./node2_hlf/hls/hls_filesharer.stg
+	mkdir ./node2_hlf/hls/hls-filesharer.stg | true
+	cp $(ROOPATH)/examples/filesharer/_storage/* ./node2_hlf/hls/hls-filesharer.stg
 run:
 	docker-compose build
 	docker-compose up
 clean:
-	rm -rf ./node2_hlf/hls/hls_filesharer.stg
+	rm -rf ./node2_hlf/hls/hls-filesharer.stg
 	rm -f ./node1_hlf/hlk.key ./node2_hlf/hlk.key
 stop:
 	docker-compose down 

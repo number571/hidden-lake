@@ -9,8 +9,8 @@ default: build move_hla remove-std
 build: 
 	for app in \
 		hlk hlc \
-		hls/hls_messenger hls/hls_filesharer hls/hls_remoter hls/hls_pinger \
-		hla/hla_tcp hla/hla_http; \
+		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger \
+		hla/hla-tcp hla/hla-http; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

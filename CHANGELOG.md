@@ -13,13 +13,14 @@
 ### CHANGES
 
 - `*_test.go`: replace {t.Error(); return} -> {t.Fatal()}
-- `cmd/hla/hla_http`: delete write_timeout_ms
-- `cmd`: renames hls -> hlk; hlm, hlf, hlr, hlp -> hls_messenger, hls_filesharer, hls_remoter, hls_pinger
+- `cmd/hla/hla-http`: delete write_timeout_ms
+- `cmd`: renames hls -> hlk; hlm, hlf, hlr, hlp -> hls-messenger, hls-filesharer, hls-remoter, hls-pinger
+- `cmd`: rename hla_tcp -> hla-tcp, hla_http -> hla-http, hls_messenger -> hls-messenger, ...
 
 ### BUG FIXES
 
 - `cmd/*`: fix print information about version, help
-- `cmd/hla/hla_http`: delete request_timeout_ms
+- `cmd/hla/hla-http`: delete request_timeout_ms
 
 <!-- ... -->
 
@@ -36,13 +37,13 @@
 - `build/networks.yml`: rename settings, default_settings -> default, default_network
 - `build/networks.yml`: delete queue_period, fetch_timeout
 - `build/settings.yml`: replace many non global values to pkgs, services, add http timeouts
-- `cmd/hls,cmd/hla_tcp,cmd/hla_http`: message_size_bytes now optionally param (used default value)
+- `cmd/hls,cmd/hla-tcp,cmd/hla-http`: message_size_bytes now optionally param (used default value)
 - `modes`: rename dir configs -> modes
-- `cmd/hls/hls_remoter`: add check password != ""
+- `cmd/hls/hls-remoter`: add check password != ""
 
 ### BUG FIXES
 
-- `cmd/hla/hla_http`: add check network mask
+- `cmd/hla/hla-http`: add check network mask
 - `cmd/hlc`: adapters now not inserted in the config if HLC run with network key
 
 <!-- ... -->
@@ -53,7 +54,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hla`: add hla_http service
+- `cmd/hla`: add hla-http service
 
 ### CHANGES
 
@@ -62,7 +63,7 @@
 
 ### BUG FIXES
 
-- `cmd/hls/hls_messenger`: fix duplicate messages in WS receive
+- `cmd/hls/hls-messenger`: fix duplicate messages in WS receive
 
 <!-- ... -->
 
@@ -83,7 +84,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hls/hls_pinger`: new service - pinger
+- `cmd/hls/hls-pinger`: new service - pinger
 
 ### CHANGES
 
@@ -96,7 +97,7 @@
 
 ### BUG FIXES
 
-- `cmd/hla/hla_tcp`: delete duplicate host add
+- `cmd/hla/hla-tcp`: delete duplicate host add
 
 <!-- ... -->
 
@@ -132,7 +133,7 @@
 ### IMPROVEMENTS
 
 - `cmd/hla`: rethink adapter's concept
-- `cmd/hla/hla_tcp`: create
+- `cmd/hla/hla-tcp`: create
 
 ### CHANGES
 
@@ -146,7 +147,7 @@
 
 ### BUG FIXES
 
-- `cmd/hls/hls_messenger, cmd/hls/hls_filesharer`: rename dir _daemon -> daemon
+- `cmd/hls/hls-messenger, cmd/hls/hls-filesharer`: rename dir _daemon -> daemon
 
 <!-- ... -->
 
@@ -156,13 +157,13 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hls/hls_messenger`: add support URL links
+- `cmd/hls/hls-messenger`: add support URL links
 
 ### CHANGES
 
 - `cmd/*`: change 'GetXxxMS() uint64' methods to 'GetXxx() time.Duration' 
 - `go.mod` [!]: update go-peer version: v1.7.3 -> v1.7.6
-- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: move webui static, template paths to internal/webui
+- `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`: move webui static, template paths to internal/webui
 - `pkg/request,pkg/response`: update interfaces: IRequestBuilder, IResponseBuilder
 - `hidden-lake`: move GVersion, GSettings, GNetworks from root dir -> to build/ dir
 - `build`: default work_size_bits=22 -> work_size_bits=0
@@ -172,7 +173,7 @@
 ### BUG FIXES
 
 - `cmd/hle, cmd/hlt, cmd/hll`: fix serviceName in handlers
-- `cmd/hls/hls_messenger`: fix bug downloadBase64File: filename can contains last char \
+- `cmd/hls/hls-messenger`: fix bug downloadBase64File: filename can contains last char \
 
 <!-- ... -->
 
@@ -228,15 +229,15 @@
 
 ### CHANGES
 
-- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: add HLS=remoter,HLC,HLA links to HL services in /about page
-- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: add target="_blank" to external links
-- `cmd/hls/hls_filesharer`: file hashing: sha256 -> sha384
-- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: hash(pubkey.bytes()) -> hash(pubkey.string())
+- `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`: add HLS=remoter,HLC,HLA links to HL services in /about page
+- `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`: add target="_blank" to external links
+- `cmd/hls/hls-filesharer`: file hashing: sha256 -> sha384
+- `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`: hash(pubkey.bytes()) -> hash(pubkey.string())
 
 ### BUG FIXES
 
-- `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`: fix links to HL services in /about page
-- `cmd/hls/hls_messenger`: fix emoji replacer
+- `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`: fix links to HL services in /about page
+- `cmd/hls/hls-messenger`: fix emoji replacer
 
 <!-- ... -->
 
@@ -279,7 +280,7 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hls/hls_messenger`: add ping message
+- `cmd/hls/hls-messenger`: add ping message
 - `cmd`: RSA-4096 -> ML-KEM-768, ML-DSA-65
 
 <!-- ... -->

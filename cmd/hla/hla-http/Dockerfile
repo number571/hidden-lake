@@ -7,7 +7,8 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
-RUN go build -o hls_remoter ./cmd/hls/hls_remoter
+RUN go build -o hla-http ./cmd/hla/hla-http
 
+ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."
-CMD ./hls_remoter --path "${SERVICE_PATH}"
+CMD ./hla-http --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}"

@@ -7,8 +7,7 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
-RUN go build -o hla_http ./cmd/hla/hla_http
+RUN go build -o hls-filesharer ./cmd/hls/hls-filesharer
 
-ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."
-CMD ./hla_http --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}"
+CMD ./hls-filesharer --path "${SERVICE_PATH}"

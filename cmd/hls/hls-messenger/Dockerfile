@@ -7,7 +7,7 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
-RUN go build -o hls_filesharer ./cmd/hls/hls_filesharer
+RUN go build -o hls-messenger ./cmd/hls/hls-messenger
 
 ENV SERVICE_PATH="."
-CMD ./hls_filesharer --path "${SERVICE_PATH}"
+CMD ./hls-messenger --path "${SERVICE_PATH}"

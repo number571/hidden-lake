@@ -13,7 +13,7 @@ HLS=messenger is an application that implements a graphical user interface (GUI)
 ## Installation
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_messenger@latest
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-messenger@latest
 ```
 
 ## How it works
@@ -34,19 +34,19 @@ Most of the code is a call to API functions from the HLK kernel. Thanks to this 
 Default build and run
 
 ```bash 
-$ go run ./cmd/hls/hls_messenger
+$ go run ./cmd/hls/hls-messenger
 
 > [INFO] 2023/06/03 15:30:31 HLS=messenger is running...
 > ...
 ```
 
 Open ports `9591` (HTTP, interface) and `9592` (HTTP, incoming).
-Creates [`./hls_messenger.yml`](./hls_messenger.yml) and `./hls_messenger.db` files.
+Creates [`./hls-messenger.yml`](./hls-messenger.yml) and `./hls-messenger.db` files.
 
 ## Running options
 
 ```bash
-$ hls_messenger --path /root
+$ hls-messenger --path /root
 # path = path to config and database files
 ```
 
@@ -71,7 +71,7 @@ To see the success of sending and receiving messages, you need to do all the sam
 <p align="center"><img src="images/hls_messenger_logger.png" alt="hls_messenger_logger.png"/></p>
 <p align="center">Figure 3. Log of the three nodes with request/response actions.</p>
 
-> More example images about HLS=messenger pages in the [cmd/hls/hls_messenger/images](images "Path to HLS=messenger images")
+> More example images about HLS=messenger pages in the [cmd/hls/hls-messenger/images](images "Path to HLS=messenger images")
 
 ## Pages
 

@@ -20,8 +20,8 @@ const (
 )
 
 const (
-	CPathYML = "hls_messenger.yml"
-	CPathDB  = "hls_messenger.db"
+	CPathYML = "hls-messenger.yml"
+	CPathDB  = "hls-messenger.db"
 )
 
 const (

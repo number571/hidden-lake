@@ -13,14 +13,14 @@ HLS=filesharer is an application that implements a graphical user interface (GUI
 ## Installation
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_filesharer@latest
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-filesharer@latest
 ```
 
 ## How it works
 
 Most of the code is a call to API functions from the HLK kernel. Thanks to this approach, implicit authorization of users is formed from the state of the anonymizing service.
 
-Unlike applications such as HLK and HLS=messenger, the HLS=filesharer application does not have a database. Instead, the storage is used, represented by the usual `hls_filesharer.stg` directory.
+Unlike applications such as HLK and HLS=messenger, the HLS=filesharer application does not have a database. Instead, the storage is used, represented by the usual `hls-filesharer.stg` directory.
 
 <p align="center"><img src="images/hls_filesharer_download.gif" alt="hls_filesharer_download.gif"/></p>
 <p align="center">Figure 1. Example of download file in HLS=filesharer (x2 speed).</p>
@@ -38,15 +38,15 @@ File transfer is limited by the bandwidth of HLK itself. If we take into account
 Default build and run
 
 ```bash 
-$ go run ./cmd/hls/hls_filesharer
+$ go run ./cmd/hls/hls-filesharer
 
 > [INFO] 2023/06/03 15:30:31 HLS=filesharer is running...
 > ...
 ```
 
 Open ports `9541` (HTTP, interface) and `9542` (HTTP, incoming).
-Creates [`./hls_filesharer.yml`](./hls_filesharer.yml) and `./hls_filesharer.stg` files.
-The directory `hls_filesharer.stg` stores all shared/loaded files. 
+Creates [`./hls-filesharer.yml`](./hls-filesharer.yml) and `./hls-filesharer.stg` files.
+The directory `hls-filesharer.stg` stores all shared/loaded files. 
 
 ## Running options
 
@@ -72,4 +72,4 @@ Than open browser on `localhost:8080`. It is a `node1_hlf`. This node is a Alice
 
 To see the another side of communication, you need to do all the same operations, but with `localhost:7070` as `node2_hlf`. This node will be Bob.
 
-> More example images about HLS=filesharer pages in the [cmd/hls/hls_filesharer/images](images "Path to HLS=filesharer images")
+> More example images about HLS=filesharer pages in the [cmd/hls/hls-filesharer/images](images "Path to HLS=filesharer images")

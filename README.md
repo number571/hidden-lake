@@ -82,8 +82,8 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 ## Dependencies
 
 1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hlk`)
-2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hls/hls_messenger`)
-3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls_messenger,cmd/hls/hls_filesharer`)
+2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hls/hls-messenger`)
+3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`)
 
 ### Makefile
 
@@ -127,13 +127,13 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [kernel](cmd/hlk) - anonymizes traffic using the QB-problem
    * [composite](cmd/hlc) - runs many HL applications as one application
 2. Adapters (HLA):
-   * [tcp](cmd/hla/hla_tcp) - adapts HL traffic over TCP protocol
-   * [http](cmd/hla/hla_http) - adapts HL traffic over HTTP ptotocol
+   * [tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
+   * [http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
 3. Services (HLS):
-   * [messenger](cmd/hls/hls_messenger) - messenger with a web interface
-   * [filesharer](cmd/hls/hls_filesharer) - file sharing with a web interface
-   * [remoter](cmd/hls/hls_remoter) - executes remote access commands
-   * [pinger](cmd/hls/hls_pinger) - ping the node to check the online status
+   * [messenger](cmd/hls/hls-messenger) - messenger with a web interface
+   * [filesharer](cmd/hls/hls-filesharer) - file sharing with a web interface
+   * [remoter](cmd/hls/hls-remoter) - executes remote access commands
+   * [pinger](cmd/hls/hls-pinger) - ping the node to check the online status
 
 ## Build and run
 
@@ -167,7 +167,7 @@ $ hlc --network oi4r9NW9Le7fKF9d
 
 You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
 
-<p align="center"><img src="cmd/hlk/images/hls_logger.gif" alt="hls_logger.gif"/></p>
+<p align="center"><img src="cmd/hlk/images/hlk_logger.gif" alt="hlk_logger.gif"/></p>
 
 ## Communication
 
@@ -183,7 +183,7 @@ After receiving the public key, it must be transferred to the future interlocuto
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name": "friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating using the default `HLS=messenger` application (open `internal` address in the browser from `hls_messenger.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLS=filesharer` (file sharing), `HLS=remoter` (remote access).
+__Success__. Now you can start communicating using the default `HLS=messenger` application (open `internal` address in the browser from `hls-messenger.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLS=filesharer` (file sharing), `HLS=remoter` (remote access).
 
 ## Star History
 

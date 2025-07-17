@@ -9,7 +9,7 @@ The `Hidden Lake Service (Pinger)` allows you to ping a node to see if a partici
 ## Installation
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_pinger@latest
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-pinger@latest
 ```
 
 ## How it works
@@ -37,14 +37,14 @@ func handler() {
 Default build and run
 
 ```bash 
-$ go run ./cmd/hls/hls_pinger
+$ go run ./cmd/hls/hls-pinger
 
 > [INFO] 2023/06/03 15:30:31 HLS=pinger is running...
 > ...
 ```
 
 Open port `9552` (HTTP, incoming).
-Creates [`./hls_pinger.yml`](./hls_pinger.yml) file.
+Creates [`./hls-pinger.yml`](./hls-pinger.yml) file.
 
 ## Running options
 

@@ -20,7 +20,7 @@ const (
 )
 
 const (
-	CPathYML = "hls_pinger.yml"
+	CPathYML = "hls-pinger.yml"
 )
 
 const (

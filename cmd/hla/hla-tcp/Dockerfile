@@ -7,7 +7,8 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 COPY ./ ./
-RUN go build -o hls_pinger ./cmd/hls/hls_pinger
+RUN go build -o hla-tcp ./cmd/hla/hla-tcp
 
+ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."
-CMD ./hls_pinger --path "${SERVICE_PATH}"
+CMD ./hla-tcp --path "${SERVICE_PATH}" --network "${SERVICE_NETWORK}"

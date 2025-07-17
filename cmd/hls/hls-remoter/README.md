@@ -14,7 +14,7 @@ The `Hidden Lake Service (Remoter)` this is a service that provides the ability 
 ## Installation
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_remoter@latest
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-remoter@latest
 ```
 
 ## How it works
@@ -42,19 +42,19 @@ The `[@remoter-separator]` label means that the arguments are separated for the 
 Default build and run
 
 ```bash 
-$ go run ./cmd/hls/hls_remoter
+$ go run ./cmd/hls/hls-remoter
 
 > [INFO] 2023/06/03 15:30:31 HLS=remoter is running...
 > ...
 ```
 
 Open port `9532` (HTTP, incoming).
-Creates [`./hls_remoter.yml`](./hls_remoter.yml) file.
+Creates [`./hls-remoter.yml`](./hls-remoter.yml) file.
 
 ## Running options
 
 ```bash
-$ hls_remoter --path /root
+$ hls-remoter --path /root
 # path = path to config
 ```
 

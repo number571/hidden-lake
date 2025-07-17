@@ -8,8 +8,8 @@
 
 ## List of adapters
 
-1. [HLA=tcp](hla_tcp) - adapts HL traffic to a custom TCP connection
-2. [HLA=http](hla_http) - adapts HL traffic to a custom HTTP connection
+1. [HLA=tcp](hla-tcp) - adapts HL traffic to a custom TCP connection
+2. [HLA=http](hla-http) - adapts HL traffic to a custom HTTP connection
 
 ## Installation
 
@@ -43,7 +43,7 @@ $ go run ./cmd/hla/hla_<proto>
 > ...
 ```
 
-Creates [`./hla_<proto>.yml`](./hla_tcp/hla_tcp.yml) file (as example `tcp`).
+Creates [`./hla_<proto>.yml`](./hla-tcp/hla-tcp.yml) file (as example `tcp`).
 
 ## Running options
 

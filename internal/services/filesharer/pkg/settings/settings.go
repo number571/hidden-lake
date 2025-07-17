@@ -20,8 +20,8 @@ const (
 )
 
 const (
-	CPathYML = "hls_filesharer.yml"
-	CPathSTG = "hls_filesharer.stg"
+	CPathYML = "hls-filesharer.yml"
+	CPathSTG = "hls-filesharer.stg"
 )
 
 const (
