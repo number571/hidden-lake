@@ -3,9 +3,9 @@ GC=go build
 ROOPATH=..
 BINPATH=$(ROOPATH)/bin
 
-.PHONY: default build move_hla remove-std clean 
+.PHONY: default build move_hla move_hls remove-std clean 
 
-default: build move_hla remove-std
+default: build move_hla move_hls remove-std
 build: 
 	for app in \
 		hlk hlc \
@@ -30,6 +30,9 @@ build:
 move_hla:
 	mv $(BINPATH)/hla/* $(BINPATH)/
 	rm -r $(BINPATH)/hla
+move_hls:
+	mv $(BINPATH)/hls/* $(BINPATH)/
+	rm -r $(BINPATH)/hls
 remove-std:
 	make -C $(BINPATH) remove-std
 
