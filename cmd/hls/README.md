@@ -2,6 +2,8 @@
 
 > Hidden Lake Services
 
+<img src="images/hls_logo.png" alt="hls_logo.png"/>
+
 `Hidden Lake Services` are applied applications that perform specific tasks.
 
 ## List of services

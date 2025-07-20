@@ -2,6 +2,8 @@
 
 > Hidden Lake Projects
 
+<img src="images/hlp_logo.png" alt="hlp_logo.png"/>
+
 `Hidden Lake Projects` are an offshoot of the development from the original project. The purpose of these projects is to create monolithic (most often console-based) applications without reference to services and microservice architecture in particular.
 
 ## List of projects
