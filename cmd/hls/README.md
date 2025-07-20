@@ -1,55 +1,10 @@
 # HLS
 
-> Hidden Lake Services
-
-<img src="images/hls_logo.png" alt="hls_logo.png"/>
-
-`Hidden Lake Services` ...
+`Hidden Lake Services` are applied applications that perform specific tasks.
 
 ## List of services
 
-1. [HLS=filesharer](hls-filesharer) - ...
-2. [HLS=messenger](hls-messenger) - ...
-3. [HLS=pinger](hls-pinger) - ...
-4. [HLS=remoter](hls-remoter) - ...
-
-## Installation
-
-It is necessary to replace `<service>` with an existing service in the list.
-
-```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_<service>@latest
-```
-
-## How it works
-
-...
-
-<p align="center"><img src="images/hls_arch.png" alt="hls_arch.png"/></p>
-<p align="center">Figure 1. Architecture of HLS</p>
-
-## Supported platforms
-
-- Windows (x86_64, arm64)
-- Linux (x86_64, arm64)
-- MacOS (x86_64, arm64)
-
-## Build and run
-
-Default build and run
-
-```bash 
-$ go run ./cmd/hls/hls_<service>
-
-> [INFO] 2024/12/29 03:40:06 HLS=<service> is started
-> ...
-```
-
-Creates [`./hls_<service>.yml`](./hls-messenger/hls-messenger.yml) file (as example `messenger`).
-
-## Running options
-
-```bash
-$ hls_<service> --path /root
-# path = path to config, database, key files
-```
+1. [HLS=filesharer](hls-filesharer) - file sharing with a web interface
+2. [HLS=messenger](hls-messenger) - messenger with a web interface
+3. [HLS=pinger](hls-pinger) - ping the node to check the online status
+4. [HLS=remoter](hls-remoter) - executes remote access commands
