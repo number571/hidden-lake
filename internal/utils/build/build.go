@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	cFileSettings = "hl_settings.yml"
-	cFileNetworks = "hl_networks.yml"
+	cFileSettings = "hl-settings.yml"
+	cFileNetworks = "hl-networks.yml"
 )
 
 func SetBuildByPath(pInputPath string) ([2]bool, error) {
