@@ -8,7 +8,7 @@
 
 ### IMPROVEMENTS
 
-- `projects/hl-chat`: add side-project hl-chat
+- `cmd/hlp/hlp-chat`: add side-project hlp-chat
 
 ### CHANGES
 
