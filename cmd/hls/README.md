@@ -1,5 +1,7 @@
 # HLS
 
+> Hidden Lake Services
+
 `Hidden Lake Services` are applied applications that perform specific tasks.
 
 ## List of services
