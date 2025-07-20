@@ -3,9 +3,9 @@ GC=go build
 ROOPATH=..
 BINPATH=$(ROOPATH)/bin
 
-.PHONY: default build move_hla move_hls remove-std clean 
+.PHONY: default build move_hla move_hls move_hlp remove-std clean 
 
-default: build move_hla move_hls remove-std
+default: build move_hla move_hls move_hlp remove-std
 build: 
 	for app in \
 		hlk hlc \
@@ -27,12 +27,33 @@ build:
 			done; \
 		done; \
 	done;
+	for app in \
+		hlp/hlp-chat; \
+	do \
+		cd $${app} && $(GC) -o ../../$(BINPATH)/$${app} .; \
+		for arch in amd64 arm64; \
+		do \
+			for platform in linux windows darwin; \
+			do \
+				echo "build $${app}_$${arch}_$${platform}"; \
+				if [[ $$platform == "windows" ]] \
+				then \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -o ../../$(BINPATH)/$${app}_$${arch}_$${platform}.exe .; \
+				else \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -o ../../$(BINPATH)/$${app}_$${arch}_$${platform} .; \
+				fi; \
+			done; \
+		done; \
+	done;
 move_hla:
 	mv $(BINPATH)/hla/* $(BINPATH)/
 	rm -r $(BINPATH)/hla
 move_hls:
 	mv $(BINPATH)/hls/* $(BINPATH)/
 	rm -r $(BINPATH)/hls
+move_hlp:
+	mv $(BINPATH)/hlp/* $(BINPATH)/
+	rm -r $(BINPATH)/hlp
 remove-std:
 	make -C $(BINPATH) remove-std
 
