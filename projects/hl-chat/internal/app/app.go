@@ -96,12 +96,15 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 			buildBytes := keyBuilder.Build(private, seedSize+dkeySize)
 
 			p.fPrivKey = ed25519.NewKeyFromSeed(buildBytes[:seedSize])
-			db, err := database.NewDatabase(p.fDBPath, buildBytes[seedSize:])
-			if err != nil {
-				panic(err)
-			}
 
-			p.fDB = db
+			var err error
+			p.fDB = database.NewVoidDatabase()
+			if p.fDBPath != "" {
+				p.fDB, err = database.NewDatabase(p.fDBPath, buildBytes[seedSize:])
+				if err != nil {
+					panic(err)
+				}
+			}
 		}
 
 		pages.AddAndSwitchToPage("chat", p.getChatPage(ctx), true)

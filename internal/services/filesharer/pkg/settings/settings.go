@@ -14,14 +14,17 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceName        = "filesharer"
+	CServiceName = "filesharer"
+)
+
+const (
 	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "file sharing with a web interface"
 )
 
 const (
-	CPathYML = "hls-filesharer.yml"
-	CPathSTG = "hls-filesharer.stg"
+	CPathYML = "hls-" + CServiceName + ".yml"
+	CPathSTG = "hls-" + CServiceName + ".stg"
 )
 
 const (

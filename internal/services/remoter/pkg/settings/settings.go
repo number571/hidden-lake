@@ -14,13 +14,16 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceName        = "remoter"
+	CServiceName = "remoter"
+)
+
+const (
 	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "executes remote access commands"
 )
 
 const (
-	CPathYML        = "hls-remoter.yml"
+	CPathYML        = "hls-" + CServiceName + ".yml"
 	CHeaderPassword = "Hl-Remoter-Password" // nolint: gosec
 )
 

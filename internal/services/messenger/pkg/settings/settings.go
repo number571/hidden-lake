@@ -14,14 +14,17 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceName        = "messenger"
+	CServiceName = "messenger"
+)
+
+const (
 	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "messenger with a web interface"
 )
 
 const (
-	CPathYML = "hls-messenger.yml"
-	CPathDB  = "hls-messenger.db"
+	CPathYML = "hls-" + CServiceName + ".yml"
+	CPathDB  = "hls-" + CServiceName + ".db"
 )
 
 const (

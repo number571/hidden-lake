@@ -14,17 +14,17 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceAdapterScheme = "tcp"
+	CServiceName = "tcp"
 )
 
 const (
-	CServiceFullName    = adapters.CServicePrefix + "=" + CServiceAdapterScheme
+	CServiceFullName    = adapters.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "adapts HL traffic to a custom TCP connection"
 )
 
 const (
-	CPathYML = "hla_" + CServiceAdapterScheme + ".yml"
-	CPathDB  = "hla_" + CServiceAdapterScheme + ".db"
+	CPathYML = "hla-" + CServiceName + ".yml"
+	CPathDB  = "hla-" + CServiceName + ".db"
 )
 
 const (

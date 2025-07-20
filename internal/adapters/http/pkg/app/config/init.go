@@ -57,7 +57,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
 
-	cfg.FConnections = network.FConnections.GetByScheme(hla_settings.CServiceAdapterScheme)
+	cfg.FConnections = network.FConnections.GetByScheme(hla_settings.CServiceName)
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)

@@ -14,13 +14,16 @@ func GetServiceName() name.IServiceName {
 }
 
 const (
-	CServiceName        = "pinger"
+	CServiceName = "pinger"
+)
+
+const (
 	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
 	CServiceDescription = "ping the node to check the online status"
 )
 
 const (
-	CPathYML = "hls-pinger.yml"
+	CPathYML = "hls-" + CServiceName + ".yml"
 )
 
 const (

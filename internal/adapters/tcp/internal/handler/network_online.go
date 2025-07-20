@@ -32,7 +32,7 @@ func HandleNetworkOnlineAPI(
 			connects := pNetworkNode.GetConnections()
 			inOnline := make([]string, 0, len(connects))
 			for addr := range connects {
-				inOnline = append(inOnline, pkg_settings.CServiceAdapterScheme+"://"+addr)
+				inOnline = append(inOnline, pkg_settings.CServiceName+"://"+addr)
 			}
 			sort.SliceStable(inOnline, func(i, j int) bool {
 				return inOnline[i] < inOnline[j]
@@ -54,7 +54,7 @@ func HandleNetworkOnlineAPI(
 				_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 				return
 			}
-			if u.Scheme != pkg_settings.CServiceAdapterScheme {
+			if u.Scheme != pkg_settings.CServiceName {
 				pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 				_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 				return
