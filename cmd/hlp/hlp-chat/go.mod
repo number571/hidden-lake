@@ -1,4 +1,4 @@
-module github.com/number571/hidden-lake/projects/hl-chat
+module github.com/number571/hidden-lake/cmd/hlp/hlp-chat
 
 go 1.24
 

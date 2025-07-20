@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/number571/hidden-lake/projects/hl-chat/internal/app"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/app"
 )
 
 func main() {

@@ -11,6 +11,6 @@
 
 ```bash
 $ git clone https://github.com/number571/hidden-lake
-$ cd hidden-lake/projects/hl-chat
-$ go run ./cmd/hl-chat -n "<network-key>" -f "<database-file>"
+$ cd cmd/hlp/hlp-chat
+$ go run . -n "<network-key>" -f "<database-file>"
 ```

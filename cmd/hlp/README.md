@@ -4,7 +4,7 @@ Hidden Lake Projects are an offshoot of the development from the original projec
 
 ## List of projects
 
-1. [hl-chat](hl-chat) - console messenger with group chats
+1. [hlp-chat](hlp-chat) - console messenger with group chats
 
 ## Advantages and disadvantages
 

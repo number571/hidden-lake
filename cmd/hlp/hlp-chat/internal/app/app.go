@@ -15,9 +15,9 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/database"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/projects/hl-chat/internal/database"
 	"github.com/rivo/tview"
 )
 

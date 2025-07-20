@@ -13,12 +13,12 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/database"
 	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
-	"github.com/number571/hidden-lake/projects/hl-chat/internal/database"
 )
 
 func (p *sApp) getHLNode(
