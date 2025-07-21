@@ -1,9 +1,15 @@
-# Hidden Lake Projects (Chat)
+# HLP=chat
 
-## Build and run
+> Hidden Lake Project (Chat)
+
+## Installation
 
 ```bash
-$ git clone https://github.com/number571/hidden-lake
-$ cd cmd/hlp/hlp-chat
-$ go run . -n "<network-key>" -f "<database-file>"
+$ go install github.com/number571/hidden-lake/cmd/hlp/hlp-chat@latest
 ```
+
+## Supported platforms
+
+- Windows (x86_64, arm64)
+- Linux (x86_64, arm64)
+- MacOS (x86_64, arm64)
