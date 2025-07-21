@@ -1,12 +1,12 @@
 package settings
 
-import "github.com/number571/hidden-lake/internal/utils/name"
+import "github.com/number571/hidden-lake/internal/utils/appname"
 
 var (
-	gAppName = name.LoadAppName(CServiceFullName)
+	gAppName = appname.LoadAppName(CServiceFullName)
 )
 
-func GetAppName() name.IAppName {
+func GetAppName() appname.IAppName {
 	return gAppName
 }
 

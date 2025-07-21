@@ -1,4 +1,4 @@
-package name
+package appname
 
 type IAppName interface {
 	Short() string

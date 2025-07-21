@@ -11,7 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/utils/name"
+	"github.com/number571/hidden-lake/internal/utils/appname"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
@@ -87,7 +87,7 @@ func NewTCPAdapter(
 	return p
 }
 
-func (p *sTCPAdapter) WithLogger(pName name.IAppName, pLogger logger.ILogger) ITCPAdapter {
+func (p *sTCPAdapter) WithLogger(pName appname.IAppName, pLogger logger.ILogger) ITCPAdapter {
 	p.fShortName = pName.Short()
 	p.fLogger = pLogger
 	return p
