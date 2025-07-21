@@ -25,23 +25,6 @@ func TestError(t *testing.T) {
 	}
 }
 
-func TestVoidDatabase(t *testing.T) {
-	db := NewVoidDatabase()
-	if orig := db.GetOrigin(); orig == nil {
-		t.Fatal("get origin void kv database")
-	}
-	if err := db.Insert(nil, SMessage{}); err != nil {
-		t.Fatal(err)
-	}
-	msgs, err := db.Select(nil, 10)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(msgs) != 0 {
-		t.Fatal("len msgs != 0")
-	}
-}
-
 func TestEncryptDecrypt(t *testing.T) {
 	t.Parallel()
 

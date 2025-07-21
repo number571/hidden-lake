@@ -6,6 +6,7 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/projects/chat/internal/database"
+	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/rivo/tview"
@@ -35,7 +37,7 @@ const (
 )
 
 type sApp struct {
-	fDBPath     string
+	fDBFilePath string
 	fNetworkKey string
 
 	fDB  database.IDatabase
@@ -45,9 +47,9 @@ type sApp struct {
 	fChanKey asymmetric.IPrivKey
 }
 
-func NewApp(pNetworkKey string, pDBPath string) types.IRunner {
+func NewApp(pNetworkKey string, pInputPath string) types.IRunner {
 	return &sApp{
-		fDBPath:     pDBPath,
+		fDBFilePath: filepath.Join(pInputPath, settings.CPathDB),
 		fNetworkKey: pNetworkKey,
 		fApp:        tview.NewApplication(),
 	}
@@ -107,13 +109,9 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 			)
 
 			var err error
-			p.fDB = database.NewVoidDatabase()
-
-			if p.fDBPath != "" {
-				p.fDB, err = database.NewDatabase(p.fDBPath, [3][]byte{authKey, encrKey, hashKey})
-				if err != nil {
-					panic(err)
-				}
+			p.fDB, err = database.NewDatabase(p.fDBFilePath, [3][]byte{authKey, encrKey, hashKey})
+			if err != nil {
+				panic(err)
 			}
 		}
 
