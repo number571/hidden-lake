@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
+	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
 	CServiceDescription = "messenger with a web interface"
 )
 
 const (
-	CPathYML = "hls-" + CServiceName + ".yml"
-	CPathDB  = "hls-" + CServiceName + ".db"
+	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
+	CPathDB  = services.CServiceShortPrefix + "-" + CServiceName + ".db"
 )
 
 const (

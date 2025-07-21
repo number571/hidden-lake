@@ -1,5 +1,6 @@
 package services
 
 const (
-	CServicePrefix = "hidden-lake-service"
+	CServiceShortPrefix = "hls"
+	CServiceFullPrefix  = "hidden-lake-service"
 )

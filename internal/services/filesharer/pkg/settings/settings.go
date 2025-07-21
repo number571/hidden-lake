@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
+	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
 	CServiceDescription = "file sharing with a web interface"
 )
 
 const (
-	CPathYML = "hls-" + CServiceName + ".yml"
-	CPathSTG = "hls-" + CServiceName + ".stg"
+	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
+	CPathSTG = services.CServiceShortPrefix + "-" + CServiceName + ".stg"
 )
 
 const (

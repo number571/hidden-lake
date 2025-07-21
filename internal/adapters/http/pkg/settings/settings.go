@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CServiceFullName    = adapters.CServicePrefix + "=" + CServiceName
+	CServiceFullName    = adapters.CServiceFullPrefix + "=" + CServiceName
 	CServiceDescription = "adapts HL traffic to a custom HTTP connection"
 )
 
 const (
-	CPathYML = "hla-" + CServiceName + ".yml"
-	CPathDB  = "hla-" + CServiceName + ".db"
+	CPathYML = adapters.CServiceShortPrefix + "-" + CServiceName + ".yml"
+	CPathDB  = adapters.CServiceShortPrefix + "-" + CServiceName + ".db"
 )
 
 const (

@@ -1,5 +1,6 @@
 package adapters
 
 const (
-	CServicePrefix = "hidden-lake-adapter"
+	CServiceShortPrefix = "hla"
+	CServiceFullPrefix  = "hidden-lake-adapter"
 )

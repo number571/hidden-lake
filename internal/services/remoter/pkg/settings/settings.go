@@ -18,12 +18,12 @@ const (
 )
 
 const (
-	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
+	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
 	CServiceDescription = "executes remote access commands"
 )
 
 const (
-	CPathYML        = "hls-" + CServiceName + ".yml"
+	CPathYML        = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
 	CHeaderPassword = "Hl-Remoter-Password" // nolint: gosec
 )
 

@@ -18,12 +18,12 @@ const (
 )
 
 const (
-	CServiceFullName    = services.CServicePrefix + "=" + CServiceName
+	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
 	CServiceDescription = "ping the node to check the online status"
 )
 
 const (
-	CPathYML = "hls-" + CServiceName + ".yml"
+	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
 )
 
 const (
