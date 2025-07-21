@@ -6,11 +6,11 @@ import (
 )
 
 var (
-	gServiceName = name.LoadServiceName(CServiceFullName)
+	gAppName = name.LoadAppName(CServiceFullName)
 )
 
-func GetServiceName() name.IServiceName {
-	return gServiceName
+func GetAppName() name.IAppName {
+	return gAppName
 }
 
 const (

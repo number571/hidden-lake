@@ -122,7 +122,7 @@ func (p *tsHTTPAdapter) Run(context.Context) error                        { retu
 func (p *tsHTTPAdapter) Produce(context.Context, layer1.IMessage) error   { return nil }
 func (p *tsHTTPAdapter) Consume(context.Context) (layer1.IMessage, error) { return nil, nil }
 
-func (p *tsHTTPAdapter) WithLogger(name.IServiceName, logger.ILogger) hla_http.IHTTPAdapter {
+func (p *tsHTTPAdapter) WithLogger(name.IAppName, logger.ILogger) hla_http.IHTTPAdapter {
 	return p
 }
 func (p *tsHTTPAdapter) WithHandlers(map[string]http.HandlerFunc) hla_http.IHTTPAdapter { return p }

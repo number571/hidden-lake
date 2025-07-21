@@ -42,7 +42,7 @@ func NewHiddenLakeNode(
 		fSettings: pSettings,
 		fOriginNode: anonymity.NewNode(
 			anonymity.NewSettings(&anonymity.SSettings{
-				FServiceName:  pSettings.GetServiceName(),
+				FServiceName:  pSettings.GetAppName(),
 				FFetchTimeout: pSettings.GetFetchTimeout(),
 			}),
 			pSettings.GetLogger(),

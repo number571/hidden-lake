@@ -15,7 +15,7 @@ func HandleIncomingPingHTTP(pConfig config.IConfig, pLogger logger.ILogger) http
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hls_pinger_settings.GetServiceName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_pinger_settings.GetAppName().Short(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

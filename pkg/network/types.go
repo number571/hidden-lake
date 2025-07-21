@@ -37,5 +37,5 @@ type IQBPSettings interface {
 
 type ISrvSettings interface {
 	GetLogger() gopeer_logger.ILogger
-	GetServiceName() string
+	GetAppName() string
 }

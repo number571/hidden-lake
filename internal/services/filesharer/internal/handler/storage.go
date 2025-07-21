@@ -31,7 +31,7 @@ func StoragePage(
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetServiceName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppName().Short(), pR)
 
 		if pR.URL.Path != "/friends/storage" {
 			NotFoundPage(pLogger, pCfg)(pW, pR)

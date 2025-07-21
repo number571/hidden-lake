@@ -42,7 +42,7 @@ func (p *sApp) initAnonNode() error {
 				FQBPConsumers: cfgSettings.GetQBPConsumers(),
 			},
 			FServeSettings: &network.SServeSettings{
-				FServiceName: hlk_settings.GetServiceName().Short(),
+				FServiceName: hlk_settings.GetAppName().Short(),
 				FLogger:      p.fAnonLogger,
 			},
 		}),

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	gp_database "github.com/number571/go-peer/pkg/storage/database"
 )
@@ -18,25 +17,23 @@ import (
 type sDatabase struct {
 	fMtx *sync.Mutex
 	fKVD gp_database.IKVDatabase
-	fKey [2][]byte
-	fAKH []byte
+	fKey [3][]byte
 }
 
-func NewDatabase(pPath string, pKey []byte) (IDatabase, error) {
-	if len(pKey) != 2*symmetric.CCipherKeySize {
-		return nil, errors.New("invalid key size")
+func NewDatabase(pPath string, pKey [3][]byte) (IDatabase, error) {
+	for _, k := range pKey {
+		if len(k) != symmetric.CCipherKeySize {
+			return nil, ErrKeySize
+		}
 	}
 	kvDB, err := gp_database.NewKVDatabase(pPath)
 	if err != nil {
 		return nil, err
 	}
-	authKey := pKey[:symmetric.CCipherKeySize]
-	encrKey := pKey[symmetric.CCipherKeySize:]
 	return &sDatabase{
 		fMtx: &sync.Mutex{},
 		fKVD: kvDB,
-		fKey: [2][]byte{authKey, encrKey},
-		fAKH: hashing.NewHMACHasher(authKey, []byte("hash")).ToBytes(),
+		fKey: pKey,
 	}, nil
 }
 
@@ -56,7 +53,7 @@ func (p *sDatabase) Insert(pChannel asymmetric.IPubKey, pMsg SMessage) error {
 	if err := p.fKVD.Set(p.keyGetMsg(pChannel, count), p.messageToBytes(pMsg)); err != nil {
 		return errors.Join(ErrSetCount, err)
 	}
-	if err := p.fKVD.Set(p.keyCountMsgs(pChannel), []byte(fmt.Sprintf("%d", count+1))); err != nil {
+	if err := p.fKVD.Set(p.keyCountMsgs(pChannel), []byte(fmt.Sprintf("%d", count+1))); err != nil { // nolint: perfsprint
 		return errors.Join(ErrSetMessage, err)
 	}
 
@@ -81,12 +78,16 @@ func (p *sDatabase) Select(pChannel asymmetric.IPubKey, pN uint64) ([]SMessage, 
 	}
 
 	msgs := make([]SMessage, 0, pN)
-	for i := int64(count - 1); i >= int64(readUintil); i-- {
-		msgBytes, err := p.fKVD.Get(p.keyGetMsg(pChannel, uint64(i)))
+	for i := int64(count - 1); i >= int64(readUintil); i-- { // nolint: gosec
+		msgBytes, err := p.fKVD.Get(p.keyGetMsg(pChannel, uint64(i))) // nolint: gosec
 		if err != nil {
 			return nil, errors.Join(ErrGetMessage, err)
 		}
-		msgs = append(msgs, p.bytesToMessage(msgBytes))
+		msg, err := p.bytesToMessage(msgBytes)
+		if err != nil {
+			return nil, errors.Join(ErrDecodeMsg, err)
+		}
+		msgs = append(msgs, msg)
 	}
 
 	slices.Reverse(msgs)
@@ -119,22 +120,22 @@ func (p *sDatabase) messageToBytes(pMsg SMessage) []byte {
 	return p.encryptBytes(msgBytes)
 }
 
-func (p *sDatabase) bytesToMessage(pEncBytes []byte) SMessage {
+func (p *sDatabase) bytesToMessage(pEncBytes []byte) (SMessage, error) {
 	msgBytes, err := p.decryptBytes(pEncBytes)
 	if err != nil {
-		panic("decryption failed")
+		return SMessage{}, err
 	}
 	dateTimeSize := len(time.DateTime)
 	if len(msgBytes) < ed25519.PublicKeySize+dateTimeSize {
-		panic("message bytes = null")
+		return SMessage{}, ErrMsgSize
 	}
 	sendTime, err := time.Parse(time.DateTime, string(msgBytes[:dateTimeSize]))
 	if err != nil {
-		panic(err)
+		return SMessage{}, err
 	}
 	return SMessage{
 		FSendTime: sendTime,
 		FSender:   ed25519.PublicKey(msgBytes[dateTimeSize : dateTimeSize+ed25519.PublicKeySize]),
 		FMessage:  string(msgBytes[dateTimeSize+ed25519.PublicKeySize:]),
-	}
+	}, nil
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/name"
 )
 
-func Println(pServiceName name.IServiceName, pDescription string, pArgs flag.IFlags) {
+func Println(pAppName name.IAppName, pDescription string, pArgs flag.IFlags) {
 	args := strings.Builder{}
 	args.Grow(1 << 10)
 
@@ -23,8 +23,8 @@ func Println(pServiceName name.IServiceName, pDescription string, pArgs flag.IFl
 
 	fmt.Printf(
 		"<%s (%s)>\nDescription: %s\nArguments:\n%s\n",
-		pServiceName.Format(),
-		pServiceName.Short(),
+		pAppName.Format(),
+		pAppName.Short(),
 		pDescription,
 		strings.TrimSpace(args.String()),
 	)

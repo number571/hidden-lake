@@ -17,11 +17,11 @@ func (p *sDatabase) encryptBytes(pBytes []byte) []byte {
 
 func (p *sDatabase) decryptBytes(pEncBytes []byte) ([]byte, error) {
 	if len(pEncBytes) < hashing.CHasherSize+symmetric.CCipherBlockSize {
-		return nil, errors.New("invalid ciphertext size")
+		return nil, errors.New("invalid ciphertext size") // nolint: err113
 	}
 	mac := hashing.NewHMACHasher(p.fKey[0], pEncBytes[hashing.CHasherSize:]).ToBytes()
 	if !bytes.Equal(mac, pEncBytes[:hashing.CHasherSize]) {
-		return nil, errors.New("invalid mac")
+		return nil, errors.New("invalid mac") // nolint: err113
 	}
 	cipher := symmetric.NewCipher(p.fKey[1])
 	return cipher.DecryptBytes(pEncBytes[hashing.CHasherSize:]), nil

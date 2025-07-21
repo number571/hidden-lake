@@ -12,7 +12,7 @@ import (
 type ITCPAdapter interface {
 	adapters.IRunnerAdapter
 
-	WithLogger(name.IServiceName, logger.ILogger) ITCPAdapter
+	WithLogger(name.IAppName, logger.ILogger) ITCPAdapter
 	GetConnKeeper() connkeeper.IConnKeeper
 }
 

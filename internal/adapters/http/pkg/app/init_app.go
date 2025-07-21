@@ -27,7 +27,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hla_http_settings.GetServiceName(), stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hla_http_settings.GetAppName(), stdfLogger, okLoaded)
 
 	return NewApp(cfg, inputPath), nil
 }

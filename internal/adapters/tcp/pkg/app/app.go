@@ -142,12 +142,12 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is started",
-			hla_tcp_settings.GetServiceName().Short(),
+			hla_tcp_settings.GetAppName().Short(),
 		))
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
-			hla_tcp_settings.GetServiceName().Short(),
+			hla_tcp_settings.GetAppName().Short(),
 			encoding.SerializeJSON(hla_tcp_config.GetConfigSettings(p.fWrapper.GetConfig())),
 		))
 		return nil
@@ -161,7 +161,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
 			"%s is stopped",
-			hla_tcp_settings.GetServiceName().Short(),
+			hla_tcp_settings.GetAppName().Short(),
 		))
 		return p.stop()
 	}

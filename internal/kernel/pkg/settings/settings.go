@@ -3,11 +3,11 @@ package settings
 import "github.com/number571/hidden-lake/internal/utils/name"
 
 var (
-	gServiceName = name.LoadServiceName(CServiceFullName)
+	gAppName = name.LoadAppName(CServiceFullName)
 )
 
-func GetServiceName() name.IServiceName {
-	return gServiceName
+func GetAppName() name.IAppName {
+	return gAppName
 }
 
 const (

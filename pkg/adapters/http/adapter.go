@@ -67,7 +67,7 @@ func (p *sHTTPAdapter) WithHandlers(pHandlers map[string]http.HandlerFunc) IHTTP
 	return p
 }
 
-func (p *sHTTPAdapter) WithLogger(pName name.IServiceName, pLogger logger.ILogger) IHTTPAdapter {
+func (p *sHTTPAdapter) WithLogger(pName name.IAppName, pLogger logger.ILogger) IHTTPAdapter {
 	p.fShortName = pName.Short()
 	p.fLogger = pLogger
 	return p

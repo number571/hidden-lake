@@ -7,7 +7,7 @@ import (
 
 func ExamplePrintln() {
 	Println(
-		name.LoadServiceName("hidden-lake-adapter=common"),
+		name.LoadAppName("hidden-lake-adapter=common"),
 		"adapts HL traffic to a custom HTTP server",
 		flag.NewFlagsBuilder(
 			flag.NewFlagBuilder("-v", "--version").

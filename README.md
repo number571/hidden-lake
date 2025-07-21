@@ -83,7 +83,9 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 
 1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hlk`)
 2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hls/hls-messenger`)
-3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`)
+3. Go library [github.com/rivo/tview](https://github.com/rivo/tview "tview") (used by `cmd/hlp/hlp-chat`)
+4. Go library [github.com/gdamore/tcell/v2](https://github.com/gdamore/tcell "tcell") (used by `cmd/hlp/hlp-chat`)
+5. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`)
 
 ### Makefile
 

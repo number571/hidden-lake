@@ -1,6 +1,6 @@
 package name
 
-type IServiceName interface {
+type IAppName interface {
 	Short() string
 	Format() string
 }

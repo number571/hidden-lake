@@ -28,11 +28,11 @@ func SetBuildByPath(pInputPath string) ([2]bool, error) {
 	return oks, nil
 }
 
-func LogLoadedBuildFiles(sname name.IServiceName, logger logger.ILogger, oks [2]bool) {
+func LogLoadedBuildFiles(appName name.IAppName, logger logger.ILogger, oks [2]bool) {
 	files := [2]string{cFileSettings, cFileNetworks}
 	for i := 0; i < len(oks); i++ {
 		if oks[i] {
-			logger.PushInfo(fmt.Sprintf("%s load %s build file;", sname.Short(), files[i]))
+			logger.PushInfo(fmt.Sprintf("%s load %s build file;", appName.Short(), files[i]))
 		}
 	}
 }

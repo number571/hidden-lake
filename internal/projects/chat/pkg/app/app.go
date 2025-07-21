@@ -1,3 +1,4 @@
+// nolint: errcheck
 package app
 
 import (
@@ -15,14 +16,15 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/database"
+	"github.com/number571/go-peer/pkg/types"
+	"github.com/number571/hidden-lake/internal/projects/chat/internal/database"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/rivo/tview"
 )
 
 var (
-	_ IApp = &sApp{}
+	_ types.IRunner = &sApp{}
 )
 
 const (
@@ -43,7 +45,7 @@ type sApp struct {
 	fChanKey asymmetric.IPrivKey
 }
 
-func NewApp(pNetworkKey string, pDBPath string) IApp {
+func NewApp(pNetworkKey string, pDBPath string) types.IRunner {
 	return &sApp{
 		fDBPath:     pDBPath,
 		fNetworkKey: pNetworkKey,
@@ -89,7 +91,7 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 		{
 			const (
 				seedSize = 32
-				dkeySize = 2 * symmetric.CCipherKeySize
+				dkeySize = 3 * symmetric.CCipherKeySize
 			)
 
 			keyBuilder := keybuilder.NewKeyBuilder(1<<20, []byte("priv"))
@@ -97,10 +99,18 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 
 			p.fPrivKey = ed25519.NewKeyFromSeed(buildBytes[:seedSize])
 
+			dbBytes := buildBytes[seedSize:]
+			var (
+				authKey = dbBytes[:symmetric.CCipherKeySize]
+				encrKey = dbBytes[symmetric.CCipherKeySize : 2*symmetric.CCipherKeySize]
+				hashKey = dbBytes[2*symmetric.CCipherKeySize:]
+			)
+
 			var err error
 			p.fDB = database.NewVoidDatabase()
+
 			if p.fDBPath != "" {
-				p.fDB, err = database.NewDatabase(p.fDBPath, buildBytes[seedSize:])
+				p.fDB, err = database.NewDatabase(p.fDBPath, [3][]byte{authKey, encrKey, hashKey})
 				if err != nil {
 					panic(err)
 				}
@@ -189,7 +199,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 			p.newRequest([]byte(textToSend)).Build(),
 		)
 		if err != nil {
-			fmt.Fprintf(textView, "[red]%s[white]: %s\n", "failed send message")
+			fmt.Fprintf(textView, "[red]%s[white]\n", "failed send message")
 			return
 		}
 
@@ -259,9 +269,4 @@ func (p *sApp) getLoadMessages(pChannelPubKey asymmetric.IPubKey, pPubKey ed2551
 		))
 	}
 	return initMsgs
-}
-
-// echo PubKey{...} | sha384sum
-func getPubKeyHash(pPubKey asymmetric.IPubKey) string {
-	return hashing.NewHasher([]byte(pPubKey.ToString())).ToString()
 }

@@ -16,6 +16,9 @@ var (
 	ErrGetCount   = &SDatabaseError{"get count"}
 	ErrSetCount   = &SDatabaseError{"set count"}
 	ErrParseCount = &SDatabaseError{"parse count"}
-	ErrGetMessage = &SDatabaseError{"Get message"}
+	ErrGetMessage = &SDatabaseError{"get message"}
 	ErrSetMessage = &SDatabaseError{"set message"}
+	ErrKeySize    = &SDatabaseError{"key size"}
+	ErrMsgSize    = &SDatabaseError{"msg size"}
+	ErrDecodeMsg  = &SDatabaseError{"decode msg"}
 )
