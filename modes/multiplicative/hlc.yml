@@ -2,7 +2,7 @@ logging:
 - info
 - warn
 - erro
-services:
+applications:
 - hidden-lake-adapter=tcp
 - hidden-lake-adapter=http
 - hidden-lake-kernel
