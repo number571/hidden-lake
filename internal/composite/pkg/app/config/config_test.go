@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	tgServices = []string{"service_1", "service_2", "service_3"}
+	tgApplications = []string{"app_1", "app_2", "app_3"}
 )
 
 func TestError(t *testing.T) {
@@ -27,8 +27,8 @@ func TestError(t *testing.T) {
 
 func testConfigDefaultInit(configPath string) {
 	_, _ = BuildConfig(configPath, &SConfig{
-		FLogging:  []string{"info", "erro"},
-		FServices: tgServices,
+		FLogging:      []string{"info", "erro"},
+		FApplications: tgApplications,
 	})
 }
 
@@ -55,13 +55,13 @@ func TestConfig(t *testing.T) {
 		t.Fatal("invalid logging erro")
 	}
 
-	services := cfg.GetServices()
+	services := cfg.GetApplications()
 	if len(services) != 3 {
 		t.Fatal("settings value is invalid")
 	}
 
 	for i := range services {
-		if services[i] != tgServices[i] {
+		if services[i] != tgApplications[i] {
 			t.Fatal("got invalid service")
 		}
 	}

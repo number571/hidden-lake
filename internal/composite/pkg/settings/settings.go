@@ -3,16 +3,16 @@ package settings
 import "github.com/number571/hidden-lake/internal/utils/appname"
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceFullName    = "hidden-lake-composite"
-	CServiceDescription = "runs many HL applications as one application"
+	CAppFullName    = "hidden-lake-composite"
+	CAppDescription = "runs many HL applications as one application"
 )
 
 const (

@@ -53,16 +53,16 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hlc_settings.GetAppName().Short(), stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hlc_settings.GetFmtAppName().Short(), stdfLogger, okLoaded)
 
 	return NewApp(cfg, runners), nil
 }
 
 func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]types.IRunner, error) {
 	var (
-		services = pCfg.GetServices()
-		runners  = make([]types.IRunner, 0, len(services))
-		mapsdupl = make(map[string]struct{}, len(services))
+		applications = pCfg.GetApplications()
+		runners      = make([]types.IRunner, 0, len(applications))
+		mapsdupl     = make(map[string]struct{}, len(applications))
 	)
 
 	var (
@@ -70,26 +70,26 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 		err    error
 	)
 
-	for _, sName := range services {
-		if _, ok := mapsdupl[sName]; ok {
+	for _, app := range applications {
+		if _, ok := mapsdupl[app]; ok {
 			return nil, ErrHasDuplicates
 		}
-		mapsdupl[sName] = struct{}{}
+		mapsdupl[app] = struct{}{}
 
-		switch sName {
-		case hlk_settings.CServiceFullName:
+		switch app {
+		case hlk_settings.CAppFullName:
 			runner, err = hlk_app.InitApp(pArgs, pFlags)
-		case hls_messenger_settings.CServiceFullName:
+		case hls_messenger_settings.CAppFullName:
 			runner, err = hls_messenger_app.InitApp(pArgs, pFlags)
-		case hls_filesharer_settings.CServiceFullName:
+		case hls_filesharer_settings.CAppFullName:
 			runner, err = hls_filesharer_app.InitApp(pArgs, pFlags)
-		case hls_remoter_settings.CServiceFullName:
+		case hls_remoter_settings.CAppFullName:
 			runner, err = hls_remoter_app.InitApp(pArgs, pFlags)
-		case hls_pinger_settings.CServiceFullName:
+		case hls_pinger_settings.CAppFullName:
 			runner, err = hls_pinger_app.InitApp(pArgs, pFlags)
-		case hla_tcp_settings.CServiceFullName:
+		case hla_tcp_settings.CAppFullName:
 			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
-		case hla_http_settings.CServiceFullName:
+		case hla_http_settings.CAppFullName:
 			runner, err = hla_http_app.InitApp(pArgs, pFlags)
 		default:
 			return nil, ErrUnknownService

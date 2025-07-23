@@ -21,7 +21,7 @@ func HandleConfigConnectsAPI(
 	pLogger logger.ILogger,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hla_settings.GetAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hla_settings.GetFmtAppName().Short(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -53,7 +53,7 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 			return
 		}
-		if u.Scheme != hla_settings.CServiceName {
+		if u.Scheme != hla_settings.CAppName {
 			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return

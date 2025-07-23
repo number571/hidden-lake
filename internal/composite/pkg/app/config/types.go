@@ -6,5 +6,5 @@ import (
 
 type IConfig interface {
 	GetLogging() logger.ILogging
-	GetServices() []string
+	GetApplications() []string
 }

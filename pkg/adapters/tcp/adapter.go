@@ -87,7 +87,7 @@ func NewTCPAdapter(
 	return p
 }
 
-func (p *sTCPAdapter) WithLogger(pName appname.IAppName, pLogger logger.ILogger) ITCPAdapter {
+func (p *sTCPAdapter) WithLogger(pName appname.IFmtAppName, pLogger logger.ILogger) ITCPAdapter {
 	p.fShortName = pName.Short()
 	p.fLogger = pLogger
 	return p

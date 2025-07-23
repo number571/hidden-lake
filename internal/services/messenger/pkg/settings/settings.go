@@ -6,25 +6,25 @@ import (
 )
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceName = "messenger"
+	CAppName = "messenger"
 )
 
 const (
-	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
-	CServiceDescription = "messenger with a web interface"
+	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppDescription = "messenger with a web interface"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
-	CPathDB  = services.CServiceShortPrefix + "-" + CServiceName + ".db"
+	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
+	CPathDB  = services.CServiceShortPrefix + "-" + CAppName + ".db"
 )
 
 const (

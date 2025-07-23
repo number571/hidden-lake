@@ -366,7 +366,7 @@ type tsConnKeeper struct {
 
 func (p *tsTCPAdapter) Produce(context.Context, layer1.IMessage) error   { return nil }
 func (p *tsTCPAdapter) Consume(context.Context) (layer1.IMessage, error) { return nil, nil }
-func (p *tsTCPAdapter) WithLogger(_ appname.IAppName, _ logger.ILogger) tcp.ITCPAdapter {
+func (p *tsTCPAdapter) WithLogger(_ appname.IFmtAppName, _ logger.ILogger) tcp.ITCPAdapter {
 	return p
 }
 func (p *tsTCPAdapter) GetConnKeeper() connkeeper.IConnKeeper {

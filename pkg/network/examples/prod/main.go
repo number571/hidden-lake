@@ -79,7 +79,7 @@ func newNode(name string) network.IHiddenLakeNode {
 			cache.NewLRUCache(1<<10),
 			func() []string {
 				networkByKey, _ := build.GetNetwork(networkKey)
-				return networkByKey.FConnections.GetByScheme(hla_tcp_settings.CServiceName)
+				return networkByKey.FConnections.GetByScheme(hla_tcp_settings.CAppName)
 			},
 		),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {

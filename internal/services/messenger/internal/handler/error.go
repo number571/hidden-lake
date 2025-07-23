@@ -19,7 +19,7 @@ type sError struct {
 
 func ErrorPage(pLogger logger.ILogger, pCfg config.IConfig, pTitle, pMessage string) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetFmtAppName().Short(), pR)
 
 		pW.WriteHeader(http.StatusNotFound)
 

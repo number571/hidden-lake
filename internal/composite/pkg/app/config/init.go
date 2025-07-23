@@ -33,11 +33,11 @@ func InitConfig(cfgPath string, initCfg *SConfig, _ string) (IConfig, error) {
 func initConfig() *SConfig {
 	return &SConfig{
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
-		FServices: []string{
-			hla_tcp_settings.CServiceFullName,
-			hlk_settings.CServiceFullName,
-			hls_pinger_settings.CServiceFullName,
-			hls_messenger_settings.CServiceFullName,
+		FApplications: []string{
+			hla_tcp_settings.CAppFullName,
+			hlk_settings.CAppFullName,
+			hls_pinger_settings.CAppFullName,
+			hls_messenger_settings.CAppFullName,
 		},
 	}
 }

@@ -1,6 +1,6 @@
 package appname
 
-type IAppName interface {
+type IFmtAppName interface {
 	Short() string
-	Format() string
+	Full() string
 }

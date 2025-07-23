@@ -6,24 +6,24 @@ import (
 )
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceName = "remoter"
+	CAppName = "remoter"
 )
 
 const (
-	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
-	CServiceDescription = "executes remote access commands"
+	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppDescription = "executes remote access commands"
 )
 
 const (
-	CPathYML        = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
+	CPathYML        = services.CServiceShortPrefix + "-" + CAppName + ".yml"
 	CHeaderPassword = "Hl-Remoter-Password" // nolint: gosec
 )
 

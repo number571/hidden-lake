@@ -112,7 +112,7 @@ func (p *sSettings) GetQBPConsumers() uint64 {
 	return p.FQBPSettings.FQBPConsumers
 }
 
-func (p *sSettings) GetAppName() string {
+func (p *sSettings) GetFmtAppName() string {
 	return p.FServeSettings.FServiceName
 }
 

@@ -6,25 +6,25 @@ import (
 )
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceName = "filesharer"
+	CAppName = "filesharer"
 )
 
 const (
-	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
-	CServiceDescription = "file sharing with a web interface"
+	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppDescription = "file sharing with a web interface"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
-	CPathSTG = services.CServiceShortPrefix + "-" + CServiceName + ".stg"
+	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
+	CPathSTG = services.CServiceShortPrefix + "-" + CAppName + ".stg"
 )
 
 const (

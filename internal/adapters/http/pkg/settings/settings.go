@@ -6,25 +6,25 @@ import (
 )
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceName = "http"
+	CAppName = "http"
 )
 
 const (
-	CServiceFullName    = adapters.CAdapterFullPrefix + "=" + CServiceName
-	CServiceDescription = "adapts HL traffic to a custom HTTP connection"
+	CAppFullName    = adapters.CAdapterFullPrefix + "=" + CAppName
+	CAppDescription = "adapts HL traffic to a custom HTTP connection"
 )
 
 const (
-	CPathYML = adapters.CAdapterShortPrefix + "-" + CServiceName + ".yml"
-	CPathDB  = adapters.CAdapterShortPrefix + "-" + CServiceName + ".db"
+	CPathYML = adapters.CAdapterShortPrefix + "-" + CAppName + ".yml"
+	CPathDB  = adapters.CAdapterShortPrefix + "-" + CAppName + ".db"
 )
 
 const (

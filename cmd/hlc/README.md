@@ -14,7 +14,7 @@ $ go install github.com/number571/hidden-lake/cmd/hlc@latest
 
 ## How it works
 
-The application HLC includes the download of all Hidden Lake services, and runs only the configurations selected by names in the file. The exact names of the services can be found in their `pkg/settings/settings.go` configuration files by `CServiceFullName` constant.
+The application HLC includes the download of all Hidden Lake services, and runs only the configurations selected by names in the file. The exact names of the services can be found in their `pkg/settings/settings.go` configuration files by `CAppFullName` constant.
 
 ## Supported platforms
 

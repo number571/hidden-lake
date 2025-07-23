@@ -12,7 +12,7 @@ import (
 type IHTTPAdapter interface {
 	adapters.IRunnerAdapter
 
-	WithLogger(appname.IAppName, logger.ILogger) IHTTPAdapter
+	WithLogger(appname.IFmtAppName, logger.ILogger) IHTTPAdapter
 	WithHandlers(map[string]http.HandlerFunc) IHTTPAdapter
 	GetOnlines() []string
 }

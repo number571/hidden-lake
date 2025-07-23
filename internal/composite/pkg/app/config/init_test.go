@@ -45,8 +45,8 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(config1.GetServices()) != 3 {
-		t.Fatal("got len(services) != 3")
+	if len(config1.GetApplications()) != 3 {
+		t.Fatal("got len(applications) != 3")
 	}
 
 	_ = os.Remove(configFile)
@@ -71,7 +71,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config2.GetServices()[0] != tgServices[0] {
+	if config2.GetApplications()[0] != tgApplications[0] {
 		t.Fatal("got invalid field with exist config (2)")
 	}
 
@@ -82,7 +82,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config3.GetServices()[0] != hla_tcp_settings.CServiceFullName {
+	if config3.GetApplications()[0] != hla_tcp_settings.CAppFullName {
 		t.Fatal("got invalid field with exist config (3)")
 	}
 }

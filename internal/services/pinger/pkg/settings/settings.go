@@ -6,24 +6,24 @@ import (
 )
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceName = "pinger"
+	CAppName = "pinger"
 )
 
 const (
-	CServiceFullName    = services.CServiceFullPrefix + "=" + CServiceName
-	CServiceDescription = "ping the node to check the online status"
+	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppDescription = "ping the node to check the online status"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CServiceName + ".yml"
+	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
 )
 
 const (

@@ -22,7 +22,7 @@ func NewBuilder() IBuilder {
 func (p *sBuilder) GetListFiles(pPage uint64) hls_request.IRequest {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
-		WithHost(hls_filesharer_settings.CServiceFullName).
+		WithHost(hls_filesharer_settings.CAppFullName).
 		WithPath(fmt.Sprintf("%s?page=%d", hls_filesharer_settings.CListPath, pPage)).
 		Build()
 }
@@ -30,7 +30,7 @@ func (p *sBuilder) GetListFiles(pPage uint64) hls_request.IRequest {
 func (p *sBuilder) LoadFileChunk(pName string, pChunk uint64) hls_request.IRequest {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
-		WithHost(hls_filesharer_settings.CServiceFullName).
+		WithHost(hls_filesharer_settings.CAppFullName).
 		WithPath(fmt.Sprintf("%s?name=%s&chunk=%d", hls_filesharer_settings.CLoadPath, pName, pChunk)).
 		Build()
 }

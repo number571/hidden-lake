@@ -66,8 +66,8 @@ func initConfig() *SConfig {
 			FInternal: hlk_settings.CDefaultInternalAddress,
 		},
 		FServices: map[string]string{
-			hls_pinger_settings.CServiceFullName:    hls_pinger_settings.CDefaultExternalAddress,
-			hls_messenger_settings.CServiceFullName: hls_messenger_settings.CDefaultExternalAddress,
+			hls_pinger_settings.CAppFullName:    hls_pinger_settings.CDefaultExternalAddress,
+			hls_messenger_settings.CAppFullName: hls_messenger_settings.CDefaultExternalAddress,
 		},
 		FEndpoints: []string{
 			hla_tcp_settings.CDefaultInternalAddress,

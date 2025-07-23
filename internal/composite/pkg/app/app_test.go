@@ -76,7 +76,7 @@ func TestApp(t *testing.T) {
 
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfigHLC, &config.SConfig{
-		FServices: []string{"test"},
+		FApplications: []string{"test"},
 	})
 	if err != nil {
 		t.Fatal(err)

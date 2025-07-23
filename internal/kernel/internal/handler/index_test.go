@@ -146,7 +146,7 @@ func TestHandleIndexAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if title != pkg_settings.CServiceFullName {
+	if title != pkg_settings.CAppFullName {
 		t.Fatal("incorrect title pattern")
 	}
 }

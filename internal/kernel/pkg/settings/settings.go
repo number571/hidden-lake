@@ -3,16 +3,16 @@ package settings
 import "github.com/number571/hidden-lake/internal/utils/appname"
 
 var (
-	gAppName = appname.LoadAppName(CServiceFullName)
+	gFmtAppName = appname.LoadAppName(CAppFullName)
 )
 
-func GetAppName() appname.IAppName {
-	return gAppName
+func GetFmtAppName() appname.IFmtAppName {
+	return gFmtAppName
 }
 
 const (
-	CServiceFullName    = "hidden-lake-kernel"
-	CServiceDescription = "anonymizes traffic using the QB-problem"
+	CAppFullName    = "hidden-lake-kernel"
+	CAppDescription = "anonymizes traffic using the QB-problem"
 )
 
 const (

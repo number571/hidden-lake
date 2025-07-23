@@ -15,8 +15,8 @@ var (
 type SConfig struct {
 	fLogging logger.ILogging
 
-	FLogging  []string `yaml:"logging,omitempty"`
-	FServices []string `yaml:"services"`
+	FLogging      []string `yaml:"logging,omitempty"`
+	FApplications []string `yaml:"applications"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -59,7 +59,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 
 func (p *SConfig) isValid() bool {
 	return true &&
-		len(p.FServices) != 0
+		len(p.FApplications) != 0
 }
 
 func (p *SConfig) initConfig() error {
@@ -83,8 +83,8 @@ func (p *SConfig) loadLogging() error {
 	return nil
 }
 
-func (p *SConfig) GetServices() []string {
-	return p.FServices
+func (p *SConfig) GetApplications() []string {
+	return p.FApplications
 }
 
 func (p *SConfig) GetLogging() logger.ILogging {

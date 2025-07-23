@@ -105,7 +105,7 @@ func indexAPIRequestOK(handler http.HandlerFunc) error {
 // 		return
 // 	}
 
-// 	if title != settings.CServiceFullName {
+// 	if title != settings.CAppFullName {
 // 		t.Fatal("incorrect title pattern")
 // 		return
 // 	}

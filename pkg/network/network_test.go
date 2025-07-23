@@ -91,7 +91,7 @@ func TestSettings(t *testing.T) {
 		t.Fatal("got invalid pow_parallel by default")
 	}
 
-	if sett.GetAppName() != "_" {
+	if sett.GetFmtAppName() != "_" {
 		t.Fatal("got invalid service_name by default")
 	}
 

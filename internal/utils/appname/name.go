@@ -6,15 +6,15 @@ import (
 )
 
 var (
-	_ IAppName = &sAppName{}
+	_ IFmtAppName = &sFmtAppName{}
 )
 
-type sAppName struct {
-	fShortName  string
-	fFormatName string
+type sFmtAppName struct {
+	fShortName string
+	fFullName  string
 }
 
-func LoadAppName(pFullName string) IAppName {
+func LoadAppName(pFullName string) IFmtAppName {
 	// Example: hidden-lake-adapters=common -> [Hidden Lake Adapters=common], [HLA]
 	nameSplited := bytes.Split([]byte(pFullName), []byte("-"))
 	shortName := make([]byte, 0, len(nameSplited))
@@ -33,16 +33,16 @@ func LoadAppName(pFullName string) IAppName {
 	}
 	nameJoined = bytes.Join(nameSplited, []byte(" = "))
 
-	return &sAppName{
-		fShortName:  string(shortName),
-		fFormatName: string(nameJoined),
+	return &sFmtAppName{
+		fShortName: string(shortName),
+		fFullName:  string(nameJoined),
 	}
 }
 
-func (p *sAppName) Short() string {
+func (p *sFmtAppName) Short() string {
 	return p.fShortName
 }
 
-func (p *sAppName) Format() string {
-	return p.fFormatName
+func (p *sFmtAppName) Full() string {
+	return p.fFullName
 }

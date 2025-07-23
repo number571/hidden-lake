@@ -19,7 +19,7 @@ func HandleNetworkOnlineAPI(
 	pAdapter hla_http.IHTTPAdapter,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetFmtAppName().Short(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -32,7 +32,7 @@ func HandleNetworkOnlineAPI(
 			connects := pAdapter.GetOnlines()
 			inOnline := make([]string, 0, len(connects))
 			for _, addr := range connects {
-				inOnline = append(inOnline, pkg_settings.CServiceName+"://"+addr)
+				inOnline = append(inOnline, pkg_settings.CAppName+"://"+addr)
 			}
 			sort.SliceStable(inOnline, func(i, j int) bool {
 				return inOnline[i] < inOnline[j]
@@ -54,7 +54,7 @@ func HandleNetworkOnlineAPI(
 				_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 				return
 			}
-			if u.Scheme != pkg_settings.CServiceName {
+			if u.Scheme != pkg_settings.CAppName {
 				pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 				_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 				return

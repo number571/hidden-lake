@@ -53,7 +53,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	}
 
 	result := string(res)
-	if result != hlk_settings.CServiceFullName {
+	if result != hlk_settings.CAppFullName {
 		return "", ErrInvalidTitle
 	}
 
