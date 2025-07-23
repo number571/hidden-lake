@@ -2,7 +2,7 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/adapters"
-	"github.com/number571/hidden-lake/pkg/utils/appname"
+	"github.com/number571/hidden-lake/internal/utils/appname"
 )
 
 var (

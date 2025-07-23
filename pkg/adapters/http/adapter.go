@@ -12,10 +12,10 @@ import (
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/internal/utils/appname"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
-	"github.com/number571/hidden-lake/pkg/utils/appname"
 )
 
 const (

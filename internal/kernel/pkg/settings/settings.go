@@ -1,6 +1,6 @@
 package settings
 
-import "github.com/number571/hidden-lake/pkg/utils/appname"
+import "github.com/number571/hidden-lake/internal/utils/appname"
 
 var (
 	gAppName = appname.LoadAppName(CServiceFullName)

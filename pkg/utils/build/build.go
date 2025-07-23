@@ -29,7 +29,7 @@ func SetBuildByPath(pInputPath string) ([2]bool, error) {
 
 func LogLoadedBuildFiles(appName string, logger logger.ILogger, oks [2]bool) {
 	files := [2]string{cFileSettings, cFileNetworks}
-	for i := 0; i < len(oks); i++ {
+	for i := range len(oks) {
 		if oks[i] {
 			logger.PushInfo(fmt.Sprintf("%s load %s build file;", appName, files[i]))
 		}

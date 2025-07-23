@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/utils/appname"
 	"github.com/number571/hidden-lake/pkg/adapters"
-	"github.com/number571/hidden-lake/pkg/utils/appname"
 )
 
 type IHTTPAdapter interface {
