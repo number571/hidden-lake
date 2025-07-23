@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/utils/build"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/build"
 )
 
 // initApp work with the raw data = read files, read args

@@ -8,9 +8,9 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/build"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/build"
 )
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
@@ -27,7 +27,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hla_tcp_settings.GetAppName(), stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hla_tcp_settings.GetAppName().Short(), stdfLogger, okLoaded)
 
 	return NewApp(cfg, inputPath), nil
 }

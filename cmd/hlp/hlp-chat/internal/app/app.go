@@ -18,10 +18,10 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/keybuilder"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/projects/chat/internal/database"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/network"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/request"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/database"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/network"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/request"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/settings"
 	"github.com/rivo/tview"
 )
 

@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/utils/build"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/internal/utils/privkey"
+	"github.com/number571/hidden-lake/pkg/build"
 
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -30,7 +30,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hlk_settings.GetAppName(), stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hlk_settings.GetAppName().Short(), stdfLogger, okLoaded)
 
 	keyPath := filepath.Join(inputPath, hlk_settings.CPathKey)
 	privKey, err := privkey.GetPrivKey(keyPath)

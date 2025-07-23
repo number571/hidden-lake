@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 

@@ -8,7 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/crypto/random"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/settings"
 	"github.com/number571/hidden-lake/pkg/request"
 )
 

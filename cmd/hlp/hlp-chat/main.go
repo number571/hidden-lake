@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/app"
-	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/app"
+	"github.com/number571/hidden-lake/cmd/hlp/hlp-chat/internal/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
