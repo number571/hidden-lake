@@ -14,7 +14,7 @@ import (
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/utils/flag"
 )
 
 var (

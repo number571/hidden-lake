@@ -6,10 +6,6 @@
 
 *??? ??, ????*
 
-### IMPROVEMENTS
-
-- `cmd/hlp/hlp-chat`: add side-project hlp-chat
-
 ### CHANGES
 
 - `*_test.go`: replace {t.Error(); return} -> {t.Fatal()}
@@ -185,7 +181,7 @@
 
 - `pkg`: add pkg/network
 - `pkg`: move internal/service/pkg/request|response -> pkg/request|response
-- `pkg/internal/utils/flag`: add key aliases
+- `pkg/pkg/utils/flag`: add key aliases
 - `cmd/hls,cmd/hle`: rename parallel -> threads
 - `cmd/*`: add 'help' arg
 - `cmd/*/Dockerfile`: change SERVICE_PATH: "/mounted" -> "."

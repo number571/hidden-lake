@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/number571/hidden-lake/internal/utils/appname"
-	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/utils/appname"
+	"github.com/number571/hidden-lake/pkg/utils/flag"
 )
 
 func Println(pAppName appname.IAppName, pDescription string, pArgs flag.IFlags) {

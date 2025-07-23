@@ -9,7 +9,7 @@ import (
 
 	"github.com/number571/hidden-lake/internal/services/remoter/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

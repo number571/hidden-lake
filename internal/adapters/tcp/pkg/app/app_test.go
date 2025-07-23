@@ -15,8 +15,8 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

@@ -11,7 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/utils/appname"
+	"github.com/number571/hidden-lake/pkg/utils/appname"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
