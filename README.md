@@ -134,8 +134,6 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [filesharer](cmd/hls/hls-filesharer) - file sharing with a web interface
    * [remoter](cmd/hls/hls-remoter) - executes remote access commands
    * [pinger](cmd/hls/hls-pinger) - ping the node to check the online status
-4. Projects (HLP):
-   * [chat](cmd/hlp/hlp-chat) - console group chat
 
 ## Build and run
 
