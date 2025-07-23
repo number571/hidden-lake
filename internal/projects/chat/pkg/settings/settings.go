@@ -19,9 +19,9 @@ const (
 
 const (
 	CProjectFullName    = projects.CProjectFullPrefix + "=" + CProjectName
-	CProjectDescription = "console anonymous group chat"
+	CProjectDescription = "console group chat"
 )
 
 const (
-	CPathDB = "hlp-chat.db"
+	CPathDB = projects.CProjectShortPrefix + "-" + CProjectName + ".db"
 )

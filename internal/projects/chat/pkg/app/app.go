@@ -2,26 +2,26 @@
 package app
 
 import (
+	"bytes"
 	"context"
 	"crypto/ed25519"
-	"encoding/hex"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
 
+	gopeer_database "github.com/number571/go-peer/pkg/storage/database"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/crypto/keybuilder"
-	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/symmetric"
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/projects/chat/internal/database"
+	"github.com/number571/hidden-lake/internal/projects/chat/pkg/network"
+	"github.com/number571/hidden-lake/internal/projects/chat/pkg/request"
 	"github.com/number571/hidden-lake/internal/projects/chat/pkg/settings"
-	"github.com/number571/hidden-lake/pkg/network"
-	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/rivo/tview"
 )
 
@@ -30,10 +30,8 @@ var (
 )
 
 const (
-	cPrintNCharsPubKey     = 16
-	cHiddenLakeProjectHost = "hidden-lake-project=chat"
-	cSendMessageTemplate   = "[fuchsia]%X[white]\n%s\n[gray]%s[white]\n\n"
-	cRecvMessageTeamplte   = "[aqua]%X[white]\n%s\n[gray]%s[white]\n\n"
+	cSendMessageTemplate = "[fuchsia]%X[white]\n%s\n[gray]%s[white]\n\n"
+	cRecvMessageTeamplte = "[aqua]%X[white]\n%s\n[gray]%s[white]\n\n"
 )
 
 type sApp struct {
@@ -123,6 +121,22 @@ func (p *sApp) getAuthPage(ctx context.Context, pages *tview.Pages) *tview.Form 
 	return form
 }
 
+func (p *sApp) rememberHash(hash []byte) bool {
+	hashWithPrefix := bytes.Join([][]byte{[]byte("chat_"), hash}, []byte{})
+	origDB := p.fDB.GetOrigin()
+	_, err := origDB.Get(hashWithPrefix)
+	if err == nil {
+		return false
+	}
+	if !errors.Is(err, gopeer_database.ErrNotFound) {
+		return false
+	}
+	if err := origDB.Set(hashWithPrefix, []byte{}); err != nil {
+		return false
+	}
+	return true
+}
+
 func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 	textToSend := ""
 	inputField := tview.NewInputField().SetLabel(">>> ").SetChangedFunc(func(text string) {
@@ -142,7 +156,35 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 			p.fApp.Draw()
 		})
 
-	node := p.getHLNode(p.fNetworkKey, textView)
+	node := network.NewHiddenLakeChatNode(
+		p.fNetworkKey,
+		p.fDB.GetOrigin(),
+		p.fChanKey,
+		p.fPrivKey,
+		func(pubKey ed25519.PublicKey, hash []byte, body string) {
+			if ok := p.rememberHash(hash); !ok {
+				return
+			}
+
+			msg := database.SMessage{
+				FSendTime: time.Now(),
+				FSender:   pubKey,
+				FMessage:  body,
+			}
+			if err := p.fDB.Insert(channelPubKey, msg); err != nil {
+				return
+			}
+
+			fmt.Fprintf(
+				textView,
+				cRecvMessageTeamplte,
+				msg.FSender,
+				msg.FMessage,
+				msg.FSendTime.Format(time.DateTime),
+			)
+		},
+	)
+
 	go func() {
 		if err := node.Run(ctx); err != nil {
 			panic(err)
@@ -153,7 +195,7 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 		"%s{\n\t[yellow]ED25519 public key[white]: %X\n\t[yellow]Message bytes limit[white]: %d\n}\n\n",
 		strings.Join(p.getLoadMessages(channelPubKey, pubKey), ""),
 		pubKey,
-		p.getMessageLimitSize(node, p.newRequest([]byte{}).Build()),
+		node.GetMessageLimitSize(),
 	)
 
 	textView.SetText(initText)
@@ -186,16 +228,12 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 			return
 		}
 
-		if hasNotGraphicCharacters(textToSend) {
+		if request.HasNotGraphicCharacters(textToSend) {
 			fmt.Fprintf(textView, "[red]%s[white]\n", "only graphic chars are required")
 			return
 		}
 
-		err := node.SendRequest(
-			ctx,
-			channelPubKey,
-			p.newRequest([]byte(textToSend)).Build(),
-		)
+		err := node.SendMessage(ctx, textToSend)
 		if err != nil {
 			fmt.Fprintf(textView, "[red]%s[white]\n", "failed send message")
 			return
@@ -219,33 +257,10 @@ func (p *sApp) getChatPage(ctx context.Context) *tview.Flex {
 	chat := tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(textView, 0, 6, false).
 		AddItem(inputField, 1, 1, false)
-	chat.SetBorder(true).SetTitle(" Hidden Lake Chat ")
+	chat.SetBorder(true).SetTitle(" Hidden Lake ")
 
 	chat.SetFocusFunc(func() { p.fApp.SetFocus(inputField) })
 	return chat
-}
-
-func (p *sApp) getMessageLimitSize(node network.IHiddenLakeNode, req request.IRequest) uint64 {
-	reqBytesLen := uint64(len(req.ToBytes()))
-	payloadLimit := node.GetOriginNode().GetQBProcessor().GetClient().GetPayloadLimit()
-	if payloadLimit < (reqBytesLen + encoding.CSizeUint64) {
-		panic("payload limit < header size of message")
-	}
-	return payloadLimit - reqBytesLen - encoding.CSizeUint64
-}
-
-func (p *sApp) newRequest(body []byte) request.IRequestBuilder {
-	salt := random.NewRandom().GetBytes(16)
-	hash := hashing.NewHMACHasher(salt, body).ToBytes()
-	sign := ed25519.Sign(p.fPrivKey, hash)
-	return request.NewRequestBuilder().
-		WithHost(cHiddenLakeProjectHost).
-		WithHead(map[string]string{
-			"pubk": hex.EncodeToString(p.fPrivKey.Public().(ed25519.PublicKey)),
-			"salt": hex.EncodeToString(salt),
-			"sign": hex.EncodeToString(sign),
-		}).
-		WithBody(body)
 }
 
 func (p *sApp) getLoadMessages(pChannelPubKey asymmetric.IPubKey, pPubKey ed25519.PublicKey) []string {
