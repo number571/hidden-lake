@@ -27,7 +27,7 @@ var (
 			WithDefinedValue("."),
 		flag.NewFlagBuilder("-n", "--network").
 			WithDescription("set network key of connections from build").
-			WithDefinedValue("oi4r9NW9Le7fKF9d"),
+			WithDefinedValue(build.CDefaultNetwork),
 	).Build()
 )
 

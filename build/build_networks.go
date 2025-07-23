@@ -16,14 +16,14 @@ const (
 
 var (
 	//go:embed networks.yml
-	GNetworksVal []byte
+	gNetworksVal []byte
 	gNetworksMtx sync.RWMutex
 	gNetworks    = make(map[string]SNetwork, 16)
 )
 
 func init() {
 	networksYAML := &SNetworksYAML{}
-	if err := encoding.DeserializeYAML(GNetworksVal, networksYAML); err != nil {
+	if err := encoding.DeserializeYAML(gNetworksVal, networksYAML); err != nil {
 		panic(err)
 	}
 	networksYAML.FNetworks[CDefaultNetwork] = networksYAML.FDefault
