@@ -17,7 +17,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
 	okLoaded, err := build.SetBuildByPath(inputPath)
 	if err != nil {
-		return nil, errors.Join(ErrSetNetworks, err)
+		return nil, errors.Join(ErrSetBuild, err)
 	}
 
 	cfgPath := filepath.Join(inputPath, hls_filesharer_settings.CPathYML)
