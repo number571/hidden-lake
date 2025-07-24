@@ -10,8 +10,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/hidden-lake/internal/utils/appname"
 	hla_http "github.com/number571/hidden-lake/pkg/adapters/http"
-	"github.com/number571/hidden-lake/pkg/utils/appname"
 )
 
 func TestHandleNetworkOnlineAPI(t *testing.T) {

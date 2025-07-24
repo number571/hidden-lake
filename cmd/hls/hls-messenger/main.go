@@ -14,8 +14,8 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/help"
 	"github.com/number571/hidden-lake/pkg/utils/flag"
-	"github.com/number571/hidden-lake/pkg/utils/help"
 )
 
 var (
