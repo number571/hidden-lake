@@ -11,8 +11,7 @@ build:
 		hlk \
 		hlc \
 		hla/hla-tcp hla/hla-http \
-		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger \
-		hlp/hlp-chat; \
+		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \
@@ -33,8 +32,7 @@ build:
 move_apps:
 	mv $(BINPATH)/hla/* $(BINPATH)/
 	mv $(BINPATH)/hls/* $(BINPATH)/
-	mv $(BINPATH)/hlp/* $(BINPATH)/
-	rm -r $(BINPATH)/hla $(BINPATH)/hls $(BINPATH)/hlp
+	rm -r $(BINPATH)/hla $(BINPATH)/hls 
 	
 remove-std:
 	make -C $(BINPATH) remove-std
