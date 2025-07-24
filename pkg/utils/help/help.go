@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/number571/hidden-lake/internal/utils/appname"
+	"github.com/number571/hidden-lake/pkg/utils/appname"
 	"github.com/number571/hidden-lake/pkg/utils/flag"
 )
 

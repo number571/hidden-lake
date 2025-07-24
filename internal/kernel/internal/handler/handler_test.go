@@ -27,7 +27,6 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/appname"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hl_adapters "github.com/number571/hidden-lake/pkg/adapters"
@@ -36,6 +35,7 @@ import (
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/utils/appname"
 )
 
 const (

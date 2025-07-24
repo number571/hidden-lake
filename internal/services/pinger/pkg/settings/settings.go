@@ -2,7 +2,7 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/services"
-	"github.com/number571/hidden-lake/internal/utils/appname"
+	"github.com/number571/hidden-lake/pkg/utils/appname"
 )
 
 var (
