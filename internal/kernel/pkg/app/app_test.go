@@ -13,7 +13,7 @@ import (
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/pkg/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

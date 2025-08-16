@@ -2,7 +2,7 @@ package help
 
 import (
 	"github.com/number571/hidden-lake/internal/utils/appname"
-	"github.com/number571/hidden-lake/pkg/utils/flag"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
 func ExamplePrintln() {

@@ -8,9 +8,9 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/utils/build"
-	"github.com/number571/hidden-lake/pkg/utils/flag"
 )
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
