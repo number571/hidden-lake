@@ -7,7 +7,7 @@ import (
 var (
 	tgFlags = NewFlagsBuilder(
 		NewFlagBuilder("-v", "--version").
-			WithDescription("print information about service"),
+			WithDescription("print information about application"),
 		NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefinedValue("."),
@@ -25,7 +25,7 @@ func TestPanicFlagsGet(t *testing.T) {
 
 	_ = NewFlagsBuilder(
 		NewFlagBuilder("-v", "--version").
-			WithDescription("print information about service"),
+			WithDescription("print information about application"),
 	).Build().Get("--unknown")
 }
 
@@ -40,9 +40,9 @@ func TestPanicFlagsBuilder(t *testing.T) {
 
 	_ = NewFlagsBuilder(
 		NewFlagBuilder("-v", "--version").
-			WithDescription("print information about service"),
+			WithDescription("print information about application"),
 		NewFlagBuilder("-v", "--version").
-			WithDescription("print information about service"),
+			WithDescription("print information about application"),
 	).Build()
 }
 

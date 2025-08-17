@@ -21,9 +21,9 @@ import (
 var (
 	gFlags = flag.NewFlagsBuilder(
 		flag.NewFlagBuilder("-v", "--version").
-			WithDescription("print version of service"),
+			WithDescription("print version of application"),
 		flag.NewFlagBuilder("-h", "--help").
-			WithDescription("print information about service"),
+			WithDescription("print information about application"),
 		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefinedValue("."),
