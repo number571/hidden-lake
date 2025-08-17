@@ -85,28 +85,3 @@ func indexAPIRequestOK(handler http.HandlerFunc) error {
 
 	return nil
 }
-
-// func TestHandleIndexAPI(t *testing.T) {
-// 	t.Parallel()
-
-// 	addr := testutils.TgAddrs[AAA]
-// 	pathCfg := fmt.Sprintf(tcPathConfigTemplate, 3)
-
-// 	client := client.NewClient(
-// 		client.NewRequester(
-// 			addr,
-// 			&http.Client{Timeout: time.Minute},
-// 		),
-// 	)
-
-// 	title, err := client.GetIndex(context.Background())
-// 	if err != nil {
-// 		t.Fatal(err)
-// 		return
-// 	}
-
-// 	if title != settings.CAppFullName {
-// 		t.Fatal("incorrect title pattern")
-// 		return
-// 	}
-// }
