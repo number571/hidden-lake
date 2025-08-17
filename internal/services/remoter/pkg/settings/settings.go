@@ -18,12 +18,12 @@ const (
 )
 
 const (
-	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppFullName    = services.CServiceDomainName + "=" + CAppName
 	CAppDescription = "executes remote access commands"
 )
 
 const (
-	CPathYML        = services.CServiceShortPrefix + "-" + CAppName + ".yml"
+	CPathYML        = services.CServiceShortName + "-" + CAppName + ".yml"
 	CHeaderPassword = "Hl-Remoter-Password" // nolint: gosec
 )
 

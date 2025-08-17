@@ -18,12 +18,12 @@ const (
 )
 
 const (
-	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppFullName    = services.CServiceDomainName + "=" + CAppName
 	CAppDescription = "ping the node to check the online status"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
+	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
 )
 
 const (

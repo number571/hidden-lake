@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CAppFullName    = adapters.CAdapterFullPrefix + "=" + CAppName
+	CAppFullName    = adapters.CAdapterDomainName + "=" + CAppName
 	CAppDescription = "adapts HL traffic to a custom HTTP connection"
 )
 
 const (
-	CPathYML = adapters.CAdapterShortPrefix + "-" + CAppName + ".yml"
-	CPathDB  = adapters.CAdapterShortPrefix + "-" + CAppName + ".db"
+	CPathYML = adapters.CAdapterShortName + "-" + CAppName + ".yml"
+	CPathDB  = adapters.CAdapterShortName + "-" + CAppName + ".db"
 )
 
 const (

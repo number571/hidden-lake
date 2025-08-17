@@ -1,6 +1,6 @@
 package adapters
 
 const (
-	CAdapterShortPrefix = "hla"
-	CAdapterFullPrefix  = "hidden-lake-adapter"
+	CAdapterShortName  = "hla"
+	CAdapterDomainName = "hidden-lake-adapter"
 )

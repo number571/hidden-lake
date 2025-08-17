@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppFullName    = services.CServiceDomainName + "=" + CAppName
 	CAppDescription = "file sharing with a web interface"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
-	CPathSTG = services.CServiceShortPrefix + "-" + CAppName + ".stg"
+	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
+	CPathSTG = services.CServiceShortName + "-" + CAppName + ".stg"
 )
 
 const (

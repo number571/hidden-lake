@@ -18,13 +18,13 @@ const (
 )
 
 const (
-	CAppFullName    = services.CServiceFullPrefix + "=" + CAppName
+	CAppFullName    = services.CServiceDomainName + "=" + CAppName
 	CAppDescription = "messenger with a web interface"
 )
 
 const (
-	CPathYML = services.CServiceShortPrefix + "-" + CAppName + ".yml"
-	CPathDB  = services.CServiceShortPrefix + "-" + CAppName + ".db"
+	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
+	CPathDB  = services.CServiceShortName + "-" + CAppName + ".db"
 )
 
 const (
