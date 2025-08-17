@@ -12,7 +12,6 @@ import (
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/utils/appname"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
@@ -67,8 +66,8 @@ func (p *sHTTPAdapter) WithHandlers(pHandlers map[string]http.HandlerFunc) IHTTP
 	return p
 }
 
-func (p *sHTTPAdapter) WithLogger(pName appname.IFmtAppName, pLogger logger.ILogger) IHTTPAdapter {
-	p.fShortName = pName.Short()
+func (p *sHTTPAdapter) WithLogger(pName string, pLogger logger.ILogger) IHTTPAdapter {
+	p.fShortName = pName
 	p.fLogger = pLogger
 	return p
 }

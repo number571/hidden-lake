@@ -16,7 +16,7 @@ func HandleConfigSettingsAPI(
 	pLogger logger.ILogger,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetFmtAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetShortAppName(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

@@ -1,21 +1,31 @@
 package appname
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestServiceName(t *testing.T) {
-	serviceName := LoadAppName("hidden-lake-kernel")
-	if serviceName.Full() != "Hidden Lake Kernel" {
+func TestToFormatAppName(t *testing.T) {
+	formatName := ToFormatAppName("hidden-lake-kernel")
+	if formatName != "Hidden Lake Kernel" {
+		t.Log(formatName)
 		t.Fatal("invalid full name")
 	}
-	if serviceName.Short() != "HLK" {
-		t.Fatal("invalid short name")
-	}
-
-	serviceWithSubName := LoadAppName("hidden-lake-adapters=common")
-	if serviceWithSubName.Full() != "Hidden Lake Adapters = Common" {
+	formatName = ToFormatAppName("hidden-lake-adapters=common")
+	if formatName != "Hidden Lake Adapters = Common" {
+		t.Log(formatName)
 		t.Fatal("invalid full name (with subname)")
 	}
-	if serviceWithSubName.Short() != "HLA=common" {
+}
+
+func TestToShortAppName(t *testing.T) {
+	shortName := ToShortAppName("hidden-lake-kernel")
+	if shortName != "HLK" {
+		t.Log(shortName)
+		t.Fatal("invalid short name")
+	}
+	shortName = ToShortAppName("hidden-lake-adapters=common")
+	if shortName != "HLA=common" {
+		t.Log(shortName)
 		t.Fatal("invalid short name (with subname)")
 	}
 }

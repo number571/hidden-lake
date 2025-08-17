@@ -3,11 +3,11 @@ package settings
 import "github.com/number571/hidden-lake/internal/utils/appname"
 
 var (
-	gFmtAppName = appname.LoadAppName(CAppFullName)
+	gShortAppName = appname.ToShortAppName(CAppFullName)
 )
 
-func GetFmtAppName() appname.IFmtAppName {
-	return gFmtAppName
+func GetShortAppName() string {
+	return gShortAppName
 }
 
 const (

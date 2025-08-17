@@ -2,47 +2,55 @@ package appname
 
 import (
 	"bytes"
+	"strings"
 	"unicode"
 )
 
-var (
-	_ IFmtAppName = &sFmtAppName{}
-)
+func ToFormatAppName(pFullName string) string {
+	// Example: hidden-lake-adapters=common -> hidden-lake-adapters = Common
+	splitedEq := bytes.Split([]byte(pFullName), []byte("="))
+	if len(splitedEq) > 2 {
+		panic("length of splited by '=' > 2")
+	}
+	if len(splitedEq) == 2 {
+		splitedEq[1][0] = byte(unicode.ToUpper(rune(splitedEq[1][0])))
+	}
+	joinedEq := bytes.Join(splitedEq, []byte(" = "))
 
-type sFmtAppName struct {
-	fShortName string
-	fFullName  string
+	// Example: hidden-lake-adapters=common -> Hidden Lake Adapters = Common
+	splitedSb := bytes.Split(joinedEq, []byte("-"))
+	for i := range splitedSb {
+		splitedSb[i][0] = byte(unicode.ToUpper(rune(splitedSb[i][0])))
+	}
+	joinedSb := bytes.Join(splitedSb, []byte(" "))
+
+	return string(joinedSb)
 }
 
-func LoadAppName(pFullName string) IFmtAppName {
-	// Example: hidden-lake-adapters=common -> [Hidden Lake Adapters=common], [HLA]
-	nameSplited := bytes.Split([]byte(pFullName), []byte("-"))
-	shortName := make([]byte, 0, len(nameSplited))
-	for i := range nameSplited {
-		nameSplited[i][0] = byte(unicode.ToUpper(rune(nameSplited[i][0])))
-		shortName = append(shortName, nameSplited[i][0])
+func ToShortAppName(pFullName string) string {
+	result := strings.Builder{}
+	result.Grow(len(pFullName))
+
+	splitedEq := strings.Split(pFullName, "=")
+	if len(splitedEq) > 2 {
+		panic("length of splited by '=' > 2")
 	}
-	nameJoined := bytes.Join(nameSplited, []byte(" "))
 
-	// Example: Hidden Lake Adapters=common -> [Hidden Lake Adapters = Common], [HLA=common]
-	nameSplited = bytes.Split(nameJoined, []byte("="))
-	if len(nameSplited) > 1 {
-		shortName = append(shortName, '=')
-		shortName = append(shortName, bytes.Join(nameSplited[1:], []byte("="))...)
-		nameSplited[1][0] = byte(unicode.ToUpper(rune(nameSplited[1][0])))
+	splitedSb := strings.Split(splitedEq[0], "-")
+	for _, v := range splitedSb {
+		firstCh := unicode.ToUpper(rune(v[0]))
+		if _, err := result.WriteRune(firstCh); err != nil {
+			panic(err)
+		}
 	}
-	nameJoined = bytes.Join(nameSplited, []byte(" = "))
 
-	return &sFmtAppName{
-		fShortName: string(shortName),
-		fFullName:  string(nameJoined),
+	if len(splitedEq) == 2 {
+		if err := result.WriteByte('='); err != nil {
+			panic(err)
+		}
+		if _, err := result.WriteString(splitedEq[1]); err != nil {
+			panic(err)
+		}
 	}
-}
-
-func (p *sFmtAppName) Short() string {
-	return p.fShortName
-}
-
-func (p *sFmtAppName) Full() string {
-	return p.fFullName
+	return result.String()
 }

@@ -20,7 +20,7 @@ func HandleConfigFriendsAPI(
 	pNode anonymity.INode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetFmtAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetShortAppName(), pR)
 
 		var vFriend pkg_settings.SFriend
 

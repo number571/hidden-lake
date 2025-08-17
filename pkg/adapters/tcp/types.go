@@ -5,14 +5,13 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
-	"github.com/number571/hidden-lake/internal/utils/appname"
 	"github.com/number571/hidden-lake/pkg/adapters"
 )
 
 type ITCPAdapter interface {
 	adapters.IRunnerAdapter
 
-	WithLogger(appname.IFmtAppName, logger.ILogger) ITCPAdapter
+	WithLogger(string, logger.ILogger) ITCPAdapter
 	GetConnKeeper() connkeeper.IConnKeeper
 }
 

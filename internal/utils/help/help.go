@@ -8,7 +8,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
-func Println(pAppName appname.IFmtAppName, pDescription string, pArgs flag.IFlags) {
+func Println(pAppName, pDescription string, pArgs flag.IFlags) {
 	args := strings.Builder{}
 	args.Grow(1 << 10)
 
@@ -23,8 +23,8 @@ func Println(pAppName appname.IFmtAppName, pDescription string, pArgs flag.IFlag
 
 	fmt.Printf(
 		"<%s (%s)>\nDescription: %s\nArguments:\n%s\n",
-		pAppName.Full(),
-		pAppName.Short(),
+		appname.ToFormatAppName(pAppName),
+		appname.ToShortAppName(pAppName),
 		pDescription,
 		strings.TrimSpace(args.String()),
 	)

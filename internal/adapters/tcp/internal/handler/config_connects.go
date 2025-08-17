@@ -23,7 +23,7 @@ func HandleConfigConnectsAPI(
 	pNetworkNode network.INode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hla_settings.GetFmtAppName().Short(), pR)
+		logBuilder := http_logger.NewLogBuilder(hla_settings.GetShortAppName(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
