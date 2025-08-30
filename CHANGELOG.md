@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### BUG FIXES
+
+- `internal/adapters/http`: fix get_connections scheme
+
 <!-- ... -->
 
 ## v1.9.0

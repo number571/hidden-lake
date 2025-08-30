@@ -33,7 +33,7 @@ func HandleConfigConnectsAPI(
 			connects := pWrapper.GetConfig().GetConnections()
 			result := make([]string, 0, len(connects))
 			for _, addr := range connects {
-				result = append(result, "tcp://"+addr)
+				result = append(result, hla_settings.CAppName+"://"+addr)
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, result)
