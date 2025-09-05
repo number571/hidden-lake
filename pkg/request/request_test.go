@@ -2,7 +2,6 @@ package request
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/payload/joiner"
@@ -120,8 +119,6 @@ func TestLoadRequest(t *testing.T) {
 
 	reqStr := request2.ToString()
 	if reqStr != tgBRequest {
-		fmt.Println(reqStr)
-		fmt.Println(tgBRequest)
 		t.Fatal("string request is invalid")
 	}
 
