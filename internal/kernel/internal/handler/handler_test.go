@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -144,10 +143,11 @@ func testAllFree(node anonymity.INode, cancel context.CancelFunc, srv *http.Serv
 		_ = os.RemoveAll(pathCfg)
 	}()
 	cancel()
-	_ = closer.CloseAll([]io.Closer{
+	closer := closer.NewCloser(
 		srv,
 		node.GetKVDatabase(),
-	})
+	)
+	_ = closer.Close()
 }
 
 func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.INode, addr string) *http.Server {

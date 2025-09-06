@@ -330,10 +330,11 @@ func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.
 		_ = os.RemoveAll(pathDB + "_push1")
 	}()
 	cancel()
-	_ = closer.CloseAll([]io.Closer{
+	closer := closer.NewCloser(
 		srv,
 		node.GetKVDatabase(),
-	})
+	)
+	_ = closer.Close()
 }
 
 func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFunc) {

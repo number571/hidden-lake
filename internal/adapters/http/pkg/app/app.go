@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -236,10 +235,8 @@ func (p *sApp) setIntoDB(msg layer1.IMessage) error {
 }
 
 func (p *sApp) stop() error {
-	err := closer.CloseAll([]io.Closer{
-		p.fDatabase,
-	})
-	if err != nil {
+	closer := closer.NewCloser(p.fDatabase)
+	if err := closer.Close(); err != nil {
 		return errors.Join(ErrClose, err)
 	}
 	return nil

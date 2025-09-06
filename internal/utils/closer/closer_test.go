@@ -14,16 +14,17 @@ type tsCloser struct {
 func TestCloser(t *testing.T) {
 	t.Parallel()
 
-	err := CloseAll([]io.Closer{
+	closer := NewCloser(
 		testNewCloser(false),
 		testNewCloser(false),
 		testNewCloser(false),
-	})
-	if err != nil {
+	)
+
+	if err := closer.Close(); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := CloseAll([]io.Closer{testNewCloser(true)}); err == nil {
+	if err := NewCloser(testNewCloser(true)).Close(); err == nil {
 		t.Fatal("nothing error?")
 	}
 }

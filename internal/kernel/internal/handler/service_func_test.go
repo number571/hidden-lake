@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -152,9 +151,8 @@ func TestHLS(t *testing.T) {
 	}
 	defer func() {
 		nodeCancel()
-		_ = closer.CloseAll([]io.Closer{
-			nodeService.GetKVDatabase(),
-		})
+		closer := closer.NewCloser(nodeService.GetKVDatabase())
+		_ = closer.Close()
 	}()
 
 	// client
@@ -164,9 +162,8 @@ func TestHLS(t *testing.T) {
 	}
 	defer func() {
 		clientCancel()
-		_ = closer.CloseAll([]io.Closer{
-			nodeClient.GetKVDatabase(),
-		})
+		closer := closer.NewCloser(nodeClient.GetKVDatabase())
+		_ = closer.Close()
 	}()
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"sync"
 
@@ -165,12 +164,12 @@ func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup,
 }
 
 func (p *sApp) stop() error {
-	err := closer.CloseAll([]io.Closer{
+	closer := closer.NewCloser(
 		p.fIntServiceHTTP,
 		p.fExtServiceHTTP,
 		p.fDatabase,
-	})
-	if err != nil {
+	)
+	if err := closer.Close(); err != nil {
 		return errors.Join(ErrClose, err)
 	}
 	return nil

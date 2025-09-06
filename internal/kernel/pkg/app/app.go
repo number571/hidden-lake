@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"sync"
 
@@ -132,11 +131,11 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 }
 
 func (p *sApp) stop() error {
-	err := closer.CloseAll([]io.Closer{
+	closer := closer.NewCloser(
 		p.fServiceHTTP,
 		p.fNode.GetOriginNode().GetKVDatabase(),
-	})
-	if err != nil {
+	)
+	if err := closer.Close(); err != nil {
 		return errors.Join(ErrClose, err)
 	}
 	return nil
