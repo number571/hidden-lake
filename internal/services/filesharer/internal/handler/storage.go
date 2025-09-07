@@ -124,12 +124,17 @@ func downloadFile(
 	pW.Header().Set("Content-Disposition", "attachment; filename="+strconv.Quote(fileName))
 	pW.Header().Set("Content-Length", strconv.FormatUint(fileSize, 10))
 
-	fileinfo := stream.NewFileInfo(fileName, fileHash, fileSize)
-
 	chCtx, cancel := context.WithCancel(pCtx)
 	defer cancel()
 
-	stream, err := stream.BuildStream(chCtx, pCfg.GetSettings().GetRetryNum(), tempFile, pHlsClient, aliasName, fileinfo)
+	stream, err := stream.BuildStream(
+		chCtx,
+		pCfg.GetSettings().GetRetryNum(),
+		tempFile,
+		pHlsClient,
+		aliasName,
+		stream.NewFileInfo(fileName, fileHash, fileSize),
+	)
 	if err != nil {
 		ErrorPage(pLogger, pCfg, "build_stream", "build stream")(pW, pR)
 		return
