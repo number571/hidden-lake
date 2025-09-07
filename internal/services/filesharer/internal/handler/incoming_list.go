@@ -19,7 +19,7 @@ import (
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 )
 
-func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pStgPath string) http.HandlerFunc {
+func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pPathTo string) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
@@ -38,7 +38,7 @@ func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pStgPat
 			return
 		}
 
-		result, err := getListFileInfo(pCfg, pStgPath, uint64(page)) //nolint:gosec
+		result, err := getListFileInfo(pCfg, pPathTo, uint64(page)) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
@@ -50,11 +50,12 @@ func HandleIncomingListHTTP(pLogger logger.ILogger, pCfg config.IConfig, pStgPat
 	}
 }
 
-func getListFileInfo(pCfg config.IConfig, pStgPath string, pPage uint64) ([]hls_filesharer_settings.SFileInfo, error) {
+func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]hls_filesharer_settings.SFileInfo, error) {
 	pageOffset := pCfg.GetSettings().GetPageOffset()
 	fileReader := pageOffset
 
-	entries, err := os.ReadDir(pStgPath)
+	stgPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG)
+	entries, err := os.ReadDir(stgPath)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +76,7 @@ func getListFileInfo(pCfg config.IConfig, pStgPath string, pPage uint64) ([]hls_
 		fileReader--
 
 		fileName := files[i].Name()
-		fullPath := filepath.Join(pStgPath, fileName)
+		fullPath := filepath.Join(stgPath, fileName)
 
 		result = append(result, hls_filesharer_settings.SFileInfo{
 			FName: fileName,

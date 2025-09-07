@@ -18,6 +18,10 @@ import (
 func TestStoragePage(t *testing.T) {
 	t.Parallel()
 
+	defer func() {
+		_ = os.Remove("./testdata/hls-filesharer-6f9f238425eca2439ed4581ac1fdb45fc76379e7fba94bc0a7624fa3e7ab1ec3701b4bfcdda376ca755192e6f45f2a4e.tmp")
+	}()
+
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
 		t.Fatal(err)
@@ -37,7 +41,7 @@ func TestStoragePage(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	handler := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(true, true))
+	handler := StoragePage(ctx, httpLogger, cfg, "./testdata", newTsHLSClient(true, true))
 	if err := storageRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +55,7 @@ func TestStoragePage(t *testing.T) {
 	if err := storageRequestAliasName(handler); err == nil {
 		t.Fatal("request success with alias_name")
 	}
-	handlerx := StoragePage(ctx, httpLogger, cfg, newTsHLSClient(false, true))
+	handlerx := StoragePage(ctx, httpLogger, cfg, "./testdata", newTsHLSClient(false, true))
 	if err := storageRequestOK(handlerx); err == nil {
 		t.Fatal("request success with fetch failed")
 	}
@@ -88,7 +92,7 @@ func storageRequestAliasName(handler http.HandlerFunc) error {
 }
 
 func storageRequestDownloadOK(handler http.HandlerFunc) error {
-	fileBytes, err := os.ReadFile("./testdata/file.txt")
+	fileBytes, err := os.ReadFile("./testdata/hls-filesharer.stg/file.txt")
 	if err != nil {
 		return err
 	}

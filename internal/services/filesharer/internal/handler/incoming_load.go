@@ -21,7 +21,7 @@ import (
 func HandleIncomingLoadHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
-	pStgPath string,
+	pPathTo string,
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -51,7 +51,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		fullPath := filepath.Join(pStgPath, name)
+		fullPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG, name)
 		stat, err := os.Stat(fullPath)
 		if os.IsNotExist(err) || stat.IsDir() {
 			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))

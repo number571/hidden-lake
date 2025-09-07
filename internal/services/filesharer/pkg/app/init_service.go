@@ -18,12 +18,12 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		hls_filesharer_settings.CLoadPath,
-		handler.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fStgPath, pHlsClient),
+		handler.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fPathTo, pHlsClient),
 	) // POST
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CListPath,
-		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fStgPath),
+		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fPathTo),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -44,11 +44,11 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlsClient hls_clie
 
 	cfgWrapper := config.NewWrapper(p.fConfig)
 
-	mux.HandleFunc(hls_filesharer_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                              // GET, POST
-	mux.HandleFunc(hls_filesharer_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                              // GET
-	mux.HandleFunc(hls_filesharer_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlsClient))     // GET, PATCH, PUT, POST, DELETE
-	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))        // GET, POST, DELETE
-	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsStoragePath, handler.StoragePage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient)) // GET, POST, DELETE
+	mux.HandleFunc(hls_filesharer_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                         // GET, POST
+	mux.HandleFunc(hls_filesharer_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                         // GET
+	mux.HandleFunc(hls_filesharer_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlsClient))                // GET, PATCH, PUT, POST, DELETE
+	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))                   // GET, POST, DELETE
+	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsStoragePath, handler.StoragePage(pCtx, p.fHTTPLogger, p.fConfig, p.fPathTo, pHlsClient)) // GET, POST, DELETE
 
 	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{

@@ -3,8 +3,13 @@ package handler
 import (
 	"context"
 	"crypto/sha512"
+	"errors"
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -28,6 +33,7 @@ func StoragePage(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
+	pPathTo string,
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -46,7 +52,7 @@ func StoragePage(
 		}
 
 		if fileName := query.Get("file_name"); fileName != "" {
-			downloadFile(pCtx, pLogger, pCfg, pW, pR, pHlsClient)
+			downloadFile(pCtx, pLogger, pCfg, pPathTo, pW, pR, pHlsClient)
 			return
 		}
 
@@ -82,17 +88,20 @@ func downloadFile(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
+	pPathTo string,
 	pW http.ResponseWriter,
 	pR *http.Request,
 	pHlsClient hls_client.IClient,
 ) {
 	query := pR.URL.Query()
 
-	aliasName := query.Get("alias_name")
-	fileName := query.Get("file_name")
+	var (
+		aliasName = query.Get("alias_name")
+		fileName  = query.Get("file_name")
+		fileHash  = query.Get("file_hash")
+	)
 
-	fileHash := query.Get("file_hash")
-	if len(fileHash) != (sha512.Size384 << 1) {
+	if !isHexHash(fileHash) {
 		ErrorPage(pLogger, pCfg, "file_hash_error", "incorrect file hash")(pW, pR)
 		return
 	}
@@ -103,16 +112,51 @@ func downloadFile(
 		return
 	}
 
+	tempFile := filepath.Join(pPathTo, fmt.Sprintf(hls_filesharer_settings.CPathTMP, fileHash))
+	if _, err := os.Stat(tempFile); errors.Is(err, os.ErrNotExist) {
+		if _, err := os.Create(tempFile); err != nil { // nolint: gosec
+			ErrorPage(pLogger, pCfg, "create_temp_file", "create temp file")(pW, pR)
+			return
+		}
+	}
+
 	pW.Header().Set("Content-Type", "application/octet-stream")
 	pW.Header().Set("Content-Disposition", "attachment; filename="+strconv.Quote(fileName))
 	pW.Header().Set("Content-Length", strconv.FormatUint(fileSize, 10))
 
 	fileinfo := stream.NewFileInfo(fileName, fileHash, fileSize)
-	stream, err := stream.BuildStream(pCtx, pCfg.GetSettings().GetRetryNum(), pHlsClient, aliasName, fileinfo)
+
+	chCtx, cancel := context.WithCancel(pCtx)
+	defer cancel()
+
+	stream, err := stream.BuildStream(chCtx, pCfg.GetSettings().GetRetryNum(), tempFile, pHlsClient, aliasName, fileinfo)
 	if err != nil {
 		ErrorPage(pLogger, pCfg, "build_stream", "build stream")(pW, pR)
 		return
 	}
 
+	go func() {
+		select {
+		case <-chCtx.Done():
+		case <-pR.Context().Done():
+			cancel()
+		}
+	}()
+
 	http.ServeContent(pW, pR, fileName, time.Now(), stream)
+}
+
+func isHexHash(hash string) bool {
+	if len(hash) != (sha512.Size384 << 1) {
+		return false
+	}
+	bhash := []byte(strings.ToLower(hash))
+	for _, b := range bhash {
+		// b in '0123456789abcdef'
+		if ('0' <= b && b <= '9') || ('a' <= b && b <= 'f') {
+			continue
+		}
+		return false
+	}
+	return true
 }

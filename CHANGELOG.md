@@ -9,6 +9,7 @@
 ### BUG FIXES
 
 - `internal/adapters/http`: fix get_connections scheme
+- `cmd/hls/hls-filesharer`: fix stream resume download
 
 <!-- ... -->
 

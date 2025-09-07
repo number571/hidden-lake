@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"path/filepath"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -31,8 +30,8 @@ var (
 type sApp struct {
 	fState state.IState
 
-	fConfig  config.IConfig
-	fStgPath string
+	fConfig config.IConfig
+	fPathTo string
 
 	fIntServiceHTTP *http.Server
 	fExtServiceHTTP *http.Server
@@ -51,7 +50,7 @@ func NewApp(
 	return &sApp{
 		fState:      state.NewBoolState(),
 		fConfig:     pCfg,
-		fStgPath:    filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG),
+		fPathTo:     pPathTo,
 		fHTTPLogger: httpLogger,
 		fStdfLogger: stdfLogger,
 	}

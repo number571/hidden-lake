@@ -28,16 +28,23 @@ func TestError(t *testing.T) {
 func TestStream(t *testing.T) {
 	t.Parallel()
 
+	tf, err := os.CreateTemp("", "temp-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = tf.Close() }()
+
 	filename := "file.txt"
 	fileBytes, err := os.ReadFile("./testdata/" + filename)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	ctx := context.Background()
 	stream, err := BuildStream(
 		ctx,
 		0,
+		tf.Name(),
 		newTsHLSClient(fileBytes),
 		"alias_name",
 		func() IFileInfo {

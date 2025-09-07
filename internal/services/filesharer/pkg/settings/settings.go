@@ -25,6 +25,7 @@ const (
 const (
 	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
 	CPathSTG = services.CServiceShortName + "-" + CAppName + ".stg"
+	CPathTMP = services.CServiceShortName + "-" + CAppName + "-%s.tmp"
 )
 
 const (
