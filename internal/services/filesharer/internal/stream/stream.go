@@ -94,7 +94,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 		}
 		p.fBuffer = chunk
 		if err := p.appendToTempFile(p.fBuffer); err != nil {
-			return 0, errors.Join(ErrWriteFileChunk, err)
+			return 0, errors.Join(ErrAppendToTempFile, err)
 		}
 	}
 
@@ -103,11 +103,15 @@ func (p *sStream) Read(b []byte) (int, error) {
 	p.fPosition += uint64(n) //nolint:gosec
 
 	if _, err := p.fHasher.Write(b[:n]); err != nil {
-		return 0, errors.Join(ErrWriteFileChunk, err)
+		return 0, errors.Join(ErrHashWriteChunk, err)
 	}
 
 	if p.fPosition < p.fFileInfo.GetSize() {
 		return n, nil
+	}
+
+	if err := os.Remove(p.fTempFile); err != nil {
+		return 0, errors.Join(ErrDeleteTempFile, err)
 	}
 
 	hashSum := encoding.HexEncode(p.fHasher.Sum(nil))

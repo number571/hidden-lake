@@ -13,8 +13,10 @@ func (err *SStreamError) Error() string {
 }
 
 var (
-	ErrWriteFileChunk   = &SStreamError{"write file chunk"}
+	ErrAppendToTempFile = &SStreamError{"append to temp file"}
+	ErrDeleteTempFile   = &SStreamError{"delete temp file"}
 	ErrLoadFileChunk    = &SStreamError{"load file chunk"}
+	ErrHashWriteChunk   = &SStreamError{"hash write chunk"}
 	ErrInvalidHash      = &SStreamError{"invalid hash"}
 	ErrRetryFailed      = &SStreamError{"retry failed"}
 	ErrInvalidWhence    = &SStreamError{"invalid whence"}

@@ -112,7 +112,7 @@ func downloadFile(
 		return
 	}
 
-	tempFile := filepath.Join(pPathTo, fmt.Sprintf(hls_filesharer_settings.CPathTMP, fileHash))
+	tempFile := tempName(pPathTo, fileHash)
 	if _, err := os.Stat(tempFile); errors.Is(err, os.ErrNotExist) {
 		if _, err := os.Create(tempFile); err != nil { // nolint: gosec
 			ErrorPage(pLogger, pCfg, "create_temp_file", "create temp file")(pW, pR)
@@ -144,6 +144,10 @@ func downloadFile(
 	}()
 
 	http.ServeContent(pW, pR, fileName, time.Now(), stream)
+}
+
+func tempName(p, h string) string {
+	return filepath.Join(p, fmt.Sprintf(hls_filesharer_settings.CPathTMP, h[:8]))
 }
 
 func isHexHash(hash string) bool {

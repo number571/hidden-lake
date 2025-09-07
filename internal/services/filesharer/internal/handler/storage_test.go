@@ -18,10 +18,6 @@ import (
 func TestStoragePage(t *testing.T) {
 	t.Parallel()
 
-	defer func() {
-		_ = os.Remove("./testdata/hls-filesharer-6f9f238425eca2439ed4581ac1fdb45fc76379e7fba94bc0a7624fa3e7ab1ec3701b4bfcdda376ca755192e6f45f2a4e.tmp")
-	}()
-
 	logging, err := std_logger.LoadLogging([]string{})
 	if err != nil {
 		t.Fatal(err)
