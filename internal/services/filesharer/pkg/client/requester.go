@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"crypto/sha512"
+	"encoding/hex"
 	"errors"
 	"net/http"
 
@@ -42,7 +43,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 	}
 
 	for _, info := range list {
-		if len(info.FHash) != (sha512.Size384 << 1) {
+		if !isValidHexHash(info.FHash) {
 			return nil, ErrInvalidResponse
 		}
 	}
@@ -61,4 +62,12 @@ func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pReq
 	}
 
 	return resp.GetBody(), nil
+}
+
+func isValidHexHash(hash string) bool {
+	v, err := hex.DecodeString(hash)
+	if err != nil {
+		return false
+	}
+	return len(v) == sha512.Size384
 }

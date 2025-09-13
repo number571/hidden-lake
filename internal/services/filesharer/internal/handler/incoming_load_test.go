@@ -237,7 +237,7 @@ func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
 func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
 func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return nil, nil
+	return map[string]asymmetric.IPubKey{"abc": asymmetric.NewPrivKey().GetPubKey()}, nil
 }
 
 func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }

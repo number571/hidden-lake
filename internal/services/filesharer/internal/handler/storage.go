@@ -1,17 +1,18 @@
 package handler
 
 import (
+	"bytes"
 	"context"
-	"crypto/sha512"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
+	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
 	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/stream"
@@ -101,18 +102,31 @@ func downloadFile(
 		fileHash  = query.Get("file_hash")
 	)
 
-	if !isHexHash(fileHash) {
-		ErrorPage(pLogger, pCfg, "file_hash_error", "incorrect file hash")(pW, pR)
-		return
-	}
-
 	fileSize, err := strconv.ParseUint(query.Get("file_size"), 10, 64)
 	if err != nil {
 		ErrorPage(pLogger, pCfg, "file_size_error", "incorrect file size")(pW, pR)
 		return
 	}
 
-	tempFile := tempName(pPathTo, fileHash)
+	myPubKey, err := pHlsClient.GetPubKey(pCtx)
+	if err != nil {
+		ErrorPage(pLogger, pCfg, "get_pub_key", "get public key")(pW, pR)
+		return
+	}
+
+	friends, err := pHlsClient.GetFriends(pCtx)
+	if err != nil {
+		ErrorPage(pLogger, pCfg, "get_friends", "get friends")(pW, pR)
+		return
+	}
+
+	fPubKey, ok := friends[aliasName]
+	if !ok {
+		ErrorPage(pLogger, pCfg, "get_friend_pub_key", "get friend pub key")(pW, pR)
+		return
+	}
+
+	tempFile := filepath.Join(pPathTo, tempFilename(myPubKey, fPubKey, fileHash))
 	if _, err := os.Stat(tempFile); errors.Is(err, os.ErrNotExist) {
 		if _, err := os.Create(tempFile); err != nil { // nolint: gosec
 			ErrorPage(pLogger, pCfg, "create_temp_file", "create temp file")(pW, pR)
@@ -151,21 +165,11 @@ func downloadFile(
 	http.ServeContent(pW, pR, fileName, time.Now(), stream)
 }
 
-func tempName(p, h string) string {
-	return filepath.Join(p, fmt.Sprintf(hls_filesharer_settings.CPathTMP, h[:8]))
-}
-
-func isHexHash(hash string) bool {
-	if len(hash) != (sha512.Size384 << 1) {
-		return false
-	}
-	bhash := []byte(strings.ToLower(hash))
-	for _, b := range bhash {
-		// b in '0123456789abcdef'
-		if ('0' <= b && b <= '9') || ('a' <= b && b <= 'f') {
-			continue
-		}
-		return false
-	}
-	return true
+func tempFilename(pMyPubKey, pFPubKey asymmetric.IPubKey, pFileHash string) string {
+	hash := hashing.NewHasher(bytes.Join([][]byte{
+		pMyPubKey.ToBytes(),
+		pFPubKey.ToBytes(),
+		[]byte(pFileHash),
+	}, []byte{})).ToString()
+	return fmt.Sprintf(hls_filesharer_settings.CPathTMP, hash[:8])
 }
