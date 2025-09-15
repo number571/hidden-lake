@@ -41,7 +41,7 @@ type (
 
 type (
     iInternalFunc func()
-    iExternalFunc func()
+    IExternalFunc func()
 )
 ```
 
