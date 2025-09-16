@@ -191,7 +191,7 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 3. GET             /api/config/settings
 4. GET/DELETE      /api/network/online
 5. POST/PUT        /api/network/request
-6. GET             /api/kernel/pubkey
+6. GET             /api/profile/pubkey
 ```
 
 ### 1. /api/config/connects
@@ -418,12 +418,12 @@ Content-Type: text/plain; charset=utf-8
 success: broadcast
 ```
 
-### 6. /api/kernel/pubkey
+### 6. /api/profile/pubkey
 
 #### 6.1. GET Request
 
 ```bash
-curl -i -X GET 'http://localhost:9572/api/kernel/pubkey'
+curl -i -X GET 'http://localhost:9572/api/profile/pubkey'
 ```
 
 #### 6.1. GET Response

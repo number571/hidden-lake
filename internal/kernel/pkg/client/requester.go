@@ -25,7 +25,7 @@ const (
 	cHandleConfigFriendsTemplate  = "http://" + "%s" + hlk_settings.CHandleConfigFriendsPath
 	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hlk_settings.CHandleNetworkOnlinePath
 	cHandleNetworkRequestTemplate = "http://" + "%s" + hlk_settings.CHandleNetworkRequestPath
-	cHandleServicePubKeyTemplate  = "http://" + "%s" + hlk_settings.CHandleServicePubKeyPath
+	cHandleServicePubKeyTemplate  = "http://" + "%s" + hlk_settings.CHandleProfilePubKeyPath
 )
 
 type sRequester struct {

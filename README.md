@@ -174,7 +174,7 @@ You can also create your own networks by copying the contents of the networks.ym
 To communicate with other network nodes, you must first obtain your public key, which was generated for the first time when launching HLK. To do this, you need to access the [HLK API](cmd/hlk/README.md#hlk-api) at the `internal` address provided in `hlk.yml` (by default `localhost:9572`).
 
 ```bash
-$ curl -X GET 'http://localhost:9572/api/kernel/pubkey'
+$ curl -X GET 'http://localhost:9572/api/profile/pubkey'
 ```
 
 After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLK API.

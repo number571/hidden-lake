@@ -29,7 +29,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	mux.HandleFunc(hlk_settings.CHandleConfigConnectsPath, handler.HandleConfigConnectsAPI(pCtx, p.fHTTPLogger, epClients))
 	mux.HandleFunc(hlk_settings.CHandleConfigFriendsPath, handler.HandleConfigFriendsAPI(p.fCfgW, p.fHTTPLogger, origNode))
 	mux.HandleFunc(hlk_settings.CHandleNetworkOnlinePath, handler.HandleNetworkOnlineAPI(pCtx, p.fHTTPLogger, epClients))
-	mux.HandleFunc(hlk_settings.CHandleServicePubKeyPath, handler.HandleServicePubKeyAPI(p.fHTTPLogger, origNode))
+	mux.HandleFunc(hlk_settings.CHandleProfilePubKeyPath, handler.HandleServicePubKeyAPI(p.fHTTPLogger, origNode))
 	mux.HandleFunc(hlk_settings.CHandleNetworkRequestPath, handler.HandleNetworkRequestAPI(pCtx, cfg, p.fHTTPLogger, p.fNode))
 
 	// response can take a long time to complete (x2 time QB-problem period)

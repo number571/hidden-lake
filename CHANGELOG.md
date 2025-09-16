@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/hlk`: change API '/api/kernel/pubkey' -> '/api/profile/pubkey'
+
 ### BUG FIXES
 
 - `internal/adapters/http`: fix get_connections scheme
@@ -274,7 +278,7 @@
 
 ### CHANGES
 
-- `cmd/hls`: rename /api/network/pubkey -> /api/service/pubkey
+- `cmd/hls`: rename /api/network/pubkey -> /api/profile/pubkey
 - `cmd/hle`: update API encrypt/decrypt messages
 - `cmd/hls,cmd/hlt`: delete rand_ prefix parameters (message_size_bytes, queue_period_ms)
 - `go.mod`: update go-peer version: 1.7.0 -> 1.7.2
