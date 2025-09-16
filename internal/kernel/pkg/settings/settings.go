@@ -22,8 +22,8 @@ const (
 )
 
 const (
-	CHeaderPublicKey    = "Hl-Public-Key"
-	CHeaderResponseMode = "Hl-Response-Mode"
+	CHeaderSenderPubKey = "Hlk-Sender-Pubkey"
+	CHeaderResponseMode = "Hlk-Response-Mode"
 )
 
 const (

@@ -52,7 +52,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		for key, val := range pRequest.GetHead() {
 			pushReq.Header.Set(key, val)
 		}
-		pushReq.Header.Set(hlk_settings.CHeaderPublicKey, pSender.ToString())
+		pushReq.Header.Set(hlk_settings.CHeaderSenderPubKey, pSender.ToString())
 
 		// send request and receive response from service
 		httpClient := &http.Client{Timeout: build.GetSettings().GetHttpHandleTimeout()}
