@@ -24,7 +24,7 @@ const (
 
 const (
 	CPathYML        = services.CServiceShortName + "-" + CAppName + ".yml"
-	CHeaderPassword = "Hl-Remoter-Password" // nolint: gosec
+	CHeaderPassword = "Password" // nolint: gosec
 )
 
 const (

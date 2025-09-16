@@ -22,8 +22,8 @@ const (
 )
 
 const (
-	CHeaderPublicKey    = "Hl-Service-Public-Key"
-	CHeaderResponseMode = "Hl-Service-Response-Mode"
+	CHeaderPublicKey    = "Hl-Public-Key"
+	CHeaderResponseMode = "Hl-Response-Mode"
 )
 
 const (

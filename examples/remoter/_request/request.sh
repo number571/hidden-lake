@@ -11,7 +11,7 @@ PUSH_FORMAT='{
 		"host":"hidden-lake-service=remoter",
 		"path":"/exec",
         "head":{
-            "Hl-Remoter-Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"
+            "Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"
         },
         "body":"'${BASE64_BODY}'"
     }

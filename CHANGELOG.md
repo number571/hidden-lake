@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `cmd/hlk`: change API '/api/kernel/pubkey' -> '/api/profile/pubkey'
+- `cmd/hlk`: change headers CHeaderPublicKey, CHeaderResponseMode
 
 ### BUG FIXES
 
