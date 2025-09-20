@@ -2,34 +2,26 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/services"
-	"github.com/number571/hidden-lake/internal/utils/appname"
-)
-
-var (
-	gShortAppName = appname.ToShortAppName(CAppFullName)
-)
-
-func GetShortAppName() string {
-	return gShortAppName
-}
-
-const (
-	CAppName = "remoter"
 )
 
 const (
-	CAppFullName    = services.CServiceDomainName + "=" + CAppName
+	CServiceName    = "remoter"
+	CAppShortName   = services.CServiceShortName + "-" + CServiceName
+	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
 	CAppDescription = "executes remote access commands"
 )
 
 const (
-	CPathYML        = services.CServiceShortName + "-" + CAppName + ".yml"
-	CHeaderPassword = "Password" // nolint: gosec
+	CPathYML = CAppShortName + ".yml"
 )
 
 const (
-	CExecPath      = "/exec"
-	CExecSeparator = "[@remoter-separator]"
+	CHeaderPassword = "Password" // nolint: gosec
+	CExecSeparator  = "[@remoter-separator]"
+)
+
+const (
+	CExecPath = "/exec"
 )
 
 const (

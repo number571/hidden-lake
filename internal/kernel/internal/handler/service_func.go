@@ -27,7 +27,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		pSender asymmetric.IPubKey,
 		pRequest request.IRequest,
 	) (response.IResponse, error) {
-		logBuilder := anon_logger.NewLogBuilder(hlk_settings.GetShortAppName())
+		logBuilder := anon_logger.NewLogBuilder(hlk_settings.CAppShortName)
 
 		// get service's address by hostname
 		service, ok := pCfg.GetService(pRequest.GetHost())

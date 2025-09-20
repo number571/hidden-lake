@@ -2,30 +2,19 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/services"
-	"github.com/number571/hidden-lake/internal/utils/appname"
-)
-
-var (
-	gShortAppName = appname.ToShortAppName(CAppFullName)
-)
-
-func GetShortAppName() string {
-	return gShortAppName
-}
-
-const (
-	CAppName = "filesharer"
 )
 
 const (
-	CAppFullName    = services.CServiceDomainName + "=" + CAppName
+	CServiceName    = "filesharer"
+	CAppShortName   = services.CServiceShortName + "-" + CServiceName
+	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
 	CAppDescription = "file sharing with a web interface"
 )
 
 const (
-	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
-	CPathSTG = services.CServiceShortName + "-" + CAppName + ".stg"
-	CPathTMP = services.CServiceShortName + "-" + CAppName + "-%s.tmp"
+	CPathYML = CAppShortName + ".yml"
+	CPathSTG = CAppShortName + ".stg"
+	CPathTMP = CAppShortName + "-%s.tmp"
 )
 
 const (

@@ -27,7 +27,7 @@ func HandleIncomingPushHTTP(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeOFF)
 
-		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetShortAppName(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.CAppShortName, pR)
 
 		if pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

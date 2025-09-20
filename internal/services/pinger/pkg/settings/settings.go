@@ -2,28 +2,17 @@ package settings
 
 import (
 	"github.com/number571/hidden-lake/internal/services"
-	"github.com/number571/hidden-lake/internal/utils/appname"
-)
-
-var (
-	gShortAppName = appname.ToShortAppName(CAppFullName)
-)
-
-func GetShortAppName() string {
-	return gShortAppName
-}
-
-const (
-	CAppName = "pinger"
 )
 
 const (
-	CAppFullName    = services.CServiceDomainName + "=" + CAppName
+	CServiceName    = "pinger"
+	CAppShortName   = services.CServiceShortName + "-" + CServiceName
+	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
 	CAppDescription = "ping the node to check the online status"
 )
 
 const (
-	CPathYML = services.CServiceShortName + "-" + CAppName + ".yml"
+	CPathYML = CAppShortName + ".yml"
 )
 
 const (

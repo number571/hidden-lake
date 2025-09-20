@@ -11,7 +11,7 @@ import (
 
 func IndexPage(pLogger logger.ILogger, pCfg config.IConfig) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetShortAppName(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.CAppShortName, pR)
 
 		if pR.URL.Path != "/" {
 			NotFoundPage(pLogger, pCfg)(pW, pR)

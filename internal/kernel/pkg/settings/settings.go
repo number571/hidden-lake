@@ -1,24 +1,15 @@
 package settings
 
-import "github.com/number571/hidden-lake/internal/utils/appname"
-
-var (
-	gShortAppName = appname.ToShortAppName(CAppFullName)
-)
-
-func GetShortAppName() string {
-	return gShortAppName
-}
-
 const (
+	CAppShortName   = "hlk"
 	CAppFullName    = "hidden-lake-kernel"
 	CAppDescription = "anonymizes traffic using the QB-problem"
 )
 
 const (
-	CPathKey = "hlk.key"
-	CPathYML = "hlk.yml"
-	CPathDB  = "hlk.db"
+	CPathKey = CAppShortName + ".key"
+	CPathYML = CAppShortName + ".yml"
+	CPathDB  = CAppShortName + ".db"
 )
 
 const (

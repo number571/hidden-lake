@@ -23,7 +23,7 @@ func HandleConfigConnectsAPI(
 	pNetworkNode network.INode,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hla_settings.GetShortAppName(), pR)
+		logBuilder := http_logger.NewLogBuilder(hla_settings.CAppShortName, pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -35,7 +35,7 @@ func HandleConfigConnectsAPI(
 			connects := pWrapper.GetConfig().GetConnections()
 			result := make([]string, 0, len(connects))
 			for _, addr := range connects {
-				result = append(result, hla_settings.CAppName+"://"+addr)
+				result = append(result, hla_settings.CAdapterName+"://"+addr)
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, result)
@@ -55,7 +55,7 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 			return
 		}
-		if u.Scheme != hla_settings.CAppName {
+		if u.Scheme != hla_settings.CAdapterName {
 			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return
