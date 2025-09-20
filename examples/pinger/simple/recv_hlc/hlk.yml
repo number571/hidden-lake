@@ -9,7 +9,7 @@ logging:
 address:
   external: 127.0.0.1:8571
 services:
-  hidden-lake-service=pinger: 127.0.0.1:8552
+  hls-pinger: 127.0.0.1:8552
 endpoints:
   - 127.0.0.1:8522
 friends:

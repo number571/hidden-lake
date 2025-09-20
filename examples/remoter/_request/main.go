@@ -16,7 +16,7 @@ const (
         "receiver":"%s",
         "req_data":{
 			"method":"POST",
-			"host":"hidden-lake-service=remoter",
+			"host":"hls-remoter",
 			"path":"/exec",
 			"head":{
 				"Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"

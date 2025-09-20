@@ -3,7 +3,7 @@ logging:
   - warn
   - erro
 applications:
-  - hidden-lake-kernel
-  - hidden-lake-service=pinger
-  - hidden-lake-service=messenger
-  - hidden-lake-adapter=tcp
+  - hlk
+  - hla-tcp
+  - hls-pinger
+  - hls-messenger

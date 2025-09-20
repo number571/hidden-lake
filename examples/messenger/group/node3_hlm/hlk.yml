@@ -11,7 +11,7 @@ address:
   external: 127.0.0.1:6571
   internal: :6572
 services:
-  hidden-lake-service=messenger: 127.0.0.1:6061
+  hls-messenger: 127.0.0.1:6061
 endpoints:
 - 127.0.0.1:6522
 friends:

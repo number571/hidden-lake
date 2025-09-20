@@ -77,25 +77,25 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 		mapsdupl[app] = struct{}{}
 
 		switch app {
-		case hlk_settings.CAppFullName:
+		case hlk_settings.CAppShortName:
 			runner, err = hlk_app.InitApp(pArgs, pFlags)
-		case hls_messenger_settings.CAppFullName:
+		case hls_messenger_settings.CAppShortName:
 			runner, err = hls_messenger_app.InitApp(pArgs, pFlags)
-		case hls_filesharer_settings.CAppFullName:
+		case hls_filesharer_settings.CAppShortName:
 			runner, err = hls_filesharer_app.InitApp(pArgs, pFlags)
-		case hls_remoter_settings.CAppFullName:
+		case hls_remoter_settings.CAppShortName:
 			runner, err = hls_remoter_app.InitApp(pArgs, pFlags)
-		case hls_pinger_settings.CAppFullName:
+		case hls_pinger_settings.CAppShortName:
 			runner, err = hls_pinger_app.InitApp(pArgs, pFlags)
-		case hla_tcp_settings.CAppFullName:
+		case hla_tcp_settings.CAppShortName:
 			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
-		case hla_http_settings.CAppFullName:
+		case hla_http_settings.CAppShortName:
 			runner, err = hla_http_app.InitApp(pArgs, pFlags)
 		default:
 			return nil, ErrUnknownService
 		}
 		if err != nil {
-			return nil, err
+			return nil, errors.Join(ErrInitApp, err)
 		}
 
 		runners = append(runners, runner)

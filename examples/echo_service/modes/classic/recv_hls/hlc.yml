@@ -3,4 +3,4 @@ logging:
   - warn
   - erro
 applications:
-  - hidden-lake-kernel
+  - hlk

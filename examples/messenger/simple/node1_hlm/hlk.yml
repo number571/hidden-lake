@@ -10,8 +10,8 @@ address:
   external: 127.0.0.1:8571
   internal: 127.0.0.1:8572
 services:
-  hidden-lake-service=pinger: 127.0.0.1:8552
-  hidden-lake-service=messenger: 127.0.0.1:8081
+  hls-pinger: 127.0.0.1:8552
+  hls-messenger: 127.0.0.1:8081
 endpoints:
 - 127.0.0.1:9522
 friends:

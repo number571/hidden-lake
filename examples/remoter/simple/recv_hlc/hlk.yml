@@ -9,7 +9,7 @@ logging:
 address:
   external: 127.0.0.1:8571
 services:
-  hidden-lake-service=remoter: 127.0.0.1:8532
+  hls-remoter: 127.0.0.1:8532
 endpoints:
   - 127.0.0.1:8522
 friends:

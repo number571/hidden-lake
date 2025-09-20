@@ -34,10 +34,10 @@ func initConfig() *SConfig {
 	return &SConfig{
 		FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 		FApplications: []string{
-			hla_tcp_settings.CAppFullName,
-			hlk_settings.CAppFullName,
-			hls_pinger_settings.CAppFullName,
-			hls_messenger_settings.CAppFullName,
+			hlk_settings.CAppShortName,
+			hla_tcp_settings.CAppShortName,
+			hls_pinger_settings.CAppShortName,
+			hls_messenger_settings.CAppShortName,
 		},
 	}
 }

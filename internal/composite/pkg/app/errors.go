@@ -20,5 +20,6 @@ var (
 	ErrHasDuplicates  = &SAppError{"has duplicates"}
 	ErrGetRunners     = &SAppError{"get runners"}
 	ErrInitConfig     = &SAppError{"init config"}
+	ErrInitApp        = &SAppError{"init app"}
 	ErrSetBuild       = &SAppError{"set build"}
 )

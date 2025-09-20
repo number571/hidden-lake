@@ -13,7 +13,7 @@ const (
         "receiver":"%s",
         "req_data":{
 			"method":"GET",
-			"host":"hidden-lake-service=filesharer",
+			"host":"hls-filesharer",
 			"path":"/list?page=0"
 		}
 	}`

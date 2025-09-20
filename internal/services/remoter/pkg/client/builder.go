@@ -25,7 +25,7 @@ func NewBuilder(pPassword string) IBuilder {
 func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
-		WithHost(hls_remoter_settings.CAppFullName).
+		WithHost(hls_remoter_settings.CAppShortName).
 		WithPath(hls_remoter_settings.CExecPath).
 		WithHead(map[string]string{
 			hls_remoter_settings.CHeaderPassword: p.fPassword,

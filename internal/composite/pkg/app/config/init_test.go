@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/number571/hidden-lake/build"
-	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 )
 
 const (
@@ -82,7 +82,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config3.GetApplications()[0] != hla_tcp_settings.CAppFullName {
+	if config3.GetApplications()[0] != hlk_settings.CAppShortName {
 		t.Fatal("got invalid field with exist config (3)")
 	}
 }

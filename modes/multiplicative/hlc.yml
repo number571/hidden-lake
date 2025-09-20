@@ -3,10 +3,10 @@ logging:
 - warn
 - erro
 applications:
-- hidden-lake-adapter=tcp
-- hidden-lake-adapter=http
-- hidden-lake-kernel
-# - hidden-lake-service=pinger
-# - hidden-lake-service=messenger
-# - hidden-lake-service=filesharer
-# - hidden-lake-service=remoter
+- hlk
+- hla-tcp
+- hla-http
+# - hls-pinger
+# - hls-messenger
+# - hls-filesharer
+# - hls-remoter

@@ -21,7 +21,7 @@ func NewBuilder() IBuilder {
 func (p *sBuilder) PushMessage(pBody []byte) hls_request.IRequest {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
-		WithHost(hls_messenger_settings.CAppFullName).
+		WithHost(hls_messenger_settings.CAppShortName).
 		WithPath(hls_messenger_settings.CPushPath).
 		WithBody(pBody).
 		Build()

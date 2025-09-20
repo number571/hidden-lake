@@ -21,7 +21,7 @@ func NewBuilder() IBuilder {
 func (p *sBuilder) Ping() hls_request.IRequest {
 	return hls_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
-		WithHost(hls_pinger_settings.CAppFullName).
+		WithHost(hls_pinger_settings.CAppShortName).
 		WithPath(hls_pinger_settings.CPingPath).
 		Build()
 }

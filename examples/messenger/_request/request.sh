@@ -15,7 +15,7 @@ PUSH_FORMAT='{
     "receiver":"Alice",
     "req_data":{
         "method":"POST",
-        "host":"hidden-lake-service=messenger",
+        "host":"hls-messenger",
         "path":"/push",
         "body":"'${SENT_DATA}'"
     }

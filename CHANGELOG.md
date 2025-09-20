@@ -10,6 +10,7 @@
 
 - `cmd/hlk`: change API '/api/kernel/pubkey' -> '/api/profile/pubkey'
 - `cmd/hlk`: change headers CHeaderSenderPubKey, CHeaderResponseMode
+- `cmd/hlc,cmd/hlk`: change applications/services names
 
 ### BUG FIXES
 
@@ -152,7 +153,7 @@
 - `cmd/*`: change log.Fatal -> panic (args validate)
 - `cmd/*`: add *.yml default configs
 - `cmd/hlt`: delete default config connection 127.0.0.1:9571
-- `cmd/hls,cmd/hlc`: delete default config service hidden-lake-service=filesharer
+- `cmd/hls,cmd/hlc`: delete default config service hls-filesharer
 - `internal/webui`: settings insert scheme://host and port -> insert scheme://host:port
 - `cmd/hlt,cmd/hll,cmd/hle,cmd/hla/common`: deleted
 - `go.mod`: update go-peer version: v1.7.6 -> v1.7.8

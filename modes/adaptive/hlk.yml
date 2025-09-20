@@ -14,10 +14,10 @@ address:
   external: 127.0.0.1:9571
   internal: 127.0.0.1:9572
 # services:
-#   hidden-lake-service=pinger: 127.0.0.1:9552
-#   hidden-lake-service=messenger: 127.0.0.1:9592
-#   hidden-lake-service=filesharer: 127.0.0.1:9542
-#   hidden-lake-service=remoter: 127.0.0.1:9532
+#   hls-pinger: 127.0.0.1:9552
+#   hls-messenger: 127.0.0.1:9592
+#   hls-filesharer: 127.0.0.1:9542
+#   hls-remoter: 127.0.0.1:9532
 endpoints:
 - 127.0.0.1:9522
 # friends:

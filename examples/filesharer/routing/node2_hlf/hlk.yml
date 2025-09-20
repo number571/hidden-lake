@@ -12,7 +12,7 @@ address:
   external: :7571
   internal: :7572
 services:
-  hidden-lake-service=filesharer: node2_hlc:7071
+  hls-filesharer: node2_hlc:7071
 endpoints:
 - 127.0.0.1:7522
 friends:
