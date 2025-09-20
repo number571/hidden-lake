@@ -19,7 +19,7 @@ func HandleConfigConnectsAPI(
 	pEPClients []client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.CAppShortName, pR)
+		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppShortNameFMT(), pR)
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

@@ -1,8 +1,18 @@
 package settings
 
 import (
+	"strings"
+
 	"github.com/number571/hidden-lake/internal/adapters"
 )
+
+var (
+	gAppShortNameFMT = strings.ToUpper(CAppShortName)
+)
+
+func GetAppShortNameFMT() string {
+	return gAppShortNameFMT
+}
 
 const (
 	CAdapterName    = "http"

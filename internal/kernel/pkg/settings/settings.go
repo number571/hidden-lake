@@ -1,5 +1,15 @@
 package settings
 
+import "strings"
+
+var (
+	gAppShortNameFMT = strings.ToUpper(CAppShortName)
+)
+
+func GetAppShortNameFMT() string {
+	return gAppShortNameFMT
+}
+
 const (
 	CAppShortName   = "hlk"
 	CAppFullName    = "hidden-lake-kernel"

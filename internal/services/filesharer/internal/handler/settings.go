@@ -38,7 +38,7 @@ func SettingsPage(
 	pHlsClient hls_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.CAppShortName, pR)
+		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
 
 		cfg := pWrapper.GetConfig()
 		cfgEditor := pWrapper.GetEditor()

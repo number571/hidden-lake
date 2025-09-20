@@ -53,7 +53,7 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	}
 
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
-	build.LogLoadedBuildFiles(hlc_settings.CAppShortName, stdfLogger, okLoaded)
+	build.LogLoadedBuildFiles(hlc_settings.GetAppShortNameFMT(), stdfLogger, okLoaded)
 
 	return NewApp(cfg, runners), nil
 }
