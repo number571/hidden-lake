@@ -15,9 +15,12 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CServiceName    = "pinger"
-	CAppShortName   = services.CServiceShortName + "-" + CServiceName
-	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
+	CAppShortName = services.CServiceShortName + "-" + CAppServiceName
+	CAppFullName  = services.CServiceDomainName + "=" + CAppServiceName
+)
+
+const (
+	CAppServiceName = "pinger"
 	CAppDescription = "ping the node to check the online status"
 )
 

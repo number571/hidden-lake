@@ -11,8 +11,11 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CAppShortName   = "hlk"
-	CAppFullName    = "hidden-lake-kernel"
+	CAppShortName = "hlk"
+	CAppFullName  = "hidden-lake-kernel"
+)
+
+const (
 	CAppDescription = "anonymizes traffic using the QB-problem"
 )
 

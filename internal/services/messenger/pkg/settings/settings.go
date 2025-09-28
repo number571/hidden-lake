@@ -15,10 +15,13 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CServiceName    = "messenger"
-	CAppShortName   = services.CServiceShortName + "-" + CServiceName
-	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
-	CAppDescription = "messenger with a web interface"
+	CAppShortName = services.CServiceShortName + "-" + CAppServiceName
+	CAppFullName  = services.CServiceDomainName + "=" + CAppServiceName
+)
+
+const (
+	CAppServiceName = "messenger"
+	CAppDescription = "chat with a web interface"
 )
 
 const (

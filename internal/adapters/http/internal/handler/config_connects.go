@@ -33,7 +33,7 @@ func HandleConfigConnectsAPI(
 			connects := pWrapper.GetConfig().GetConnections()
 			result := make([]string, 0, len(connects))
 			for _, addr := range connects {
-				result = append(result, hla_settings.CAdapterName+"://"+addr)
+				result = append(result, hla_settings.CAppAdapterName+"://"+addr)
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, result)
@@ -53,7 +53,7 @@ func HandleConfigConnectsAPI(
 			_ = api.Response(pW, http.StatusTeapot, "failed: connect is nil")
 			return
 		}
-		if u.Scheme != hla_settings.CAdapterName {
+		if u.Scheme != hla_settings.CAppAdapterName {
 			pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
 			_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
 			return

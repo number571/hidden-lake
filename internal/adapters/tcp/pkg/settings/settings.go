@@ -15,9 +15,12 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CAdapterName    = "tcp"
-	CAppShortName   = adapters.CAdapterShortName + "-" + CAdapterName
-	CAppFullName    = adapters.CAdapterFullName + "=" + CAdapterName
+	CAppShortName = adapters.CAdapterShortName + "-" + CAppAdapterName
+	CAppFullName  = adapters.CAdapterFullName + "=" + CAppAdapterName
+)
+
+const (
+	CAppAdapterName = "tcp"
 	CAppDescription = "adapts HL traffic to a custom TCP connection"
 )
 

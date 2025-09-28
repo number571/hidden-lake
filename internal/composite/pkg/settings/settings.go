@@ -11,8 +11,11 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CAppShortName   = "hlc"
-	CAppFullName    = "hidden-lake-composite"
+	CAppShortName = "hlc"
+	CAppFullName  = "hidden-lake-composite"
+)
+
+const (
 	CAppDescription = "runs many HL applications as one application"
 )
 

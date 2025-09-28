@@ -15,9 +15,12 @@ func GetAppShortNameFMT() string {
 }
 
 const (
-	CServiceName    = "filesharer"
-	CAppShortName   = services.CServiceShortName + "-" + CServiceName
-	CAppFullName    = services.CServiceDomainName + "=" + CServiceName
+	CAppShortName = services.CServiceShortName + "-" + CAppServiceName
+	CAppFullName  = services.CServiceDomainName + "=" + CAppServiceName
+)
+
+const (
+	CAppServiceName = "filesharer"
 	CAppDescription = "file sharing with a web interface"
 )
 
