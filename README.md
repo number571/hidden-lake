@@ -165,7 +165,7 @@ The HLK node is easily connected to the production environment throw HLA=tcp. To
 $ hlc --network oi4r9NW9Le7fKF9d
 ```
 
-You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl_networks.yml`. Further, the contents of this file can be overwritten or supplemented.
+You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl-networks.yml`. Further, the contents of this file can be overwritten or supplemented.
 
 <p align="center"><img src="cmd/hlk/images/hlk_logger.gif" alt="hlk_logger.gif"/></p>
 
