@@ -75,7 +75,7 @@ func FriendsChatPage(
 			return
 		}
 
-		recvPubKey, err := getReceiverPubKey(pCtx, pHlkClient, aliasName)
+		recvPubKey, err := getFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_receiver", "get receiver by public key")(pW, pR)
 			return

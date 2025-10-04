@@ -43,7 +43,8 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		fPubKey, err := getReceiverPubKey(pCtx, pHlkClient, pR.Header.Get(hlk_settings.CHeaderSenderFriend))
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderFriend)
+		fPubKey, err := getFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
@@ -79,7 +80,7 @@ func HandleIncomingPushHTTP(
 	}
 }
 
-func getReceiverPubKey(
+func getFriendPubKeyByAliasName(
 	pCtx context.Context,
 	client hlk_client.IClient,
 	aliasName string,
