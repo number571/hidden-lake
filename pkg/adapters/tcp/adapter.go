@@ -141,7 +141,7 @@ func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) err
 		if errors.Is(err, network.ErrNoConnections) {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
 		} else {
-			p.fLogger.PushInfo(logBuilder)
+			p.fLogger.PushWarn(logBuilder)
 		}
 		return errors.Join(ErrBroadcast, err)
 	}

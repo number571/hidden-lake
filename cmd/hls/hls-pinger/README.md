@@ -49,7 +49,7 @@ Creates [`./hls-pinger.yml`](./hls-pinger.yml) file.
 ## Running options
 
 ```bash
-$ hlp --path /root
+$ hls-pinger --path /root
 # path = path to config
 ```
 

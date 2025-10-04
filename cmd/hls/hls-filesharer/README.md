@@ -51,7 +51,7 @@ The directory `hls-filesharer.stg` stores all shared/loaded files.
 ## Running options
 
 ```bash
-$ hlf --path /root
+$ hls-filesharer --path /root
 # path = path to config and storage
 ```
 
