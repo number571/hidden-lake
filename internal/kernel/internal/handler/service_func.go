@@ -52,14 +52,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		for key, val := range pRequest.GetHead() {
 			pushReq.Header.Set(key, val)
 		}
-
-		// set alias name of sender to headers by public key
-		for aliasName, pubKey := range pCfg.GetFriends() {
-			if pubKey.ToString() == pSender.ToString() {
-				pushReq.Header.Set(hlk_settings.CHeaderSenderFriend, aliasName)
-				break
-			}
-		}
+		setAliasNameToHeaders(pCfg, pushReq, pSender)
 
 		// send request and receive response from service
 		httpClient := &http.Client{Timeout: build.GetSettings().GetHttpHandleTimeout()}
@@ -90,6 +83,15 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 			// unknown response mode
 			pLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogBaseResponseModeFromService))
 			return nil, ErrInvalidResponseMode
+		}
+	}
+}
+
+func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender asymmetric.IPubKey) {
+	for aliasName, pubKey := range pCfg.GetFriends() {
+		if pubKey.ToString() == pSender.ToString() {
+			pReq.Header.Set(hlk_settings.CHeaderSenderName, aliasName)
+			break
 		}
 	}
 }

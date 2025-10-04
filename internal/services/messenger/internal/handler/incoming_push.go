@@ -43,7 +43,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderFriend)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
 		fPubKey, err := getFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))

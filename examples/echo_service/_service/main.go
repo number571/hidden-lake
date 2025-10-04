@@ -18,7 +18,7 @@ func main() {
 }
 
 func echoPage(w http.ResponseWriter, r *http.Request) {
-	log.Printf("[%s] %s\n", r.Method, r.Header.Get("Hlk-Sender-Friend"))
+	log.Printf("[%s] %s\n", r.Method, r.Header.Get("Hlk-Sender-Name"))
 	if r.Method != http.MethodPost {
 		response(w, 2, "failed: incorrect method")
 		return

@@ -67,7 +67,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 func incomingPushRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
-	req.Header.Set(hlk_settings.CHeaderSenderFriend, "abc")
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -87,7 +87,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 func incomingPushRequestMessage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/push", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderFriend, "abc")
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()
