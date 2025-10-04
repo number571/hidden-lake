@@ -18,7 +18,7 @@
 It is necessary to replace `<application>` with an existing service in the list.
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls_<application>@latest
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-<application>@latest
 ```
 
 ## How it works
@@ -36,17 +36,17 @@ HLS are classic http servers. The `Hlk-Sender-Pubkey` header received from HLK i
 Default build and run
 
 ```bash 
-$ go run ./cmd/hls/hls_<application>
+$ go run ./cmd/hls/hls-<application>
 
 > [INFO] 2024/12/29 03:40:06 HLS=<application> is started
 > ...
 ```
 
-Creates [`./hls_<application>.yml`](./hls-messenger/hls-messenger.yml) file (as example `messenger`).
+Creates [`./hls-<application>.yml`](./hls-messenger/hls-messenger.yml) file (as example `messenger`). Also can create another files / directories (as example `hls-filesharer.stg` in `filesharer`)
 
 ## Running options
 
 ```bash
-$ hls_<application> --path /root
+$ hls-<application> --path /root
 # path    = path to config, database, key files
 ```

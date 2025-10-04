@@ -16,7 +16,7 @@
 It is necessary to replace `<proto>` with an existing adapter in the list.
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hla/hla_<proto>@latest
+$ go install github.com/number571/hidden-lake/cmd/hla/hla-<proto>@latest
 ```
 
 ## How it works
@@ -37,18 +37,18 @@ HLA are based on two functions: `Consume` and `Produce`. Due to this, at the int
 Default build and run
 
 ```bash 
-$ go run ./cmd/hla/hla_<proto>
+$ go run ./cmd/hla/hla-<proto>
 
 > [INFO] 2024/12/29 03:40:06 HLA=<proto> is started
 > ...
 ```
 
-Creates [`./hla_<proto>.yml`](./hla-tcp/hla-tcp.yml) file (as example `tcp`).
+Creates [`./hla-<proto>.yml`](./hla-tcp/hla-tcp.yml) file (as example `tcp`).
 
 ## Running options
 
 ```bash
-$ hla_<proto> --path /root --network xxx
+$ hla-<proto> --path /root --network xxx
 # path    = path to config, database, key files
 # network = use network configuration from networks.yml
 ```
