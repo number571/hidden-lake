@@ -14,7 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/stream"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
@@ -35,7 +35,7 @@ func StoragePage(
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
 	pPathTo string,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
@@ -53,7 +53,7 @@ func StoragePage(
 		}
 
 		if fileName := query.Get("file_name"); fileName != "" {
-			downloadFile(pCtx, pLogger, pCfg, pPathTo, pW, pR, pHlsClient)
+			downloadFile(pCtx, pLogger, pCfg, pPathTo, pW, pR, pHlkClient)
 			return
 		}
 
@@ -64,7 +64,7 @@ func StoragePage(
 
 		hlfClient := hls_filesharer_client.NewClient(
 			hls_filesharer_client.NewBuilder(),
-			hls_filesharer_client.NewRequester(pHlsClient),
+			hls_filesharer_client.NewRequester(pHlkClient),
 		)
 
 		filesList, err := hlfClient.GetListFiles(pCtx, aliasName, uint64(page)) //nolint:gosec
@@ -92,7 +92,7 @@ func downloadFile(
 	pPathTo string,
 	pW http.ResponseWriter,
 	pR *http.Request,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) {
 	query := pR.URL.Query()
 
@@ -108,13 +108,13 @@ func downloadFile(
 		return
 	}
 
-	myPubKey, err := pHlsClient.GetPubKey(pCtx)
+	myPubKey, err := pHlkClient.GetPubKey(pCtx)
 	if err != nil {
 		ErrorPage(pLogger, pCfg, "get_pub_key", "get public key")(pW, pR)
 		return
 	}
 
-	friends, err := pHlsClient.GetFriends(pCtx)
+	friends, err := pHlkClient.GetFriends(pCtx)
 	if err != nil {
 		ErrorPage(pLogger, pCfg, "get_friends", "get friends")(pW, pR)
 		return
@@ -145,7 +145,7 @@ func downloadFile(
 		chCtx,
 		pCfg.GetSettings().GetRetryNum(),
 		tempFile,
-		pHlsClient,
+		pHlkClient,
 		aliasName,
 		stream.NewFileInfo(fileName, fileHash, fileSize),
 	)

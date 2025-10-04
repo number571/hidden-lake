@@ -11,7 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	internal_utils "github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 )
@@ -47,11 +47,11 @@ func BuildStream(
 	pCtx context.Context,
 	pRetryNum uint64,
 	pTempFile string,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 	pAliasName string,
 	pFileInfo IFileInfo,
 ) (IReadSeeker, error) {
-	chunkSize, err := internal_utils.GetMessageLimit(pCtx, pHlsClient)
+	chunkSize, err := internal_utils.GetMessageLimit(pCtx, pHlkClient)
 	if err != nil {
 		return nil, errors.Join(ErrGetMessageLimit, err)
 	}
@@ -66,7 +66,7 @@ func BuildStream(
 		fTempBytes: tempBytes,
 		fHlfClient: hls_filesharer_client.NewClient(
 			hls_filesharer_client.NewBuilder(),
-			hls_filesharer_client.NewRequester(pHlsClient),
+			hls_filesharer_client.NewRequester(pHlkClient),
 		),
 		fAliasName: pAliasName,
 		fHasher:    sha512.New384(),

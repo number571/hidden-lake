@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	"github.com/number571/hidden-lake/internal/webui"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 )
 
 type sConnection struct {
@@ -35,7 +35,7 @@ func SettingsPage(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pWrapper config.IWrapper,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
@@ -71,7 +71,7 @@ func SettingsPage(
 				ErrorPage(pLogger, cfg, "get_host", "host is nil")(pW, pR)
 				return
 			}
-			if err := pHlsClient.AddConnection(pCtx, host); err != nil {
+			if err := pHlkClient.AddConnection(pCtx, host); err != nil {
 				ErrorPage(pLogger, cfg, "add_connection", "add connection")(pW, pR)
 				return
 			}
@@ -82,13 +82,13 @@ func SettingsPage(
 				return
 			}
 
-			if err := pHlsClient.DelConnection(pCtx, connect); err != nil {
+			if err := pHlkClient.DelConnection(pCtx, connect); err != nil {
 				ErrorPage(pLogger, cfg, "del_connection", "delete connection")(pW, pR)
 				return
 			}
 		}
 
-		result, err := getSettings(pCtx, cfg, pHlsClient)
+		result, err := getSettings(pCtx, cfg, pHlkClient)
 		if err != nil {
 			ErrorPage(pLogger, cfg, "get_settings", "get settings")(pW, pR)
 			return
@@ -102,12 +102,12 @@ func SettingsPage(
 func getSettings(
 	pCtx context.Context,
 	pCfg config.IConfig,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) (*sSettings, error) {
 	result := new(sSettings)
 	result.sTemplate = getTemplate(pCfg)
 
-	myPubKey, err := pHlsClient.GetPubKey(pCtx)
+	myPubKey, err := pHlkClient.GetPubKey(pCtx)
 	if err != nil {
 		return nil, errors.Join(ErrGetPublicKey, err)
 	}
@@ -115,13 +115,13 @@ func getSettings(
 	result.FPublicKey = myPubKey.ToString()
 	result.FPublicKeyHash = pubkey.GetPubKeyHash(myPubKey)
 
-	gotSettings, err := pHlsClient.GetSettings(pCtx)
+	gotSettings, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
 		return nil, errors.Join(ErrGetSettingsHLS, err)
 	}
 	result.FNetworkKey = gotSettings.GetNetworkKey()
 
-	allConns, err := getAllConnections(pCtx, pHlsClient)
+	allConns, err := getAllConnections(pCtx, pHlkClient)
 	if err != nil {
 		return nil, errors.Join(ErrGetAllConnections, err)
 	}
@@ -132,7 +132,7 @@ func getSettings(
 
 func getAllConnections(
 	pCtx context.Context,
-	pClient hls_client.IClient,
+	pClient hlk_client.IClient,
 ) ([]sConnection, error) {
 	conns, err := pClient.GetConnections(pCtx)
 	if err != nil {

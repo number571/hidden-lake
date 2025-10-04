@@ -52,7 +52,14 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		for key, val := range pRequest.GetHead() {
 			pushReq.Header.Set(key, val)
 		}
-		pushReq.Header.Set(hlk_settings.CHeaderSenderPubKey, pSender.ToString())
+
+		// set alias name of sender to headers by public key
+		for aliasName, pubKey := range pCfg.GetFriends() {
+			if pubKey.ToString() == pSender.ToString() {
+				pushReq.Header.Set(hlk_settings.CHeaderSenderFriend, aliasName)
+				break
+			}
+		}
 
 		// send request and receive response from service
 		httpClient := &http.Client{Timeout: build.GetSettings().GetHttpHandleTimeout()}

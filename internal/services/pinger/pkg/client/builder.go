@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
-	hls_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (
@@ -18,8 +18,8 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
-func (p *sBuilder) Ping() hls_request.IRequest {
-	return hls_request.NewRequestBuilder().
+func (p *sBuilder) Ping() hlk_request.IRequest {
+	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_pinger_settings.CAppShortName).
 		WithPath(hls_pinger_settings.CPingPath).

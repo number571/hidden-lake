@@ -26,7 +26,7 @@ const (
 )
 
 const (
-	CHeaderSenderPubKey = "Hlk-Sender-Pubkey"
+	CHeaderSenderFriend = "Hlk-Sender-Friend"
 	CHeaderResponseMode = "Hlk-Response-Mode"
 )
 

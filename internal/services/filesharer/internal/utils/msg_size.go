@@ -4,15 +4,15 @@ import (
 	"context"
 	"errors"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	hls_response "github.com/number571/hidden-lake/pkg/response"
+	hlk_response "github.com/number571/hidden-lake/pkg/response"
 )
 
 var (
 	gRespSize = uint64(len(
-		hls_response.NewResponseBuilder().
+		hlk_response.NewResponseBuilder().
 			WithCode(200).
 			WithHead(map[string]string{
 				"Content-Type":                   api.CApplicationOctetStream,
@@ -24,8 +24,8 @@ var (
 	))
 )
 
-func GetMessageLimit(pCtx context.Context, pHlsClient hls_client.IClient) (uint64, error) {
-	sett, err := pHlsClient.GetSettings(pCtx)
+func GetMessageLimit(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
+	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
 		return 0, errors.Join(ErrGetSettingsHLS, err)
 	}

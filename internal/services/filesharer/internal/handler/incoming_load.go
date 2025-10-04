@@ -13,7 +13,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 )
@@ -22,7 +22,7 @@ func HandleIncomingLoadHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pPathTo string,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
@@ -59,7 +59,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunkSize, err := utils.GetMessageLimit(pCtx, pHlsClient)
+		chunkSize, err := utils.GetMessageLimit(pCtx, pHlkClient)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_chunk_size"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: get chunk size")

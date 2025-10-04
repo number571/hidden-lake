@@ -13,7 +13,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
@@ -184,9 +184,9 @@ func TestHandleConnectsAPI(t *testing.T) {
 	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[6])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TgAddrs[6],
 			&http.Client{Timeout: time.Minute},
 		),
@@ -197,7 +197,7 @@ func TestHandleConnectsAPI(t *testing.T) {
 	testDelConnect(t, client)
 }
 
-func testGetConnects(t *testing.T, client hls_client.IClient) {
+func testGetConnects(t *testing.T, client hlk_client.IClient) {
 	connects, err := client.GetConnections(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -208,13 +208,13 @@ func testGetConnects(t *testing.T, client hls_client.IClient) {
 	}
 }
 
-func testAddConnect(t *testing.T, client hls_client.IClient) {
+func testAddConnect(t *testing.T, client hlk_client.IClient) {
 	if err := client.AddConnection(context.Background(), "tcp://aaa"); err != nil {
 		t.Fatal(err)
 	}
 }
 
-func testDelConnect(t *testing.T, client hls_client.IClient) {
+func testDelConnect(t *testing.T, client hlk_client.IClient) {
 	if err := client.DelConnection(context.Background(), "tcp://bbb"); err != nil {
 		t.Fatal(err)
 	}

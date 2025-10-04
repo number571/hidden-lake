@@ -17,7 +17,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -251,9 +251,9 @@ func TestHandleRequestAPI(t *testing.T) {
 	pushNode, pushCancel, pushSrv := testAllPushCreate(pathCfg, pathDB)
 	defer testAllPushFree(pushNode, pushCancel, pushSrv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TgAddrs[9],
 			&http.Client{Timeout: time.Minute},
 		),
@@ -267,7 +267,7 @@ func TestHandleRequestAPI(t *testing.T) {
 	testFetch(t, client)
 }
 
-func testSend(t *testing.T, client hls_client.IClient) {
+func testSend(t *testing.T, client hlk_client.IClient) {
 	err := client.SendRequest(
 		context.Background(),
 		"test_recvr",
@@ -286,7 +286,7 @@ func testSend(t *testing.T, client hls_client.IClient) {
 	}
 }
 
-func testFetch(t *testing.T, client hls_client.IClient) {
+func testFetch(t *testing.T, client hlk_client.IClient) {
 	res, err := client.FetchRequest(
 		context.Background(),
 		"test_recvr",

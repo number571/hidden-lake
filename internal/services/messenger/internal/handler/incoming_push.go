@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 
@@ -12,7 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 )
@@ -22,7 +23,7 @@ func HandleIncomingPushHTTP(
 	pLogger logger.ILogger,
 	pDB database.IKVDatabase,
 	pBroker msgdata.IMessageBroker,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeOFF)
@@ -42,8 +43,8 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		fPubKey := asymmetric.LoadPubKey(pR.Header.Get(hlk_settings.CHeaderSenderPubKey))
-		if fPubKey == nil {
+		fPubKey, err := getReceiverPubKey(pCtx, pHlkClient, pR.Header.Get(hlk_settings.CHeaderSenderFriend))
+		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
 			return
@@ -57,7 +58,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		myPubKey, err := pHlsClient.GetPubKey(pCtx)
+		myPubKey, err := pHlkClient.GetPubKey(pCtx)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
@@ -76,4 +77,20 @@ func HandleIncomingPushHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
+}
+
+func getReceiverPubKey(
+	pCtx context.Context,
+	client hlk_client.IClient,
+	aliasName string,
+) (asymmetric.IPubKey, error) {
+	friends, err := client.GetFriends(pCtx)
+	if err != nil {
+		return nil, errors.Join(ErrGetFriends, err)
+	}
+	friendPubKey, ok := friends[aliasName]
+	if !ok {
+		return nil, ErrUndefinedPublicKey
+	}
+	return friendPubKey, nil
 }

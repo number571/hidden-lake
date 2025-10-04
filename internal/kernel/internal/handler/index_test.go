@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/request"
@@ -21,9 +21,9 @@ import (
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TcUnknownHost,
 			&http.Client{Timeout: time.Second},
 		),
@@ -133,9 +133,9 @@ func TestHandleIndexAPI(t *testing.T) {
 	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, addr)
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			addr,
 			&http.Client{Timeout: time.Minute},
 		),

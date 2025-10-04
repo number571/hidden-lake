@@ -9,7 +9,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
@@ -79,7 +79,7 @@ func TestStream(t *testing.T) {
 }
 
 var (
-	_ hls_client.IClient = &tsHLSClient{}
+	_ hlk_client.IClient = &tsHLSClient{}
 )
 
 type tsHLSClient struct {

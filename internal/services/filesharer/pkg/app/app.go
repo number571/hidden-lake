@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_config "github.com/number571/hidden-lake/internal/services/filesharer/pkg/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -92,9 +92,9 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrInitSTG, err)
 		}
 
-		hlsClient := hls_client.NewClient(
-			hls_client.NewBuilder(),
-			hls_client.NewRequester(
+		hlsClient := hlk_client.NewClient(
+			hlk_client.NewBuilder(),
+			hlk_client.NewRequester(
 				p.fConfig.GetConnection(),
 				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 			),

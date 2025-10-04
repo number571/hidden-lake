@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (
@@ -14,17 +14,17 @@ var (
 )
 
 type sRequester struct {
-	fHLSClient hls_client.IClient
+	fHlkClient hlk_client.IClient
 }
 
-func NewRequester(pHLSClient hls_client.IClient) IRequester {
+func NewRequester(pHlkClient hlk_client.IClient) IRequester {
 	return &sRequester{
-		fHLSClient: pHLSClient,
+		fHlkClient: pHlkClient,
 	}
 }
 
-func (p *sRequester) Ping(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) error {
-	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) Ping(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) error {
+	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
 	}

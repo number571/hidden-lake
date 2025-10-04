@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	hls_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (
@@ -18,17 +18,17 @@ var (
 )
 
 type sRequester struct {
-	fHLSClient hls_client.IClient
+	fHlkClient hlk_client.IClient
 }
 
-func NewRequester(pHLSClient hls_client.IClient) IRequester {
+func NewRequester(pHlkClient hlk_client.IClient) IRequester {
 	return &sRequester{
-		fHLSClient: pHLSClient,
+		fHlkClient: pHlkClient,
 	}
 }
 
-func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) ([]hls_filesharer_settings.SFileInfo, error) {
-	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]hls_filesharer_settings.SFileInfo, error) {
+	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
@@ -51,8 +51,8 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 	return list, nil
 }
 
-func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pRequest hls_request.IRequest) ([]byte, error) {
-	resp, err := p.fHLSClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]byte, error) {
+	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}

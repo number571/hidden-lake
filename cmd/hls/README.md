@@ -23,7 +23,7 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls-<application>@latest
 
 ## How it works
 
-HLS are classic http servers. The `Hlk-Sender-Pubkey` header received from HLK is always present in requests. The service may return the `Hlk-Response-Mode` header, indicating that the response must be sent (on/off). Services also have a limit on the size of messages sent = `payload_size_bytes` (HLK).
+HLS are classic http servers. The `Hlk-Sender-Friend` header received from HLK is always present in requests. The service may return the `Hlk-Response-Mode` header, indicating that the response must be sent (on/off). Services also have a limit on the size of messages sent = `payload_size_bytes` (HLK).
 
 ## Supported platforms
 

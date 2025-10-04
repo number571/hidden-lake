@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
-	hls_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 var (
@@ -22,8 +22,8 @@ func NewBuilder(pPassword string) IBuilder {
 	}
 }
 
-func (p *sBuilder) Exec(pCmd ...string) hls_request.IRequest {
-	return hls_request.NewRequestBuilder().
+func (p *sBuilder) Exec(pCmd ...string) hlk_request.IRequest {
+	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodPost).
 		WithHost(hls_remoter_settings.CAppShortName).
 		WithPath(hls_remoter_settings.CExecPath).

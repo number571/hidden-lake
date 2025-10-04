@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
@@ -18,13 +18,13 @@ import (
 
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 	pMsgBroker msgdata.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		hls_messenger_settings.CPushPath,
-		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlsClient),
+		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlkClient),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -38,7 +38,7 @@ func (p *sApp) initExternalServiceHTTP(
 
 func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 	pMsgBroker msgdata.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
@@ -51,10 +51,10 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(hls_messenger_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                            // GET, POST
 	mux.HandleFunc(hls_messenger_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                            // GET
-	mux.HandleFunc(hls_messenger_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlsClient))                   // GET, PATCH, PUT, POST, DELETE
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))                      // GET, POST, DELETE
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsChatPath, handler.FriendsChatPage(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pHlsClient)) // GET, POST, PUT
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsUploadPath, handler.FriendsUploadPage(pCtx, p.fHTTPLogger, p.fConfig, pHlsClient))          // GET
+	mux.HandleFunc(hls_messenger_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlkClient))                   // GET, PATCH, PUT, POST, DELETE
+	mux.HandleFunc(hls_messenger_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient))                      // GET, POST, DELETE
+	mux.HandleFunc(hls_messenger_settings.CHandleFriendsChatPath, handler.FriendsChatPage(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pHlkClient)) // GET, POST, PUT
+	mux.HandleFunc(hls_messenger_settings.CHandleFriendsUploadPath, handler.FriendsUploadPage(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient))          // GET
 
 	mux.Handle(hls_messenger_settings.CHandleFriendsChatWSPath, websocket.Handler(handler.FriendsChatWS(pMsgBroker)))
 

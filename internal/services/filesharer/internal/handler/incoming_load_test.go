@@ -10,7 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/request"
@@ -200,7 +200,7 @@ func incomingLoadRequestMethod(handler http.HandlerFunc) error {
 }
 
 var (
-	_ hls_client.IClient = &tsHLSClient{}
+	_ hlk_client.IClient = &tsHLSClient{}
 )
 
 type tsHLSClient struct {

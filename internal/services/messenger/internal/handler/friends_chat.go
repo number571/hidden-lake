@@ -5,9 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	internal_utils "github.com/number571/hidden-lake/internal/services/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
@@ -43,7 +42,7 @@ func FriendsChatPage(
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
 	pDB database.IKVDatabase,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetAppShortNameFMT(), pR)
@@ -70,13 +69,13 @@ func FriendsChatPage(
 			return
 		}
 
-		myPubKey, err := pHlsClient.GetPubKey(pCtx)
+		myPubKey, err := pHlkClient.GetPubKey(pCtx)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_public_key", "read public key")(pW, pR)
 			return
 		}
 
-		recvPubKey, err := getReceiverPubKey(pCtx, pHlsClient, aliasName)
+		recvPubKey, err := getReceiverPubKey(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_receiver", "get receiver by public key")(pW, pR)
 			return
@@ -94,7 +93,7 @@ func FriendsChatPage(
 			}
 
 			if msgBytes != nil {
-				if err := pushMessage(pCtx, pHlsClient, aliasName, msgBytes); err != nil {
+				if err := pushMessage(pCtx, pHlkClient, aliasName, msgBytes); err != nil {
 					ErrorPage(pLogger, pCfg, "send_message", "push message to network")(pW, pR)
 					return
 				}
@@ -110,7 +109,7 @@ func FriendsChatPage(
 
 			hlpClient := hls_pinger_client.NewClient(
 				hls_pinger_client.NewBuilder(),
-				hls_pinger_client.NewRequester(pHlsClient),
+				hls_pinger_client.NewRequester(pHlkClient),
 			)
 
 			pingState = 1
@@ -164,7 +163,7 @@ func FriendsChatPage(
 
 func pushMessage(
 	pCtx context.Context,
-	pClient hls_client.IClient,
+	pClient hlk_client.IClient,
 	pAliasName string,
 	pMsgBytes []byte,
 ) error {
@@ -187,22 +186,4 @@ func pushMessage(
 	}
 
 	return nil
-}
-
-func getReceiverPubKey(
-	pCtx context.Context,
-	client hls_client.IClient,
-	aliasName string,
-) (asymmetric.IPubKey, error) {
-	friends, err := client.GetFriends(pCtx)
-	if err != nil {
-		return nil, errors.Join(ErrGetFriends, err)
-	}
-
-	friendPubKey, ok := friends[aliasName]
-	if !ok {
-		return nil, ErrUndefinedPublicKey
-	}
-
-	return friendPubKey, nil
 }

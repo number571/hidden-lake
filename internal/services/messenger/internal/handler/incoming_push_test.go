@@ -11,7 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
@@ -67,7 +67,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 func incomingPushRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
-	req.Header.Set(hlk_settings.CHeaderSenderPubKey, asymmetric.NewPrivKey().GetPubKey().ToString())
+	req.Header.Set(hlk_settings.CHeaderSenderFriend, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -87,7 +87,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 func incomingPushRequestMessage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/push", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderPubKey, asymmetric.NewPrivKey().GetPubKey().ToString())
+	req.Header.Set(hlk_settings.CHeaderSenderFriend, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -139,7 +139,7 @@ func incomingPushRequestMethod(handler http.HandlerFunc) error {
 }
 
 var (
-	_ hls_client.IClient = &tsHLSClient{}
+	_ hlk_client.IClient = &tsHLSClient{}
 )
 
 type tsHLSClient struct {

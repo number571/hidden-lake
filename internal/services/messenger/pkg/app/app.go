@@ -16,7 +16,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_config "github.com/number571/hidden-lake/internal/services/messenger/pkg/config"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -100,9 +100,9 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		}
 
 		msgBroker := msgdata.NewMessageBroker()
-		hlsClient := hls_client.NewClient(
-			hls_client.NewBuilder(),
-			hls_client.NewRequester(
+		hlsClient := hlk_client.NewClient(
+			hlk_client.NewBuilder(),
+			hlk_client.NewRequester(
 				p.fConfig.GetConnection(),
 				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 			),

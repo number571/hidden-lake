@@ -14,7 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	testutils "github.com/number571/hidden-lake/test/utils"
@@ -294,9 +294,9 @@ func TestHandleFriendsAPI(t *testing.T) {
 	wcfg, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[7])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TgAddrs[7],
 			&http.Client{Timeout: time.Minute},
 		),
@@ -308,7 +308,7 @@ func TestHandleFriendsAPI(t *testing.T) {
 	testDelFriend(t, client, aliasName)
 }
 
-func testGetFriends(t *testing.T, client hls_client.IClient, cfg config.IConfig) {
+func testGetFriends(t *testing.T, client hlk_client.IClient, cfg config.IConfig) {
 	friends, err := client.GetFriends(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -329,7 +329,7 @@ func testGetFriends(t *testing.T, client hls_client.IClient, cfg config.IConfig)
 	}
 }
 
-func testAddFriend(t *testing.T, client hls_client.IClient, aliasName string) {
+func testAddFriend(t *testing.T, client hlk_client.IClient, aliasName string) {
 	err := client.AddFriend(
 		context.Background(),
 		aliasName,
@@ -349,7 +349,7 @@ func testAddFriend(t *testing.T, client hls_client.IClient, aliasName string) {
 	}
 }
 
-func testDelFriend(t *testing.T, client hls_client.IClient, aliasName string) {
+func testDelFriend(t *testing.T, client hlk_client.IClient, aliasName string) {
 	err := client.DelFriend(context.Background(), aliasName)
 	if err != nil {
 		t.Fatal(err)

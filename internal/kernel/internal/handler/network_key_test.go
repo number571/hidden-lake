@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -20,9 +20,9 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[14])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TgAddrs[14],
 			&http.Client{Timeout: time.Minute},
 		),
@@ -31,7 +31,7 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 	testGetNetworkKey(t, client, "test")
 }
 
-func testGetNetworkKey(t *testing.T, client hls_client.IClient, networkKey string) {
+func testGetNetworkKey(t *testing.T, client hlk_client.IClient, networkKey string) {
 	settings, err := client.GetSettings(context.Background())
 	if err != nil {
 		t.Fatal(err)

@@ -14,8 +14,8 @@ var (
 	))
 )
 
-func GetMessageLimit(pCtx context.Context, pHlsClient client.IClient) (uint64, error) {
-	sett, err := pHlsClient.GetSettings(pCtx)
+func GetMessageLimit(pCtx context.Context, pHlkClient client.IClient) (uint64, error) {
+	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
 		return 0, errors.Join(ErrGetSettingsHLS, err)
 	}

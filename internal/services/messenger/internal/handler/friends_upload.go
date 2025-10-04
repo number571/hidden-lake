@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -24,7 +24,7 @@ func FriendsUploadPage(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
-	pHlsClient hls_client.IClient,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_messenger_settings.GetAppShortNameFMT(), pR)
@@ -40,7 +40,7 @@ func FriendsUploadPage(
 			return
 		}
 
-		msgLimit, err := utils.GetMessageLimit(pCtx, pHlsClient)
+		msgLimit, err := utils.GetMessageLimit(pCtx, pHlkClient)
 		if err != nil {
 			ErrorPage(pLogger, pCfg, "get_message_size", "get message size (limit)")(pW, pR)
 			return

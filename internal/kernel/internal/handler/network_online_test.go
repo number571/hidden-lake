@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hls_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
@@ -131,9 +131,9 @@ func TestHandleOnlineAPI(t *testing.T) {
 	_, node, _, cancel, srv := testAllCreate(pathCfg, pathDB, testutils.TgAddrs[12])
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
-	client := hls_client.NewClient(
-		hls_client.NewBuilder(),
-		hls_client.NewRequester(
+	client := hlk_client.NewClient(
+		hlk_client.NewBuilder(),
+		hlk_client.NewRequester(
 			testutils.TgAddrs[12],
 			&http.Client{Timeout: time.Minute},
 		),
@@ -143,7 +143,7 @@ func TestHandleOnlineAPI(t *testing.T) {
 	testDelOnline(t, client)
 }
 
-func testGetOnlines(t *testing.T, client hls_client.IClient) {
+func testGetOnlines(t *testing.T, client hlk_client.IClient) {
 	onlines, err := client.GetOnlines(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -153,7 +153,7 @@ func testGetOnlines(t *testing.T, client hls_client.IClient) {
 	}
 }
 
-func testDelOnline(t *testing.T, client hls_client.IClient) {
+func testDelOnline(t *testing.T, client hlk_client.IClient) {
 	if err := client.DelOnline(context.Background(), "tcp://bbb"); err != nil {
 		t.Fatal(err)
 	}

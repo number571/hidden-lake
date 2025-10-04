@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	hls_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 type IClient interface {
@@ -11,9 +11,9 @@ type IClient interface {
 }
 
 type IRequester interface {
-	Exec(context.Context, string, hls_request.IRequest) ([]byte, error)
+	Exec(context.Context, string, hlk_request.IRequest) ([]byte, error)
 }
 
 type IBuilder interface {
-	Exec(...string) hls_request.IRequest
+	Exec(...string) hlk_request.IRequest
 }
