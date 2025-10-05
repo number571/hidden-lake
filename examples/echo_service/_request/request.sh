@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## base64(hello, world!) = aGVsbG8sIHdvcmxkIQ==
+
 PUSH_FORMAT='{
     "receiver":"Bob",
     "req_data":{
