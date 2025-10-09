@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### BUG FIXES
+
+- `cmd/hla/hla-tcp`: fix duplicated log of start app
+
 <!-- ... -->
 
 ## v1.9.1

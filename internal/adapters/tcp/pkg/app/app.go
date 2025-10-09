@@ -139,11 +139,6 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		p.initLoggers()
 		p.initHandlers(pCtx)
 
-		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
-			"%s is started",
-			hla_tcp_settings.GetAppShortNameFMT(),
-		))
-
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
 			hla_tcp_settings.GetAppShortNameFMT(),
