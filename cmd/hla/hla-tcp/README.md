@@ -39,6 +39,7 @@ Creates [`./hla-tcp.yml`](./hla-tcp.yml) file.
 ## Running options
 
 ```bash
-$ hla-tcp --path /root
-# path = path to config
+$ hla-tcp --path /root --network xxx
+# path    = path to config
+# network = use network configuration from networks.yml
 ```

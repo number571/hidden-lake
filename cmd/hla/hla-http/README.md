@@ -39,6 +39,7 @@ Creates [`./hla-http.yml`](./hla-http.yml) file.
 ## Running options
 
 ```bash
-$ hla-http --path /root
-# path = path to config
+$ hla-http --path /root --network xxx
+# path    = path to config
+# network = use network configuration from networks.yml
 ```
