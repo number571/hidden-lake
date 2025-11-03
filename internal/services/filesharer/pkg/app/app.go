@@ -92,7 +92,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrInitSTG, err)
 		}
 
-		hlsClient := hlk_client.NewClient(
+		hlkClient := hlk_client.NewClient(
 			hlk_client.NewBuilder(),
 			hlk_client.NewRequester(
 				p.fConfig.GetConnection(),
@@ -100,8 +100,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			),
 		)
 
-		p.initExternalServiceHTTP(pCtx, hlsClient)
-		p.initInternalServiceHTTP(pCtx, hlsClient)
+		p.initExternalServiceHTTP(pCtx, hlkClient)
+		p.initInternalServiceHTTP(pCtx, hlkClient)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
