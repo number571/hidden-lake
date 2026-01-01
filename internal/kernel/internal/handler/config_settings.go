@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/anonymity"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"

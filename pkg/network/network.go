@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/number571/go-peer/pkg/anonymity"
-	"github.com/number571/go-peer/pkg/anonymity/queue"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
+	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -61,8 +61,8 @@ func NewHiddenLakeNode(
 				}),
 				func() client.IClient {
 					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())
-					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
+					if client.GetPayloadSize() <= encoding.CSizeUint64 {
+						panic(`client.GetPayloadSize() <= encoding.CSizeUint64`)
 					}
 					return client
 				}(),

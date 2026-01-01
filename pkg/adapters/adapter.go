@@ -3,7 +3,7 @@ package adapters
 import (
 	"context"
 
-	"github.com/number571/go-peer/pkg/anonymity/adapters"
+	"github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/adapters"
+	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/database"

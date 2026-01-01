@@ -20,7 +20,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/response"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
-	"github.com/number571/go-peer/pkg/anonymity"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/payload"
 )

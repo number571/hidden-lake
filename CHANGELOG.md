@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `go.mod`: update go-peer
+
 ### BUG FIXES
 
 - `cmd/hla/hla-tcp`: fix duplicated log of start app

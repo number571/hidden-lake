@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"

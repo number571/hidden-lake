@@ -12,7 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
 
-	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )

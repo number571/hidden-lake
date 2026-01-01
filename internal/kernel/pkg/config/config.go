@@ -21,6 +21,6 @@ func GetConfigSettings(pCfg config.IConfig, pClient client.IClient) SConfigSetti
 			FQueuePeriodMS:    uint64(sett.GetQueuePeriod() / time.Millisecond),  //nolint:gosec
 		},
 		// encoding.CSizeUint64 = payload64.Head()
-		FPayloadSizeBytes: pClient.GetPayloadLimit() - encoding.CSizeUint64,
+		FPayloadSizeBytes: pClient.GetPayloadSize() - encoding.CSizeUint64,
 	}
 }

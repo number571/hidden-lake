@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"sync"
 
-	anon_logger "github.com/number571/go-peer/pkg/anonymity/logger"
+	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"

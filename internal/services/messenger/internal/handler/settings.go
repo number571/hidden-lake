@@ -11,7 +11,6 @@ import (
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/language"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	"github.com/number571/hidden-lake/internal/webui"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
@@ -109,7 +108,7 @@ func getSettings(pCtx context.Context, pCfg config.IConfig, pHlkClient hlk_clien
 	}
 
 	result.FPublicKey = myPubKey.ToString()
-	result.FPublicKeyHash = pubkey.GetPubKeyHash(myPubKey)
+	result.FPublicKeyHash = myPubKey.GetHasher().ToString()
 
 	gotSettings, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {

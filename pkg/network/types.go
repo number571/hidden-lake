@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/number571/go-peer/pkg/anonymity"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/types"

@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/anonymity"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"

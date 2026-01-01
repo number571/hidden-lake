@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/anonymity"
-	"github.com/number571/go-peer/pkg/anonymity/adapters"
-	"github.com/number571/go-peer/pkg/anonymity/queue"
+	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
+	"github.com/number571/go-peer/pkg/anonymity/qb/adapters"
+	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
 	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
