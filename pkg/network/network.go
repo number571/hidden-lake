@@ -7,8 +7,8 @@ import (
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
-	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hybrid/client"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"

@@ -13,8 +13,8 @@ import (
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
-	"github.com/number571/go-peer/pkg/client"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hybrid/client"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
@@ -42,8 +42,6 @@ const (
 	tcQueuePeriod   = 5_000
 	tcFetchTimeout  = 30_000
 	tcQueueCapacity = 32
-	tcMaxConnects   = 16
-	tcCapacity      = 1024
 )
 
 var (

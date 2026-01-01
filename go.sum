@@ -4,6 +4,8 @@ github.com/number571/go-peer v1.7.10 h1:dtmqet8Jyzj+TglM2mdh3oAgJYEF0uVy2uvKGMuw
 github.com/number571/go-peer v1.7.10/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 github.com/number571/go-peer v1.7.11-0.20260101104530-ff08c7492995 h1:KNbP+nuI2PLkoRQhxj8MLHhEdr9zRNceHJQa2p9bmqo=
 github.com/number571/go-peer v1.7.11-0.20260101104530-ff08c7492995/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
+github.com/number571/go-peer v1.7.11-0.20260101214804-2b80d76bc377 h1:MYagiQEfeM1MWWsL2P6BQ0jXMg1fVhtzOcN4sRbboBQ=
+github.com/number571/go-peer v1.7.11-0.20260101214804-2b80d76bc377/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 go.etcd.io/bbolt v1.3.5 h1:XAzx9gjCb0Rxj7EoqcClPD1d5ZBxZJk0jbuoPHenBt0=
 go.etcd.io/bbolt v1.3.5/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
 golang.org/x/crypto v0.31.0 h1:ihbySMvVjLAeSH1IbfcRTkD/iNscyz8rGzjF/E5hV6U=
