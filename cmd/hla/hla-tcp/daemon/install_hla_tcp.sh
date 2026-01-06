@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeAdapterTCP
 
 [Service]
-ExecStart=/root/hla-tcp_amd64_linux --path /root
+ExecStart=/usr/local/bin/hla-tcp_amd64_linux --path ~/.config/hidden-lake
 Restart=always
 RestartSec=10
 
@@ -14,7 +14,7 @@ RestartSec=10
 WantedBy=multi-user.target
 " > /etc/systemd/system/hidden_lake_adapter_tcp.service
 
-cd /root && \
+cd /usr/local/bin && \
     rm -f hla-tcp_amd64_linux && \
     wget https://github.com/number571/hidden-lake/releases/latest/download/hla-tcp_amd64_linux && \
     chmod +x hla-tcp_amd64_linux

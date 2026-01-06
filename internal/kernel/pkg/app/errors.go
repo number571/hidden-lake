@@ -31,4 +31,5 @@ var (
 	ErrGetPsdPubKey     = &SAppError{"get psd pub key"}
 	ErrSetPsdPubKey     = &SAppError{"set psd pub key"}
 	ErrSetBuild         = &SAppError{"set build"}
+	ErrMkdirPath        = &SAppError{"mkdir path"}
 )

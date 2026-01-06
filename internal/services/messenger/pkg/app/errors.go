@@ -19,4 +19,5 @@ var (
 	ErrClose      = &SAppError{"close"}
 	ErrInitConfig = &SAppError{"init config"}
 	ErrSetBuild   = &SAppError{"set build"}
+	ErrMkdirPath  = &SAppError{"mkdir path"}
 )

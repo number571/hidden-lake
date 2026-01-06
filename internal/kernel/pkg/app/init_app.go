@@ -2,6 +2,7 @@ package app
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -18,6 +19,10 @@ import (
 // initApp work with the raw data = read files, read args
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	inputPath := strings.TrimSuffix(pFlags.Get("-p").GetStringValue(pArgs), "/")
+	if err := os.MkdirAll(inputPath, 0700); err != nil {
+		return nil, errors.Join(ErrMkdirPath, err)
+	}
+
 	okLoaded, err := build.SetBuildByPath(inputPath)
 	if err != nil {
 		return nil, errors.Join(ErrSetBuild, err)

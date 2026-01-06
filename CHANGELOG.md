@@ -6,9 +6,14 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `*/pkg/app/init_app.go`: create path for configs/databases if not exists
+
 ### CHANGES
 
 - `go.mod`: update go-peer
+- `install_*.sh`: change path /root -> (/usr/local/bin, ~/.config/hidden-lake)
 
 ### BUG FIXES
 

@@ -64,10 +64,6 @@ func TestInitApp(t *testing.T) {
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Fatal(err)
 	}
-
-	if _, err := InitApp([]string{"--path", "./not_exist/path/to/hlk"}, tgFlags); err == nil {
-		t.Fatal("success init app with undefined dir key")
-	}
 }
 
 func TestApp(t *testing.T) {

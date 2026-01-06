@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeFilesharer
 
 [Service]
-ExecStart=/root/hls-filesharer_amd64_linux --path /root
+ExecStart=/usr/local/bin/hls-filesharer_amd64_linux --path ~/.config/hidden-lake
 Restart=always
 RestartSec=10
 
@@ -14,7 +14,7 @@ RestartSec=10
 WantedBy=multi-user.target
 " > /etc/systemd/system/hidden_lake_service_filesharer.service
 
-cd /root && \
+cd /usr/local/bin && \
     rm -f hls-filesharer_amd64_linux && \
     wget https://github.com/number571/hidden-lake/releases/latest/download/hls-filesharer_amd64_linux && \
     chmod +x hls-filesharer_amd64_linux

@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeService
 
 [Service]
-ExecStart=/root/hls_amd64_linux --path /root
+ExecStart=/usr/local/bin/hls_amd64_linux --path ~/.config/hidden-lake
 Restart=always
 RestartSec=10
 
@@ -14,7 +14,7 @@ RestartSec=10
 WantedBy=multi-user.target
 " > /etc/systemd/system/hidden_lake_kernel.service
 
-cd /root && \
+cd /usr/local/bin && \
     rm -f hls_amd64_linux && \
     wget https://github.com/number571/hidden-lake/releases/latest/download/hlk_amd64_linux && \
     chmod +x hls_amd64_linux

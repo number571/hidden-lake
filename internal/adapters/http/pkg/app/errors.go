@@ -20,4 +20,5 @@ var (
 	ErrExist      = &SAppError{"exist"}
 	ErrInitConfig = &SAppError{"init config"}
 	ErrSetBuild   = &SAppError{"set build"}
+	ErrMkdirPath  = &SAppError{"mkdir path"}
 )

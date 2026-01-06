@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeMessenger
 
 [Service]
-ExecStart=/root/hls-messenger_amd64_linux --path /root
+ExecStart=/usr/local/bin/hls-messenger_amd64_linux --path ~/.config/hidden-lake
 Restart=always
 RestartSec=10
 
@@ -14,7 +14,7 @@ RestartSec=10
 WantedBy=multi-user.target
 " > /etc/systemd/system/hidden_lake_service_messenger.service
 
-cd /root && \
+cd /usr/local/bin && \
     rm -f hls-messenger_amd64_linux && \
     wget https://github.com/number571/hidden-lake/releases/latest/download/hls-messenger_amd64_linux && \
     chmod +x hls-messenger_amd64_linux
