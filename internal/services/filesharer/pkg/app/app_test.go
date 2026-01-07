@@ -57,7 +57,9 @@ func TestApp(t *testing.T) {
 		FSettings: &config.SConfigSettings{
 			FPageOffset: 10,
 		},
-		FAddress:    testutils.TgAddrs[29],
+		FAddress: &config.SAddress{
+			FExternal: testutils.TgAddrs[29],
+		},
 		FConnection: "test_connection",
 	})
 	if err != nil {

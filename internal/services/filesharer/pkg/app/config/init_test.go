@@ -43,7 +43,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config2.GetAddress() != tcAddressIncoming {
+	if config2.GetAddress().GetExternal() != tcAddressIncoming {
 		t.Fatal("got invalid field with exist config (2)")
 	}
 
@@ -54,7 +54,7 @@ func TestInit(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if config3.GetAddress() != hls_filesharer_settings.CDefaultAddress {
+	if config3.GetAddress().GetExternal() != hls_filesharer_settings.CDefaultExternalAddress {
 		t.Fatal("got invalid field with exist config (3)")
 	}
 }

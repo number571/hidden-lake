@@ -31,7 +31,7 @@ const (
 )
 
 const (
-	CDefaultAddress = "127.0.0.1:9542"
+	CDefaultExternalAddress = "127.0.0.1:9542"
 )
 
 const (

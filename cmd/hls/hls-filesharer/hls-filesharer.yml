@@ -6,5 +6,6 @@ logging:
 - info
 - warn
 - erro
-address: 127.0.0.1:9542
+address:
+  external: 127.0.0.1:9542
 connection: 127.0.0.1:9572

@@ -30,7 +30,7 @@ const (
 
 const (
 	CHeaderPassword = "Password" // nolint: gosec
-	CExecSeparator  = "[@remoter-separator]"
+	CExecSeparator  = "[@s]"
 )
 
 const (

@@ -26,10 +26,10 @@ The server providing the remote access service is waiting for a request in the f
 As an example, to create a file with the contents of "hello, world!" and then reading from the same file, you will need to run the following command:
 
 ```bash
-bash[@remoter-separator]-c[@remoter-separator]echo 'hello, world' > file.txt && cat file.txt
+bash[@s]-c[@s]echo 'hello, world' > file.txt && cat file.txt
 ```
 
-The `[@remoter-separator]` label means that the arguments are separated for the main command.
+The `[@s]` label means that the arguments are separated for the main command.
 
 ## Supported platforms
 

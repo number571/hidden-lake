@@ -1,7 +1,5 @@
 #!/bin/bash
 
-## node1[localhost:8080](Alice) -> node2[localhost:7070](Bob)
-
 PUSH_FORMAT='{
     "receiver":"Bob",
     "req_data":{

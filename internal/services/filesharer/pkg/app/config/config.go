@@ -13,6 +13,7 @@ import (
 var (
 	_ IConfigSettings = &SConfigSettings{}
 	_ IConfig         = &SConfig{}
+	_ IAddress        = &SAddress{}
 )
 
 type SConfigSettings struct {
@@ -30,8 +31,12 @@ type SConfig struct {
 
 	FSettings   *SConfigSettings `yaml:"settings"`
 	FLogging    []string         `yaml:"logging,omitempty"`
-	FAddress    string           `yaml:"address"`
+	FAddress    *SAddress        `yaml:"address"`
 	FConnection string           `yaml:"connection"`
+}
+
+type SAddress struct {
+	FExternal string `yaml:"external"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -105,13 +110,17 @@ func (p *SConfigSettings) loadLanguage() error {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != "" &&
-		p.FAddress != "" &&
+		p.FAddress.FExternal != "" &&
 		p.FSettings.FPageOffset != 0
 }
 
 func (p *SConfig) initConfig() error {
 	if p.FSettings == nil {
 		p.FSettings = new(SConfigSettings)
+	}
+
+	if p.FAddress == nil {
+		p.FAddress = new(SAddress)
 	}
 
 	if !p.isValid() {
@@ -138,12 +147,16 @@ func (p *SConfig) loadLogging() error {
 	return nil
 }
 
-func (p *SConfig) GetAddress() string {
+func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
 func (p *SConfig) GetConnection() string {
 	return p.FConnection
+}
+
+func (p *SAddress) GetExternal() string {
+	return p.FExternal
 }
 
 func (p *SConfig) GetLogging() logger.ILogging {

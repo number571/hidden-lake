@@ -9,12 +9,14 @@
 ### IMPROVEMENTS
 
 - `*/pkg/app/init_app.go`: create path for configs/databases if not exists
+- `cmd/hls/*`: add cli clients, update examples
 
 ### CHANGES
 
 - `go.mod`: update go-peer
 - `install_*.sh`: change path /root -> (/usr/local/bin, ~/.config/hidden-lake)
 - `cmd/hls/hls-filesharer`: delete webui -> change to cli
+- `cmd/hls/hls-remoter`: change separator [@remoter-separator] -> [@s]
 
 ### BUG FIXES
 
