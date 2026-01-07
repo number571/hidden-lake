@@ -3,15 +3,11 @@ package app
 import (
 	"context"
 	"net/http"
-	"os"
 
-	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/webui"
 )
 
 func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
@@ -19,12 +15,17 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 	mux.HandleFunc(
 		hls_filesharer_settings.CLoadPath,
 		handler.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fPathTo, pHlkClient),
-	) // POST
+	) // GET
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CListPath,
 		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fPathTo),
-	) // POST
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CInfoPath,
+		handler.HandleIncomingInfoHTTP(p.fHTTPLogger, p.fPathTo),
+	) // GET
 
 	buildSettings := build.GetSettings()
 	p.fExtServiceHTTP = &http.Server{
@@ -33,38 +34,4 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
 		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
 	}
-}
-
-func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
-	mux := http.NewServeMux()
-	mux.Handle(hls_filesharer_settings.CStaticPath, http.StripPrefix(
-		hls_filesharer_settings.CStaticPath,
-		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(webui.MustGetStaticPath()))),
-	)
-
-	cfgWrapper := config.NewWrapper(p.fConfig)
-
-	mux.HandleFunc(hls_filesharer_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                         // GET, POST
-	mux.HandleFunc(hls_filesharer_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                         // GET
-	mux.HandleFunc(hls_filesharer_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlkClient))                // GET, PATCH, PUT, POST, DELETE
-	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient))                   // GET, POST, DELETE
-	mux.HandleFunc(hls_filesharer_settings.CHandleFriendsStoragePath, handler.StoragePage(pCtx, p.fHTTPLogger, p.fConfig, p.fPathTo, pHlkClient)) // GET, POST, DELETE
-
-	buildSettings := build.GetSettings()
-	p.fIntServiceHTTP = &http.Server{
-		Addr:        p.fConfig.GetAddress().GetInternal(),
-		Handler:     mux,
-		ReadTimeout: buildSettings.GetHttpReadTimeout(),
-		// WriteTimeout not set (downloading a file may take a long time)
-	}
-}
-
-func handleFileServer(pLogger logger.ILogger, pCfg config.IConfig, pFS http.FileSystem) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, err := pFS.Open(r.URL.Path); os.IsNotExist(err) {
-			handler.NotFoundPage(pLogger, pCfg)(w, r)
-			return
-		}
-		http.FileServer(pFS).ServeHTTP(w, r)
-	})
 }

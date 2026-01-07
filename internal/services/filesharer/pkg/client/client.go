@@ -2,8 +2,6 @@ package client
 
 import (
 	"context"
-
-	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 )
 
 var (
@@ -22,7 +20,11 @@ func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
 	}
 }
 
-func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]hls_filesharer_settings.SFileInfo, error) {
+func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (IFileInfo, error) {
+	return p.fRequester.GetFileInfo(pCtx, pAliasName, p.fBuilder.GetFileInfo(pName))
+}
+
+func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]IFileInfo, error) {
 	return p.fRequester.GetListFiles(pCtx, pAliasName, p.fBuilder.GetListFiles(pPage))
 }
 

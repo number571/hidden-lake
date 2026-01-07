@@ -58,7 +58,6 @@ func TestApp(t *testing.T) {
 			FPageOffset: 10,
 		},
 		FAddress: &config.SAddress{
-			FInternal: testutils.TgAddrs[37],
 			FExternal: testutils.TgAddrs[29],
 		},
 		FConnection: "test_connection",

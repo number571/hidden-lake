@@ -22,13 +22,11 @@ logging:
   - info
   - erro
 address:
-  internal: '%s'
   external: '%s'
 connection: '%s'`
 )
 
 const (
-	tcAddressInterface  = "address_interface"
 	tcAddressIncoming   = "address_incoming"
 	tcConnectionService = "connection_service"
 	tcMessageSize       = (1 << 20)
@@ -51,7 +49,6 @@ func testNewConfigString() string {
 		tcConfigTemplate,
 		tcPageOffset,
 		tcRetryNum,
-		tcAddressInterface,
 		tcAddressIncoming,
 		tcConnectionService,
 	)
@@ -82,10 +79,6 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetLogging().HasWarn() == tcLogging {
 		t.Fatal("logging.warn is invalid")
-	}
-
-	if cfg.GetAddress().GetInternal() != tcAddressInterface {
-		t.Fatal("address.interface is invalid")
 	}
 
 	if cfg.GetAddress().GetExternal() != tcAddressIncoming {

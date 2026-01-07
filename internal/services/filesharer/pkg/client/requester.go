@@ -5,6 +5,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -27,7 +28,7 @@ func NewRequester(pHlkClient hlk_client.IClient) IRequester {
 	}
 }
 
-func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]hls_filesharer_settings.SFileInfo, error) {
+func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) (IFileInfo, error) {
 	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
@@ -37,18 +38,43 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequ
 		return nil, ErrDecodeResponse
 	}
 
-	list := make([]hls_filesharer_settings.SFileInfo, 0, hls_filesharer_settings.CDefaultPageOffset)
+	info := sFileInfo{}
+	if err := encoding.DeserializeJSON(resp.GetBody(), &info); err != nil {
+		fmt.Println(string(resp.GetBody()))
+		return nil, errors.Join(ErrInvalidResponse, err)
+	}
+
+	if !isValidHexHash(info.FHash) {
+		return nil, ErrInvalidResponse
+	}
+
+	return NewFileInfo(info.FName, info.FHash, info.FSize), nil
+}
+
+func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]IFileInfo, error) {
+	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+
+	if resp.GetCode() != http.StatusOK {
+		return nil, ErrDecodeResponse
+	}
+
+	list := make([]sFileInfo, 0, hls_filesharer_settings.CDefaultPageOffset)
 	if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
 		return nil, errors.Join(ErrInvalidResponse, err)
 	}
 
+	fileInfos := make([]IFileInfo, 0, len(list))
 	for _, info := range list {
 		if !isValidHexHash(info.FHash) {
 			return nil, ErrInvalidResponse
 		}
+		fileInfos = append(fileInfos, NewFileInfo(info.FName, info.FHash, info.FSize))
 	}
 
-	return list, nil
+	return fileInfos, nil
 }
 
 func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]byte, error) {

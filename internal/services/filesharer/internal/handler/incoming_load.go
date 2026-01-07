@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
@@ -59,7 +59,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunkSize, err := utils.GetMessageLimit(pCtx, pHlkClient)
+		chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_chunk_size"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: get chunk size")

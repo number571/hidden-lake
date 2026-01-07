@@ -5,20 +5,24 @@ import (
 	"context"
 	"crypto/sha512"
 	"errors"
+	"fmt"
 	"hash"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	internal_utils "github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
+	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 )
 
 func init() {
 	v := []byte("init_value")
 	h := sha512.Sum384(v)
+
 	// maintaining the overall level of security and uniformity of the algorithms used
 	if !bytes.Equal(h[:], hashing.NewHasher(v).ToBytes()) {
 		panic("uses diff hash functions")
@@ -26,8 +30,10 @@ func init() {
 }
 
 var (
-	_ IReadSeeker = &sStream{}
+	_ io.ReadSeeker = &sStream{}
 )
+
+type ICallbackFunc func([]byte, uint64, uint64)
 
 type sStream struct {
 	fContext   context.Context
@@ -35,44 +41,67 @@ type sStream struct {
 	fTempFile  string
 	fHlfClient hls_filesharer_client.IClient
 	fAliasName string
-	fFileInfo  IFileInfo
+	fFileInfo  hls_filesharer_client.IFileInfo
 	fBuffer    []byte
 	fPosition  uint64
 	fTempBytes []byte
 	fHasher    hash.Hash
 	fChunkSize uint64
+	fCallback  ICallbackFunc
 }
 
 func BuildStream(
 	pCtx context.Context,
 	pRetryNum uint64,
-	pTempFile string,
-	pHlkClient hlk_client.IClient,
+	pInputPath string,
 	pAliasName string,
-	pFileInfo IFileInfo,
-) (IReadSeeker, error) {
-	chunkSize, err := internal_utils.GetMessageLimit(pCtx, pHlkClient)
+	pHlkClient hlk_client.IClient,
+	pFilename string,
+	pCallback ICallbackFunc,
+) (io.ReadSeeker, error) {
+	hlfClient := hls_filesharer_client.NewClient(
+		hls_filesharer_client.NewBuilder(),
+		hls_filesharer_client.NewRequester(pHlkClient),
+	)
+	chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
 	if err != nil {
-		return nil, errors.Join(ErrGetMessageLimit, err)
+		return nil, err
 	}
-	tempBytes, err := os.ReadFile(pTempFile) // nolint: gosec
+	fileInfo, err := hlfClient.GetFileInfo(pCtx, pAliasName, pFilename)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, fileInfo.GetHash()[:8])
+	tempFile := filepath.Join(pInputPath, tempName)
+	tempBytes, err := readTempFile(tempFile)
+	if err != nil {
+		return nil, err
 	}
 	return &sStream{
 		fContext:   pCtx,
 		fRetryNum:  pRetryNum,
-		fTempFile:  pTempFile,
+		fTempFile:  tempFile,
 		fTempBytes: tempBytes,
-		fHlfClient: hls_filesharer_client.NewClient(
-			hls_filesharer_client.NewBuilder(),
-			hls_filesharer_client.NewRequester(pHlkClient),
-		),
+		fHlfClient: hlfClient,
 		fAliasName: pAliasName,
 		fHasher:    sha512.New384(),
 		fChunkSize: chunkSize,
-		fFileInfo:  pFileInfo,
+		fFileInfo:  fileInfo,
+		fCallback:  pCallback,
 	}, nil
+}
+
+func readTempFile(pTempFile string) ([]byte, error) {
+	if _, err := os.Stat(pTempFile); errors.Is(err, os.ErrNotExist) {
+		if _, err := os.Create(pTempFile); err != nil { // nolint: gosec
+			return nil, errors.Join(ErrCreateTempFile, err)
+		}
+	}
+	tempBytes, err := os.ReadFile(pTempFile) // nolint: gosec
+	if err != nil {
+		return nil, errors.Join(ErrReadTempFile, err)
+	}
+	return tempBytes, nil
 }
 
 func (p *sStream) Read(b []byte) (int, error) {
@@ -101,6 +130,10 @@ func (p *sStream) Read(b []byte) (int, error) {
 	n := copy(b, p.fBuffer)
 	p.fBuffer = p.fBuffer[n:]
 	p.fPosition += uint64(n) //nolint:gosec
+
+	if p.fCallback != nil {
+		p.fCallback(b[:n], p.fPosition, p.fFileInfo.GetSize())
+	}
 
 	if _, err := p.fHasher.Write(b[:n]); err != nil {
 		return 0, errors.Join(ErrHashWriteChunk, err)

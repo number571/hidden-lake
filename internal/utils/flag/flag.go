@@ -2,6 +2,7 @@ package flag
 
 import (
 	"slices"
+	"strconv"
 )
 
 var (
@@ -51,6 +52,32 @@ func (p *sFlag) GetBoolValue(pArgs []string) bool {
 		}
 	}
 	return false
+}
+
+func (p *sFlag) GetInt64Value(pArgs []string) int64 {
+	defaultValue, err := strconv.ParseInt(p.fDefaultValue, 10, 64)
+	if err != nil {
+		defaultValue = 0
+	}
+	aliases := p.GetAliases()
+	isNextValue := false
+	for _, arg := range pArgs {
+		if isNextValue {
+			value, err := strconv.ParseInt(arg, 10, 64)
+			if err != nil {
+				panic("int64 value is invalid")
+			}
+			return value
+		}
+		if !slices.Contains(aliases, arg) {
+			continue
+		}
+		isNextValue = true
+	}
+	if isNextValue {
+		panic("args has key but value is not found")
+	}
+	return defaultValue
 }
 
 func (p *sFlag) GetStringValue(pArgs []string) string {

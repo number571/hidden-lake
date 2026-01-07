@@ -1,7 +1,7 @@
 package utils
 
 const (
-	errPrefix = "internal/services/filesharer/internal/utils = "
+	errPrefix = "internal/services/filesharer/pkg/utils = "
 )
 
 type SUtilsError struct {

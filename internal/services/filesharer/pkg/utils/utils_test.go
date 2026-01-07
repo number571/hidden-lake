@@ -24,7 +24,7 @@ func TestError(t *testing.T) {
 func TestUtils(t *testing.T) {
 	t.Parallel()
 
-	limit, err := GetMessageLimit(context.Background(), newTsHLSClient(1024))
+	limit, err := GetMessageLimitOnLoadPage(context.Background(), newTsHLSClient(1024))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestUtils(t *testing.T) {
 		t.Fatal("limit != 1024-gRespSize")
 	}
 
-	if _, err := GetMessageLimit(context.Background(), newTsHLSClient(gRespSize)); err == nil {
+	if _, err := GetMessageLimitOnLoadPage(context.Background(), newTsHLSClient(gRespSize)); err == nil {
 		t.Fatal("success get message limit with gRespSize >= limit")
 	}
 }

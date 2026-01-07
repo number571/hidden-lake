@@ -5,12 +5,14 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hashing"
+	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -34,23 +36,24 @@ func TestStream(t *testing.T) {
 	}
 	defer func() { _ = tf.Close() }()
 
+	inputPath := "./testdata/"
 	filename := "file.txt"
-	fileBytes, err := os.ReadFile("./testdata/" + filename)
+	fileBytes, err := os.ReadFile(inputPath + filename)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	ctx := context.Background()
+	hlkClient := newTsHLSClient(fileBytes)
+
 	stream, err := BuildStream(
 		ctx,
 		0,
-		tf.Name(),
-		newTsHLSClient(fileBytes),
+		inputPath,
 		"alias_name",
-		func() IFileInfo {
-			hash := hashing.NewHasher(fileBytes).ToString()
-			return NewFileInfo(filename, hash, uint64(len(fileBytes)))
-		}(),
+		hlkClient,
+		filename,
+		nil,
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -124,8 +127,17 @@ func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) err
 	return nil
 }
 
-func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
-	p.fCounter++
+func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IRequest) (response.IResponse, error) {
+	var resp response.IResponseBuilder
+	switch {
+	case strings.Contains(r.GetPath(), "/info"):
+		fileInfo := client.NewFileInfoFromBytes("file.txt", p.fFileBytes)
+		resp = response.NewResponseBuilder().WithCode(200).WithBody(encoding.SerializeJSON(fileInfo))
+	case strings.Contains(r.GetPath(), "/load"):
+		resp = response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
+		p.fCounter++
+	default:
+		return nil, errors.New("unknown path") // nolint:err113
+	}
 	return resp.Build(), nil
 }

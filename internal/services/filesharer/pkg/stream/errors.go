@@ -22,4 +22,6 @@ var (
 	ErrInvalidWhence    = &SStreamError{"invalid whence"}
 	ErrNegativePosition = &SStreamError{"negative position"}
 	ErrGetMessageLimit  = &SStreamError{"get message limit"}
+	ErrReadTempFile     = &SStreamError{"read temp file"}
+	ErrCreateTempFile   = &SStreamError{"create temp file"}
 )

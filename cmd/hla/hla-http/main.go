@@ -34,7 +34,8 @@ var (
 func main() {
 	args := os.Args[1:]
 	if ok := gFlags.Validate(args); !ok {
-		panic("args invalid")
+		fmt.Println("args invalid")
+		os.Exit(1)
 	}
 
 	if gFlags.Get("-v").GetBoolValue(args) {

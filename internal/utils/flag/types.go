@@ -19,6 +19,8 @@ type IFlagBuilder interface {
 type IFlag interface {
 	GetAliases() []string
 	GetDescription() string
+
 	GetBoolValue([]string) bool
+	GetInt64Value([]string) int64
 	GetStringValue([]string) string
 }

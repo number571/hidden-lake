@@ -14,6 +14,7 @@
 
 - `go.mod`: update go-peer
 - `install_*.sh`: change path /root -> (/usr/local/bin, ~/.config/hidden-lake)
+- `cmd/hls/hls-filesharer`: delete webui -> change to cli
 
 ### BUG FIXES
 

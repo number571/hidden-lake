@@ -19,6 +19,14 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
+func (p *sBuilder) GetFileInfo(pFileName string) hlk_request.IRequest {
+	return hlk_request.NewRequestBuilder().
+		WithMethod(http.MethodGet).
+		WithHost(hls_filesharer_settings.CAppShortName).
+		WithPath(fmt.Sprintf("%s?name=%s", hls_filesharer_settings.CInfoPath, pFileName)).
+		Build()
+}
+
 func (p *sBuilder) GetListFiles(pPage uint64) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
