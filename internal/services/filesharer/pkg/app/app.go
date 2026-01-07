@@ -126,7 +126,7 @@ func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup,
 	defer wg.Done()
 	defer func() { <-pCtx.Done() }()
 
-	if p.fConfig.GetAddress().GetExternal() == "" {
+	if p.fConfig.GetAddress() == "" {
 		return
 	}
 

@@ -16,8 +16,8 @@ type IEditor interface {
 
 type IConfig interface {
 	GetSettings() IConfigSettings
-	GetAddress() IAddress
 	GetLogging() logger.ILogging
+	GetAddress() string
 	GetConnection() string
 }
 
@@ -25,8 +25,4 @@ type IConfigSettings interface {
 	GetRetryNum() uint64
 	GetPageOffset() uint64
 	GetLanguage() language.ILanguage
-}
-
-type IAddress interface {
-	GetExternal() string
 }

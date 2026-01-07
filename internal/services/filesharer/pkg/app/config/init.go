@@ -20,10 +20,8 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 				FPageOffset: hls_filesharer_settings.CDefaultPageOffset,
 				FLanguage:   hls_filesharer_settings.CDefaultLanguage,
 			},
-			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
-			FAddress: &SAddress{
-				FExternal: hls_filesharer_settings.CDefaultExternalAddress,
-			},
+			FLogging:    []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
+			FAddress:    hls_filesharer_settings.CDefaultAddress,
 			FConnection: hlk_settings.CDefaultInternalAddress,
 		}
 	}

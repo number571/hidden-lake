@@ -9,7 +9,6 @@ services:
       - SERVICE_PATH=examples/filesharer/prod_test/node1_hlf
     ports:
       - 8572:8572
-      - 8080:8080
     networks:
       - hidden-lake
   node2_hlc:
@@ -19,8 +18,6 @@ services:
     environment:
       - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/filesharer/prod_test/node2_hlf
-    ports:
-      - 7070:7070
     networks:
       - hidden-lake
 networks:

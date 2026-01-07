@@ -65,17 +65,17 @@ func BuildStream(
 	)
 	chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrGetMessageLimit, err)
 	}
 	fileInfo, err := hlfClient.GetFileInfo(pCtx, pAliasName, pFilename)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrGetFileInfo, err)
 	}
 	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, fileInfo.GetHash()[:8])
 	tempFile := filepath.Join(pInputPath, tempName)
-	tempBytes, err := readTempFile(tempFile)
+	tempBytes, err := readTempFile(tempFile, chunkSize)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrReadTempFile, err)
 	}
 	return &sStream{
 		fContext:   pCtx,
@@ -91,15 +91,18 @@ func BuildStream(
 	}, nil
 }
 
-func readTempFile(pTempFile string) ([]byte, error) {
+func readTempFile(pTempFile string, pChunkSize uint64) ([]byte, error) {
 	if _, err := os.Stat(pTempFile); errors.Is(err, os.ErrNotExist) {
 		if _, err := os.Create(pTempFile); err != nil { // nolint: gosec
-			return nil, errors.Join(ErrCreateTempFile, err)
+			return nil, err
 		}
 	}
 	tempBytes, err := os.ReadFile(pTempFile) // nolint: gosec
 	if err != nil {
-		return nil, errors.Join(ErrReadTempFile, err)
+		return nil, err
+	}
+	if uint64(len(tempBytes))%pChunkSize != 0 {
+		return nil, errors.New("len(tempBytes) %% chunkSize != 0") // nolint: err113
 	}
 	return tempBytes, nil
 }
@@ -121,10 +124,10 @@ func (p *sStream) Read(b []byte) (int, error) {
 		if err != nil {
 			return 0, errors.Join(ErrLoadFileChunk, err)
 		}
-		p.fBuffer = chunk
-		if err := p.appendToTempFile(p.fBuffer); err != nil {
+		if err := p.appendToTempFile(chunk); err != nil {
 			return 0, errors.Join(ErrAppendToTempFile, err)
 		}
+		p.fBuffer = chunk
 	}
 
 	n := copy(b, p.fBuffer)

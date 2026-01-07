@@ -16,5 +16,4 @@ var (
 	ErrMkdirPath     = &SAppError{"mkdir path"}
 	ErrRetryNum      = &SAppError{"retry num"}
 	ErrUnknownAction = &SAppError{"unknown action"}
-	ErrInput         = &SAppError{"input"}
 )

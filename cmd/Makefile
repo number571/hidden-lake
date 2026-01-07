@@ -11,7 +11,8 @@ build:
 		hlk \
 		hlc \
 		hla/hla-tcp hla/hla-http \
-		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger; \
+		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger \
+		hls/hls-filesharer/client/hls-filesharer-cli; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

@@ -21,8 +21,7 @@ const (
 logging:
   - info
   - erro
-address:
-  external: '%s'
+address: '%s'
 connection: '%s'`
 )
 
@@ -81,7 +80,7 @@ func TestConfig(t *testing.T) {
 		t.Fatal("logging.warn is invalid")
 	}
 
-	if cfg.GetAddress().GetExternal() != tcAddressIncoming {
+	if cfg.GetAddress() != tcAddressIncoming {
 		t.Fatal("address.incoming is invalid")
 	}
 
