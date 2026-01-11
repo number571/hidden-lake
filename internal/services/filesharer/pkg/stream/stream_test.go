@@ -27,7 +27,7 @@ func TestError(t *testing.T) {
 	}
 }
 
-func TestStream(t *testing.T) {
+func TestStreamReader(t *testing.T) {
 	t.Parallel()
 
 	tf, err := os.CreateTemp("", "temp-")
@@ -46,7 +46,7 @@ func TestStream(t *testing.T) {
 	ctx := context.Background()
 	hlkClient := newTsHLSClient(fileBytes)
 
-	stream, err := BuildStream(
+	stream, err := BuildStreamReader(
 		ctx,
 		0,
 		inputPath,

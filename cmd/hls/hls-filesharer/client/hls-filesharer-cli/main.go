@@ -123,7 +123,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println(string(fileInfoStr))
 	case "load":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		stream, err := stream.BuildStream(
+		reader, err := stream.BuildStreamReader(
 			pCtx,
 			uint64(retryNum),
 			inputPath,
@@ -138,7 +138,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			return err
 		}
 		dstFile := filepath.Join(inputPath, fileName)
-		if err := copyFile(dstFile, stream); err != nil {
+		if err := copyFile(dstFile, reader); err != nil {
 			return err
 		}
 	default:
@@ -149,17 +149,15 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 }
 
 func copyFile(dst string, src io.Reader) error {
-	destinationFile, err := os.Create(dst) // nolint:gosec
+	dstFile, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY, 0600) // nolint:gosec
 	if err != nil {
 		return fmt.Errorf("failed to create destination file: %w", err)
 	}
-	defer destinationFile.Close() // nolint:errcheck
-	_, err = io.Copy(destinationFile, src)
-	if err != nil {
+	defer dstFile.Close() // nolint:errcheck
+	if _, err := io.Copy(dstFile, src); err != nil {
 		return fmt.Errorf("failed to copy file contents: %w", err)
 	}
-	err = destinationFile.Sync()
-	if err != nil {
+	if err := dstFile.Sync(); err != nil {
 		return fmt.Errorf("failed to sync destination file: %w", err)
 	}
 	return nil

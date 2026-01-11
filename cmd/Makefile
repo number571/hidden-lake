@@ -8,11 +8,12 @@ BINPATH=$(ROOPATH)/bin
 default: build move_apps remove-std
 build: 
 	for app in \
-		hlk \
-		hlc \
-		hla/hla-tcp hla/hla-http \
-		hls/hls-messenger hls/hls-filesharer hls/hls-remoter hls/hls-pinger \
-		hls/hls-filesharer/client/hls-filesharer-cli; \
+		hlk 				hlc \
+		hla/hla-tcp 		hla/hla-http \
+		hls/hls-messenger 	hls/hls-messenger/client/hls-messenger-cli \
+		hls/hls-filesharer 	hls/hls-filesharer/client/hls-filesharer-cli \
+		hls/hls-remoter 	hls/hls-remoter/client/hls-remoter-cli \
+		hls/hls-pinger 		hls/hls-pinger/client/hls-pinger-cli; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

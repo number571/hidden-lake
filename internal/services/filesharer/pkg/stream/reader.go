@@ -50,7 +50,7 @@ type sStream struct {
 	fCallback  ICallbackFunc
 }
 
-func BuildStream(
+func BuildStreamReader(
 	pCtx context.Context,
 	pRetryNum uint64,
 	pInputPath string,
@@ -179,6 +179,7 @@ func (p *sStream) Seek(offset int64, whence int) (int64, error) {
 	if pos < 0 {
 		return 0, ErrNegativePosition
 	}
+
 	p.fBuffer = p.fBuffer[:0]
 	p.fPosition = uint64(pos)
 	return pos, nil
