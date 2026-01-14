@@ -33,5 +33,11 @@ const (
 )
 
 const (
+	CDefaultInternalAddress = "127.0.0.1:9551"
 	CDefaultExternalAddress = "127.0.0.1:9552"
+)
+
+const (
+	CHandleIndexPath = "/api/index"
+	CHandlePingPath  = "/api/ping"
 )

@@ -80,7 +80,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	go func() {
 		for {
-			m, err := hlsClient.ListenMessage(pCtx, friend, "hls-messenger-cli")
+			m, err := hlsClient.ListenChat(pCtx, friend, "hls-messenger-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue

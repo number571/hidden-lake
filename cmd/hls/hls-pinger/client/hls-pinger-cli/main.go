@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_pinger_client "github.com/number571/hidden-lake/internal/services/pinger/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/flag"
@@ -20,9 +19,9 @@ var (
 			WithDescription("print version of application"),
 		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print information about application"),
-		flag.NewFlagBuilder("-k", "--kernel").
-			WithDescription("set internal address of the HLK").
-			WithDefinedValue("localhost:9572"),
+		flag.NewFlagBuilder("-s", "--service").
+			WithDescription("set internal address of the HLS").
+			WithDefinedValue("localhost:9551"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
@@ -56,15 +55,10 @@ func main() {
 }
 
 func runFunction(pCtx context.Context, pArgs []string) error {
-	hlkClient := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			gFlags.Get("-k").GetStringValue(pArgs),
+	return hls_pinger_client.NewClient(
+		hls_pinger_client.NewRequester(
+			gFlags.Get("-s").GetStringValue(pArgs),
 			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 		),
-	)
-	return hls_pinger_client.NewClient(
-		hls_pinger_client.NewBuilder(),
-		hls_pinger_client.NewRequester(hlkClient),
-	).Ping(pCtx, gFlags.Get("-f").GetStringValue(pArgs))
+	).PingFriend(pCtx, gFlags.Get("-f").GetStringValue(pArgs))
 }

@@ -9,17 +9,19 @@ var (
 )
 
 type sClient struct {
-	fBuilder   IBuilder
 	fRequester IRequester
 }
 
-func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
+func NewClient(pRequester IRequester) IClient {
 	return &sClient{
-		fBuilder:   pBuilder,
 		fRequester: pRequester,
 	}
 }
 
-func (p *sClient) Ping(pCtx context.Context, pAliasName string) error {
-	return p.fRequester.Ping(pCtx, pAliasName, p.fBuilder.Ping())
+func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
+	return p.fRequester.GetIndex(pCtx)
+}
+
+func (p *sClient) PingFriend(pCtx context.Context, pAliasName string) error {
+	return p.fRequester.PingFriend(pCtx, pAliasName)
 }

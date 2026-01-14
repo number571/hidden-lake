@@ -20,6 +20,10 @@ func NewClient(pRequester IRequester) IClient {
 	}
 }
 
+func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
+	return p.fRequester.GetIndex(pCtx)
+}
+
 func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (string, error) {
 	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
 }
@@ -28,6 +32,6 @@ func (p *sClient) LoadMessages(pCtx context.Context, pAliasName string, pPage ui
 	return p.fRequester.LoadMessages(pCtx, pAliasName, pPage, pOffset)
 }
 
-func (p *sClient) ListenMessage(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessage, error) {
-	return p.fRequester.ListenMessage(pCtx, pSubscribeID, pAliasName)
+func (p *sClient) ListenChat(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessage, error) {
+	return p.fRequester.ListenChat(pCtx, pSubscribeID, pAliasName)
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run ./../../cmd/hls/hls-pinger/client/hls-pinger-cli -k localhost:7572 -f Bob
+go run ./../../cmd/hls/hls-pinger/client/hls-pinger-cli -s localhost:7551 -f Bob

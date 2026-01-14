@@ -10,6 +10,7 @@ const (
 	tcLogging    = true
 	tcAddress1   = "test_address1"
 	tcAddress2   = "test_address2"
+	tcAddress3   = "test_address3"
 )
 
 func TestError(t *testing.T) {
@@ -27,8 +28,10 @@ func testConfigDefaultInit(configPath string) {
 		FSettings: &SConfigSettings{},
 		FLogging:  []string{"info", "erro"},
 		FAddress: &SAddress{
+			FInternal: tcAddress2,
 			FExternal: tcAddress1,
 		},
+		FConnection: tcAddress3,
 	})
 }
 

@@ -40,25 +40,28 @@ func (p *sApp) initInternalServiceHTTP(
 ) {
 	mux := http.NewServeMux()
 
-	timeoutMsg := "handle timeout"
-	buildSettings := build.GetSettings()
+	mux.HandleFunc(
+		hls_messenger_settings.CHandleIndexPath,
+		handler.HandleIndexAPI(p.fHTTPLogger),
+	) // GET
 
-	indexHandler := http.TimeoutHandler(handler.HandleIndexAPI(p.fHTTPLogger), buildSettings.GetHttpReadTimeout(), timeoutMsg)
-	mux.Handle(hls_messenger_settings.CHandleIndexPath, indexHandler) // GET
+	mux.HandleFunc(
+		hls_messenger_settings.CHandlePushMessagePath,
+		handler.HandlePushMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+	) // POST
 
-	pushMessageHandler := http.TimeoutHandler(handler.HandlePushMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase), buildSettings.GetHttpReadTimeout(), timeoutMsg)
-	mux.Handle(hls_messenger_settings.CHandlePushMessagePath, pushMessageHandler) // POST
+	mux.HandleFunc(
+		hls_messenger_settings.CHandleLoadMessagesPath,
+		handler.HandleLoadMessagesAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+	) // GET
 
-	loadMessagesHandler := http.TimeoutHandler(handler.HandleLoadMessagesAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase), buildSettings.GetHttpReadTimeout(), timeoutMsg)
-	mux.Handle(hls_messenger_settings.CHandleLoadMessagesPath, loadMessagesHandler) // GET
+	mux.HandleFunc(
+		hls_messenger_settings.CHandleListenChatPath,
+		handler.HandleListenChatAPI(pCtx, pMsgBroker),
+	) // GET
 
-	listenMessageHandler := http.TimeoutHandler(handler.HandleListenMessageAPI(pCtx, pMsgBroker), buildSettings.GetHttpReadTimeout()<<1, timeoutMsg)
-	mux.Handle(hls_messenger_settings.CHandleListenMessagePath, listenMessageHandler) // GET
-
-	p.fIntServiceHTTP = &http.Server{
-		Addr:         p.fConfig.GetAddress().GetInternal(),
-		Handler:      mux,
-		ReadTimeout:  buildSettings.GetHttpReadTimeout() << 2,
-		WriteTimeout: buildSettings.GetHttpHandleTimeout() << 2,
+	p.fIntServiceHTTP = &http.Server{ // nolint: gosec
+		Addr:    p.fConfig.GetAddress().GetInternal(),
+		Handler: mux,
 	}
 }

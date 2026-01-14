@@ -7,11 +7,11 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/pubkey"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -51,7 +51,7 @@ func HandleIncomingPushHTTP(
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
-		fPubKey, err := utils.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
+		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")

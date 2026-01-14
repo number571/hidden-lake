@@ -18,10 +18,10 @@ var (
 )
 
 const (
-	cHandleIndexTemplate         = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandlePushMessageTemplate   = "http://" + "%s" + hls_settings.CHandlePushMessagePath + "?friend=%s"
-	cHandleLoadMessagesTemplate  = "http://" + "%s" + hls_settings.CHandleLoadMessagesPath + "?friend=%s&page=%d&offset=%d"
-	cHandleListenMessageTemplate = "http://" + "%s" + hls_settings.CHandleListenMessagePath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate        = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandlePushMessageTemplate  = "http://" + "%s" + hls_settings.CHandlePushMessagePath + "?friend=%s"
+	cHandleLoadMessagesTemplate = "http://" + "%s" + hls_settings.CHandleLoadMessagesPath + "?friend=%s&page=%d&offset=%d"
+	cHandleListenChatTemplate   = "http://" + "%s" + hls_settings.CHandleListenChatPath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -90,13 +90,13 @@ func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pPage ui
 	return result, nil
 }
 
-func (p *sRequester) ListenMessage(pCtx context.Context, pFriend string, pSid string) (message.IMessage, error) {
+func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid string) (message.IMessage, error) {
 	for {
 		res, err := api.Request(
 			pCtx,
 			p.fClient,
 			http.MethodGet,
-			fmt.Sprintf(cHandleListenMessageTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			fmt.Sprintf(cHandleListenChatTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
 			nil,
 		)
 		if err != nil {

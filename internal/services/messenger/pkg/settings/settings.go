@@ -44,8 +44,8 @@ const (
 )
 
 const (
-	CHandleIndexPath         = "/api/index"
-	CHandlePushMessagePath   = "/api/push/message"
-	CHandleLoadMessagesPath  = "/api/load/messages"
-	CHandleListenMessagePath = "/api/listen/message"
+	CHandleIndexPath        = "/api/index"
+	CHandlePushMessagePath  = "/api/push/message"
+	CHandleLoadMessagesPath = "/api/load/messages"
+	CHandleListenChatPath   = "/api/listen/chat"
 )

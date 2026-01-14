@@ -1,4 +1,4 @@
-package handler
+package incoming
 
 import (
 	"net/http"

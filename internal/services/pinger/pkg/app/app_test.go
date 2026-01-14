@@ -55,7 +55,9 @@ func TestApp(t *testing.T) {
 		FSettings: &config.SConfigSettings{},
 		FAddress: &config.SAddress{
 			FExternal: testutils.TgAddrs[39],
+			FInternal: testutils.TgAddrs[40],
 		},
+		FConnection: testutils.TgAddrs[41],
 	})
 	if err != nil {
 		t.Fatal(err)
