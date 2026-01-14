@@ -1,4 +1,4 @@
-package handler
+package message
 
 import "testing"
 

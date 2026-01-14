@@ -3,28 +3,25 @@ package app
 import (
 	"context"
 	"net/http"
-	"os"
 
-	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler/incoming"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/msgdata"
-	"github.com/number571/hidden-lake/internal/webui"
-	"golang.org/x/net/websocket"
 )
 
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
-	pMsgBroker msgdata.IMessageBroker,
+	pMsgBroker message.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
+
 	mux.HandleFunc(
 		hls_messenger_settings.CPushPath,
-		handler.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlkClient),
+		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlkClient),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -39,40 +36,29 @@ func (p *sApp) initExternalServiceHTTP(
 func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
-	pMsgBroker msgdata.IMessageBroker,
+	pMsgBroker message.IMessageBroker,
 ) {
 	mux := http.NewServeMux()
-	mux.Handle(hls_messenger_settings.CStaticPath, http.StripPrefix(
-		hls_messenger_settings.CStaticPath,
-		handleFileServer(p.fHTTPLogger, p.fConfig, http.FS(webui.MustGetStaticPath()))),
-	)
 
-	cfgWrapper := config.NewWrapper(p.fConfig)
-
-	mux.HandleFunc(hls_messenger_settings.CHandleIndexPath, handler.IndexPage(p.fHTTPLogger, p.fConfig))                                            // GET, POST
-	mux.HandleFunc(hls_messenger_settings.CHandleAboutPath, handler.AboutPage(p.fHTTPLogger, p.fConfig))                                            // GET
-	mux.HandleFunc(hls_messenger_settings.CHandleSettingsPath, handler.SettingsPage(pCtx, p.fHTTPLogger, cfgWrapper, pHlkClient))                   // GET, PATCH, PUT, POST, DELETE
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsPath, handler.FriendsPage(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient))                      // GET, POST, DELETE
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsChatPath, handler.FriendsChatPage(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pHlkClient)) // GET, POST, PUT
-	mux.HandleFunc(hls_messenger_settings.CHandleFriendsUploadPath, handler.FriendsUploadPage(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient))          // GET
-
-	mux.Handle(hls_messenger_settings.CHandleFriendsChatWSPath, websocket.Handler(handler.FriendsChatWS(pMsgBroker)))
-
+	timeoutMsg := "handle timeout"
 	buildSettings := build.GetSettings()
+
+	indexHandler := http.TimeoutHandler(handler.HandleIndexAPI(p.fHTTPLogger), buildSettings.GetHttpReadTimeout(), timeoutMsg)
+	mux.Handle(hls_messenger_settings.CHandleIndexPath, indexHandler) // GET
+
+	pushMessageHandler := http.TimeoutHandler(handler.HandlePushMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase), buildSettings.GetHttpReadTimeout(), timeoutMsg)
+	mux.Handle(hls_messenger_settings.CHandlePushMessagePath, pushMessageHandler) // POST
+
+	loadMessagesHandler := http.TimeoutHandler(handler.HandleLoadMessagesAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase), buildSettings.GetHttpReadTimeout(), timeoutMsg)
+	mux.Handle(hls_messenger_settings.CHandleLoadMessagesPath, loadMessagesHandler) // GET
+
+	listenMessageHandler := http.TimeoutHandler(handler.HandleListenMessageAPI(pCtx, pMsgBroker), buildSettings.GetHttpReadTimeout()<<1, timeoutMsg)
+	mux.Handle(hls_messenger_settings.CHandleListenMessagePath, listenMessageHandler) // GET
+
 	p.fIntServiceHTTP = &http.Server{
 		Addr:         p.fConfig.GetAddress().GetInternal(),
-		Handler:      mux, // http.TimeoutHandler send panic from websocket use
-		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
-		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
+		Handler:      mux,
+		ReadTimeout:  buildSettings.GetHttpReadTimeout() << 2,
+		WriteTimeout: buildSettings.GetHttpHandleTimeout() << 2,
 	}
-}
-
-func handleFileServer(pLogger logger.ILogger, pCfg config.IConfig, pFS http.FileSystem) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, err := pFS.Open(r.URL.Path); os.IsNotExist(err) {
-			handler.NotFoundPage(pLogger, pCfg)(w, r)
-			return
-		}
-		http.FileServer(pFS).ServeHTTP(w, r)
-	})
 }

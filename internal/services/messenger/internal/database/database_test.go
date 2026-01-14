@@ -1,11 +1,11 @@
 package database
 
 import (
-	"bytes"
 	"os"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 )
 
 const (
@@ -39,7 +39,7 @@ func TestDatabase(t *testing.T) {
 	friend := asymmetric.NewPrivKey().GetPubKey()
 
 	rel := NewRelation(iam, friend)
-	err1 := db.Push(rel, NewMessage(true, []byte(tcBody)))
+	err1 := db.Push(rel, message.NewMessage(true, tcBody))
 	if err1 != nil {
 		t.Fatal(err1)
 	}
@@ -62,7 +62,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal("!msgs[0].IsIncoming()")
 	}
 
-	if !bytes.Equal(msgs[0].GetMessage(), []byte(tcBody)) {
+	if msgs[0].GetMessage() != tcBody {
 		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 	}
 }

@@ -1,23 +1,33 @@
 package client
 
-import "context"
+import (
+	"context"
+
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+)
 
 var (
 	_ IClient = &sClient{}
 )
 
 type sClient struct {
-	fBuilder   IBuilder
 	fRequester IRequester
 }
 
-func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
+func NewClient(pRequester IRequester) IClient {
 	return &sClient{
-		fBuilder:   pBuilder,
 		fRequester: pRequester,
 	}
 }
 
-func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody []byte) error {
-	return p.fRequester.PushMessage(pCtx, pAliasName, p.fBuilder.PushMessage(pBody))
+func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (string, error) {
+	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
+}
+
+func (p *sClient) LoadMessages(pCtx context.Context, pAliasName string, pPage uint64, pOffset uint64) ([]message.IMessage, error) {
+	return p.fRequester.LoadMessages(pCtx, pAliasName, pPage, pOffset)
+}
+
+func (p *sClient) ListenMessage(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessage, error) {
+	return p.fRequester.ListenMessage(pCtx, pSubscribeID, pAliasName)
 }

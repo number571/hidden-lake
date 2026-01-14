@@ -30,8 +30,7 @@ const (
 )
 
 const (
-	CStaticPath = "/static/"
-	CPushPath   = "/push"
+	CPushPath = "/push"
 )
 
 const (
@@ -45,12 +44,8 @@ const (
 )
 
 const (
-	CHandleIndexPath         = "/"
-	CHandleAboutPath         = "/about"
-	CHandleFaviconPath       = "/favicon.ico"
-	CHandleSettingsPath      = "/settings"
-	CHandleFriendsPath       = "/friends"
-	CHandleFriendsChatPath   = "/friends/chat"
-	CHandleFriendsUploadPath = "/friends/upload"
-	CHandleFriendsChatWSPath = "/friends/chat/ws"
+	CHandleIndexPath         = "/api/index"
+	CHandlePushMessagePath   = "/api/push/message"
+	CHandleLoadMessagesPath  = "/api/load/messages"
+	CHandleListenMessagePath = "/api/listen/message"
 )

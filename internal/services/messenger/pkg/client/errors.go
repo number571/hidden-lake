@@ -17,4 +17,5 @@ var (
 	ErrDecodeResponse = &SClientError{"decode response"}
 	ErrPingMessage    = &SClientError{"ping message"}
 	ErrPushMessage    = &SClientError{"push message"}
+	ErrInvalidTitle   = &SClientError{"invalid title"}
 )

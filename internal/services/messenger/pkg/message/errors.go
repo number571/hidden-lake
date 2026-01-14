@@ -1,4 +1,4 @@
-package msgdata
+package message
 
 const (
 	errPrefix = "internal/utils/msgdata = "

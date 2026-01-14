@@ -1,4 +1,4 @@
-package handler
+package incoming
 
 import (
 	"bytes"
@@ -15,8 +15,8 @@ import (
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/internal/utils/msgdata"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -37,7 +37,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	msgBroker := msgdata.NewMessageBroker()
+	msgBroker := message.NewMessageBroker()
 	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
 
 	if err := incomingPushRequestOK(handler); err != nil {
@@ -66,7 +66,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 func incomingPushRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
+	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer([]byte("hello, world!")))
 	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
@@ -106,7 +106,7 @@ func incomingPushRequestMessage(handler http.HandlerFunc) error {
 
 func incomingPushRequestPubKey(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer(wrapText("hello, world!")))
+	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer([]byte("hello, world!")))
 
 	handler(w, req)
 	res := w.Result()
@@ -147,7 +147,6 @@ type tsHLSClient struct {
 	fGetPubKey    bool
 	fPrivKey      asymmetric.IPrivKey
 	fFriendPubKey asymmetric.IPubKey
-	fPldSize      uint64
 }
 
 func newTsHLSClient(pGetPubKey, pWithOK bool) *tsHLSClient {
@@ -217,7 +216,7 @@ func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (r
 type tsDatabase struct {
 	fPushOK bool
 	fLoadOK bool
-	fMsg    database.IMessage
+	fMsg    message.IMessage
 }
 
 func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
@@ -236,7 +235,7 @@ func (p *tsDatabase) Size(database.IRelation) uint64 {
 	return 1
 }
 
-func (p *tsDatabase) Push(_ database.IRelation, pM database.IMessage) error {
+func (p *tsDatabase) Push(_ database.IRelation, pM message.IMessage) error {
 	if !p.fPushOK {
 		return errors.New("some error") // nolint: err113
 	}
@@ -244,12 +243,12 @@ func (p *tsDatabase) Push(_ database.IRelation, pM database.IMessage) error {
 	return nil
 }
 
-func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]database.IMessage, error) {
+func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]message.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	if p.fMsg == nil {
 		return nil, nil
 	}
-	return []database.IMessage{p.fMsg}, nil
+	return []message.IMessage{p.fMsg}, nil
 }

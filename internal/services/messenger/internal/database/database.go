@@ -6,6 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 )
 
 type sKeyValueDB struct {
@@ -28,7 +29,7 @@ func (p *sKeyValueDB) Size(pR IRelation) uint64 {
 	return p.getSize(pR)
 }
 
-func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]IMessage, error) {
+func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]message.IMessage, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -41,13 +42,13 @@ func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]IMessage, error
 		return nil, ErrEndGtSize
 	}
 
-	res := make([]IMessage, 0, pEnd-pStart)
+	res := make([]message.IMessage, 0, pEnd-pStart)
 	for i := pStart; i < pEnd; i++ {
 		data, err := p.fDB.Get(getKeyMessageByEnum(pR, i))
 		if err != nil {
 			return nil, errors.Join(ErrGetMessage, err)
 		}
-		msg := LoadMessage(data)
+		msg := message.LoadMessage(data)
 		if msg == nil {
 			return nil, ErrLoadMessage
 		}
@@ -57,7 +58,7 @@ func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]IMessage, error
 	return res, nil
 }
 
-func (p *sKeyValueDB) Push(pR IRelation, pMsg IMessage) error {
+func (p *sKeyValueDB) Push(pR IRelation, pMsg message.IMessage) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 

@@ -1,17 +1,17 @@
-package handler
+package incoming
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/utils"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/msgdata"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -22,7 +22,7 @@ func HandleIncomingPushHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pDB database.IKVDatabase,
-	pBroker msgdata.IMessageBroker,
+	pBroker message.IMessageBroker,
 	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -36,26 +36,25 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		rawMsgBytes, err := io.ReadAll(pR.Body)
+		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			_ = api.Response(pW, http.StatusConflict, "failed: response message")
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
-		fPubKey, err := getFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
+		rawMsg := string(msgBytes)
+		if len(rawMsg) == 0 || chars.HasNotGraphicCharacters(rawMsg) {
+			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
+			_ = api.Response(pW, http.StatusConflict, "failed: response message")
 			return
 		}
 
-		dbMsg := database.NewMessage(true, rawMsgBytes)
-		msg, err := msgdata.GetMessage(dbMsg.GetMessage(), dbMsg.GetTimestamp())
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		fPubKey, err := utils.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("recv_message"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: get message bytes")
+			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
 			return
 		}
 
@@ -66,32 +65,16 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		rel := database.NewRelation(myPubKey, fPubKey)
-		if err := pDB.Push(rel, dbMsg); err != nil {
+		msg := message.NewMessage(true, rawMsg)
+		pBroker.Produce(aliasName, msg)
+
+		if err := pDB.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return
 		}
 
-		pBroker.Produce(fPubKey.GetHasher().ToString(), msg)
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
-}
-
-func getFriendPubKeyByAliasName(
-	pCtx context.Context,
-	client hlk_client.IClient,
-	aliasName string,
-) (asymmetric.IPubKey, error) {
-	friends, err := client.GetFriends(pCtx)
-	if err != nil {
-		return nil, errors.Join(ErrGetFriends, err)
-	}
-	friendPubKey, ok := friends[aliasName]
-	if !ok {
-		return nil, ErrUndefinedPublicKey
-	}
-	return friendPubKey, nil
 }

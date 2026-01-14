@@ -3,17 +3,17 @@ package client
 import (
 	"context"
 
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
 )
 
 type IClient interface {
-	PushMessage(context.Context, string, []byte) error
+	PushMessage(context.Context, string, string) (string, error)
+	LoadMessages(context.Context, string, uint64, uint64) ([]message.IMessage, error)
+	ListenMessage(context.Context, string, string) (message.IMessage, error)
 }
 
 type IRequester interface {
-	PushMessage(context.Context, string, hlk_request.IRequest) error
-}
-
-type IBuilder interface {
-	PushMessage([]byte) hlk_request.IRequest
+	PushMessage(context.Context, string, string) (string, error)
+	LoadMessages(context.Context, string, uint64, uint64) ([]message.IMessage, error)
+	ListenMessage(context.Context, string, string) (message.IMessage, error)
 }

@@ -13,6 +13,8 @@ func (err *SUtilsError) Error() string {
 }
 
 var (
+	ErrGetFriends          = &SUtilsError{"get friends"}
+	ErrUndefinedPublicKey  = &SUtilsError{"undefined public key"}
 	ErrMessageSizeGteLimit = &SUtilsError{"message size >= limit"}
 	ErrGetSettingsHLS      = &SUtilsError{"get settings hlk"}
 )
