@@ -43,14 +43,14 @@ func (p *sClient) GetSettings(pCtx context.Context) (config.IConfigSettings, err
 }
 
 func (p *sClient) SendRequest(pCtx context.Context, pRecv string, pData request.IRequest) error {
-	if err := p.fRequester.SendRequest(pCtx, p.fBuilder.Request(pRecv, pData)); err != nil {
+	if err := p.fRequester.SendRequest(pCtx, pRecv, p.fBuilder.Request(pData)); err != nil {
 		return fmt.Errorf("send request (client): %w", err)
 	}
 	return nil
 }
 
 func (p *sClient) FetchRequest(pCtx context.Context, pRecv string, pData request.IRequest) (response.IResponse, error) {
-	res, err := p.fRequester.FetchRequest(pCtx, p.fBuilder.Request(pRecv, pData))
+	res, err := p.fRequester.FetchRequest(pCtx, pRecv, p.fBuilder.Request(pData))
 	if err != nil {
 		return nil, fmt.Errorf("fetch request (client): %w", err)
 	}

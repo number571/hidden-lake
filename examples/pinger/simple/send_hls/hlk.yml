@@ -8,7 +8,7 @@ logging:
   - erro
 address:
   external: 127.0.0.1:7571
-  internal: 127.0.0.1:7572
+  internal: :7572
 endpoints:
   - 127.0.0.1:7522
 friends:

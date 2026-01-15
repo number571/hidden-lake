@@ -31,9 +31,6 @@ func (p *sBuilder) Friend(pAliasName string, pPubKey asymmetric.IPubKey) *pkg_se
 	}
 }
 
-func (p *sBuilder) Request(pReceiver string, pReq request.IRequest) *pkg_settings.SRequest {
-	return &pkg_settings.SRequest{
-		FReceiver: pReceiver,
-		FReqData:  pReq.(*request.SRequest),
-	}
+func (p *sBuilder) Request(pReq request.IRequest) *request.SRequest {
+	return pReq.(*request.SRequest)
 }

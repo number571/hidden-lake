@@ -82,8 +82,6 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 ## Dependencies
 
 1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hlk`)
-2. Go library [golang.org/x/net](https://golang.org/x/net "x/net") (used by `cmd/hls/hls-messenger`)
-3. CSS/JS library [getbootstrap.com](https://getbootstrap.com "bootstrap") (used by `cmd/hls/hls-messenger,cmd/hls/hls-filesharer`)
 
 ### Makefile
 
@@ -130,8 +128,8 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
    * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
 3. Services:
-   * [HLS=messenger](cmd/hls/hls-messenger) - chat with a web interface
-   * [HLS=filesharer](cmd/hls/hls-filesharer) - file sharing with a web interface
+   * [HLS=messenger](cmd/hls/hls-messenger) - send and recv text messages
+   * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
    * [HLS=remoter](cmd/hls/hls-remoter) - executes remote access commands
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check the online status
 

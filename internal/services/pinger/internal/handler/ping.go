@@ -9,6 +9,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/pinger/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
@@ -47,7 +48,14 @@ func HandleSendPingAPI(
 			return
 		}
 
+		respBody := string(resp.GetBody())
+		if chars.HasNotGraphicCharacters(respBody) {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: invalid response")
+			return
+		}
+
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, resp.GetBody())
+		_ = api.Response(pW, http.StatusOK, respBody)
 	}
 }

@@ -48,7 +48,7 @@ $ go run ./cmd/hls/hls-remoter
 > ...
 ```
 
-Open port `9532` (HTTP, incoming).
+Open ports `9531` (HTTP, internal), `9532` (HTTP, incoming).
 Creates [`./hls-remoter.yml`](./hls-remoter.yml) file.
 
 ## Running options
@@ -71,10 +71,55 @@ $ make
 Than run command
 ```bash
 $ cd examples/remoter
-$ make request # go run ./_request/main.go
+$ ./_request/raw/request.sh
 ```
 
 Got response
 ```json
 {"code":200,"head":{"Content-Type":"application/octet-stream"},"body":"aGVsbG8sIHdvcmxkCg=="}
+```
+
+## HLS API
+
+```
+1. GET  /api/index
+2. POST /api/command/exec
+```
+
+### 1. /api/index
+
+#### 1.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9531/api/index
+```
+
+#### 1.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 18
+
+hidden-lake-kernel
+```
+
+### 2. /api/command/exec
+
+#### 2.2. POST Request
+
+```bash
+curl -i -X POST "http://localhost:9531/api/command/exec?friend=Bob" --data '{"password":"DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK","command":["bash","-c","echo hello, world!"]}'
+```
+
+#### 2.2. POST Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/octet-stream
+Date: Thu, 15 Jan 2026 11:06:09 GMT
+Content-Length: 14
+
+hello, world!
 ```

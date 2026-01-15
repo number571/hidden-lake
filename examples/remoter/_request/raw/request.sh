@@ -5,18 +5,15 @@ BASE64_BODY="$(\
     base64 -w 0 \
 )";
 PUSH_FORMAT='{
-    "receiver":"Bob",
-    "req_data":{
-        "method":"POST",
-		"host":"hls-remoter",
-		"path":"/exec",
-        "head":{
-            "Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"
-        },
-        "body":"'${BASE64_BODY}'"
-    }
+    "method":"POST",
+    "host":"hls-remoter",
+    "path":"/exec",
+    "head":{
+        "Password": "DpxJFjAlrs4HOWga0wk14mZqQSBo9DxK"
+    },
+    "body":"'${BASE64_BODY}'"
 }';
 
 d="$(date +%s)";
-curl -i -X POST http://localhost:7572/api/network/request --data "${PUSH_FORMAT}";
+curl -i -X POST "http://localhost:7572/api/network/request?friend=Bob" --data "${PUSH_FORMAT}";
 echo && echo "Request took $(($(date +%s)-d)) seconds";

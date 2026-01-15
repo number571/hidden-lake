@@ -8,10 +8,10 @@
 
 ## List of services
 
-1. [HLS=filesharer](hls-filesharer) - file sharing with a web interface
-2. [HLS=messenger](hls-messenger) - chat with a web interface
-3. [HLS=pinger](hls-pinger) - ping the node to check the online status
-4. [HLS=remoter](hls-remoter) - executes remote access commands
+1. [HLS=messenger](hls-messenger) - send and recv text messages
+2. [HLS=filesharer](hls-filesharer) - view storage and download files 
+3. [HLS=remoter](hls-remoter) - executes remote access commands
+4. [HLS=pinger](hls-pinger) - ping the node to check the online status
 
 ## Installation
 

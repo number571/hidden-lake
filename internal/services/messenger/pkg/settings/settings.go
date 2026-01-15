@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppServiceName = "messenger"
-	CAppDescription = "chat with a web interface"
+	CAppDescription = "send and recv text messages"
 )
 
 const (

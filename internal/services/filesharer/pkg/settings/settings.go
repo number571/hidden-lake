@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppServiceName = "filesharer"
-	CAppDescription = "file sharing with a web interface"
+	CAppDescription = "view storage and download files"
 )
 
 const (

@@ -5,4 +5,4 @@ clean:
 	make -C ./routing clean
 	make -C ./modes clean
 request:
-	go run ./_request/main.go
+	./_request/raw/request.sh

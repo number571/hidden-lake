@@ -43,7 +43,7 @@ $ go run ./cmd/hls/hls-pinger
 > ...
 ```
 
-Open port `9552` (HTTP, incoming).
+Open ports `9551` (HTTP, internal), `9552` (HTTP, incoming).
 Creates [`./hls-pinger.yml`](./hls-pinger.yml) file.
 
 ## Running options
@@ -66,10 +66,53 @@ $ make
 Than run command
 ```bash
 $ cd examples/pinger
-$ make request # go run ./_request/main.go
+$ ./_request/raw/request.sh
 ```
 
 Got response
 ```json
 {"code":200,"head":{"Content-Type":"text/plain"}}
+```
+
+## HLS API
+
+```
+1. GET /api/index
+2. GET /api/send/ping
+```
+
+### 1. /api/index
+
+#### 1.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9551/api/index
+```
+
+#### 1.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 18
+
+hidden-lake-kernel
+```
+
+### 2. /api/send/ping
+
+#### 2.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9551/api/send/ping?friend=Bob"
+```
+
+#### 2.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:47:04 GMT
+Content-Length: 0
 ```

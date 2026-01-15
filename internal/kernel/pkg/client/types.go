@@ -49,11 +49,11 @@ type IRequester interface {
 	AddConnection(context.Context, string) error
 	DelConnection(context.Context, string) error
 
-	SendRequest(context.Context, *pkg_settings.SRequest) error
-	FetchRequest(context.Context, *pkg_settings.SRequest) (response.IResponse, error)
+	SendRequest(context.Context, string, *request.SRequest) error
+	FetchRequest(context.Context, string, *request.SRequest) (response.IResponse, error)
 }
 
 type IBuilder interface {
-	Request(string, request.IRequest) *pkg_settings.SRequest
+	Request(request.IRequest) *request.SRequest
 	Friend(string, asymmetric.IPubKey) *pkg_settings.SFriend
 }

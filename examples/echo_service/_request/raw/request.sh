@@ -1,9 +1,12 @@
 #!/bin/bash
 
+## base64(hello, world!) = aGVsbG8sIHdvcmxkIQ==
+
 PUSH_FORMAT='{
-    "method":"GET",
-    "host":"hls-pinger",
-    "path":"/ping"
+    "method":"POST",
+    "host":"hidden-echo-service",
+    "path":"/echo",
+    "body":"aGVsbG8sIHdvcmxkIQ=="
 }';
 
 d="$(date +%s)";

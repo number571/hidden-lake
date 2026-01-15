@@ -18,7 +18,6 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
@@ -96,13 +95,10 @@ func TestHandleRequestAPI2(t *testing.T) {
 }
 
 func requestAPIRequestPutOK(handler http.HandlerFunc) error {
-	request := pkg_settings.SRequest{
-		FReceiver: "abc",
-		FReqData:  &request.SRequest{},
-	}
+	request := &request.SRequest{}
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(encoding.SerializeJSON(request)))
+	req := httptest.NewRequest(http.MethodPut, "/?friend=abc", bytes.NewBuffer(encoding.SerializeJSON(request)))
 
 	handler(w, req)
 	res := w.Result()
@@ -120,13 +116,10 @@ func requestAPIRequestPutOK(handler http.HandlerFunc) error {
 }
 
 func requestAPIRequestPostOK(handler http.HandlerFunc) error {
-	request := pkg_settings.SRequest{
-		FReceiver: "abc",
-		FReqData:  &request.SRequest{},
-	}
+	request := &request.SRequest{}
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(request)))
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc", bytes.NewBuffer(encoding.SerializeJSON(request)))
 
 	handler(w, req)
 	res := w.Result()
@@ -144,12 +137,8 @@ func requestAPIRequestPostOK(handler http.HandlerFunc) error {
 }
 
 func requestAPIRequestReqData(handler http.HandlerFunc) error {
-	request := pkg_settings.SRequest{
-		FReceiver: "abc",
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(request)))
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -167,13 +156,10 @@ func requestAPIRequestReqData(handler http.HandlerFunc) error {
 }
 
 func requestAPIRequestNotFound(handler http.HandlerFunc) error {
-	request := pkg_settings.SRequest{
-		FReceiver: "notfound",
-		FReqData:  &request.SRequest{},
-	}
+	request := &request.SRequest{}
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(request)))
+	req := httptest.NewRequest(http.MethodPost, "/?friend=notfound", bytes.NewBuffer(encoding.SerializeJSON(request)))
 
 	handler(w, req)
 	res := w.Result()
@@ -191,13 +177,10 @@ func requestAPIRequestNotFound(handler http.HandlerFunc) error {
 }
 
 func requestAPIRequestDecode(handler http.HandlerFunc) error {
-	request := pkg_settings.SRequest{
-		FReceiver: "abc",
-		FReqData:  &request.SRequest{},
-	}
+	request := &request.SRequest{}
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(bytes.Join(
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc", bytes.NewBuffer(bytes.Join(
 		[][]byte{
 			[]byte{1},
 			encoding.SerializeJSON(request),

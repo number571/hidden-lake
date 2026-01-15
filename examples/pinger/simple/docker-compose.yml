@@ -15,6 +15,7 @@ services:
     environment:
       - SERVICE_PATH=examples/pinger/simple/send_hls
     ports:
+      - 7572:7572
       - 7551:7551
     networks:
       - hidden-lake

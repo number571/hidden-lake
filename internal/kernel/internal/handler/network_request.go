@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -13,12 +12,6 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/request"
-)
-
-const (
-	cErrorNone = iota
-	cErrorGetFriends
-	cErrorDecodeData
 )
 
 func HandleNetworkRequestAPI(
@@ -30,7 +23,7 @@ func HandleNetworkRequestAPI(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppShortNameFMT(), pR)
 
-		var vRequest pkg_settings.SRequest
+		var vRequest = &request.SRequest{}
 
 		if pR.Method != http.MethodPost && pR.Method != http.MethodPut {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -38,31 +31,23 @@ func HandleNetworkRequestAPI(
 			return
 		}
 
-		if err := json.NewDecoder(pR.Body).Decode(&vRequest); err != nil {
+		if err := json.NewDecoder(pR.Body).Decode(vRequest); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			_ = api.Response(pW, http.StatusConflict, "failed: decode request")
 			return
 		}
 
-		pubKey, req, errCode := unwrapRequest(pConfig, vRequest)
-		switch errCode {
-		case cErrorNone:
-			// pass
-		case cErrorGetFriends:
+		friends := pConfig.GetFriends()
+		pubKey, ok := friends[pR.URL.Query().Get("friend")]
+		if !ok {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
 			return
-		case cErrorDecodeData:
-			pLogger.PushWarn(logBuilder.WithMessage("decode_data"))
-			_ = api.Response(pW, http.StatusTeapot, "failed: decode hex format data")
-			return
-		default:
-			panic("undefined error code")
 		}
 
 		switch pR.Method {
 		case http.MethodPut:
-			if err := pNode.SendRequest(pCtx, pubKey, req); err != nil {
+			if err := pNode.SendRequest(pCtx, pubKey, vRequest); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("send_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: send payload")
 				return
@@ -73,7 +58,7 @@ func HandleNetworkRequestAPI(
 			return
 
 		case http.MethodPost:
-			resp, err := pNode.FetchRequest(pCtx, pubKey, req)
+			resp, err := pNode.FetchRequest(pCtx, pubKey, vRequest)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("fetch_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: fetch payload")
@@ -85,23 +70,4 @@ func HandleNetworkRequestAPI(
 			return
 		}
 	}
-}
-
-func unwrapRequest(
-	pConfig config.IConfig,
-	pRequest pkg_settings.SRequest,
-) (asymmetric.IPubKey, request.IRequest, int) {
-	friends := pConfig.GetFriends()
-
-	pubKey, ok := friends[pRequest.FReceiver]
-	if !ok {
-		return nil, nil, cErrorGetFriends
-	}
-
-	req := pRequest.FReqData
-	if req == nil {
-		return nil, nil, cErrorDecodeData
-	}
-
-	return pubKey, req, cErrorNone
 }

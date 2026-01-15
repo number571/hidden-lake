@@ -14,9 +14,10 @@
 ### CHANGES
 
 - `go.mod`: update go-peer
-- `install_*.sh`: change path /root -> (/usr/local/bin, ~/.config/hidden-lake)
-- `cmd/hls/hls-filesharer`: delete webui -> change to cli
+- `*/daemon/install_*.sh`: change path /root -> (/usr/local/bin, ~/.config/hidden-lake)
+- `cmd/hls/hls-filesharer|cmd/hls/hls-messenger`: delete webui -> change to cli
 - `cmd/hls/hls-remoter`: change separator [@remoter-separator] -> [@s]
+- `cmd/hlk`: change API of the /api/network/request path
 
 ### BUG FIXES
 

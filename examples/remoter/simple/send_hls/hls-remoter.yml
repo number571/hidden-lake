@@ -5,5 +5,5 @@ logging:
 - warn
 - erro
 address:
-  internal: :8531
+  internal: :7531
 connection: 127.0.0.1:7572

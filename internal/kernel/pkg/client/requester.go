@@ -5,12 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
 
@@ -24,7 +26,7 @@ const (
 	cHandleConfigConnectsTemplate = "http://" + "%s" + hlk_settings.CHandleConfigConnectsPath
 	cHandleConfigFriendsTemplate  = "http://" + "%s" + hlk_settings.CHandleConfigFriendsPath
 	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hlk_settings.CHandleNetworkOnlinePath
-	cHandleNetworkRequestTemplate = "http://" + "%s" + hlk_settings.CHandleNetworkRequestPath
+	cHandleNetworkRequestTemplate = "http://" + "%s" + hlk_settings.CHandleNetworkRequestPath + "?friend=%s"
 	cHandleServicePubKeyTemplate  = "http://" + "%s" + hlk_settings.CHandleProfilePubKeyPath
 )
 
@@ -80,12 +82,12 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 	return cfgSettings, nil
 }
 
-func (p *sRequester) FetchRequest(pCtx context.Context, pRequest *hlk_settings.SRequest) (response.IResponse, error) {
+func (p *sRequester) FetchRequest(pCtx context.Context, pFriend string, pRequest *request.SRequest) (response.IResponse, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost),
+		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost, url.QueryEscape(pFriend)),
 		pRequest,
 	)
 	if err != nil {
@@ -99,12 +101,12 @@ func (p *sRequester) FetchRequest(pCtx context.Context, pRequest *hlk_settings.S
 	return resp, nil
 }
 
-func (p *sRequester) SendRequest(pCtx context.Context, pRequest *hlk_settings.SRequest) error {
+func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest *request.SRequest) error {
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPut,
-		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost),
+		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost, url.QueryEscape(pFriend)),
 		pRequest,
 	)
 	if err != nil {
