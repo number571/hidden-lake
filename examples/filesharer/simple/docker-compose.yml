@@ -7,7 +7,7 @@ services:
     environment:
       - SERVICE_PATH=examples/filesharer/simple/node1_hlf
     ports:
-      - 8572:8572
+      - 8541:8541
     networks:
       - hidden-lake
   node2_hlc:

@@ -1,0 +1,10 @@
+settings:
+  page_offset: 10
+  retry_num: 2
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :8541
+connection: 127.0.0.1:8572

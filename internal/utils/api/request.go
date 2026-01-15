@@ -53,8 +53,12 @@ func RequestWithWriter(
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	_, err = io.Copy(pW, resp.Body)
-	return err
+	buf := make([]byte, 2048)
+	if _, err := io.CopyBuffer(pW, resp.Body, buf); err != nil {
+		return errors.Join(ErrReadResponse, err)
+	}
+
+	return nil
 }
 
 func Request(

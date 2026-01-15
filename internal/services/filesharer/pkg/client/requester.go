@@ -22,9 +22,9 @@ var (
 
 const (
 	cHandleIndexTemplate        = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleFileInfoTemplate     = "http://" + "%s" + hls_settings.CHandleFileInfoPath + "?name=%s"
-	cHandleFileDownloadTemplate = "http://" + "%s" + hls_settings.CHandleFileDownloadPath + "?name=%s"
-	cHandleStorageFilesTemplate = "http://" + "%s" + hls_settings.CHandleStorageFilesPath + "?page=%d"
+	cHandleFileInfoTemplate     = "http://" + "%s" + hls_settings.CHandleFileInfoPath + "?friend=%s&file=%s"
+	cHandleFileDownloadTemplate = "http://" + "%s" + hls_settings.CHandleFileDownloadPath + "?friend=%s&file=%s"
+	cHandleStorageFilesTemplate = "http://" + "%s" + hls_settings.CHandleStorageFilesPath + "?friend=%s&page=%d"
 )
 
 type sRequester struct {
@@ -64,7 +64,7 @@ func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileN
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleFileInfoTemplate, p.fHost, url.QueryEscape(pFileName)),
+		fmt.Sprintf(cHandleFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
 		nil,
 	)
 	if err != nil {
@@ -88,7 +88,7 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleStorageFilesTemplate, p.fHost, pPage),
+		fmt.Sprintf(cHandleStorageFilesTemplate, p.fHost, url.QueryEscape(pAliasName), pPage),
 		nil,
 	)
 	if err != nil {
@@ -117,7 +117,7 @@ func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleFileDownloadTemplate, p.fHost, url.QueryEscape(pFileName)),
+		fmt.Sprintf(cHandleFileDownloadTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
 		nil,
 	)
 	if err != nil {

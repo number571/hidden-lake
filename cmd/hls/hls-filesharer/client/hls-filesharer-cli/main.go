@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -122,12 +123,26 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		if err != nil {
 			return err
 		}
-		if err := hlfClient.DownloadFile(dstFile, pCtx, friend, fileName); err != nil {
+		pw := &processWriter{fW: dstFile}
+		if err := hlfClient.DownloadFile(pw, pCtx, friend, fileName); err != nil {
 			return err
 		}
+		fmt.Printf("\ndone!\n")
 	default:
 		return errors.Join(ErrUnknownAction, errors.New(do)) // nolint:err113
 	}
 
 	return nil
+}
+
+type processWriter struct {
+	fP uint64
+	fW io.Writer
+}
+
+func (p *processWriter) Write(b []byte) (n int, err error) {
+	n, err = p.fW.Write(b)
+	p.fP += uint64(n) // nolint: gosec
+	fmt.Printf("\rdownloading ... %dB", p.fP)
+	return n, err
 }

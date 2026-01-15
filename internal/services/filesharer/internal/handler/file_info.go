@@ -30,8 +30,8 @@ func HandleFileInfoAPI(
 		info, err := getFileInfo(
 			pCtx,
 			pHlkClient,
-			pR.URL.Query().Get("name"),
 			pR.URL.Query().Get("friend"),
+			pR.URL.Query().Get("file"),
 		)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("get_file_info"))

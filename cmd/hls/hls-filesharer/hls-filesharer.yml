@@ -7,5 +7,6 @@ logging:
 - warn
 - erro
 address:
+  internal: 127.0.0.1:9541
   external: 127.0.0.1:9542
 connection: 127.0.0.1:9572
