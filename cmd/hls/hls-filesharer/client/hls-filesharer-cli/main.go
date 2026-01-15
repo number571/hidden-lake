@@ -5,17 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/stream"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -32,9 +29,9 @@ var (
 		flag.NewFlagBuilder("-r", "--retry").
 			WithDescription("retry number on load chunk of file").
 			WithDefinedValue("3"),
-		flag.NewFlagBuilder("-k", "--kernel").
-			WithDescription("set internal address of the HLK").
-			WithDefinedValue("localhost:9572"),
+		flag.NewFlagBuilder("-s", "--service").
+			WithDescription("set internal address of the HLS").
+			WithDefinedValue("localhost:9541"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
@@ -82,17 +79,11 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		return ErrRetryNum
 	}
 
-	hlkClient := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			gFlags.Get("-k").GetStringValue(pArgs),
+	hlfClient := hls_filesharer_client.NewClient(
+		hls_filesharer_client.NewRequester(
+			gFlags.Get("-s").GetStringValue(pArgs),
 			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 		),
-	)
-
-	hlfClient := hls_filesharer_client.NewClient(
-		hls_filesharer_client.NewBuilder(),
-		hls_filesharer_client.NewRequester(hlkClient),
 	)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
@@ -123,42 +114,20 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println(string(fileInfoStr))
 	case "load":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		reader, err := stream.BuildStreamReader(
-			pCtx,
-			uint64(retryNum),
-			inputPath,
-			friend,
-			hlkClient,
-			fileName,
-			func(_ []byte, p uint64, s uint64) {
-				fmt.Printf("download:[ %dB / %dB ]\n", p, s)
-			},
+		dstFile, err := os.OpenFile( // nolint: gosec
+			filepath.Join(inputPath, fileName),
+			os.O_CREATE|os.O_WRONLY,
+			0600,
 		)
 		if err != nil {
 			return err
 		}
-		dstFile := filepath.Join(inputPath, fileName)
-		if err := copyFile(dstFile, reader); err != nil {
+		if err := hlfClient.DownloadFile(dstFile, pCtx, friend, fileName); err != nil {
 			return err
 		}
 	default:
 		return errors.Join(ErrUnknownAction, errors.New(do)) // nolint:err113
 	}
 
-	return nil
-}
-
-func copyFile(dst string, src io.Reader) error {
-	dstFile, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY, 0600) // nolint:gosec
-	if err != nil {
-		return fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer dstFile.Close() // nolint:errcheck
-	if _, err := io.Copy(dstFile, src); err != nil {
-		return fmt.Errorf("failed to copy file contents: %w", err)
-	}
-	if err := dstFile.Sync(); err != nil {
-		return fmt.Errorf("failed to sync destination file: %w", err)
-	}
 	return nil
 }

@@ -60,8 +60,11 @@ func (p *sApp) initInternalServiceHTTP(
 		handler.HandleListenChatAPI(pCtx, pMsgBroker),
 	) // GET
 
+	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{ // nolint: gosec
-		Addr:    p.fConfig.GetAddress().GetInternal(),
-		Handler: mux,
+		Addr:         p.fConfig.GetAddress().GetInternal(),
+		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpCallbackTimeout(), "handle timeout"),
+		ReadTimeout:  buildSettings.GetHttpCallbackTimeout(),
+		WriteTimeout: buildSettings.GetHttpCallbackTimeout(),
 	}
 }

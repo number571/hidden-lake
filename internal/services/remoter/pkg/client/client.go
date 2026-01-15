@@ -20,6 +20,10 @@ func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
 	}
 }
 
-func (p *sClient) Exec(pCtx context.Context, pAliasName string, pCmd ...string) ([]byte, error) {
-	return p.fRequester.Exec(pCtx, pAliasName, p.fBuilder.Exec(pCmd...))
+func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
+	return p.fRequester.GetIndex(pCtx)
+}
+
+func (p *sClient) ExecCommand(pCtx context.Context, pFriend string, pCommand ...string) ([]byte, error) {
+	return p.fRequester.ExecCommand(pCtx, pFriend, p.fBuilder.ExecCommand(pCommand...))
 }

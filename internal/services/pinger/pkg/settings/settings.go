@@ -38,6 +38,6 @@ const (
 )
 
 const (
-	CHandleIndexPath = "/api/index"
-	CHandlePingPath  = "/api/ping"
+	CHandleIndexPath    = "/api/index"
+	CHandleSendPingPath = "/api/send/ping"
 )

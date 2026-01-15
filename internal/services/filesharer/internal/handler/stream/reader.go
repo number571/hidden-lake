@@ -8,15 +8,16 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
+	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
 func init() {
@@ -39,15 +40,14 @@ type sStream struct {
 	fContext   context.Context
 	fRetryNum  uint64
 	fTempFile  string
-	fHlfClient hls_filesharer_client.IClient
+	fHlkClient hlk_client.IClient
 	fAliasName string
-	fFileInfo  hls_filesharer_client.IFileInfo
+	fFileInfo  utils.IFileInfo
 	fBuffer    []byte
 	fPosition  uint64
 	fTempBytes []byte
 	fHasher    hash.Hash
 	fChunkSize uint64
-	fCallback  ICallbackFunc
 }
 
 func BuildStreamReader(
@@ -56,39 +56,33 @@ func BuildStreamReader(
 	pInputPath string,
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
-	pFilename string,
-	pCallback ICallbackFunc,
-) (io.ReadSeeker, error) {
-	hlfClient := hls_filesharer_client.NewClient(
-		hls_filesharer_client.NewBuilder(),
-		hls_filesharer_client.NewRequester(pHlkClient),
-	)
+	pFileInfo utils.IFileInfo,
+) (io.ReadSeeker, string, error) {
 	chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
 	if err != nil {
-		return nil, errors.Join(ErrGetMessageLimit, err)
+		return nil, "", errors.Join(ErrGetMessageLimit, err)
 	}
-	fileInfo, err := hlfClient.GetFileInfo(pCtx, pAliasName, pFilename)
-	if err != nil {
-		return nil, errors.Join(ErrGetFileInfo, err)
-	}
-	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, fileInfo.GetHash()[:8])
+
+	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, pFileInfo.GetHash()[:8])
 	tempFile := filepath.Join(pInputPath, tempName)
+
+	// TODO: fix
 	tempBytes, err := readTempFile(tempFile, chunkSize)
 	if err != nil {
-		return nil, errors.Join(ErrReadTempFile, err)
+		return nil, "", errors.Join(ErrReadTempFile, err)
 	}
+
 	return &sStream{
 		fContext:   pCtx,
 		fRetryNum:  pRetryNum,
 		fTempFile:  tempFile,
 		fTempBytes: tempBytes,
-		fHlfClient: hlfClient,
+		fHlkClient: pHlkClient,
 		fAliasName: pAliasName,
 		fHasher:    sha512.New384(),
 		fChunkSize: chunkSize,
-		fFileInfo:  fileInfo,
-		fCallback:  pCallback,
-	}, nil
+		fFileInfo:  pFileInfo,
+	}, tempFile, nil
 }
 
 func readTempFile(pTempFile string, pChunkSize uint64) ([]byte, error) {
@@ -99,9 +93,11 @@ func readTempFile(pTempFile string, pChunkSize uint64) ([]byte, error) {
 	}
 	tempBytes, err := os.ReadFile(pTempFile) // nolint: gosec
 	if err != nil {
+		_ = os.Remove(pTempFile)
 		return nil, err
 	}
 	if uint64(len(tempBytes))%pChunkSize != 0 {
+		_ = os.Remove(pTempFile)
 		return nil, errors.New("len(tempBytes) %% chunkSize != 0") // nolint: err113
 	}
 	return tempBytes, nil
@@ -133,10 +129,6 @@ func (p *sStream) Read(b []byte) (int, error) {
 	n := copy(b, p.fBuffer)
 	p.fBuffer = p.fBuffer[n:]
 	p.fPosition += uint64(n) //nolint:gosec
-
-	if p.fCallback != nil {
-		p.fCallback(b[:n], p.fPosition, p.fFileInfo.GetSize())
-	}
 
 	if _, err := p.fHasher.Write(b[:n]); err != nil {
 		return 0, errors.Join(ErrHashWriteChunk, err)
@@ -188,17 +180,26 @@ func (p *sStream) Seek(offset int64, whence int) (int64, error) {
 func (p *sStream) loadFileChunk() ([]byte, error) {
 	var lastErr error
 	for i := uint64(0); i <= p.fRetryNum; i++ {
-		chunk, err := p.fHlfClient.LoadFileChunk(
-			p.fContext,
-			p.fAliasName,
-			p.fFileInfo.GetName(),
-			p.fPosition/p.fChunkSize,
-		)
+		req := hlk_request.NewRequestBuilder().
+			WithMethod(http.MethodGet).
+			WithHost(hls_filesharer_settings.CAppShortName).
+			WithPath(fmt.Sprintf(
+				"%s?name=%s&chunk=%d",
+				hls_filesharer_settings.CLoadPath,
+				p.fFileInfo.GetName(),
+				p.fPosition/p.fChunkSize,
+			)).
+			Build()
+		resp, err := p.fHlkClient.FetchRequest(p.fContext, p.fAliasName, req)
 		if err != nil {
 			lastErr = err
 			continue
 		}
-		return chunk, nil
+		if resp.GetCode() != http.StatusOK {
+			lastErr = err
+			continue
+		}
+		return resp.GetBody(), nil
 	}
 	return nil, errors.Join(ErrRetryFailed, lastErr)
 }

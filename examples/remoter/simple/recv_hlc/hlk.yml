@@ -8,6 +8,7 @@ logging:
   - erro
 address:
   external: 127.0.0.1:8571
+  internal: 127.0.0.1:8572
 services:
   hls-remoter: 127.0.0.1:8532
 endpoints:

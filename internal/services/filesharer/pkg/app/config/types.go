@@ -28,5 +28,6 @@ type IConfigSettings interface {
 }
 
 type IAddress interface {
+	GetInternal() string
 	GetExternal() string
 }

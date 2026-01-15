@@ -18,4 +18,5 @@ var (
 	ErrBadRequest      = errors.New(errPrefix + "bad request")
 	ErrDecodeResponse  = errors.New(errPrefix + "decode response")
 	ErrInvalidResponse = errors.New(errPrefix + "invalid response")
+	ErrInvalidTitle    = &SClientError{"invalid title"}
 )

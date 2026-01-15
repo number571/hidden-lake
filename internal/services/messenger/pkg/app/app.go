@@ -137,6 +137,10 @@ func (p *sApp) runInternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup,
 	defer wg.Done()
 	defer func() { <-pCtx.Done() }()
 
+	if p.fConfig.GetAddress().GetInternal() == "" {
+		return
+	}
+
 	go func() {
 		err := p.fIntServiceHTTP.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {

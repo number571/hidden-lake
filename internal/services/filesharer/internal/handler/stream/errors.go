@@ -1,7 +1,7 @@
 package stream
 
 const (
-	errPrefix = "internal/services/filesharer/internal/stream = "
+	errPrefix = "internal/services/filesharer/internal/handler/stream = "
 )
 
 type SStreamError struct {

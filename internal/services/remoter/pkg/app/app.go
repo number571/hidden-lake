@@ -11,6 +11,8 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
+	"github.com/number571/hidden-lake/build"
+	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/remoter/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/services/remoter/pkg/config"
 	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
@@ -33,6 +35,7 @@ type sApp struct {
 	fStdfLogger logger.ILogger
 
 	fExtServiceHTTP *http.Server
+	fIntServiceHTTP *http.Server
 }
 
 func NewApp(
@@ -55,6 +58,7 @@ func NewApp(
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
+		p.runInternalListenerHTTP,
 		p.runExternalListenerHTTP,
 	}
 
@@ -84,7 +88,16 @@ func (p *sApp) Run(pCtx context.Context) error {
 
 func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
+		hlkClient := hlk_client.NewClient(
+			hlk_client.NewBuilder(),
+			hlk_client.NewRequester(
+				p.fConfig.GetConnection(),
+				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+			),
+		)
+
 		p.initExternalServiceHTTP(pCtx)
+		p.initInternalServiceHTTP(pCtx, hlkClient)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
@@ -108,9 +121,30 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 	}
 }
 
+func (p *sApp) runInternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+	defer func() { <-pCtx.Done() }()
+
+	if p.fConfig.GetAddress().GetInternal() == "" {
+		return
+	}
+
+	go func() {
+		err := p.fIntServiceHTTP.ListenAndServe()
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			pChErr <- err
+			return
+		}
+	}()
+}
+
 func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 	defer func() { <-pCtx.Done() }()
+
+	if p.fConfig.GetAddress().GetExternal() == "" {
+		return
+	}
 
 	go func() {
 		err := p.fExtServiceHTTP.ListenAndServe()
@@ -123,6 +157,7 @@ func (p *sApp) runExternalListenerHTTP(pCtx context.Context, wg *sync.WaitGroup,
 
 func (p *sApp) stop() error {
 	closer := closer.NewCloser(
+		p.fIntServiceHTTP,
 		p.fExtServiceHTTP,
 	)
 	if err := closer.Close(); err != nil {

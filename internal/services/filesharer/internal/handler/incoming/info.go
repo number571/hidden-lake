@@ -1,4 +1,4 @@
-package handler
+package incoming
 
 import (
 	"crypto/sha512"
@@ -13,8 +13,8 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 )
 
 func HandleIncomingInfoHTTP(
@@ -44,7 +44,7 @@ func HandleIncomingInfoHTTP(
 		stgPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG)
 		fullPath := filepath.Join(stgPath, fileName)
 
-		info := hls_filesharer_client.NewFileInfo(
+		info := utils.NewFileInfo(
 			fileName,
 			getFileHash(fullPath),
 			getFileSize(fullPath),

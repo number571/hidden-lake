@@ -31,12 +31,13 @@ type SConfig struct {
 
 	FSettings   *SConfigSettings `yaml:"settings"`
 	FLogging    []string         `yaml:"logging,omitempty"`
-	FAddress    *SAddress        `yaml:"address"`
+	FAddress    *SAddress        `yaml:"address,omitempty"`
 	FConnection string           `yaml:"connection"`
 }
 
 type SAddress struct {
-	FExternal string `yaml:"external"`
+	FInternal string `yaml:"internal,omitempty"`
+	FExternal string `yaml:"external,omitempty"`
 }
 
 func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
@@ -110,7 +111,6 @@ func (p *SConfigSettings) loadLanguage() error {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != "" &&
-		p.FAddress.FExternal != "" &&
 		p.FSettings.FPageOffset != 0
 }
 
@@ -153,6 +153,10 @@ func (p *SConfig) GetAddress() IAddress {
 
 func (p *SConfig) GetConnection() string {
 	return p.FConnection
+}
+
+func (p *SAddress) GetInternal() string {
+	return p.FExternal
 }
 
 func (p *SAddress) GetExternal() string {

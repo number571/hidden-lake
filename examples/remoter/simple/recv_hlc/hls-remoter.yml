@@ -6,3 +6,4 @@ logging:
 - erro
 address:
   external: 127.0.0.1:8532
+connection: 127.0.0.1:8572

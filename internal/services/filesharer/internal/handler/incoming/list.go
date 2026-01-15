@@ -1,4 +1,4 @@
-package handler
+package incoming
 
 import (
 	"io/fs"
@@ -10,11 +10,11 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 )
 
 func HandleIncomingListHTTP(
@@ -52,7 +52,7 @@ func HandleIncomingListHTTP(
 	}
 }
 
-func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]hls_filesharer_client.IFileInfo, error) {
+func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]utils.IFileInfo, error) {
 	pageOffset := pCfg.GetSettings().GetPageOffset()
 	fileReader := pageOffset
 
@@ -70,7 +70,7 @@ func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]hls_f
 		files = append(files, e)
 	}
 
-	result := make([]hls_filesharer_client.IFileInfo, 0, pageOffset)
+	result := make([]utils.IFileInfo, 0, pageOffset)
 	for i := (pPage * pageOffset); i < uint64(len(files)); i++ {
 		if fileReader == 0 {
 			break
@@ -82,7 +82,7 @@ func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]hls_f
 
 		result = append(
 			result,
-			hls_filesharer_client.NewFileInfo(
+			utils.NewFileInfo(
 				fileName,
 				getFileHash(fullPath),
 				getFileSize(fullPath),

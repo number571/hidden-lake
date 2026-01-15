@@ -41,17 +41,14 @@ const (
 )
 
 const (
-	CHandleIndexPath          = "/"
-	CHandleAboutPath          = "/about"
-	CHandleFaviconPath        = "/favicon.ico"
-	CHandleSettingsPath       = "/settings"
-	CHandleFriendsPath        = "/friends"
-	CHandleFriendsStoragePath = "/friends/storage"
-	CStaticPath               = "/static/"
-)
-
-const (
 	CInfoPath = "/info"
 	CListPath = "/list"
 	CLoadPath = "/load"
+)
+
+const (
+	CHandleIndexPath        = "/api/index"
+	CHandleFileInfoPath     = "/api/file/info"
+	CHandleFileDownloadPath = "/api/file/download"
+	CHandleStorageFilesPath = "/api/storage/files"
 )

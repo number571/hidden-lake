@@ -30,12 +30,12 @@ type SConfig struct {
 
 	FSettings   *SConfigSettings `yaml:"settings"`
 	FLogging    []string         `yaml:"logging,omitempty"`
-	FAddress    *SAddress        `yaml:"address"`
+	FAddress    *SAddress        `yaml:"address,omitempty"`
 	FConnection string           `yaml:"connection"`
 }
 
 type SAddress struct {
-	FInternal string `yaml:"internal"`
+	FInternal string `yaml:"internal,omitempty"`
 	FExternal string `yaml:"external,omitempty"`
 }
 
@@ -106,7 +106,6 @@ func (p *SConfigSettings) loadLanguage() error {
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != "" &&
-		p.FAddress.FInternal != "" &&
 		p.FSettings.FMessagesCapacity != 0
 }
 

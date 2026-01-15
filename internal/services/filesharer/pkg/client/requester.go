@@ -6,41 +6,73 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
+	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
 var (
 	_ IRequester = &sRequester{}
 )
 
+const (
+	cHandleIndexTemplate        = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleFileInfoTemplate     = "http://" + "%s" + hls_settings.CHandleFileInfoPath + "?name=%s"
+	cHandleFileDownloadTemplate = "http://" + "%s" + hls_settings.CHandleFileDownloadPath + "?name=%s"
+	cHandleStorageFilesTemplate = "http://" + "%s" + hls_settings.CHandleStorageFilesPath + "?page=%d"
+)
+
 type sRequester struct {
-	fHlkClient hlk_client.IClient
+	fHost   string
+	fClient *http.Client
 }
 
-func NewRequester(pHlkClient hlk_client.IClient) IRequester {
+func NewRequester(pHost string, pClient *http.Client) IRequester {
 	return &sRequester{
-		fHlkClient: pHlkClient,
+		fHost:   pHost,
+		fClient: pClient,
 	}
 }
 
-func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) (IFileInfo, error) {
-	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
+		nil,
+	)
+	if err != nil {
+		return "", errors.Join(ErrBadRequest, err)
+	}
+
+	result := string(res)
+	if result != hls_settings.CAppFullName {
+		return "", ErrInvalidTitle
+	}
+
+	return result, nil
+}
+
+func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileName string) (utils.IFileInfo, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleFileInfoTemplate, p.fHost, url.QueryEscape(pFileName)),
+		nil,
+	)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
 
-	if resp.GetCode() != http.StatusOK {
-		return nil, ErrDecodeResponse
-	}
-
-	info := sFileInfo{}
-	if err := encoding.DeserializeJSON(resp.GetBody(), &info); err != nil {
-		fmt.Println(string(resp.GetBody()))
+	info := &utils.SFileInfo{}
+	if err := encoding.DeserializeJSON(res, info); err != nil {
 		return nil, errors.Join(ErrInvalidResponse, err)
 	}
 
@@ -48,46 +80,50 @@ func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pReque
 		return nil, ErrInvalidResponse
 	}
 
-	return NewFileInfo(info.FName, info.FHash, info.FSize), nil
+	return info, nil
 }
 
-func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]IFileInfo, error) {
-	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]utils.IFileInfo, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleStorageFilesTemplate, p.fHost, pPage),
+		nil,
+	)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
 
-	if resp.GetCode() != http.StatusOK {
-		return nil, ErrDecodeResponse
-	}
-
-	list := make([]sFileInfo, 0, hls_filesharer_settings.CDefaultPageOffset)
-	if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
+	list := make([]utils.SFileInfo, 0, hls_settings.CDefaultPageOffset)
+	if err := encoding.DeserializeJSON(res, &list); err != nil {
 		return nil, errors.Join(ErrInvalidResponse, err)
 	}
 
-	fileInfos := make([]IFileInfo, 0, len(list))
+	fileInfos := make([]utils.IFileInfo, 0, len(list))
 	for _, info := range list {
 		if !isValidHexHash(info.FHash) {
 			return nil, ErrInvalidResponse
 		}
-		fileInfos = append(fileInfos, NewFileInfo(info.FName, info.FHash, info.FSize))
+		fileInfos = append(fileInfos, utils.NewFileInfo(info.FName, info.FHash, info.FSize))
 	}
 
 	return fileInfos, nil
 }
 
-func (p *sRequester) LoadFileChunk(pCtx context.Context, pAliasName string, pRequest hlk_request.IRequest) ([]byte, error) {
-	resp, err := p.fHlkClient.FetchRequest(pCtx, pAliasName, pRequest)
+func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {
+	err := api.RequestWithWriter(
+		pW,
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleFileDownloadTemplate, p.fHost, url.QueryEscape(pFileName)),
+		nil,
+	)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
-
-	if resp.GetCode() != http.StatusOK {
-		return nil, ErrDecodeResponse
-	}
-
-	return resp.GetBody(), nil
+	return nil
 }
 
 func isValidHexHash(hash string) bool {

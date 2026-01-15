@@ -7,24 +7,26 @@ import (
 	"github.com/number571/hidden-lake/build"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 )
 
 func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
 	mux := http.NewServeMux()
+
 	mux.HandleFunc(
 		hls_filesharer_settings.CLoadPath,
-		handler.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fPathTo, pHlkClient),
+		incoming.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fPathTo, pHlkClient),
 	) // GET
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CListPath,
-		handler.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fPathTo),
+		incoming.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fPathTo),
 	) // GET
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CInfoPath,
-		handler.HandleIncomingInfoHTTP(p.fHTTPLogger, p.fPathTo),
+		incoming.HandleIncomingInfoHTTP(p.fHTTPLogger, p.fPathTo),
 	) // GET
 
 	buildSettings := build.GetSettings()
@@ -33,5 +35,34 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpHandleTimeout(), "handle timeout"),
 		ReadTimeout:  buildSettings.GetHttpReadTimeout(),
 		WriteTimeout: buildSettings.GetHttpHandleTimeout(),
+	}
+}
+
+func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleIndexPath,
+		handler.HandleIndexAPI(p.fHTTPLogger),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleFileInfoPath,
+		handler.HandleFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleStorageFilesPath,
+		handler.HandleStorageFilesAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleFileDownloadPath,
+		handler.HandleFileDownloadAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+	) // GET
+
+	p.fIntServiceHTTP = &http.Server{ // nolint: gosec
+		Addr:    p.fConfig.GetAddress().GetInternal(),
+		Handler: mux,
 	}
 }

@@ -14,18 +14,20 @@ var (
 )
 
 type SConfigSettings struct {
-	FPassword string `json:"password,omitempty" yaml:"password,omitempty"`
+	FPassword string `json:"password" yaml:"password"`
 }
 
 type SConfig struct {
 	fLogging logger.ILogging
 
-	FSettings *SConfigSettings `yaml:"settings"`
-	FLogging  []string         `yaml:"logging,omitempty"`
-	FAddress  *SAddress        `yaml:"address"`
+	FSettings   *SConfigSettings `yaml:"settings"`
+	FLogging    []string         `yaml:"logging,omitempty"`
+	FAddress    *SAddress        `yaml:"address,omitempty"`
+	FConnection string           `yaml:"connection"`
 }
 
 type SAddress struct {
+	FInternal string `yaml:"internal,omitempty"`
 	FExternal string `yaml:"external,omitempty"`
 }
 
@@ -69,8 +71,8 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 
 func (p *SConfig) isValid() bool {
 	return true &&
-		p.FAddress.FExternal != "" &&
-		p.FSettings.FPassword != ""
+		p.FSettings.FPassword != "" &&
+		p.FConnection != ""
 }
 
 func (p *SConfig) initConfig() error {
@@ -114,10 +116,18 @@ func (p *SConfig) GetAddress() IAddress {
 	return p.FAddress
 }
 
+func (p *SAddress) GetInternal() string {
+	return p.FInternal
+}
+
 func (p *SAddress) GetExternal() string {
 	return p.FExternal
 }
 
 func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
+}
+
+func (p *SConfig) GetConnection() string {
+	return p.FConnection
 }

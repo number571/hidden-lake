@@ -2,18 +2,22 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	"github.com/number571/hidden-lake/internal/services/pinger/pkg/app/config"
-	hls_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
-func HandleSendPingAPI(
+func HandleStorageFilesAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,
@@ -21,17 +25,19 @@ func HandleSendPingAPI(
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
+		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 
-		if pR.Method != http.MethodGet {
-			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
-			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+		page, err := strconv.ParseUint(pR.URL.Query().Get("page"), 10, 64)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("parse_page"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: parse page")
 			return
 		}
 
 		req := hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
 			WithHost(hls_settings.CAppShortName).
-			WithPath(hls_settings.CPingPath).
+			WithPath(fmt.Sprintf("%s?page=%d", hls_settings.CListPath, page)).
 			Build()
 
 		resp, err := pHlkClient.FetchRequest(pCtx, pR.URL.Query().Get("friend"), req)
@@ -47,7 +53,13 @@ func HandleSendPingAPI(
 			return
 		}
 
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, resp.GetBody())
+		list := make([]utils.SFileInfo, 0, hls_settings.CDefaultPageOffset)
+		if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: decode response")
+			return
+		}
+
+		_ = api.Response(pW, http.StatusOK, list)
 	}
 }

@@ -1,4 +1,4 @@
-package handler
+package incoming
 
 import (
 	"bytes"
@@ -126,6 +126,7 @@ type tsConfig struct{}
 func (p *tsConfig) GetSettings() config.IConfigSettings { return &tsConfigSettings{} }
 func (p *tsConfig) GetAddress() config.IAddress         { return nil }
 func (p *tsConfig) GetLogging() std_logger.ILogging     { return nil }
+func (p *tsConfig) GetConnection() string               { return "" }
 
 type tsConfigSettings struct{}
 

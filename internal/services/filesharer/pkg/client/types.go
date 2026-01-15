@@ -2,30 +2,23 @@ package client
 
 import (
 	"context"
+	"io"
 
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 )
 
-type IFileInfo interface {
-	GetName() string
-	GetHash() string
-	GetSize() uint64
-}
-
 type IClient interface {
-	GetFileInfo(context.Context, string, string) (IFileInfo, error)
-	GetListFiles(context.Context, string, uint64) ([]IFileInfo, error)
-	LoadFileChunk(context.Context, string, string, uint64) ([]byte, error)
+	GetIndex(context.Context) (string, error)
+
+	GetFileInfo(context.Context, string, string) (utils.IFileInfo, error)
+	GetListFiles(context.Context, string, uint64) ([]utils.IFileInfo, error)
+	DownloadFile(io.Writer, context.Context, string, string) error
 }
 
 type IRequester interface {
-	GetFileInfo(context.Context, string, hlk_request.IRequest) (IFileInfo, error)
-	GetListFiles(context.Context, string, hlk_request.IRequest) ([]IFileInfo, error)
-	LoadFileChunk(context.Context, string, hlk_request.IRequest) ([]byte, error)
-}
+	GetIndex(context.Context) (string, error)
 
-type IBuilder interface {
-	GetFileInfo(pFileName string) hlk_request.IRequest
-	GetListFiles(uint64) hlk_request.IRequest
-	LoadFileChunk(string, uint64) hlk_request.IRequest
+	GetFileInfo(context.Context, string, string) (utils.IFileInfo, error)
+	GetListFiles(context.Context, string, uint64) ([]utils.IFileInfo, error)
+	DownloadFile(io.Writer, context.Context, string, string) error
 }

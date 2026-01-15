@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_remoter_client "github.com/number571/hidden-lake/internal/services/remoter/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/flag"
@@ -24,9 +23,9 @@ var (
 			WithDescription("print version of application"),
 		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print information about application"),
-		flag.NewFlagBuilder("-k", "--kernel").
-			WithDescription("set internal address of the HLK").
-			WithDefinedValue("localhost:9572"),
+		flag.NewFlagBuilder("-s", "--service").
+			WithDescription("set internal address of the HLS").
+			WithDefinedValue("localhost:9531"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
@@ -60,21 +59,17 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	password := inputString(reader, "password: ")
 	clearTerminal()
 
-	hlkClient := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			gFlags.Get("-k").GetStringValue(pArgs),
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		),
-	)
 	hlrClient := hls_remoter_client.NewClient(
 		hls_remoter_client.NewBuilder(password),
-		hls_remoter_client.NewRequester(hlkClient),
+		hls_remoter_client.NewRequester(
+			gFlags.Get("-s").GetStringValue(pArgs),
+			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+		),
 	)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	for {
-		result, err := hlrClient.Exec(
+		result, err := hlrClient.ExecCommand(
 			pCtx,
 			friend,
 			inputString(reader, "> "),

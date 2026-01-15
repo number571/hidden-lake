@@ -1,11 +1,7 @@
 package client
 
 import (
-	"net/http"
-	"strings"
-
-	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	hls_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 )
 
 var (
@@ -22,14 +18,9 @@ func NewBuilder(pPassword string) IBuilder {
 	}
 }
 
-func (p *sBuilder) Exec(pCmd ...string) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodPost).
-		WithHost(hls_remoter_settings.CAppShortName).
-		WithPath(hls_remoter_settings.CExecPath).
-		WithHead(map[string]string{
-			hls_remoter_settings.CHeaderPassword: p.fPassword,
-		}).
-		WithBody([]byte(strings.Join(pCmd, hls_remoter_settings.CExecSeparator))).
-		Build()
+func (p *sBuilder) ExecCommand(pCmd ...string) *hls_settings.SCommandExecRequest {
+	return &hls_settings.SCommandExecRequest{
+		FPassword: p.fPassword,
+		FCommand:  pCmd,
+	}
 }

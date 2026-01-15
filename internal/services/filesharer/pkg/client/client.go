@@ -2,6 +2,9 @@ package client
 
 import (
 	"context"
+	"io"
+
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 )
 
 var (
@@ -9,25 +12,27 @@ var (
 )
 
 type sClient struct {
-	fBuilder   IBuilder
 	fRequester IRequester
 }
 
-func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
+func NewClient(pRequester IRequester) IClient {
 	return &sClient{
-		fBuilder:   pBuilder,
 		fRequester: pRequester,
 	}
 }
 
-func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (IFileInfo, error) {
-	return p.fRequester.GetFileInfo(pCtx, pAliasName, p.fBuilder.GetFileInfo(pName))
+func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
+	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]IFileInfo, error) {
-	return p.fRequester.GetListFiles(pCtx, pAliasName, p.fBuilder.GetListFiles(pPage))
+func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (utils.IFileInfo, error) {
+	return p.fRequester.GetFileInfo(pCtx, pAliasName, pName)
 }
 
-func (p *sClient) LoadFileChunk(pCtx context.Context, pAliasName, pName string, pChunk uint64) ([]byte, error) {
-	return p.fRequester.LoadFileChunk(pCtx, pAliasName, p.fBuilder.LoadFileChunk(pName, pChunk))
+func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]utils.IFileInfo, error) {
+	return p.fRequester.GetListFiles(pCtx, pAliasName, pPage)
+}
+
+func (p *sClient) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName, pName string) error {
+	return p.fRequester.DownloadFile(pW, pCtx, pAliasName, pName)
 }

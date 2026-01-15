@@ -15,7 +15,7 @@ services:
     environment:
       - SERVICE_PATH=examples/remoter/simple/send_hls
     ports:
-      - 7572:7572
+      - 8531:8531
     networks:
       - hidden-lake
 networks:

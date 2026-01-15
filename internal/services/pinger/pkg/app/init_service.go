@@ -40,12 +40,15 @@ func (p *sApp) initInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_pinger_settings.CHandlePingPath,
-		handler.HandlePingAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+		hls_pinger_settings.CHandleSendPingPath,
+		handler.HandleSendPingAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
 	) // GET
 
+	buildSettings := build.GetSettings()
 	p.fIntServiceHTTP = &http.Server{ // nolint: gosec
-		Addr:    p.fConfig.GetAddress().GetInternal(),
-		Handler: mux,
+		Addr:         p.fConfig.GetAddress().GetInternal(),
+		Handler:      http.TimeoutHandler(mux, buildSettings.GetHttpCallbackTimeout(), "handle timeout"),
+		ReadTimeout:  buildSettings.GetHttpCallbackTimeout(),
+		WriteTimeout: buildSettings.GetHttpCallbackTimeout(),
 	}
 }

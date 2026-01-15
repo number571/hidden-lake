@@ -1,19 +1,25 @@
-package client
+package utils
 
 import "github.com/number571/go-peer/pkg/crypto/hashing"
 
+type IFileInfo interface {
+	GetName() string
+	GetHash() string
+	GetSize() uint64
+}
+
 var (
-	_ IFileInfo = &sFileInfo{}
+	_ IFileInfo = &SFileInfo{}
 )
 
-type sFileInfo struct {
+type SFileInfo struct {
 	FName string `json:"name"`
 	FHash string `json:"hash"`
 	FSize uint64 `json:"size"`
 }
 
 func NewFileInfo(pName, pHash string, pSize uint64) IFileInfo {
-	return &sFileInfo{
+	return &SFileInfo{
 		FName: pName,
 		FHash: pHash,
 		FSize: pSize,
@@ -21,21 +27,21 @@ func NewFileInfo(pName, pHash string, pSize uint64) IFileInfo {
 }
 
 func NewFileInfoFromBytes(pName string, b []byte) IFileInfo {
-	return &sFileInfo{
+	return &SFileInfo{
 		FName: pName,
 		FHash: hashing.NewHasher(b).ToString(),
 		FSize: uint64(len(b)),
 	}
 }
 
-func (p *sFileInfo) GetName() string {
+func (p *SFileInfo) GetName() string {
 	return p.FName
 }
 
-func (p *sFileInfo) GetHash() string {
+func (p *SFileInfo) GetHash() string {
 	return p.FHash
 }
 
-func (p *sFileInfo) GetSize() uint64 {
+func (p *SFileInfo) GetSize() uint64 {
 	return p.FSize
 }

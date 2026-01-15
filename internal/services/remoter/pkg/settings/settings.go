@@ -34,10 +34,16 @@ const (
 )
 
 const (
-	CExecPath = "/exec"
+	CExecPath           = "/exec"
+	CDefaultExecTimeout = 5_000 // 5s
 )
 
 const (
+	CDefaultInternalAddress = "127.0.0.1:9531"
 	CDefaultExternalAddress = "127.0.0.1:9532"
-	CDefaultExecTimeout     = 5_000 // 5s
+)
+
+const (
+	CHandleIndexPath       = "/api/index"
+	CHandleCommandExecPath = "/api/command/exec"
 )

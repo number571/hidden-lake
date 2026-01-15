@@ -9,10 +9,11 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/pkg/request"
 	"github.com/number571/hidden-lake/pkg/response"
 )
@@ -30,12 +31,6 @@ func TestError(t *testing.T) {
 func TestStreamReader(t *testing.T) {
 	t.Parallel()
 
-	tf, err := os.CreateTemp("", "temp-")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer func() { _ = tf.Close() }()
-
 	inputPath := "./testdata/"
 	filename := "file.txt"
 	fileBytes, err := os.ReadFile(inputPath + filename)
@@ -46,14 +41,13 @@ func TestStreamReader(t *testing.T) {
 	ctx := context.Background()
 	hlkClient := newTsHLSClient(fileBytes)
 
-	stream, err := BuildStreamReader(
+	stream, _, err := BuildStreamReader(
 		ctx,
 		0,
 		inputPath,
 		"alias_name",
 		hlkClient,
-		filename,
-		nil,
+		utils.NewFileInfo(filename, hashing.NewHasher(fileBytes).ToString(), uint64(len(fileBytes))),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +125,7 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 	var resp response.IResponseBuilder
 	switch {
 	case strings.Contains(r.GetPath(), "/info"):
-		fileInfo := client.NewFileInfoFromBytes("file.txt", p.fFileBytes)
+		fileInfo := utils.NewFileInfoFromBytes("file.txt", p.fFileBytes)
 		resp = response.NewResponseBuilder().WithCode(200).WithBody(encoding.SerializeJSON(fileInfo))
 	case strings.Contains(r.GetPath(), "/load"):
 		resp = response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})

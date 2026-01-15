@@ -5,4 +5,5 @@ logging:
 - warn
 - erro
 address:
+  internal: 127.0.0.1:9531
   external: 127.0.0.1:9532

@@ -1,0 +1,9 @@
+settings:
+  password: jh3298jiNIUD89jidH98Y3dnHOISA9DH
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :8531
+connection: 127.0.0.1:7572

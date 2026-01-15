@@ -22,7 +22,7 @@ type SConfig struct {
 
 	FSettings   *SConfigSettings `yaml:"settings"`
 	FLogging    []string         `yaml:"logging,omitempty"`
-	FAddress    *SAddress        `yaml:"address"`
+	FAddress    *SAddress        `yaml:"address,omitempty"`
 	FConnection string           `yaml:"connection"`
 }
 
