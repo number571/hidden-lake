@@ -156,7 +156,7 @@ func (p *SConfig) GetConnection() string {
 }
 
 func (p *SAddress) GetInternal() string {
-	return p.FExternal
+	return p.FInternal
 }
 
 func (p *SAddress) GetExternal() string {

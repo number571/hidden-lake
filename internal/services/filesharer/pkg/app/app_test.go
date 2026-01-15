@@ -10,6 +10,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
 var (
@@ -56,7 +57,9 @@ func TestApp(t *testing.T) {
 		FSettings: &config.SConfigSettings{
 			FPageOffset: 10,
 		},
-		FAddress:    &config.SAddress{},
+		FAddress: &config.SAddress{
+			FExternal: testutils.TgAddrs[29],
+		},
 		FConnection: "test_connection",
 	})
 	if err != nil {
