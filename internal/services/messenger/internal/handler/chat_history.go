@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
 )
 
-func HandleLoadMessagesAPI(
+func HandleChatHistoryAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

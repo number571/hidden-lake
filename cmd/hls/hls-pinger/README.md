@@ -78,7 +78,7 @@ Got response
 
 ```
 1. GET /api/index
-2. GET /api/send/ping
+2. GET /api/command/ping
 ```
 
 ### 1. /api/index
@@ -95,17 +95,17 @@ curl -i -X GET http://localhost:9551/api/index
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Thu, 15 Jan 2026 10:30:39 GMT
-Content-Length: 18
+Content-Length: 26
 
-hidden-lake-kernel
+hidden-lake-service=pinger
 ```
 
-### 2. /api/send/ping
+### 2. /api/command/ping
 
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9551/api/send/ping?friend=Bob"
+curl -i -X GET "http://localhost:9551/api/command/ping?friend=Bob"
 ```
 
 #### 2.1. GET Response

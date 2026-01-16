@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"testing"
-
-	"github.com/number571/hidden-lake/internal/utils/language"
 )
 
 const (
@@ -16,7 +14,6 @@ const (
 const (
 	tcConfigTemplate = `settings:
   messages_capacity: %d
-  language: RUS
 logging:
   - info
   - erro
@@ -30,7 +27,6 @@ const (
 	tcAddressInterface  = "address_interface"
 	tcAddressIncoming   = "address_incoming"
 	tcConnectionService = "connection_service"
-	tcMessageSize       = (1 << 20)
 	tcMessagesCapacity  = 1000
 )
 
@@ -71,10 +67,6 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetMessagesCapacity() != tcMessagesCapacity {
 		t.Fatal("settings message capacity size is invalid")
-	}
-
-	if cfg.GetSettings().GetLanguage() != language.CLangRUS {
-		t.Fatal("settings language is invalid")
 	}
 
 	if cfg.GetLogging().HasInfo() != tcLogging {

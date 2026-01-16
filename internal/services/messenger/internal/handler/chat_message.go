@@ -17,7 +17,7 @@ import (
 	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
-func HandlePushMessageAPI(
+func HandleChatMessageAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

@@ -18,7 +18,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 			FSettings: &SConfigSettings{
 				FRetryNum:   hls_filesharer_settings.CDefaultRetryNum,
 				FPageOffset: hls_filesharer_settings.CDefaultPageOffset,
-				FLanguage:   hls_filesharer_settings.CDefaultLanguage,
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{

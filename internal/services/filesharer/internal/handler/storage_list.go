@@ -17,7 +17,7 @@ import (
 	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
-func HandleStorageFilesAPI(
+func HandleStorageListAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,

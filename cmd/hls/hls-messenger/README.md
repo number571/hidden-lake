@@ -65,3 +65,48 @@ Got response
 ```
 success: send
 ```
+
+## HLS API
+
+```
+1. GET  /api/index
+2. POST /api/chat/message
+3. GET  /api/chat/history
+4. GET  /api/chat/subscribe
+```
+
+### 1. /api/index
+
+#### 1.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9591/api/index
+```
+
+#### 1.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 29
+
+hidden-lake-service=messenger
+```
+
+### 2. /api/push/message
+
+#### 2.1. POST Request
+
+```bash
+curl -i -X POST "http://localhost:9551/api/chat/message?friend=Bob" --data "hello, world!"
+```
+
+#### 2.1. POST Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:47:04 GMT
+Content-Length: 0
+```

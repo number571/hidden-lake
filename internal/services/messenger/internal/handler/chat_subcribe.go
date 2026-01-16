@@ -9,7 +9,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
-func HandleListenChatAPI(pCtx context.Context, pBroker message.IMessageBroker) http.HandlerFunc {
+func HandleChatSubscribeAPI(pCtx context.Context, pBroker message.IMessageBroker) http.HandlerFunc {
 	buildSettings := build.GetSettings()
 
 	return func(pW http.ResponseWriter, pR *http.Request) {

@@ -3,10 +3,8 @@ package config
 import (
 	"errors"
 	"os"
-	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/internal/utils/language"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -17,12 +15,8 @@ var (
 )
 
 type SConfigSettings struct {
-	fMutex    sync.RWMutex
-	fLanguage language.ILanguage
-
 	FPageOffset uint64 `json:"page_offset" yaml:"page_offset"`
 	FRetryNum   uint64 `json:"retry_num,omitempty" yaml:"retry_num,omitempty"`
-	FLanguage   string `json:"language,omitempty" yaml:"language,omitempty"`
 }
 
 type SConfig struct {
@@ -92,22 +86,6 @@ func (p *SConfigSettings) GetPageOffset() uint64 {
 	return p.FPageOffset
 }
 
-func (p *SConfigSettings) GetLanguage() language.ILanguage {
-	p.fMutex.RLock()
-	defer p.fMutex.RUnlock()
-
-	return p.fLanguage
-}
-
-func (p *SConfigSettings) loadLanguage() error {
-	res, err := language.ToILanguage(p.FLanguage)
-	if err != nil {
-		return errors.Join(ErrToLanguage, err)
-	}
-	p.fLanguage = res
-	return nil
-}
-
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != "" &&
@@ -129,10 +107,6 @@ func (p *SConfig) initConfig() error {
 
 	if err := p.loadLogging(); err != nil {
 		return errors.Join(ErrLoadLogging, err)
-	}
-
-	if err := p.FSettings.loadLanguage(); err != nil {
-		return errors.Join(ErrLoadLanguage, err)
 	}
 
 	return nil

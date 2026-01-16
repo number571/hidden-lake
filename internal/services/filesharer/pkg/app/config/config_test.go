@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"testing"
+)
 
-	"github.com/number571/hidden-lake/internal/utils/language"
+const (
+	tcConfigFileTemplate = "config_test_%d.txt"
 )
 
 const (
@@ -95,9 +97,5 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetRetryNum() != tcRetryNum {
 		t.Fatal("settings.retry_num is invalid")
-	}
-
-	if cfg.GetSettings().GetLanguage() != language.CLangRUS {
-		t.Fatal("settings language is invalid")
 	}
 }

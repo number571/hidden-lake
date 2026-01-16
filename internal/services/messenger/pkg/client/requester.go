@@ -18,10 +18,10 @@ var (
 )
 
 const (
-	cHandleIndexTemplate        = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandlePushMessageTemplate  = "http://" + "%s" + hls_settings.CHandlePushMessagePath + "?friend=%s"
-	cHandleLoadMessagesTemplate = "http://" + "%s" + hls_settings.CHandleLoadMessagesPath + "?friend=%s&page=%d&offset=%d"
-	cHandleListenChatTemplate   = "http://" + "%s" + hls_settings.CHandleListenChatPath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate         = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleChatMessageTemplate   = "http://" + "%s" + hls_settings.CHandleChatMessagePath + "?friend=%s"
+	cHandleChatHistoryTemplate   = "http://" + "%s" + hls_settings.CHandleChatHistoryPath + "?friend=%s&page=%d&offset=%d"
+	cHandleChatSubscribeTemplate = "http://" + "%s" + hls_settings.CHandleChatSubscribePath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -59,7 +59,7 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandlePushMessageTemplate, p.fHost, pFriend),
+		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
 		pBody,
 	)
 	if err != nil {
@@ -73,7 +73,7 @@ func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pPage ui
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleLoadMessagesTemplate, p.fHost, url.QueryEscape(pFriend), pPage, pOffset),
+		fmt.Sprintf(cHandleChatHistoryTemplate, p.fHost, url.QueryEscape(pFriend), pPage, pOffset),
 		nil,
 	)
 	if err != nil {
@@ -96,7 +96,7 @@ func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid strin
 			pCtx,
 			p.fClient,
 			http.MethodGet,
-			fmt.Sprintf(cHandleListenChatTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			fmt.Sprintf(cHandleChatSubscribeTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
 			nil,
 		)
 		if err != nil {

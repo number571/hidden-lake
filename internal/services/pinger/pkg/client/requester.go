@@ -16,8 +16,8 @@ var (
 )
 
 const (
-	cHandleIndexTemplate    = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleSendPingTemplate = "http://" + "%s" + hls_settings.CHandleSendPingPath + "?friend=%s"
+	cHandleIndexTemplate       = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleCommandPingTemplate = "http://" + "%s" + hls_settings.CHandleCommandPingPath + "?friend=%s"
 )
 
 type sRequester struct {
@@ -50,12 +50,12 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
-func (p *sRequester) SendPing(pCtx context.Context, pFriend string) error {
+func (p *sRequester) PingFriend(pCtx context.Context, pFriend string) error {
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleSendPingTemplate, p.fHost, url.QueryEscape(pFriend)),
+		fmt.Sprintf(cHandleCommandPingTemplate, p.fHost, url.QueryEscape(pFriend)),
 		nil,
 	)
 	if err != nil {

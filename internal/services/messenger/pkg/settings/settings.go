@@ -40,12 +40,11 @@ const (
 
 const (
 	CDefaultMessagesCapacity = (2 << 10) // count
-	CDefaultLanguage         = ""        // ENG
 )
 
 const (
-	CHandleIndexPath        = "/api/index"
-	CHandlePushMessagePath  = "/api/push/message"
-	CHandleLoadMessagesPath = "/api/load/messages"
-	CHandleListenChatPath   = "/api/listen/chat"
+	CHandleIndexPath         = "/api/index"
+	CHandleChatMessagePath   = "/api/chat/message"
+	CHandleChatHistoryPath   = "/api/chat/history"
+	CHandleChatSubscribePath = "/api/chat/subscribe"
 )

@@ -46,18 +46,18 @@ func (p *sApp) initInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandlePushMessagePath,
-		handler.HandlePushMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatMessagePath,
+		handler.HandleChatMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // POST
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleLoadMessagesPath,
-		handler.HandleLoadMessagesAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatHistoryPath,
+		handler.HandleChatHistoryAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleListenChatPath,
-		handler.HandleListenChatAPI(pCtx, pMsgBroker),
+		hls_messenger_settings.CHandleChatSubscribePath,
+		handler.HandleChatSubscribeAPI(pCtx, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

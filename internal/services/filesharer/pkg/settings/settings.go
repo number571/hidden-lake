@@ -48,8 +48,7 @@ const (
 )
 
 const (
-	CHandleIndexPath        = "/api/index"
-	CHandleFileInfoPath     = "/api/file/info"
-	CHandleFileDownloadPath = "/api/file/download"
-	CHandleStorageFilesPath = "/api/storage/files"
+	CHandleIndexPath       = "/api/index"
+	CHandleStorageFilePath = "/api/storage/file"
+	CHandleStorageListPath = "/api/storage/list"
 )

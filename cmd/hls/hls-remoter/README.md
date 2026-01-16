@@ -100,9 +100,9 @@ curl -i -X GET http://localhost:9531/api/index
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Thu, 15 Jan 2026 10:30:39 GMT
-Content-Length: 18
+Content-Length: 27
 
-hidden-lake-kernel
+hidden-lake-service=remoter
 ```
 
 ### 2. /api/command/exec

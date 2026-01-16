@@ -8,6 +8,10 @@ import (
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 )
 
+const (
+	tcConfigFileTemplate = "config_test_%d.txt"
+)
+
 func TestInit(t *testing.T) {
 	t.Parallel()
 

@@ -17,7 +17,6 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 		initCfg = &SConfig{
 			FSettings: &SConfigSettings{
 				FMessagesCapacity: hls_messenger_settings.CDefaultMessagesCapacity,
-				FLanguage:         hls_messenger_settings.CDefaultLanguage,
 			},
 			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{

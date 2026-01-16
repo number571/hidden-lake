@@ -27,13 +27,13 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 		},
 	)
 
-	config := config.NewWrapper(&config.SConfig{
+	config := &config.SConfig{
 		FSettings: &config.SConfigSettings{
 			FPageOffset: 10,
 		},
-	})
+	}
 
-	handler := HandleIncomingListHTTP(httpLogger, config.GetConfig(), "./testdata")
+	handler := HandleIncomingListHTTP(httpLogger, config, "./testdata")
 
 	if err := incomingListRequestOK(handler); err != nil {
 		t.Fatal(err)

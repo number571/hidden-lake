@@ -60,5 +60,5 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			gFlags.Get("-s").GetStringValue(pArgs),
 			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 		),
-	).SendPing(pCtx, gFlags.Get("-f").GetStringValue(pArgs))
+	).PingFriend(pCtx, gFlags.Get("-f").GetStringValue(pArgs))
 }

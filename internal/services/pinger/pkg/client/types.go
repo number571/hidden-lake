@@ -6,10 +6,10 @@ import (
 
 type IClient interface {
 	GetIndex(context.Context) (string, error)
-	SendPing(context.Context, string) error
+	PingFriend(context.Context, string) error
 }
 
 type IRequester interface {
 	GetIndex(context.Context) (string, error)
-	SendPing(context.Context, string) error
+	PingFriend(context.Context, string) error
 }

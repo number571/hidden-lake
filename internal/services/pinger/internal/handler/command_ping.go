@@ -14,7 +14,7 @@ import (
 	hlk_request "github.com/number571/hidden-lake/pkg/request"
 )
 
-func HandleSendPingAPI(
+func HandleCommandPingAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,

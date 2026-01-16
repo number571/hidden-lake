@@ -22,6 +22,6 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) SendPing(pCtx context.Context, pAliasName string) error {
-	return p.fRequester.SendPing(pCtx, pAliasName)
+func (p *sClient) PingFriend(pCtx context.Context, pAliasName string) error {
+	return p.fRequester.PingFriend(pCtx, pAliasName)
 }

@@ -44,7 +44,7 @@ $ go run ./cmd/hls/hls-filesharer
 > ...
 ```
 
-Open ports `9541` (HTTP, interface) and `9542` (HTTP, incoming).
+Open ports `9541` (HTTP, internal) and `9542` (HTTP, incoming).
 Creates [`./hls-filesharer.yml`](./hls-filesharer.yml) and `./hls-filesharer.stg` files.
 The directory `hls-filesharer.stg` stores all shared/loaded files. 
 
@@ -65,11 +65,95 @@ $ cd examples/filesharer/routing
 $ make
 ```
 
-Than open browser on `localhost:8080`. It is a `node1_hlf`. This node is a Alice.
+Than run command
+```bash
+$ cd examples/messenger
+$ ./_request/raw/request.sh
+```
 
-<p align="center"><img src="images/hls_filesharer_about.png" alt="hls_filesharer_about.png"/></p>
-<p align="center">Figure 2. Home page of the HLS=filesharer application.</p>
+Got response
+```json
+{"code":200,"head":{"Content-Type":"application/json"},"body":"W3sibmFtZSI6ImV4YW1wbGUudHh0IiwiaGFzaCI6IjdkMGM2NGUwNTBhMmMzMWNkMmQ1MjY2YjI5MjNjYTUxYjk1ZTk3ZTJkZWRmYzM5ZTRjZTIyMGI0Nzc2ODM5NzViYTAzMmM2YzMxNDFiYWQ4NDQyYWY0OTQzZjkxYWM0MyIsInNpemUiOjE0fSx7Im5hbWUiOiJpbWFnZS5qcGciLCJoYXNoIjoiN2JmZDg4ZDU0NmI0N2I2MGRiYTJjZDVmNWZmOGYyY2NjMTlkYWYzNDg2NDBkNWY1ZDMzODFiYzNmNTQzMDZmMWM3OTg0Njc5YzIzNWI0YzQ0ODViNTZlZWMyYWQ0OTc3Iiwic2l6ZSI6MTc3OTJ9XQ=="}
+```
 
-To see the another side of communication, you need to do all the same operations, but with `localhost:7070` as `node2_hlf`. This node will be Bob.
+## HLS API
 
-> More example images about HLS=filesharer pages in the [cmd/hls/hls-filesharer/images](images "Path to HLS=filesharer images")
+```
+1. GET  /api/index
+2. GET  /api/storage/list
+3. GET  /api/storage/file
+```
+
+### 1. /api/index
+
+#### 1.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9541/api/index
+```
+
+#### 1.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 30
+
+hidden-lake-service=filesharer
+```
+
+### 2. /api/storage/list
+
+#### 2.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9541/api/storage/list?friend=Bob
+```
+
+#### 2.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 30
+
+hidden-lake-service=filesharer
+```
+
+### 3. /api/storage/list
+
+#### 3.1. GET Request
+
+```bash
+curl -i -X GET http://localhost:9541/api/storage/file?friend=Bob
+```
+
+#### 3.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 30
+
+hidden-lake-service=filesharer
+```
+
+#### 3.2. GET Request (download)
+
+```bash
+curl -i -X GET "http://localhost:9541/api/storage/file?friend=Bob&download"
+```
+
+#### 3.2. GET Response (download)
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Thu, 15 Jan 2026 10:30:39 GMT
+Content-Length: 30
+
+hidden-lake-service=filesharer
+```

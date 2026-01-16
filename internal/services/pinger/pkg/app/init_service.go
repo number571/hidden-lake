@@ -40,8 +40,8 @@ func (p *sApp) initInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_pinger_settings.CHandleSendPingPath,
-		handler.HandleSendPingAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+		hls_pinger_settings.CHandleCommandPingPath,
+		handler.HandleCommandPingAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
 	) // GET
 
 	buildSettings := build.GetSettings()
