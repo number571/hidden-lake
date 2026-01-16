@@ -51,8 +51,13 @@ func (p *sApp) initInternalServiceHTTP(
 	) // POST
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleChatHistoryPath,
-		handler.HandleChatHistoryAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatHistoryLoadPath,
+		handler.HandleChatHistoryLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+	) // GET
+
+	mux.HandleFunc(
+		hls_messenger_settings.CHandleChatHistorySizePath,
+		handler.HandleChatHistorySizeAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(

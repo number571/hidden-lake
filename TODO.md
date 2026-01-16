@@ -1,3 +1,3 @@
-1. Update README hls-messenger, hls-filesharer
-2. Update examples
-3. Update tests
+1. Update examples
+2. Update tests
+3. Update hls-filesharer (send files)

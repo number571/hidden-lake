@@ -23,8 +23,8 @@ var (
 const (
 	cHandleIndexTemplate               = "http://" + "%s" + hls_settings.CHandleIndexPath
 	cHandleStorageListTemplate         = "http://" + "%s" + hls_settings.CHandleStorageListPath + "?friend=%s&page=%d"
-	cHandleStorageFileTemplate         = "http://" + "%s" + hls_settings.CHandleStorageFilePath + "?friend=%s&file=%s"
-	cHandleStorageFileDonwloadTemplate = "http://" + "%s" + hls_settings.CHandleStorageFilePath + "?friend=%s&file=%s&download"
+	cHandleStorageFileInfoTemplate     = "http://" + "%s" + hls_settings.CHandleStorageFileInfoPath + "?friend=%s&name=%s"
+	cHandleStorageFileDonwloadTemplate = "http://" + "%s" + hls_settings.CHandleStorageFileDownloadPath + "?friend=%s&name=%s"
 )
 
 type sRequester struct {
@@ -64,7 +64,7 @@ func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileN
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleStorageFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		fmt.Sprintf(cHandleStorageFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
 		nil,
 	)
 	if err != nil {

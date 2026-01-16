@@ -2,7 +2,7 @@
 
 <!-- ... -->
 
-## v1.9.2~
+## v1.10.0~
 
 *??? ??, ????*
 
@@ -10,6 +10,7 @@
 
 - `*/pkg/app/init_app.go`: create path for configs/databases if not exists
 - `cmd/hls/*`: add cli clients, update examples
+- `cmd/hls/*`: add internal API, update pkg/client
 
 ### CHANGES
 

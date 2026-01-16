@@ -79,9 +79,14 @@ Got response
 ## HLS API
 
 ```
-1. GET  /api/index
-2. GET  /api/storage/list
-3. GET  /api/storage/file
+1. GET  /api/index                  | params = []
+                                    |> description = get name of service
+2. GET  /api/storage/list           | params = ["friend":string,"page":uint64]
+                                    |> description = get list of files from storage
+3. GET  /api/storage/file/info      | params = ["friend":string,"name":string]
+                                    |> description = get info of the file by name
+4. GET  /api/storage/file/download  | params = ["friend":string,"name":string]
+                                    |> description = download file content by name
 ```
 
 ### 1. /api/index
@@ -97,7 +102,7 @@ curl -i -X GET http://localhost:9541/api/index
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:30:39 GMT
+Date: Fri, 16 Jan 2026 21:24:23 GMT
 Content-Length: 30
 
 hidden-lake-service=filesharer
@@ -108,18 +113,18 @@ hidden-lake-service=filesharer
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET http://localhost:9541/api/storage/list?friend=Bob
+curl -i -X GET "http://localhost:9541/api/storage/list?friend=Bob&page=0"
 ```
 
 #### 2.1. GET Response
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:30:39 GMT
-Content-Length: 30
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 21:25:00 GMT
+Content-Length: 280
 
-hidden-lake-service=filesharer
+[{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14},{"name":"image.jpg","hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977","size":17792}]
 ```
 
 ### 3. /api/storage/list
@@ -127,33 +132,33 @@ hidden-lake-service=filesharer
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET http://localhost:9541/api/storage/file?friend=Bob
+curl -i -X GET "http://localhost:9541/api/storage/file/info?friend=Bob&name=example.txt"
 ```
 
 #### 3.1. GET Response
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:30:39 GMT
-Content-Length: 30
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 21:25:55 GMT
+Content-Length: 138
 
-hidden-lake-service=filesharer
+{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14}
 ```
 
-#### 3.2. GET Request (download)
+#### 3.2. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/storage/file?friend=Bob&download"
+curl -i -X GET "http://localhost:9541/api/storage/file/download?friend=Bob&name=example.txt"
 ```
 
-#### 3.2. GET Response (download)
+#### 3.2. GET Response
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:30:39 GMT
-Content-Length: 30
+Date: Fri, 16 Jan 2026 21:26:55 GMT
+Content-Length: 14
+Content-Type: text/plain; charset=utf-8
 
-hidden-lake-service=filesharer
+hello, world!
 ```

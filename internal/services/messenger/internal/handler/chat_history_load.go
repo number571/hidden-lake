@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
@@ -14,7 +15,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
 )
 
-func HandleChatHistoryAPI(
+func HandleChatHistoryLoadAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -30,7 +31,8 @@ func HandleChatHistoryAPI(
 			return
 		}
 
-		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, pR.URL.Query().Get("friend"))
+		queryParams := pR.URL.Query()
+		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, queryParams.Get("friend"))
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
@@ -45,20 +47,40 @@ func HandleChatHistoryAPI(
 		}
 
 		rel := database.NewRelation(myPubKey, fPubKey)
-
-		// TODO:
-		// pR.URL.Query().Get("page")
-		// pR.URL.Query().Get("offset")
-
-		start := uint64(0)
 		size := pDatabase.Size(rel)
 
-		messagesCap := pConfig.GetSettings().GetMessagesCapacity()
-		if size > messagesCap {
-			start = size - messagesCap
+		count := pConfig.GetSettings().GetMessagesCapacity()
+		if x := queryParams.Get("count"); x != "" {
+			var err error
+			count, err = strconv.ParseUint(x, 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("parse_count"))
+				_ = api.Response(pW, http.StatusBadGateway, "failed: parse count")
+				return
+			}
 		}
 
-		dbMsgs, err := pDatabase.Load(rel, start, size)
+		start := uint64(0)
+		if x := queryParams.Get("start"); x != "" {
+			var err error
+			start, err = strconv.ParseUint(x, 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("parse_start"))
+				_ = api.Response(pW, http.StatusBadGateway, "failed: parse start")
+				return
+			}
+		}
+
+		// ASC select used by default
+		if x := queryParams.Get("select"); x == "desc" {
+			if size < start {
+				start = 0
+			} else {
+				start = (size - start)
+			}
+		}
+
+		dbMsgs, err := pDatabase.Load(rel, start, count)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")

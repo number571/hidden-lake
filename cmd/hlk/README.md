@@ -183,13 +183,20 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 ## HLK API
 
 ```
-1. GET             /api/index
-2. GET/POST/DELETE /api/config/connects
-3. GET/POST/DELETE /api/config/friends
-4. GET             /api/config/settings
-5. GET/DELETE      /api/network/online
-6. POST/PUT        /api/network/request
-7. GET             /api/profile/pubkey
+1. GET             /api/index          	| params = []
+                            			|> description = get name of service
+2. GET/POST/DELETE /api/config/connects	| params = []
+                            			|> description = get/add/del connections via adapter
+3. GET/POST/DELETE /api/config/friends	| params = []
+                            			|> description = get/add/del friend's {aliasName:publicKey}
+4. GET             /api/config/settings	| params = []
+                            			|> description = get current settings
+5. GET/DELETE      /api/network/online	| params = []
+                            			|> description = get/disconnect current online connections
+6. POST/PUT        /api/network/request	| params = ["friend":string]
+                            			|> description = send/fetch request message via QB-net
+7. GET             /api/profile/pubkey	| params = []
+                            			|> description = get public key of the node
 ```
 
 ### 1. /api/index

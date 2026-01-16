@@ -47,8 +47,13 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 	) // GET
 
 	mux.HandleFunc(
-		hls_filesharer_settings.CHandleStorageFilePath,
-		handler.HandleStorageFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		hls_filesharer_settings.CHandleStorageFileInfoPath,
+		handler.HandleStorageFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleStorageFileDownloadPath,
+		handler.HandleStorageFileDownloadAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	mux.HandleFunc(

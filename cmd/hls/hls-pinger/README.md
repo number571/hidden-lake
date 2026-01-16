@@ -77,8 +77,10 @@ Got response
 ## HLS API
 
 ```
-1. GET /api/index
-2. GET /api/command/ping
+1. GET /api/index           | params = []
+                            |> description = get name of service
+2. GET /api/command/ping    | params = ["friend":string]
+                            |> description = ping friend's online status
 ```
 
 ### 1. /api/index

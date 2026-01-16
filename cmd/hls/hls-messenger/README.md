@@ -69,10 +69,16 @@ success: send
 ## HLS API
 
 ```
-1. GET  /api/index
-2. POST /api/chat/message
-3. GET  /api/chat/history
-4. GET  /api/chat/subscribe
+1. GET  /api/index              | params = [] 
+                                |> description = get name of service
+2. POST /api/chat/message       | params = ["friend":string]
+                                |> description = send message to chat
+3. GET  /api/chat/history/load  | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
+                                |> description = get list of messages from chat
+4. GET  /api/chat/history/size  | params = ["friend":string]
+                                |> description = get count of messages in the chat
+5. GET  /api/chat/subscribe     | params = ["friend":string]
+                                |> description = try get message from chat with longpoll method 
 ```
 
 ### 1. /api/index
@@ -88,7 +94,7 @@ curl -i -X GET http://localhost:9591/api/index
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:30:39 GMT
+Date: Fri, 16 Jan 2026 18:54:07 GMT
 Content-Length: 29
 
 hidden-lake-service=messenger
@@ -99,7 +105,7 @@ hidden-lake-service=messenger
 #### 2.1. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9551/api/chat/message?friend=Bob" --data "hello, world!"
+curl -i -X POST "http://localhost:9591/api/chat/message?friend=Alice" --data 'hello, world!'
 ```
 
 #### 2.1. POST Response
@@ -107,6 +113,63 @@ curl -i -X POST "http://localhost:9551/api/chat/message?friend=Bob" --data "hell
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Date: Thu, 15 Jan 2026 10:47:04 GMT
-Content-Length: 0
+Date: Fri, 16 Jan 2026 18:55:12 GMT
+Content-Length: 19
+
+2026-01-16T18:55:12
+```
+
+### 3. /api/chat/history/load
+
+#### 3.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9591/api/chat/history/load?friend=Alice&start=0&count=10&select=asc"
+```
+
+#### 3.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 18:56:08 GMT
+Content-Length: 69
+
+[{"incoming":false,"message":"hello, world!","timestamp":1768589712}]
+```
+
+#### 4.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9591/api/chat/history/size?friend=Alice"
+```
+
+#### 4.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 18:56:08 GMT
+Content-Length: 1
+
+1
+```
+
+### 4. /api/chat/subscribe
+
+#### 4.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9591/api/chat/subscribe?friend=Alice"
+```
+
+#### 4.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Fri, 16 Jan 2026 18:57:22 GMT
+Content-Length: 58
+
+{"incoming":true,"message":"hello","timestamp":1768589838}
 ```

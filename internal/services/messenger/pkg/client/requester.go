@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
@@ -18,10 +19,11 @@ var (
 )
 
 const (
-	cHandleIndexTemplate         = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChatMessageTemplate   = "http://" + "%s" + hls_settings.CHandleChatMessagePath + "?friend=%s"
-	cHandleChatHistoryTemplate   = "http://" + "%s" + hls_settings.CHandleChatHistoryPath + "?friend=%s&page=%d&offset=%d"
-	cHandleChatSubscribeTemplate = "http://" + "%s" + hls_settings.CHandleChatSubscribePath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleChatMessageTemplate     = "http://" + "%s" + hls_settings.CHandleChatMessagePath + "?friend=%s"
+	cHandleChatHistorySizeTemplate = "http://" + "%s" + hls_settings.CHandleChatHistorySizePath + "?friend=%s"
+	cHandleChatHistoryLoadTemplate = "http://" + "%s" + hls_settings.CHandleChatHistoryLoadPath + "?friend=%s&start=%d&count=%d&select=%s"
+	cHandleChatSubscribeTemplate   = "http://" + "%s" + hls_settings.CHandleChatSubscribePath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -68,12 +70,34 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 	return string(rsp), nil
 }
 
-func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pPage uint64, pOffset uint64) ([]message.IMessage, error) {
+func (p *sRequester) CountMessages(pCtx context.Context, pFriend string) (uint64, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChatHistoryTemplate, p.fHost, url.QueryEscape(pFriend), pPage, pOffset),
+		fmt.Sprintf(cHandleChatHistorySizeTemplate, p.fHost, url.QueryEscape(pFriend)),
+		nil,
+	)
+	if err != nil {
+		return 0, errors.Join(ErrBadRequest, err)
+	}
+	count, err := strconv.ParseUint(string(res), 10, 64)
+	if err != nil {
+		return 0, errors.Join(ErrDecodeResponse, err)
+	}
+	return count, nil
+}
+
+func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pStart uint64, pCount uint64, pDesc bool) ([]message.IMessage, error) {
+	selectType := "asc"
+	if pDesc {
+		selectType = "desc"
+	}
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChatHistoryLoadTemplate, p.fHost, url.QueryEscape(pFriend), pStart, pCount, selectType),
 		nil,
 	)
 	if err != nil {

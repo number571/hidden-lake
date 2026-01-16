@@ -29,21 +29,13 @@ func (p *sKeyValueDB) Size(pR IRelation) uint64 {
 	return p.getSize(pR)
 }
 
-func (p *sKeyValueDB) Load(pR IRelation, pStart, pEnd uint64) ([]message.IMessage, error) {
+func (p *sKeyValueDB) Load(pR IRelation, pStart, pCount uint64) ([]message.IMessage, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	if pStart > pEnd {
-		return nil, ErrStartGtEnd
-	}
-
-	size := p.getSize(pR)
-	if pEnd > size {
-		return nil, ErrEndGtSize
-	}
-
-	res := make([]message.IMessage, 0, pEnd-pStart)
-	for i := pStart; i < pEnd; i++ {
+	end := min(pStart+pCount, p.getSize(pR))
+	res := make([]message.IMessage, 0, pCount)
+	for i := pStart; i < end; i++ {
 		data, err := p.fDB.Get(getKeyMessageByEnum(pR, i))
 		if err != nil {
 			return nil, errors.Join(ErrGetMessage, err)

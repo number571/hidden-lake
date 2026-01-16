@@ -18,7 +18,5 @@ var (
 	ErrSetMessage     = &SDatabaseError{"set message"}
 	ErrSetSizeMessage = &SDatabaseError{"set size message"}
 	ErrCloseDB        = &SDatabaseError{"close db"}
-	ErrEndGtSize      = &SDatabaseError{"end > size"}
-	ErrStartGtEnd     = &SDatabaseError{"start > end"}
 	ErrCreateDB       = &SDatabaseError{"create db"}
 )

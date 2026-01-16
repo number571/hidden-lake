@@ -63,7 +63,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	fmt.Printf("<chat with a friend '%s' is started>\n", friend)
 
-	msgs, err := hlsClient.LoadMessages(pCtx, friend, 0, 0)
+	msgs, err := hlsClient.LoadMessages(pCtx, friend, 256, 256, true)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return

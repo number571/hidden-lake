@@ -82,8 +82,10 @@ Got response
 ## HLS API
 
 ```
-1. GET  /api/index
-2. POST /api/command/exec
+1. GET  /api/index          | params = []
+                            |> description = get name of service
+2. POST /api/command/exec   | params = ["friend":string]
+                            |> description = send exec command to friend
 ```
 
 ### 1. /api/index
