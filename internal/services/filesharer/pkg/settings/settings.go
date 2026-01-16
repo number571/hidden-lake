@@ -38,7 +38,6 @@ const (
 const (
 	CDefaultRetryNum   = 2  // count
 	CDefaultPageOffset = 10 // count
-	CDefaultLanguage   = "" // ENG
 )
 
 const (

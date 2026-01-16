@@ -19,7 +19,6 @@ const (
 	tcConfigTemplate = `settings:
   page_offset: %d
   retry_num: %d
-  language: RUS
 logging:
   - info
   - erro
