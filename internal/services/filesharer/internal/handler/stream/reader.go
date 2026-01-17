@@ -31,10 +31,8 @@ func init() {
 }
 
 var (
-	_ io.ReadSeeker = &sStream{}
+	_ io.Reader = &sStream{}
 )
-
-type ICallbackFunc func([]byte, uint64, uint64)
 
 type sStream struct {
 	fContext   context.Context
@@ -57,7 +55,7 @@ func BuildStreamReader(
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
 	pFileInfo utils.IFileInfo,
-) (io.ReadSeeker, string, error) {
+) (io.Reader, string, error) {
 	chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
 	if err != nil {
 		return nil, "", errors.Join(ErrGetMessageLimit, err)
@@ -148,33 +146,6 @@ func (p *sStream) Read(b []byte) (int, error) {
 	}
 
 	return n, io.EOF
-}
-
-func (p *sStream) Seek(offset int64, whence int) (int64, error) {
-	select {
-	case <-p.fContext.Done():
-		return 0, io.ErrClosedPipe
-	default:
-	}
-
-	var pos int64
-	switch whence {
-	case io.SeekStart:
-		pos = offset
-	case io.SeekCurrent:
-		pos = int64(p.fPosition) + offset //nolint:gosec
-	case io.SeekEnd:
-		pos = int64(p.fFileInfo.GetSize()) + offset //nolint:gosec
-	default:
-		return 0, ErrInvalidWhence
-	}
-	if pos < 0 {
-		return 0, ErrNegativePosition
-	}
-
-	p.fBuffer = p.fBuffer[:0]
-	p.fPosition = uint64(pos)
-	return pos, nil
 }
 
 func (p *sStream) loadFileChunk() ([]byte, error) {

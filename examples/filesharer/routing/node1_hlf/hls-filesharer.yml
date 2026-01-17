@@ -6,5 +6,5 @@ logging:
 - warn
 - erro
 address:
-  external: 127.0.0.1:7071
-connection: 127.0.0.1:7572
+  internal: :8541
+connection: 127.0.0.1:8572

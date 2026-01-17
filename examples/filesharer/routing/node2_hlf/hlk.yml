@@ -9,10 +9,10 @@ logging:
 - warn
 - erro
 address:
-  external: :7571
-  internal: :7572
+  external: 127.0.0.1:7571
+  internal: 127.0.0.1:7572
 services:
-  hls-filesharer: node2_hlc:7071
+  hls-filesharer: 127.0.0.1:7071
 endpoints:
 - 127.0.0.1:7522
 friends:

@@ -8,10 +8,8 @@ logging:
 - warn
 - erro
 address:
-  external: :8571
+  external: 127.0.0.1:8571
   internal: :8572
-services:
-  hls-filesharer: node1_hlc:8081
 endpoints:
   - 127.0.0.1:8522
 friends:
