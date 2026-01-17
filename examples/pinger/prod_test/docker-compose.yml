@@ -7,8 +7,6 @@ services:
     environment:
       - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/pinger/prod_test/recv_hlc
-    networks:
-      - hidden-lake
   send_hls:
     build:
       context: ./../../../
@@ -18,8 +16,4 @@ services:
       - SERVICE_PATH=examples/pinger/prod_test/send_hls
     ports:
       - 7572:7572
-    networks:
-      - hidden-lake
-networks:
-  hidden-lake:
-    driver: bridge
+      - 7551:7551

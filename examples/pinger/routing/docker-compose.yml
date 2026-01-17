@@ -16,6 +16,7 @@ services:
       - SERVICE_PATH=examples/pinger/routing/send_hls
     ports:
       - 7572:7572
+      - 7551:7551
     networks:
       - hidden-lake
   middle_hla_tcp_1:

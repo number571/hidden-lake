@@ -1,10 +1,9 @@
 settings:
-  messages_capacity: 2048
+  password: jh3298jiNIUD89jidH98Y3dnHOISA9DH
 logging:
 - info
 - warn
 - erro
 address:
-  internal: :7070
-  external: 127.0.0.1:7071
+  internal: :7531
 connection: 127.0.0.1:7572

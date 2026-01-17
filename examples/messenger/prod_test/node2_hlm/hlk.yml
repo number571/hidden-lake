@@ -1,6 +1,5 @@
 settings:
   message_size_bytes: 8192
-  work_size_bits: 22
   fetch_timeout_ms: 60000
   queue_period_ms: 5000
 logging:
@@ -8,10 +7,9 @@ logging:
 - warn
 - erro
 address:
-  external: :7571
+  external: 127.0.0.1:7571
   internal: :7572
 services:
-  hls-pinger: 127.0.0.1:7552
   hls-messenger: 127.0.0.1:7071
 endpoints:
   - 127.0.0.1:7522

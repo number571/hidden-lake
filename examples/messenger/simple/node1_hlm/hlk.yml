@@ -8,7 +8,7 @@ logging:
 - erro
 address:
   external: 127.0.0.1:8571
-  internal: 127.0.0.1:8572
+  internal: :8572
 services:
   hls-messenger: 127.0.0.1:8081
 endpoints:

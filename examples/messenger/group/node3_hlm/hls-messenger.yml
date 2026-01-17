@@ -6,5 +6,5 @@ logging:
 - erro
 address:
   internal: :6060
-  external: :6061
+  external: 127.0.0.1:6061
 connection: 127.0.0.1:6572

@@ -9,6 +9,7 @@ services:
       - SERVICE_PATH=examples/messenger/prod_test/node1_hlm
     ports:
       - 8080:8080
+      - 8572:8572
   node2_hlc:
     build:
       context: ./../../../

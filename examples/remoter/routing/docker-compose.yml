@@ -16,6 +16,7 @@ services:
       - SERVICE_PATH=examples/remoter/routing/send_hls
     ports:
       - 7572:7572
+      - 7531:7531
     networks:
       - hidden-lake
   middle_hla_tcp_1:

@@ -105,7 +105,7 @@ hidden-lake-service=messenger
 #### 2.1. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chat/message?friend=Alice" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chat/message?friend=Bob" --data 'hello, world!'
 ```
 
 #### 2.1. POST Response
@@ -124,7 +124,7 @@ Content-Length: 19
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/history/load?friend=Alice&start=0&count=10&select=asc"
+curl -i -X GET "http://localhost:9591/api/chat/history/load?friend=Bob&start=0&count=10&select=asc"
 ```
 
 #### 3.1. GET Response
@@ -138,10 +138,12 @@ Content-Length: 69
 [{"incoming":false,"message":"hello, world!","timestamp":1768589712}]
 ```
 
+### 4. /api/chat/history/size
+
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/history/size?friend=Alice"
+curl -i -X GET "http://localhost:9591/api/chat/history/size?friend=Bob"
 ```
 
 #### 4.1. GET Response
@@ -155,15 +157,15 @@ Content-Length: 1
 1
 ```
 
-### 4. /api/chat/subscribe
+### 5. /api/chat/subscribe
 
-#### 4.1. GET Request
+#### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/subscribe?friend=Alice"
+curl -i -X GET "http://localhost:9591/api/chat/subscribe?friend=Bob"
 ```
 
-#### 4.1. GET Response
+#### 5.1. GET Response
 
 ```
 HTTP/1.1 200 OK

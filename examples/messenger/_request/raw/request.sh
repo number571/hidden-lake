@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## node2[localhost:7070](Bob) -> node1[localhost:8080](Alice)
+## node2[localhost:8080](Alice) -> node1[localhost:7070](Bob)
 
 PUSH_FORMAT='{
     "method":"POST",
@@ -9,5 +9,5 @@ PUSH_FORMAT='{
     "body":"aGVsbG8sIHdvcmxkIQ=="
 }';
 
-curl -i -X PUT "http://localhost:7572/api/network/request?friend=Alice" --data "${PUSH_FORMAT}";
+curl -i -X PUT "http://localhost:8572/api/network/request?friend=Bob" --data "${PUSH_FORMAT}";
 echo 

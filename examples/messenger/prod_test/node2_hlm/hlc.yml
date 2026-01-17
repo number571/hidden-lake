@@ -5,5 +5,4 @@ logging:
 applications:
   - hlk
   - hla-tcp
-  - hls-pinger
   - hls-messenger

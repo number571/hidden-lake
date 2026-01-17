@@ -7,5 +7,5 @@ logging:
 - erro
 address:
   internal: :8080
-  external: :8081
-connection: node1_hlc:8572
+  external: 127.0.0.1:8081
+connection: 127.0.0.1:8572

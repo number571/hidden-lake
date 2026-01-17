@@ -9,10 +9,9 @@ logging:
 - warn
 - erro
 address:
-  external: :8571
+  external: 127.0.0.1:8571
   internal: :8572
 services:
-  hls-pinger: 127.0.0.1:8552
   hls-messenger: 127.0.0.1:8081
 endpoints:
 - 127.0.0.1:8522

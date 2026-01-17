@@ -127,7 +127,7 @@ Content-Length: 280
 [{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14},{"name":"image.jpg","hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977","size":17792}]
 ```
 
-### 3. /api/storage/list
+### 3. /api/storage/file/info
 
 #### 3.1. GET Request
 
@@ -146,13 +146,15 @@ Content-Length: 138
 {"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14}
 ```
 
-#### 3.2. GET Request
+### 4. /api/storage/file/download
+
+#### 4.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9541/api/storage/file/download?friend=Bob&name=example.txt"
 ```
 
-#### 3.2. GET Response
+#### 4.1. GET Response
 
 ```
 HTTP/1.1 200 OK

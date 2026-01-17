@@ -4,4 +4,5 @@ logging:
 - warn
 - erro
 address:
-  external: 127.0.0.1:7552
+  internal: :7551
+connection: 127.0.0.1:7572
