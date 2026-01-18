@@ -3,18 +3,19 @@ package incoming
 import (
 	"context"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 )
 
@@ -59,14 +60,14 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
+		chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_chunk_size"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: get chunk size")
 			return
 		}
 
-		chunks := utils.GetChunksCount(uint64(stat.Size()), chunkSize) //nolint:gosec
+		chunks := getChunksCount(uint64(stat.Size()), chunkSize) //nolint:gosec
 		if uint64(chunk) >= chunks {
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusLengthRequired, "failed: chunk number")
@@ -101,4 +102,8 @@ func HandleIncomingLoadHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, buf[:nR])
 	}
+}
+
+func getChunksCount(pBytesNum, pChunkSize uint64) uint64 {
+	return uint64(math.Ceil(float64(pBytesNum) / float64(pChunkSize)))
 }

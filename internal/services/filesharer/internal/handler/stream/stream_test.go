@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -47,7 +47,7 @@ func TestStreamReader(t *testing.T) {
 		inputPath,
 		"alias_name",
 		hlkClient,
-		utils.NewFileInfo(filename, hashing.NewHasher(fileBytes).ToString(), uint64(len(fileBytes))),
+		newFileInfoFromBytes(filename, fileBytes),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -125,7 +125,7 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 	var resp response.IResponseBuilder
 	switch {
 	case strings.Contains(r.GetPath(), "/info"):
-		fileInfo := utils.NewFileInfoFromBytes("file.txt", p.fFileBytes)
+		fileInfo := newFileInfoFromBytes("file.txt", p.fFileBytes)
 		resp = response.NewResponseBuilder().WithCode(200).WithBody(encoding.SerializeJSON(fileInfo))
 	case strings.Contains(r.GetPath(), "/load"):
 		resp = response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
@@ -134,4 +134,30 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 		return nil, errors.New("unknown path") // nolint:err113
 	}
 	return resp.Build(), nil
+}
+
+type sFileInfo struct {
+	FName string
+	FHash string
+	FSize uint64
+}
+
+func newFileInfoFromBytes(pName string, b []byte) fileinfo.IFileInfo {
+	return &sFileInfo{
+		FName: pName,
+		FHash: hashing.NewHasher(b).ToString(),
+		FSize: uint64(len(b)),
+	}
+}
+
+func (p *sFileInfo) GetName() string {
+	return p.FName
+}
+
+func (p *sFileInfo) GetHash() string {
+	return p.FHash
+}
+
+func (p *sFileInfo) GetSize() uint64 {
+	return p.FSize
 }

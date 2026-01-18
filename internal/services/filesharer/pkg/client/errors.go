@@ -1,7 +1,5 @@
 package client
 
-import "errors"
-
 const (
 	errPrefix = "internal/services/filesharer/pkg/client = "
 )
@@ -15,8 +13,8 @@ func (err *SClientError) Error() string {
 }
 
 var (
-	ErrBadRequest      = errors.New(errPrefix + "bad request")
-	ErrDecodeResponse  = errors.New(errPrefix + "decode response")
-	ErrInvalidResponse = errors.New(errPrefix + "invalid response")
+	ErrBadRequest      = &SClientError{"bad request"}
+	ErrDecodeResponse  = &SClientError{"decode response"}
+	ErrInvalidResponse = &SClientError{"invalid response"}
 	ErrInvalidTitle    = &SClientError{"invalid title"}
 )

@@ -9,8 +9,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
@@ -52,7 +52,7 @@ func HandleIncomingListHTTP(
 	}
 }
 
-func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]utils.IFileInfo, error) {
+func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]fileinfo.IFileInfo, error) {
 	pageOffset := pCfg.GetSettings().GetPageOffset()
 	fileReader := pageOffset
 
@@ -70,7 +70,7 @@ func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]utils
 		files = append(files, e)
 	}
 
-	result := make([]utils.IFileInfo, 0, pageOffset)
+	result := make([]fileinfo.IFileInfo, 0, pageOffset)
 	for i := (pPage * pageOffset); i < uint64(len(files)); i++ {
 		if fileReader == 0 {
 			break
@@ -80,14 +80,13 @@ func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]utils
 		fileName := files[i].Name()
 		fullPath := filepath.Join(stgPath, fileName)
 
-		result = append(
-			result,
-			utils.NewFileInfo(
-				fileName,
-				getFileHash(fullPath),
-				getFileSize(fullPath),
-			),
-		)
+		info, err := fileinfo.NewFileInfo(fullPath)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, info)
 	}
+
 	return result, nil
 }

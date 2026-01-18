@@ -1,4 +1,4 @@
-package utils
+package limiters
 
 import (
 	"context"
@@ -24,7 +24,7 @@ var (
 	))
 )
 
-func GetMessageLimitOnLoadPage(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
+func GetLimitOnLoadResponseSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
 	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
 		return 0, errors.Join(ErrGetSettingsHLS, err)

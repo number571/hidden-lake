@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 )
 
 var (
@@ -25,11 +25,11 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (utils.IFileInfo, error) {
+func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (fileinfo.IFileInfo, error) {
 	return p.fRequester.GetFileInfo(pCtx, pAliasName, pName)
 }
 
-func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]utils.IFileInfo, error) {
+func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]fileinfo.IFileInfo, error) {
 	return p.fRequester.GetListFiles(pCtx, pAliasName, pPage)
 }
 

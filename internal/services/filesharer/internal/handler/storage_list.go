@@ -6,12 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
@@ -53,13 +52,13 @@ func HandleStorageListAPI(
 			return
 		}
 
-		list := make([]utils.SFileInfo, 0, hls_settings.CDefaultPageOffset)
-		if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
+		infos, err := fileinfo.LoadFileInfoList(resp.GetBody())
+		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: decode response")
 			return
 		}
 
-		_ = api.Response(pW, http.StatusOK, list)
+		_ = api.Response(pW, http.StatusOK, infos)
 	}
 }

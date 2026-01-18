@@ -2,17 +2,14 @@ package client
 
 import (
 	"context"
-	"crypto/sha512"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
-	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 )
 
@@ -59,7 +56,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
-func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileName string) (utils.IFileInfo, error) {
+func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileName string) (fileinfo.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -70,20 +67,14 @@ func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileN
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-
-	info := &utils.SFileInfo{}
-	if err := encoding.DeserializeJSON(res, info); err != nil {
-		return nil, errors.Join(ErrInvalidResponse, err)
+	info, err := fileinfo.LoadFileInfo(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-
-	if !isValidHexHash(info.FHash) {
-		return nil, ErrInvalidResponse
-	}
-
 	return info, nil
 }
 
-func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]utils.IFileInfo, error) {
+func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]fileinfo.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -94,21 +85,11 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-
-	list := make([]utils.SFileInfo, 0, hls_settings.CDefaultPageOffset)
-	if err := encoding.DeserializeJSON(res, &list); err != nil {
-		return nil, errors.Join(ErrInvalidResponse, err)
+	infos, err := fileinfo.LoadFileInfoList(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-
-	fileInfos := make([]utils.IFileInfo, 0, len(list))
-	for _, info := range list {
-		if !isValidHexHash(info.FHash) {
-			return nil, ErrInvalidResponse
-		}
-		fileInfos = append(fileInfos, utils.NewFileInfo(info.FName, info.FHash, info.FSize))
-	}
-
-	return fileInfos, nil
+	return infos, nil
 }
 
 func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {
@@ -124,12 +105,4 @@ func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName
 		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
-}
-
-func isValidHexHash(hash string) bool {
-	v, err := hex.DecodeString(hash)
-	if err != nil {
-		return false
-	}
-	return len(v) == sha512.Size384
 }

@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha512"
 	"errors"
@@ -12,23 +11,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
-
-func init() {
-	v := []byte("init_value")
-	h := sha512.Sum384(v)
-
-	// maintaining the overall level of security and uniformity of the algorithms used
-	if !bytes.Equal(h[:], hashing.NewHasher(v).ToBytes()) {
-		panic("uses diff hash functions")
-	}
-}
 
 var (
 	_ io.Reader = &sStream{}
@@ -40,7 +29,7 @@ type sStream struct {
 	fTempFile  string
 	fHlkClient hlk_client.IClient
 	fAliasName string
-	fFileInfo  utils.IFileInfo
+	fFileInfo  fileinfo.IFileInfo
 	fBuffer    []byte
 	fPosition  uint64
 	fTempBytes []byte
@@ -54,9 +43,9 @@ func BuildStreamReader(
 	pInputPath string,
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
-	pFileInfo utils.IFileInfo,
+	pFileInfo fileinfo.IFileInfo,
 ) (io.Reader, string, error) {
-	chunkSize, err := utils.GetMessageLimitOnLoadPage(pCtx, pHlkClient)
+	chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 	if err != nil {
 		return nil, "", errors.Join(ErrGetMessageLimit, err)
 	}

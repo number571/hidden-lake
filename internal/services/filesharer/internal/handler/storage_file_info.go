@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
@@ -59,7 +58,7 @@ func getFileInfo(
 	pHlkClient hlk_client.IClient,
 	pAliasName string,
 	pFileName string,
-) (utils.IFileInfo, error) {
+) (fileinfo.IFileInfo, error) {
 	req := hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
@@ -75,10 +74,5 @@ func getFileInfo(
 		return nil, errors.New("bad status code") // nolint: err113
 	}
 
-	info := &utils.SFileInfo{}
-	if err := encoding.DeserializeJSON(resp.GetBody(), info); err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return fileinfo.LoadFileInfo(resp.GetBody())
 }
