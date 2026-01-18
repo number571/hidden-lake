@@ -4,7 +4,7 @@ import "github.com/number571/go-peer/pkg/types"
 
 type IMessageBroker interface {
 	Produce(string, IMessage)
-	Consume(string) chan IMessageContainer
+	Consume(string) <-chan IMessageContainer
 }
 
 type IMessageContainer interface {

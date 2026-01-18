@@ -19,19 +19,21 @@ func NewMessageBroker() IMessageBroker {
 }
 
 func (p *sMessageBroker) Produce(pFriend string, pMessage IMessage) {
+	p.fMutex.Lock()
+	defer p.fMutex.Unlock()
+
 	c := newMessageContainer(pFriend, pMessage)
 	for id, ch := range p.fSubscribers {
 		select {
 		case ch <- c:
 		default:
-			p.fMutex.Lock()
 			delete(p.fSubscribers, id)
-			p.fMutex.Unlock()
+			close(ch)
 		}
 	}
 }
 
-func (p *sMessageBroker) Consume(pID string) chan IMessageContainer {
+func (p *sMessageBroker) Consume(pID string) <-chan IMessageContainer {
 	if ch, ok := p.tryGetChannel(pID); ok {
 		return ch
 	}

@@ -55,15 +55,14 @@ $ cd examples/messenger/routing
 $ make
 ```
 
-Than run command
+Than run commands
 ```bash
+### Terminal 1 ###
 $ cd examples/messenger
-$ ./_request/raw/request.sh
-```
-
-Got response
-```
-success: send
+$ make request-node1
+### Terminal 2 ###
+$ cd examples/messenger
+$ make request-node2
 ```
 
 ## HLS API
@@ -100,7 +99,7 @@ Content-Length: 29
 hidden-lake-service=messenger
 ```
 
-### 2. /api/push/message
+### 2. /api/chat/message
 
 #### 2.1. POST Request
 
