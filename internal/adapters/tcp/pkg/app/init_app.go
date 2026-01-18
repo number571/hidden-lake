@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/types"
+	build "github.com/number571/hidden-lake/build/environment"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/utils/build"
 )
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {

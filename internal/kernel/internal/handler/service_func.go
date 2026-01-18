@@ -8,17 +8,16 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/pkg/handler"
-	"github.com/number571/hidden-lake/pkg/network/request"
-	"github.com/number571/hidden-lake/pkg/network/response"
-
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
+	"github.com/number571/hidden-lake/pkg/network/handler"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHandlerF {

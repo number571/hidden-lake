@@ -15,7 +15,7 @@ import (
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
-	"github.com/number571/hidden-lake/pkg/handler"
+	"github.com/number571/hidden-lake/pkg/network/handler"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 	testutils "github.com/number571/hidden-lake/test/utils"
