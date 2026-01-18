@@ -12,8 +12,8 @@ import (
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/handler"
-	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"

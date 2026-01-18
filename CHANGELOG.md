@@ -19,6 +19,7 @@
 - `cmd/hls/hls-filesharer|cmd/hls/hls-messenger`: delete webui -> change to cli
 - `cmd/hls/hls-remoter`: change separator [@remoter-separator] -> [@s]
 - `cmd/hlk`: change API of the /api/network/request path
+- `pkg`: change path /request, /response -> /network/request, /network/response
 
 ### BUG FIXES
 

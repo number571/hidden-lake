@@ -7,7 +7,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	hlk_response "github.com/number571/hidden-lake/pkg/response"
+	hlk_response "github.com/number571/hidden-lake/pkg/network/response"
 )
 
 var (

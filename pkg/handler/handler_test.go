@@ -19,8 +19,8 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 var (

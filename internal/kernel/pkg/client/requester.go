@@ -12,8 +12,8 @@ import (
 	"github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 var (

@@ -7,8 +7,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
-	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 func TestError(t *testing.T) {

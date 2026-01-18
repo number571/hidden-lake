@@ -11,7 +11,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/pkg/network"
-	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/network/request"
 )
 
 func HandleNetworkRequestAPI(

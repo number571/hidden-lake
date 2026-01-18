@@ -13,8 +13,8 @@ import (
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
-	"github.com/number571/hidden-lake/pkg/request"
-	"github.com/number571/hidden-lake/pkg/response"
+	"github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 func TestError(t *testing.T) {
@@ -48,7 +48,7 @@ func TestPanicNode(t *testing.T) {
 		}),
 		asymmetric.NewPrivKey(),
 		&tsDatabase{},
-		adapters.NewRunnerAdapter(
+		newRunnerAdapter(
 			gopeer_adapters.NewAdapterByFuncs(
 				func(context.Context, layer1.IMessage) error { return nil },
 				func(context.Context) (layer1.IMessage, error) { return nil, nil },
@@ -169,7 +169,7 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 			}
 			return db
 		}(),
-		adapters.NewRunnerAdapter(
+		newRunnerAdapter(
 			gopeer_adapters.NewAdapterByFuncs(
 				func(_ context.Context, msg layer1.IMessage) error {
 					outMsgChan <- msg
@@ -198,4 +198,20 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 			panic("unknown method")
 		},
 	)
+}
+
+type sRunnerAdapter struct {
+	gopeer_adapters.IAdapter
+	fRun func(context.Context) error
+}
+
+func newRunnerAdapter(pAdapter gopeer_adapters.IAdapter, pRun func(context.Context) error) adapters.IRunnerAdapter {
+	return &sRunnerAdapter{
+		IAdapter: pAdapter,
+		fRun:     pRun,
+	}
+}
+
+func (p *sRunnerAdapter) Run(pCtx context.Context) error {
+	return p.fRun(pCtx)
 }

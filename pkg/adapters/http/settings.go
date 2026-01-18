@@ -29,7 +29,9 @@ type SServeSettings struct {
 
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
-		pSett = &SSettings{FAdapterSettings: adapters.NewSettings(nil)}
+		pSett = &SSettings{
+			FAdapterSettings: adapters.NewSettings(nil),
+		}
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,

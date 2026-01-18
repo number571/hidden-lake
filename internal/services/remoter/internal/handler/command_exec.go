@@ -12,7 +12,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 
 func HandleCommandExecAPI(

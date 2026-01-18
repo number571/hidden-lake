@@ -17,7 +17,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/utils"
-	hlk_request "github.com/number571/hidden-lake/pkg/request"
+	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 
 func init() {

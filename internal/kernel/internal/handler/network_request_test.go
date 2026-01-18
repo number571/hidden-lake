@@ -22,7 +22,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/handler"
-	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/network/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

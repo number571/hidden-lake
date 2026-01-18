@@ -14,7 +14,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/request"
+	"github.com/number571/hidden-lake/pkg/network/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
