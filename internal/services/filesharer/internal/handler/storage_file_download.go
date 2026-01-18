@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -26,7 +25,6 @@ func HandleStorageFileDownloadAPI(
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -79,10 +77,6 @@ func HandleStorageFileDownloadAPI(
 		defer func() { _ = os.Remove(tempFIle) }()
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		if _, err := io.Copy(pW, reader); err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("copy_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: copy file")
-			return
-		}
+		_ = api.ResponseWithReader(pW, http.StatusOK, reader)
 	}
 }

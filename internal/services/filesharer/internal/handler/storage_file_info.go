@@ -25,7 +25,6 @@ func HandleStorageFileInfoAPI(
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))

@@ -24,7 +24,6 @@ func HandleStorageListAPI(
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 
 		page, err := strconv.ParseUint(pR.URL.Query().Get("page"), 10, 64)
 		if err != nil {
@@ -59,6 +58,7 @@ func HandleStorageListAPI(
 			return
 		}
 
+		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, infos)
 	}
 }

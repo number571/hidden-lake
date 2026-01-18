@@ -9,6 +9,20 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
+func ResponseWithReader(
+	pW http.ResponseWriter,
+	pRet int,
+	pR io.Reader,
+) error {
+	pW.WriteHeader(pRet)
+
+	if _, err := io.Copy(pW, pR); err != nil {
+		return errors.Join(ErrCopyBytes, err)
+	}
+
+	return nil
+}
+
 func Response(
 	pW http.ResponseWriter,
 	pRet int,
