@@ -61,7 +61,13 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
-	fmt.Printf("<chat with a friend '%s' is started>\n", friend)
+	limit, err := hlsClient.GetMessageLimit(pCtx)
+	if err != nil {
+		fmt.Printf("error: %s\n", err.Error())
+		return
+	}
+
+	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
 	msgs, err := hlsClient.LoadMessages(pCtx, friend, 256, 256, true)
 	if err != nil {
