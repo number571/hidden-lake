@@ -186,9 +186,6 @@ func copyFile(dstFilePath string, tmpFile *os.File) error {
 	if _, err := tmpFile.Seek(0, io.SeekStart); err != nil {
 		return err
 	}
-	if _, err := io.Copy(dstFile, tmpFile); err != nil {
-		return err
-	}
-
-	return nil
+	_, err = io.Copy(dstFile, tmpFile)
+	return err
 }
