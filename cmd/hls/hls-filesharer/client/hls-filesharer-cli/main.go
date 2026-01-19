@@ -25,7 +25,7 @@ var (
 		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print information about application"),
 		flag.NewFlagBuilder("-p", "--path").
-			WithDescription("set path to config, database files").
+			WithDescription("set path to load files").
 			WithDefinedValue("."),
 		flag.NewFlagBuilder("-s", "--service").
 			WithDescription("set internal address of the HLS").
@@ -89,22 +89,14 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		if err != nil {
 			return err
 		}
-		fileInfoListStr, err := json.MarshalIndent(fileInfoList, "", "\t")
-		if err != nil {
-			return err
-		}
-		fmt.Println(string(fileInfoListStr))
+		fmt.Println(serializeJSON(fileInfoList))
 	case "info":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
 		fileInfo, err := hlfClient.GetFileInfo(pCtx, friend, fileName)
 		if err != nil {
 			return err
 		}
-		fileInfoStr, err := json.MarshalIndent(fileInfo, "", "\t")
-		if err != nil {
-			return err
-		}
-		fmt.Println(string(fileInfoStr))
+		fmt.Println(serializeJSON(fileInfo))
 	case "load":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
 		dstFile, err := os.OpenFile( // nolint: gosec
@@ -137,4 +129,9 @@ func (p *processWriter) Write(b []byte) (n int, err error) {
 	p.fP += uint64(n) // nolint: gosec
 	fmt.Printf("\rdownloading ... %dB", p.fP)
 	return n, err
+}
+
+func serializeJSON(pData interface{}) string {
+	res, _ := json.MarshalIndent(pData, "", "\t")
+	return string(res)
 }

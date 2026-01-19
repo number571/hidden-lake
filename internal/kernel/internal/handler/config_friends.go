@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 	"strings"
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
@@ -40,6 +41,9 @@ func HandleConfigFriendsAPI(
 					FPublicKey: pubKey.ToString(),
 				})
 			}
+			sort.Slice(listFriends, func(i, j int) bool {
+				return listFriends[i].FAliasName < listFriends[j].FAliasName
+			})
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, listFriends)

@@ -175,13 +175,13 @@ To communicate with other network nodes, you must first obtain your public key, 
 $ curl -X GET 'http://localhost:9572/api/profile/pubkey'
 ```
 
-After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the HLK API.
+After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the `HLK API` or just edit `hlk.yml` file with restart HLK application.
 
 ```bash
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating using the default `HLS=messenger` application (open `internal` address in the browser from `hls-messenger.yml`, by default `localhost:9591`) or, if necessary, connect additional applications such as `HLS=filesharer` (file sharing), `HLS=remoter` (remote access).
+__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-remoter-cli](cmd/hls/hls-remoter/client/hls-remoter-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
 
 ## Star History
 

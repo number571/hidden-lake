@@ -23,6 +23,7 @@
 - `pkg`: change path /request, /response, /handler -> /network/request, /network/response, /network/handler
 - `build`: move pkg/build -> build/environment
 - `*`: rename structs S**name**Error -> SError
+- `cmd/hlk`: add sort list of friends (get function)
 
 ### BUG FIXES
 
