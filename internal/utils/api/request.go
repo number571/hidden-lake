@@ -17,7 +17,7 @@ func RequestWithWriter(
 	pClient *http.Client,
 	pMethod, pURL string,
 	pData interface{},
-) error {
+) (http.Header, error) {
 	var (
 		contentType string
 		reqBytes    []byte
@@ -42,23 +42,23 @@ func RequestWithWriter(
 		bytes.NewBuffer(reqBytes),
 	)
 	if err != nil {
-		return errors.Join(ErrBuildRequest, err)
+		return nil, errors.Join(ErrBuildRequest, err)
 	}
 
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := pClient.Do(req)
 	if err != nil {
-		return errors.Join(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	buf := make([]byte, 2048)
 	if _, err := io.CopyBuffer(pW, resp.Body, buf); err != nil {
-		return errors.Join(ErrReadResponse, err)
+		return nil, errors.Join(ErrReadResponse, err)
 	}
 
-	return nil
+	return resp.Header, nil
 }
 
 func Request(

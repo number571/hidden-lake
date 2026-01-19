@@ -12,7 +12,7 @@ type IClient interface {
 
 	GetFileInfo(context.Context, string, string) (fileinfo.IFileInfo, error)
 	GetListFiles(context.Context, string, uint64) ([]fileinfo.IFileInfo, error)
-	DownloadFile(io.Writer, context.Context, string, string) error
+	DownloadFile(io.Writer, context.Context, string, string) (bool, string, error)
 }
 
 type IRequester interface {
@@ -20,5 +20,5 @@ type IRequester interface {
 
 	GetFileInfo(context.Context, string, string) (fileinfo.IFileInfo, error)
 	GetListFiles(context.Context, string, uint64) ([]fileinfo.IFileInfo, error)
-	DownloadFile(io.Writer, context.Context, string, string) error
+	DownloadFile(io.Writer, context.Context, string, string) (bool, string, error)
 }

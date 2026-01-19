@@ -153,7 +153,8 @@ curl -i -X GET "http://localhost:9541/api/storage/file/download?friend=Bob&name=
 
 ```
 HTTP/1.1 200 OK
-Date: Fri, 16 Jan 2026 21:26:55 GMT
+Hls-Filesharer-File-Hash: 7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43
+Date: Mon, 19 Jan 2026 08:05:06 GMT
 Content-Length: 14
 Content-Type: text/plain; charset=utf-8
 

@@ -8,7 +8,8 @@ BINPATH=$(ROOPATH)/bin
 default: build move_apps remove-std
 build: 
 	for app in \
-		hlk 				hlc \
+		hlc \
+		hlk 				hlk/client/hlk-cli \
 		hla/hla-tcp 		hla/hla-http \
 		hls/hls-messenger 	hls/hls-messenger/client/hls-messenger-cli \
 		hls/hls-filesharer 	hls/hls-filesharer/client/hls-filesharer-cli \

@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
@@ -25,17 +26,18 @@ var (
 )
 
 type sStream struct {
-	fContext   context.Context
-	fRetryNum  uint64
-	fTempFile  string
-	fHlkClient hlk_client.IClient
-	fAliasName string
-	fFileInfo  fileinfo.IFileInfo
-	fBuffer    []byte
-	fPosition  uint64
-	fTempBytes []byte
-	fHasher    hash.Hash
-	fChunkSize uint64
+	fContext      context.Context
+	fRetryNum     uint64
+	fTempEOF      bool
+	fTempPosition uint64
+	fTempFile     string
+	fHlkClient    hlk_client.IClient
+	fAliasName    string
+	fFileInfo     fileinfo.IFileInfo
+	fBuffer       []byte
+	fPosition     uint64
+	fHasher       hash.Hash
+	fChunkSize    uint64
 }
 
 func BuildStreamReader(
@@ -45,50 +47,29 @@ func BuildStreamReader(
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
 	pFileInfo fileinfo.IFileInfo,
-) (io.Reader, string, error) {
+) (io.Reader, error) {
 	chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 	if err != nil {
-		return nil, "", errors.Join(ErrGetMessageLimit, err)
+		return nil, errors.Join(ErrGetMessageLimit, err)
 	}
 
 	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, pFileInfo.GetHash()[:8])
 	tempFile := filepath.Join(pInputPath, tempName)
 
-	// TODO: fix
-	tempBytes, err := readTempFile(tempFile, chunkSize)
-	if err != nil {
-		return nil, "", errors.Join(ErrReadTempFile, err)
+	if err := createTempFile(tempFile); err != nil {
+		return nil, errors.Join(ErrReadTempFile, err)
 	}
 
 	return &sStream{
 		fContext:   pCtx,
 		fRetryNum:  pRetryNum,
 		fTempFile:  tempFile,
-		fTempBytes: tempBytes,
 		fHlkClient: pHlkClient,
 		fAliasName: pAliasName,
 		fHasher:    sha512.New384(),
 		fChunkSize: chunkSize,
 		fFileInfo:  pFileInfo,
-	}, tempFile, nil
-}
-
-func readTempFile(pTempFile string, pChunkSize uint64) ([]byte, error) {
-	if _, err := os.Stat(pTempFile); errors.Is(err, os.ErrNotExist) {
-		if _, err := os.Create(pTempFile); err != nil { // nolint: gosec
-			return nil, err
-		}
-	}
-	tempBytes, err := os.ReadFile(pTempFile) // nolint: gosec
-	if err != nil {
-		_ = os.Remove(pTempFile)
-		return nil, err
-	}
-	if uint64(len(tempBytes))%pChunkSize != 0 {
-		_ = os.Remove(pTempFile)
-		return nil, errors.New("len(tempBytes) %% chunkSize != 0") // nolint: err113
-	}
-	return tempBytes, nil
+	}, nil
 }
 
 func (p *sStream) Read(b []byte) (int, error) {
@@ -98,9 +79,16 @@ func (p *sStream) Read(b []byte) (int, error) {
 	default:
 	}
 
-	if p.fTempBytes != nil {
-		p.fBuffer = p.fTempBytes
-		p.fTempBytes = nil
+	if len(p.fBuffer) == 0 && !p.fTempEOF {
+		switch chunk, err := p.loadFileChunkFromTemp(); {
+		case err == nil:
+			p.fBuffer = chunk
+		case errors.Is(err, io.EOF):
+			p.fTempEOF = true
+		default:
+			_ = os.Remove(p.fTempFile)
+			return 0, errors.Join(ErrLoadFileChunk, err)
+		}
 	}
 
 	if len(p.fBuffer) == 0 {
@@ -108,7 +96,8 @@ func (p *sStream) Read(b []byte) (int, error) {
 		if err != nil {
 			return 0, errors.Join(ErrLoadFileChunk, err)
 		}
-		if err := p.appendToTempFile(chunk); err != nil {
+		if err := p.appendChunkToTempFile(chunk); err != nil {
+			_ = os.Remove(p.fTempFile)
 			return 0, errors.Join(ErrAppendToTempFile, err)
 		}
 		p.fBuffer = chunk
@@ -126,16 +115,33 @@ func (p *sStream) Read(b []byte) (int, error) {
 		return n, nil
 	}
 
-	if err := os.Remove(p.fTempFile); err != nil {
-		return 0, errors.Join(ErrDeleteTempFile, err)
-	}
-
 	hashSum := encoding.HexEncode(p.fHasher.Sum(nil))
 	if hashSum != p.fFileInfo.GetHash() {
+		_ = os.Remove(p.fTempFile)
 		return 0, ErrInvalidHash
 	}
 
 	return n, io.EOF
+}
+
+func createTempFile(pTempFile string) error {
+	stat, err := os.Stat(pTempFile)
+	if errors.Is(err, os.ErrNotExist) {
+		_, err := os.Create(pTempFile) // nolint: gosec
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	expired := time.Since(stat.ModTime()) > (30 * 24 * time.Hour)
+	if !expired {
+		return nil
+	}
+	if err := os.Remove(pTempFile); err != nil {
+		return err
+	}
+	_, err = os.Create(pTempFile) // nolint: gosec
+	return err
 }
 
 func (p *sStream) loadFileChunk() ([]byte, error) {
@@ -156,13 +162,31 @@ func (p *sStream) loadFileChunk() ([]byte, error) {
 	return nil, errors.Join(ErrRetryFailed, lastErr)
 }
 
-func (p *sStream) appendToTempFile(chunk []byte) error {
+func (p *sStream) loadFileChunkFromTemp() ([]byte, error) {
+	f, err := os.Open(p.fTempFile)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = f.Close() }()
+	if _, err := f.Seek(int64(p.fTempPosition), io.SeekStart); err != nil { // nolint: gosec
+		return nil, err
+	}
+	chunk := make([]byte, p.fChunkSize)
+	n, err := f.Read(chunk)
+	if err != nil {
+		return nil, err
+	}
+	p.fTempPosition += uint64(n) // nolint: gosec
+	return chunk[:n], nil
+}
+
+func (p *sStream) appendChunkToTempFile(pChunk []byte) error {
 	f, err := os.OpenFile(p.fTempFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		return err
 	}
 	defer func() { _ = f.Close() }()
-	if _, err := f.Write(chunk); err != nil {
+	if _, err := f.Write(pChunk); err != nil {
 		return err
 	}
 	return nil

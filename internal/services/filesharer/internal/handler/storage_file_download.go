@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
@@ -24,6 +25,8 @@ func HandleStorageFileDownloadAPI(
 	pHlkClient hlk_client.IClient,
 	pPathTo string,
 ) http.HandlerFunc {
+	downloadProcessesMap := newDownloadProcessesMap()
+
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
@@ -57,6 +60,16 @@ func HandleStorageFileDownloadAPI(
 			return
 		}
 
+		fileHash := info.GetHash()
+		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
+
+		if ok := downloadProcessesMap.Exist(fileHash); ok {
+			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusAccepted, "process: download")
+			return
+		}
+
 		pubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("get_pubkey"))
@@ -71,7 +84,7 @@ func HandleStorageFileDownloadAPI(
 			return
 		}
 
-		reader, tempFIle, err := stream.BuildStreamReader(
+		reader, err := stream.BuildStreamReader(
 			pCtx,
 			pConfig.GetSettings().GetRetryNum(),
 			pathToDownload,
@@ -84,9 +97,50 @@ func HandleStorageFileDownloadAPI(
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: build stream")
 			return
 		}
-		defer func() { _ = os.Remove(tempFIle) }()
+
+		downloadProcessesMap.Set(fileHash)
+		defer downloadProcessesMap.Del(fileHash)
+
+		pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeN)
+		if err := api.ResponseWithReader(pW, http.StatusOK, reader); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
+			return
+		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithReader(pW, http.StatusOK, reader)
 	}
+}
+
+type downloadProcessesMap struct {
+	fMutex *sync.RWMutex
+	fMap   map[string]struct{}
+}
+
+func newDownloadProcessesMap() *downloadProcessesMap {
+	return &downloadProcessesMap{
+		fMutex: &sync.RWMutex{},
+		fMap:   make(map[string]struct{}, 256),
+	}
+}
+
+func (p *downloadProcessesMap) Set(k string) {
+	p.fMutex.Lock()
+	defer p.fMutex.Unlock()
+
+	p.fMap[k] = struct{}{}
+}
+
+func (p *downloadProcessesMap) Del(k string) {
+	p.fMutex.Lock()
+	defer p.fMutex.Unlock()
+
+	delete(p.fMap, k)
+}
+
+func (p *downloadProcessesMap) Exist(k string) bool {
+	p.fMutex.RLock()
+	defer p.fMutex.RUnlock()
+
+	_, ok := p.fMap[k]
+	return ok
 }

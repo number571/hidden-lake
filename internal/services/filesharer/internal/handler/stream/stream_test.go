@@ -41,7 +41,7 @@ func TestStreamReader(t *testing.T) {
 	ctx := context.Background()
 	hlkClient := newTsHLSClient(fileBytes)
 
-	stream, _, err := BuildStreamReader(
+	stream, err := BuildStreamReader(
 		ctx,
 		0,
 		inputPath,

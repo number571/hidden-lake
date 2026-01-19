@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha512"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
 	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
@@ -61,7 +63,7 @@ func main() {
 
 	ctx := context.Background()
 	if err := runFunction(ctx, args); err != nil {
-		fmt.Println(err)
+		fmt.Println("\n", err)
 		os.Exit(1)
 	}
 }
@@ -99,19 +101,44 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println(serializeJSON(fileInfo))
 	case "load":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		dstFile, err := os.OpenFile( // nolint: gosec
-			filepath.Join(inputPath, fileName),
-			os.O_CREATE|os.O_WRONLY,
-			0600,
+
+		tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s-*.tmp", fileName)) // nolint: perfsprint
+		if err != nil {
+			return err
+		}
+		defer func() {
+			_ = tmpFile.Close()
+			_ = os.Remove(tmpFile.Name())
+		}()
+
+		inProcess, recvFileHash, err := hlfClient.DownloadFile(
+			&processWriter{fW: tmpFile},
+			pCtx,
+			friend,
+			fileName,
 		)
 		if err != nil {
 			return err
 		}
-		pw := &processWriter{fW: dstFile}
-		if err := hlfClient.DownloadFile(pw, pCtx, friend, fileName); err != nil {
+		if inProcess {
+			fmt.Println("\nprocessing...")
+			return nil
+		}
+
+		gotFileHash, err := getFileHash(tmpFile.Name())
+		if err != nil {
 			return err
 		}
-		fmt.Printf("\ndone!\n")
+		if recvFileHash != gotFileHash {
+			return ErrHashIsInvalid
+		}
+
+		fullPath := filepath.Join(inputPath, fileName)
+		if err := copyFile(fullPath, tmpFile); err != nil {
+			return err
+		}
+
+		fmt.Println("\ndone!")
 	default:
 		return errors.Join(ErrUnknownAction, errors.New(do)) // nolint:err113
 	}
@@ -134,4 +161,34 @@ func (p *processWriter) Write(b []byte) (n int, err error) {
 func serializeJSON(pData interface{}) string {
 	res, _ := json.MarshalIndent(pData, "", "\t")
 	return string(res)
+}
+
+func getFileHash(filename string) (string, error) {
+	f, err := os.Open(filename) //nolint:gosec
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = f.Close() }()
+	h := sha512.New384()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return encoding.HexEncode(h.Sum(nil)), nil
+}
+
+func copyFile(dstFilePath string, tmpFile *os.File) error {
+	dstFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, 0600) // nolint: gosec
+	if err != nil {
+		return err
+	}
+	defer func() { _ = dstFile.Close() }()
+
+	if _, err := tmpFile.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
+	if _, err := io.Copy(dstFile, tmpFile); err != nil {
+		return err
+	}
+
+	return nil
 }

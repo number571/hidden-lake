@@ -16,4 +16,5 @@ var (
 	ErrMkdirPath     = &SError{"mkdir path"}
 	ErrRetryNum      = &SError{"retry num"}
 	ErrUnknownAction = &SError{"unknown action"}
+	ErrHashIsInvalid = &SError{"hash is invalid"}
 )

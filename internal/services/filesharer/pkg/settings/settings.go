@@ -52,3 +52,13 @@ const (
 	CHandleStorageFileInfoPath     = "/api/storage/file/info"
 	CHandleStorageFileDownloadPath = "/api/storage/file/download"
 )
+
+const (
+	CHeaderInProcess = "Hls-Filesharer-In-Process"
+	CHeaderFileHash  = "Hls-Filesharer-File-Hash"
+)
+
+const (
+	CHeaderProcessModeY = "+" // default
+	CHeaderProcessModeN = "-"
+)

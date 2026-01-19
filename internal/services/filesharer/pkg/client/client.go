@@ -33,6 +33,6 @@ func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage ui
 	return p.fRequester.GetListFiles(pCtx, pAliasName, pPage)
 }
 
-func (p *sClient) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName, pName string) error {
+func (p *sClient) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName, pName string) (bool, string, error) {
 	return p.fRequester.DownloadFile(pW, pCtx, pAliasName, pName)
 }

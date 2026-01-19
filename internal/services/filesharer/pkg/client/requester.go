@@ -92,8 +92,8 @@ func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage
 	return infos, nil
 }
 
-func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {
-	err := api.RequestWithWriter(
+func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) (bool, string, error) {
+	headers, err := api.RequestWithWriter(
 		pW,
 		pCtx,
 		p.fClient,
@@ -102,7 +102,8 @@ func (p *sRequester) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName
 		nil,
 	)
 	if err != nil {
-		return errors.Join(ErrBadRequest, err)
+		return false, "", errors.Join(ErrBadRequest, err)
 	}
-	return nil
+	inProcess := headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY
+	return inProcess, headers.Get(hls_settings.CHeaderFileHash), nil
 }

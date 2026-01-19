@@ -24,4 +24,5 @@ var (
 	ErrGetMessageLimit  = &SError{"get message limit"}
 	ErrGetFileInfo      = &SError{"get file info"}
 	ErrReadTempFile     = &SError{"read temp file"}
+	ErrInvalidChunkSize = &SError{"invalid chunk size"}
 )
