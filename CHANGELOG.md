@@ -9,8 +9,9 @@
 ### IMPROVEMENTS
 
 - `*/pkg/app/init_app.go`: create path for configs/databases if not exists
-- `cmd/hls/*`: add cli clients, update examples
-- `cmd/hls/*`: add internal API, update pkg/client
+- `cmd/hls/*|cmd/hlk`: add CLI clients
+- `cmd/hls/*`: add internal API, update pkg/client, update examples
+- `cmd/hls/hls-filesharer`: add info API
 
 ### CHANGES
 
@@ -25,6 +26,8 @@
 ### BUG FIXES
 
 - `cmd/hla/hla-tcp`: fix duplicated log of start app
+- `pkg/adapters/http/client`: add missed GetSettings
+- `cmd/hls/hls-filesharer`: delete header CHeaderResponseMode from calculate size of response message
 
 <!-- ... -->
 

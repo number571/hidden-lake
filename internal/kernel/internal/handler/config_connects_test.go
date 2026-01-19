@@ -13,10 +13,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
 	"github.com/number571/hidden-lake/internal/adapters/http/pkg/config"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

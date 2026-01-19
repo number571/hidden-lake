@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/number571/hidden-lake/internal/adapters/http/internal/handler"
-	hla_settings "github.com/number571/hidden-lake/pkg/adapters/http/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 )
 
 func (p *sApp) initHandlers(pCtx context.Context) {

@@ -13,8 +13,9 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
-	hla_client "github.com/number571/hidden-lake/pkg/adapters/http/client"
-	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
+
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 )
 
 const (
@@ -126,8 +127,8 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 		go func(i int, url string) {
 			defer wg.Done()
 			httpClient := &http.Client{Timeout: p.fSettings.GetHandleTimeout()}
-			errs[i] = hla_client.NewClient(
-				hla_client.NewRequester(url, httpClient),
+			errs[i] = client.NewClient(
+				client.NewRequester(url, httpClient),
 			).ProduceMessage(pCtx, pNetMsg)
 		}(i, url)
 	}

@@ -17,9 +17,10 @@ import (
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/adapters"
-	"github.com/number571/hidden-lake/pkg/adapters/http/client"
-	"github.com/number571/hidden-lake/pkg/adapters/http/settings"
 	testutils "github.com/number571/hidden-lake/test/utils"
+
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 )
 
 func TestError(t *testing.T) {
