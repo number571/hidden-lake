@@ -127,15 +127,15 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			return err
 		}
 		fmt.Println(serializeJSON(connections))
-	case "add-connection":
-		connection := gFlags.Get("-a").GetStringValue(pArgs)
-		if err := hlkClient.AddConnection(pCtx, connection); err != nil {
-			return err
-		}
-		fmt.Println("done!")
 	case "del-connection":
 		connection := gFlags.Get("-a").GetStringValue(pArgs)
 		if err := hlkClient.DelConnection(pCtx, connection); err != nil {
+			return err
+		}
+		fmt.Println("done!")
+	case "add-connection":
+		connection := gFlags.Get("-a").GetStringValue(pArgs)
+		if err := hlkClient.AddConnection(pCtx, connection); err != nil {
 			return err
 		}
 		fmt.Println("done!")
