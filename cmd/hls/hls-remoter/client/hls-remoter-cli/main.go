@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_remoter_client "github.com/number571/hidden-lake/internal/services/remoter/pkg/client"
+	"github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 )
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	if gFlags.Get("-h").GetBoolValue(args) {
-		help.Println(settings.CAppFullName, settings.CAppDescription, gFlags)
+		help.Println(settings.CAppFullName+"-cli", settings.CAppDescription, gFlags)
 		return
 	}
 

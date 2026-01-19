@@ -27,9 +27,6 @@ var (
 		flag.NewFlagBuilder("-p", "--path").
 			WithDescription("set path to config, database files").
 			WithDefinedValue("."),
-		flag.NewFlagBuilder("-r", "--retry").
-			WithDescription("retry number on load chunk of file").
-			WithDefinedValue("3"),
 		flag.NewFlagBuilder("-s", "--service").
 			WithDescription("set internal address of the HLS").
 			WithDefinedValue("localhost:9541"),
@@ -58,7 +55,7 @@ func main() {
 	}
 
 	if gFlags.Get("-h").GetBoolValue(args) {
-		help.Println(settings.CAppFullName, settings.CAppDescription, gFlags)
+		help.Println(settings.CAppFullName+"-cli", settings.CAppDescription, gFlags)
 		return
 	}
 
@@ -73,11 +70,6 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 	inputPath := strings.TrimSuffix(gFlags.Get("-p").GetStringValue(pArgs), "/")
 	if err := os.MkdirAll(inputPath, 0700); err != nil {
 		return errors.Join(ErrMkdirPath, err)
-	}
-
-	retryNum := gFlags.Get("-r").GetInt64Value(pArgs)
-	if retryNum < 0 {
-		return ErrRetryNum
 	}
 
 	hlfClient := hls_filesharer_client.NewClient(
