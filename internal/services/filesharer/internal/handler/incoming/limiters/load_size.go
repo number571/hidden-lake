@@ -5,19 +5,15 @@ import (
 	"errors"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	hlk_response "github.com/number571/hidden-lake/pkg/network/response"
 )
 
 var (
-	gRespSize = uint64(len(
+	gLoadRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
-			WithHead(map[string]string{
-				"Content-Type":                   api.CApplicationOctetStream,
-				hlk_settings.CHeaderResponseMode: hlk_settings.CHeaderResponseModeON,
-			}).
+			WithHead(map[string]string{"Content-Type": api.CApplicationOctetStream}).
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),
@@ -31,9 +27,9 @@ func GetLimitOnLoadResponseSize(pCtx context.Context, pHlkClient hlk_client.ICli
 	}
 
 	pldLimit := sett.GetPayloadSizeBytes()
-	if gRespSize >= pldLimit {
+	if gLoadRspSize >= pldLimit {
 		return 0, ErrMessageSizeGteLimit
 	}
 
-	return pldLimit - gRespSize, nil
+	return pldLimit - gLoadRspSize, nil
 }

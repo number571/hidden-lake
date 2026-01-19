@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/hidden-lake/internal/adapters/http/pkg/config"
 )
 
 type IClient interface {
 	GetIndex(context.Context) (string, error)
+	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error
@@ -21,6 +23,7 @@ type IClient interface {
 
 type IRequester interface {
 	GetIndex(context.Context) (string, error)
+	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error

@@ -68,16 +68,16 @@ $ make request-node2
 ## HLS API
 
 ```
-1. GET  /api/index              | params = [] 
-                                |> description = get name of service
-2. POST /api/chat/message       | params = ["friend":string]
-                                |> description = send message to chat
-3. GET  /api/chat/history/load  | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
-                                |> description = get list of messages from chat
-4. GET  /api/chat/history/size  | params = ["friend":string]
-                                |> description = get count of messages in the chat
-5. GET  /api/chat/subscribe     | params = ["friend":string]
-                                |> description = try get message from chat with longpoll method 
+1. GET      /api/index              | params = [] 
+                                    |> description = get name of service
+2. GET/POST /api/chat/message       | params = ["friend":string]
+                                    |> description = get limit message size / send message to chat
+3. GET      /api/chat/history/load  | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
+                                    |> description = get list of messages from chat
+4. GET      /api/chat/history/size  | params = ["friend":string]
+                                    |> description = get count of messages in the chat
+5. GET      /api/chat/subscribe     | params = ["friend":string]
+                                    |> description = try get message from chat with longpoll method 
 ```
 
 ### 1. /api/index
@@ -101,13 +101,30 @@ hidden-lake-service=messenger
 
 ### 2. /api/chat/message
 
-#### 2.1. POST Request
+#### 2.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9591/api/chat/message"
+```
+
+#### 2.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 18 Jan 2026 20:38:58 GMT
+Content-Length: 4
+
+3552
+```
+
+#### 2.2. POST Request
 
 ```bash
 curl -i -X POST "http://localhost:9591/api/chat/message?friend=Bob" --data 'hello, world!'
 ```
 
-#### 2.1. POST Response
+#### 2.2. POST Response
 
 ```
 HTTP/1.1 200 OK

@@ -24,6 +24,10 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	return p.fRequester.GetIndex(pCtx)
 }
 
+func (p *sClient) GetMessageLimit(pCtx context.Context) (uint64, error) {
+	return p.fRequester.GetMessageLimit(pCtx)
+}
+
 func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (string, error) {
 	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
 }

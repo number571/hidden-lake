@@ -28,11 +28,11 @@ func TestUtils(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if limit != 1024-gRespSize {
+	if limit != 1024-gLoadRspSize {
 		t.Fatal("limit != 1024-gRespSize")
 	}
 
-	if _, err := GetLimitOnLoadResponseSize(context.Background(), newTsHLSClient(gRespSize)); err == nil {
+	if _, err := GetLimitOnLoadResponseSize(context.Background(), newTsHLSClient(gLoadRspSize)); err == nil {
 		t.Fatal("success get message limit with gRespSize >= limit")
 	}
 }

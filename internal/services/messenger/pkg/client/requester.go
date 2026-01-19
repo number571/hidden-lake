@@ -56,6 +56,24 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 	return result, nil
 }
 
+func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
+	rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, "_"),
+		nil,
+	)
+	if err != nil {
+		return 0, errors.Join(ErrBadRequest, err)
+	}
+	limit, err := strconv.ParseUint(string(rsp), 10, 64)
+	if err != nil {
+		return 0, errors.Join(ErrDecodeResponse, err)
+	}
+	return limit, nil
+}
+
 func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (string, error) {
 	rsp, err := api.Request(
 		pCtx,
