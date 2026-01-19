@@ -182,7 +182,6 @@ func copyFile(dstFilePath string, tmpFile *os.File) error {
 		return err
 	}
 	defer func() { _ = dstFile.Close() }()
-
 	if _, err := tmpFile.Seek(0, io.SeekStart); err != nil {
 		return err
 	}

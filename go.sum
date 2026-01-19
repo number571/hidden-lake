@@ -1,7 +1,7 @@
 github.com/cloudflare/circl v1.6.1 h1:zqIqSPIndyBh1bjLVVDHMPpVKqp8Su/V+6MeDzzQBQ0=
 github.com/cloudflare/circl v1.6.1/go.mod h1:uddAzsPgqdMAYatqJ0lsjX1oECcQLIlRpzZh3pJrofs=
-github.com/number571/go-peer v1.7.11-0.20260101214804-2b80d76bc377 h1:MYagiQEfeM1MWWsL2P6BQ0jXMg1fVhtzOcN4sRbboBQ=
-github.com/number571/go-peer v1.7.11-0.20260101214804-2b80d76bc377/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
+github.com/number571/go-peer v1.7.11 h1:GkZa5i1hiXleZ7arf3QIxrElZ3jSaJGYG9lj00C7LwA=
+github.com/number571/go-peer v1.7.11/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 go.etcd.io/bbolt v1.3.5 h1:XAzx9gjCb0Rxj7EoqcClPD1d5ZBxZJk0jbuoPHenBt0=
 go.etcd.io/bbolt v1.3.5/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
 golang.org/x/crypto v0.45.0 h1:jMBrvKuj23MTlT0bQEOBcAE0mjg8mK9RXFhRH6nyF3Q=

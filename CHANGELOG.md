@@ -24,6 +24,7 @@
 - `build`: move pkg/build -> build/environment
 - `*`: rename structs S**name**Error -> SError
 - `cmd/hlk`: add sort list of friends (get function)
+- `cmd/hls-messenger`: change websocket -> longpoll method on listen messages from chat
 
 ### BUG FIXES
 

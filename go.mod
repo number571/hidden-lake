@@ -2,7 +2,7 @@ module github.com/number571/hidden-lake
 
 go 1.24.0
 
-require github.com/number571/go-peer v1.7.11-0.20260101214804-2b80d76bc377
+require github.com/number571/go-peer v1.7.11
 
 require (
 	github.com/cloudflare/circl v1.6.1 // indirect

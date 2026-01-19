@@ -61,8 +61,8 @@ func NewHiddenLakeNode(
 				}),
 				func() client.IClient {
 					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())
-					if client.GetPayloadSize() <= encoding.CSizeUint64 {
-						panic(`client.GetPayloadSize() <= encoding.CSizeUint64`)
+					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
+						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
 					}
 					return client
 				}(),
