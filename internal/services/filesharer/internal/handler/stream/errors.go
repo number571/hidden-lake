@@ -4,24 +4,24 @@ const (
 	errPrefix = "internal/services/filesharer/internal/handler/stream = "
 )
 
-type SStreamError struct {
+type SError struct {
 	str string
 }
 
-func (err *SStreamError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrAppendToTempFile = &SStreamError{"append to temp file"}
-	ErrDeleteTempFile   = &SStreamError{"delete temp file"}
-	ErrLoadFileChunk    = &SStreamError{"load file chunk"}
-	ErrHashWriteChunk   = &SStreamError{"hash write chunk"}
-	ErrInvalidHash      = &SStreamError{"invalid hash"}
-	ErrRetryFailed      = &SStreamError{"retry failed"}
-	ErrInvalidWhence    = &SStreamError{"invalid whence"}
-	ErrNegativePosition = &SStreamError{"negative position"}
-	ErrGetMessageLimit  = &SStreamError{"get message limit"}
-	ErrGetFileInfo      = &SStreamError{"get file info"}
-	ErrReadTempFile     = &SStreamError{"read temp file"}
+	ErrAppendToTempFile = &SError{"append to temp file"}
+	ErrDeleteTempFile   = &SError{"delete temp file"}
+	ErrLoadFileChunk    = &SError{"load file chunk"}
+	ErrHashWriteChunk   = &SError{"hash write chunk"}
+	ErrInvalidHash      = &SError{"invalid hash"}
+	ErrRetryFailed      = &SError{"retry failed"}
+	ErrInvalidWhence    = &SError{"invalid whence"}
+	ErrNegativePosition = &SError{"negative position"}
+	ErrGetMessageLimit  = &SError{"get message limit"}
+	ErrGetFileInfo      = &SError{"get file info"}
+	ErrReadTempFile     = &SError{"read temp file"}
 )

@@ -4,15 +4,15 @@ const (
 	errPrefix = "internal/utils/pubkey = "
 )
 
-type SUtilsError struct {
+type SError struct {
 	str string
 }
 
-func (err *SUtilsError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrGetFriends         = &SUtilsError{"get friends"}
-	ErrUndefinedPublicKey = &SUtilsError{"undefined public key"}
+	ErrGetFriends         = &SError{"get friends"}
+	ErrUndefinedPublicKey = &SError{"undefined public key"}
 )

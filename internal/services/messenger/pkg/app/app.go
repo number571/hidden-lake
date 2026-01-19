@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_config "github.com/number571/hidden-lake/internal/services/messenger/pkg/config"

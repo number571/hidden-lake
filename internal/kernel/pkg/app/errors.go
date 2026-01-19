@@ -4,32 +4,32 @@ const (
 	errPrefix = "internal/kernel/pkg/app = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrRunning          = &SAppError{"app running"}
-	ErrService          = &SAppError{"service"}
-	ErrInitDB           = &SAppError{"init database"}
-	ErrClose            = &SAppError{"close"}
-	ErrSizePrivateKey   = &SAppError{"size private key"}
-	ErrGetPrivateKey    = &SAppError{"get private key"}
-	ErrInitConfig       = &SAppError{"init config"}
-	ErrSetParallelNull  = &SAppError{"set parallel = 0"}
-	ErrGetParallel      = &SAppError{"get parallel"}
-	ErrGetConsumers     = &SAppError{"get consumers"}
-	ErrCreateAnonNode   = &SAppError{"create anon node"}
-	ErrOpenKVDatabase   = &SAppError{"open kv database"}
-	ErrReadKVDatabase   = &SAppError{"read kv database"}
-	ErrMessageSizeLimit = &SAppError{"message size limit"}
-	ErrInvalidPsdPubKey = &SAppError{"invalid psd public key"}
-	ErrGetPsdPubKey     = &SAppError{"get psd pub key"}
-	ErrSetPsdPubKey     = &SAppError{"set psd pub key"}
-	ErrSetBuild         = &SAppError{"set build"}
-	ErrMkdirPath        = &SAppError{"mkdir path"}
+	ErrRunning          = &SError{"app running"}
+	ErrService          = &SError{"service"}
+	ErrInitDB           = &SError{"init database"}
+	ErrClose            = &SError{"close"}
+	ErrSizePrivateKey   = &SError{"size private key"}
+	ErrGetPrivateKey    = &SError{"get private key"}
+	ErrInitConfig       = &SError{"init config"}
+	ErrSetParallelNull  = &SError{"set parallel = 0"}
+	ErrGetParallel      = &SError{"get parallel"}
+	ErrGetConsumers     = &SError{"get consumers"}
+	ErrCreateAnonNode   = &SError{"create anon node"}
+	ErrOpenKVDatabase   = &SError{"open kv database"}
+	ErrReadKVDatabase   = &SError{"read kv database"}
+	ErrMessageSizeLimit = &SError{"message size limit"}
+	ErrInvalidPsdPubKey = &SError{"invalid psd public key"}
+	ErrGetPsdPubKey     = &SError{"get psd pub key"}
+	ErrSetPsdPubKey     = &SError{"set psd pub key"}
+	ErrSetBuild         = &SError{"set build"}
+	ErrMkdirPath        = &SError{"mkdir path"}
 )

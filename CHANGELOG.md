@@ -22,6 +22,7 @@
 - `cmd/hlk`: change API of the /api/network/request path
 - `pkg`: change path /request, /response, /handler -> /network/request, /network/response, /network/handler
 - `build`: move pkg/build -> build/environment
+- `*`: rename structs S**name**Error -> SError
 
 ### BUG FIXES
 

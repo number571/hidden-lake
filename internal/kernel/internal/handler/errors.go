@@ -4,18 +4,18 @@ const (
 	errPrefix = "internal/kernel/internal/handler = "
 )
 
-type SHandlerError struct {
+type SError struct {
 	str string
 }
 
-func (err *SHandlerError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrBadRequest          = &SHandlerError{"bad request"}
-	ErrBuildRequest        = &SHandlerError{"build request"}
-	ErrUndefinedService    = &SHandlerError{"undefined service"}
-	ErrLoadRequest         = &SHandlerError{"load request"}
-	ErrInvalidResponseMode = &SHandlerError{"invalid response mode"}
+	ErrBadRequest          = &SError{"bad request"}
+	ErrBuildRequest        = &SError{"build request"}
+	ErrUndefinedService    = &SError{"undefined service"}
+	ErrLoadRequest         = &SError{"load request"}
+	ErrInvalidResponseMode = &SError{"invalid response mode"}
 )

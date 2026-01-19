@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 )
 
 var (

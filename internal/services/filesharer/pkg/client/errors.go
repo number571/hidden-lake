@@ -4,17 +4,17 @@ const (
 	errPrefix = "internal/services/filesharer/pkg/client = "
 )
 
-type SClientError struct {
+type SError struct {
 	str string
 }
 
-func (err *SClientError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrBadRequest      = &SClientError{"bad request"}
-	ErrDecodeResponse  = &SClientError{"decode response"}
-	ErrInvalidResponse = &SClientError{"invalid response"}
-	ErrInvalidTitle    = &SClientError{"invalid title"}
+	ErrBadRequest      = &SError{"bad request"}
+	ErrDecodeResponse  = &SError{"decode response"}
+	ErrInvalidResponse = &SError{"invalid response"}
+	ErrInvalidTitle    = &SError{"invalid title"}
 )

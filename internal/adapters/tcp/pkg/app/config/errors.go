@@ -4,26 +4,26 @@ const (
 	errPrefix = "internal/adapters/tcp/pkg/app/config = "
 )
 
-type SConfigError struct {
+type SError struct {
 	str string
 }
 
-func (err *SConfigError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrLoadLogging        = &SConfigError{"load logging"}
-	ErrInvalidLogging     = &SConfigError{"invalid logging"}
-	ErrInvalidConfig      = &SConfigError{"invalid config"}
-	ErrInitConfig         = &SConfigError{"init config"}
-	ErrDeserializeConfig  = &SConfigError{"deserialize config"}
-	ErrReadConfig         = &SConfigError{"read config"}
-	ErrConfigNotExist     = &SConfigError{"config not exist"}
-	ErrWriteConfig        = &SConfigError{"write config"}
-	ErrConfigAlreadyExist = &SConfigError{"config already exist"}
-	ErrLoadConfig         = &SConfigError{"load config"}
-	ErrRebuildConfig      = &SConfigError{"rebuild config"}
-	ErrNetworkNotFound    = &SConfigError{"network not found"}
-	ErrBuildConfig        = &SConfigError{"build config"}
+	ErrLoadLogging        = &SError{"load logging"}
+	ErrInvalidLogging     = &SError{"invalid logging"}
+	ErrInvalidConfig      = &SError{"invalid config"}
+	ErrInitConfig         = &SError{"init config"}
+	ErrDeserializeConfig  = &SError{"deserialize config"}
+	ErrReadConfig         = &SError{"read config"}
+	ErrConfigNotExist     = &SError{"config not exist"}
+	ErrWriteConfig        = &SError{"write config"}
+	ErrConfigAlreadyExist = &SError{"config already exist"}
+	ErrLoadConfig         = &SError{"load config"}
+	ErrRebuildConfig      = &SError{"rebuild config"}
+	ErrNetworkNotFound    = &SError{"network not found"}
+	ErrBuildConfig        = &SError{"build config"}
 )

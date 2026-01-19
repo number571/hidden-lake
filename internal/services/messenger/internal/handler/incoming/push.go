@@ -7,7 +7,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"

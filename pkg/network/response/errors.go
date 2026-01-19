@@ -1,19 +1,19 @@
 package response
 
 const (
-	errPrefix = "pkg/response = "
+	errPrefix = "pkg/network/response = "
 )
 
-type SResponseError struct {
+type SError struct {
 	str string
 }
 
-func (err *SResponseError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrLoadBytesJoiner = &SResponseError{"load bytes joiner"}
-	ErrDecodeResponse  = &SResponseError{"decode response"}
-	ErrUnknownType     = &SResponseError{"unknown type"}
+	ErrLoadBytesJoiner = &SError{"load bytes joiner"}
+	ErrDecodeResponse  = &SError{"decode response"}
+	ErrUnknownType     = &SError{"unknown type"}
 )

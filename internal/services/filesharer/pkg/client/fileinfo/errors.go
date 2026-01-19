@@ -1,18 +1,18 @@
 package fileinfo
 
 const (
-	errPrefix = "internal/services/filesharer/pkg/client = "
+	errPrefix = "internal/services/filesharer/pkg/client/fileinfo = "
 )
 
-type SFileInfoError struct {
+type SError struct {
 	str string
 }
 
-func (err *SFileInfoError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrDecodeInfo  = &SFileInfoError{"decode info"}
-	ErrInvalidHash = &SFileInfoError{"invalid hash"}
+	ErrDecodeInfo  = &SError{"decode info"}
+	ErrInvalidHash = &SError{"invalid hash"}
 )

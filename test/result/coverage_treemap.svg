@@ -20,7 +20,7 @@
 
 
 <g>
-	<rect x="881.883634" y="493.756793" width="118.116366" height="118.243207" style="fill: rgb(20, 143, 75);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="881.883634" y="493.756793" width="118.116366" height="118.243207" style="fill: rgb(23, 148, 78);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 <text 
 	data-notex="1" 
@@ -59,13 +59,13 @@
 
 
 <g>
-	<rect x="889.883634" y="515.356793" width="72.901820" height="44.348404" style="fill: rgb(12, 128, 68);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="889.883634" y="515.356793" width="72.901820" height="44.348404" style="fill: rgb(19, 141, 74);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 <text 
 	data-notex="1" 
 	text-anchor="start"
 	transform="translate(897.883634,530.956793) scale(0.348663)"
-	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
+	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(0, 0, 0); fill-opacity: 1.00; white-space: pre;" 
 	data-math="N">build_networks.go</text>
 		
 </g>
@@ -343,25 +343,19 @@
 
 
 <g>
-	<rect x="647.995403" y="508.160000" width="71.217112" height="29.502609" style="fill: rgb(93, 184, 96);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="707.408237" y="581.776232" width="11.804278" height="14.223768" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 
 
 <g>
-	<rect x="709.608712" y="578.998261" width="9.603803" height="17.001739" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="676.601582" y="582.569938" width="22.806655" height="13.430062" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 
 
 <g>
-	<rect x="687.603959" y="545.662609" width="11.804278" height="25.335652" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
-	
-</g>
-
-
-<g>
-	<rect x="687.603959" y="578.998261" width="14.004753" height="17.001739" style="fill: rgb(102, 189, 99);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="707.408237" y="553.996522" width="11.804278" height="19.779710" style="fill: rgb(102, 189, 99);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 
@@ -380,8 +374,15 @@
 
 
 <g>
-	<rect x="707.408237" y="545.662609" width="11.804278" height="25.335652" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="647.995403" y="508.160000" width="71.217112" height="37.836522" style="fill: rgb(70, 171, 89);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
+<text 
+	data-notex="1" 
+	text-anchor="start"
+	transform="translate(655.995403,523.760000) scale(0.479315)"
+	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(0, 0, 0); fill-opacity: 1.00; white-space: pre;" 
+	data-math="N">help/help.go</text>
+		
 </g>
 
 
@@ -399,13 +400,20 @@
 
 
 <g>
-	<rect x="647.995403" y="545.662609" width="31.608556" height="28.113623" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="647.995403" y="553.996522" width="20.606179" height="42.003478" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
+<text 
+	data-notex="1" 
+	text-anchor="start"
+	transform="translate(655.995403,569.596522) scale(0.068544)"
+	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
+	data-math="N">privkey</text>
+		
 </g>
 
 
 <g>
-	<rect x="647.995403" y="581.776232" width="31.608556" height="14.223768" style="fill: rgb(134, 203, 102);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="676.601582" y="553.996522" width="22.806655" height="20.573416" style="fill: rgb(134, 203, 102);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 
@@ -874,7 +882,13 @@
 
 
 <g>
-	<rect x="655.995403" y="557.662609" width="13.792513" height="8.113623" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="655.995403" y="575.596522" width="4.606179" height="10.833980" style="fill: rgb(0, 104, 55);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	
+</g>
+
+
+<g>
+	<rect x="684.601582" y="565.996522" width="4.955823" height="0.573416" style="fill: rgb(64, 168, 88);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 
@@ -1277,27 +1291,14 @@
 
 
 <g>
-	<rect x="153.592740" y="468.019321" width="57.861558" height="63.988408" style="fill: rgb(165, 0, 38);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="153.592740" y="468.019321" width="57.861558" height="108.191816" style="fill: rgb(231, 82, 52);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 <text 
 	data-notex="1" 
 	text-anchor="start"
 	transform="translate(161.592740,483.619321) scale(0.726763)"
-	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
-	data-math="N">client</text>
-		
-</g>
-
-
-<g>
-	<rect x="153.592740" y="540.007728" width="52.661961" height="39.992272" style="fill: rgb(254, 224, 139);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
-	
-<text 
-	data-notex="1" 
-	text-anchor="start"
-	transform="translate(161.592740,555.607728) scale(0.545565)"
 	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(0, 0, 0); fill-opacity: 1.00; white-space: pre;" 
-	data-math="N">message</text>
+	data-math="N">client</text>
 		
 </g>
 
@@ -1748,27 +1749,34 @@
 
 
 <g>
-	<rect x="161.592740" y="489.619321" width="34.863445" height="34.388408" style="fill: rgb(165, 0, 38);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="202.177729" y="535.738875" width="1.276569" height="27.413229" style="fill: rgb(165, 0, 38);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	
+</g>
+
+
+<g>
+	<rect x="161.592740" y="535.738875" width="32.584989" height="32.472262" style="fill: rgb(254, 224, 139);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 <text 
 	data-notex="1" 
 	text-anchor="start"
-	transform="translate(169.592740,505.219321) scale(0.163745)"
-	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
-	data-math="N">requester.go</text>
+	transform="translate(169.592740,551.338875) scale(0.246800)"
+	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(0, 0, 0); fill-opacity: 1.00; white-space: pre;" 
+	data-math="N">message</text>
 		
 </g>
 
 
 <g>
-	<rect x="188.389917" y="561.607728" width="9.864785" height="5.137337" style="fill: rgb(166, 217, 106);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	<rect x="161.592740" y="489.619321" width="41.861558" height="38.119554" style="fill: rgb(165, 0, 38);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
-</g>
-
-
-<g>
-	<rect x="161.592740" y="561.607728" width="18.797177" height="10.392272" style="fill: rgb(249, 135, 74);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
-	
+<text 
+	data-notex="1" 
+	text-anchor="start"
+	transform="translate(169.592740,505.219321) scale(0.224493)"
+	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
+	data-math="N">requester.go</text>
+		
 </g>
 
 
@@ -1885,6 +1893,12 @@
 
 <g>
 	<rect x="117.780706" y="511.219321" width="11.812034" height="27.023273" style="fill: rgb(80, 177, 92);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
+	
+</g>
+
+
+<g>
+	<rect x="169.592740" y="557.338875" width="6.750993" height="2.872262" style="fill: rgb(249, 135, 74);opacity:1;fill-opacity:1.00;stroke:rgb(128,128,128);stroke-width:1px;stroke-opacity:1.00;" />
 	
 </g>
 

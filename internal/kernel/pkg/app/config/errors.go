@@ -4,30 +4,30 @@ const (
 	errPrefix = "internal/kernel/pkg/app/config = "
 )
 
-type SConfigError struct {
+type SError struct {
 	str string
 }
 
-func (err *SConfigError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrNotSupportedKeySize = &SConfigError{"not supported key size"}
-	ErrInvalidPublicKey    = &SConfigError{"invalid public key"}
-	ErrDuplicatePublicKey  = &SConfigError{"duplicate public key"}
-	ErrLoadLogging         = &SConfigError{"load logging"}
-	ErrInvalidLogging      = &SConfigError{"invalid logging"}
-	ErrLoadPublicKey       = &SConfigError{"load public key"}
-	ErrInvalidConfig       = &SConfigError{"invalid config"}
-	ErrLoadConfig          = &SConfigError{"load config"}
-	ErrInitConfig          = &SConfigError{"init config"}
-	ErrDeserializeConfig   = &SConfigError{"deserialize config"}
-	ErrReadConfig          = &SConfigError{"read config"}
-	ErrConfigNotFound      = &SConfigError{"config not found"}
-	ErrWriteConfig         = &SConfigError{"write config"}
-	ErrConfigAlreadyExist  = &SConfigError{"config already exist"}
-	ErrBuildConfig         = &SConfigError{"build config"}
-	ErrRebuildConfig       = &SConfigError{"rebuild config"}
-	ErrNetworkNotFound     = &SConfigError{"network not found"}
+	ErrNotSupportedKeySize = &SError{"not supported key size"}
+	ErrInvalidPublicKey    = &SError{"invalid public key"}
+	ErrDuplicatePublicKey  = &SError{"duplicate public key"}
+	ErrLoadLogging         = &SError{"load logging"}
+	ErrInvalidLogging      = &SError{"invalid logging"}
+	ErrLoadPublicKey       = &SError{"load public key"}
+	ErrInvalidConfig       = &SError{"invalid config"}
+	ErrLoadConfig          = &SError{"load config"}
+	ErrInitConfig          = &SError{"init config"}
+	ErrDeserializeConfig   = &SError{"deserialize config"}
+	ErrReadConfig          = &SError{"read config"}
+	ErrConfigNotFound      = &SError{"config not found"}
+	ErrWriteConfig         = &SError{"write config"}
+	ErrConfigAlreadyExist  = &SError{"config already exist"}
+	ErrBuildConfig         = &SError{"build config"}
+	ErrRebuildConfig       = &SError{"rebuild config"}
+	ErrNetworkNotFound     = &SError{"network not found"}
 )

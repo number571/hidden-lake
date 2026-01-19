@@ -4,18 +4,18 @@ const (
 	errPrefix = "pkg/network = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrSendRequest      = &SAppError{"send request"}
-	ErrFetchRequest     = &SAppError{"fetch request"}
-	ErrLoadResponse     = &SAppError{"load response"}
-	ErrAdapterNotRunner = &SAppError{"adapter not runner"}
-	ErrRunning          = &SAppError{"node running"}
+	ErrSendRequest      = &SError{"send request"}
+	ErrFetchRequest     = &SError{"fetch request"}
+	ErrLoadResponse     = &SError{"load response"}
+	ErrAdapterNotRunner = &SError{"adapter not runner"}
+	ErrRunning          = &SError{"node running"}
 )

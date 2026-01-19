@@ -8,7 +8,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler/incoming"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 )
 

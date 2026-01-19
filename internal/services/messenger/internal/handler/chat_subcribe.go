@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 )
 

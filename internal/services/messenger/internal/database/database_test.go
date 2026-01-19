@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 )
 
 const (
@@ -17,7 +17,7 @@ func TestError(t *testing.T) {
 	t.Parallel()
 
 	str := "value"
-	err := &SDatabaseError{str}
+	err := &SError{str}
 	if err.Error() != errPrefix+str {
 		t.Fatal("incorrect err.Error()")
 	}

@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	hls_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 )

@@ -4,14 +4,14 @@ const (
 	errPrefix = "internal/utils/logger/std = "
 )
 
-type SStdError struct {
+type SError struct {
 	str string
 }
 
-func (err *SStdError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrUnknownLogType = &SStdError{"unknown log type"}
+	ErrUnknownLogType = &SError{"unknown log type"}
 )

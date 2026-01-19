@@ -4,23 +4,23 @@ const (
 	errPrefix = "internal/composite/pkg/app = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrRunning        = &SAppError{"app running"}
-	ErrService        = &SAppError{"service"}
-	ErrClose          = &SAppError{"close"}
-	ErrUnknownService = &SAppError{"unknown service"}
-	ErrHasDuplicates  = &SAppError{"has duplicates"}
-	ErrGetRunners     = &SAppError{"get runners"}
-	ErrInitConfig     = &SAppError{"init config"}
-	ErrInitApp        = &SAppError{"init app"}
-	ErrSetBuild       = &SAppError{"set build"}
-	ErrMkdirPath      = &SAppError{"mkdir path"}
+	ErrRunning        = &SError{"app running"}
+	ErrService        = &SError{"service"}
+	ErrClose          = &SError{"close"}
+	ErrUnknownService = &SError{"unknown service"}
+	ErrHasDuplicates  = &SError{"has duplicates"}
+	ErrGetRunners     = &SError{"get runners"}
+	ErrInitConfig     = &SError{"init config"}
+	ErrInitApp        = &SError{"init app"}
+	ErrSetBuild       = &SError{"set build"}
+	ErrMkdirPath      = &SError{"mkdir path"}
 )

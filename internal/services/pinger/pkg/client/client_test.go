@@ -14,7 +14,7 @@ package client
 // 	t.Parallel()
 
 // 	str := "value"
-// 	err := &SClientError{str}
+// 	err := &SError{str}
 // 	if err.Error() != errPrefix+str {
 // 		t.Fatal("incorrect err.Error()")
 // 	}

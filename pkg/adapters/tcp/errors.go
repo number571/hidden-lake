@@ -4,15 +4,15 @@ const (
 	errPrefix = "pkg/adapters/tcp = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrRunning   = &SAppError{"adapter running"}
-	ErrBroadcast = &SAppError{"broadcast message"}
+	ErrRunning   = &SError{"adapter running"}
+	ErrBroadcast = &SError{"broadcast message"}
 )

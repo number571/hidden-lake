@@ -4,20 +4,20 @@ const (
 	errPrefix = "internal/services/messenger/pkg/app = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrRunning    = &SAppError{"app running"}
-	ErrService    = &SAppError{"service"}
-	ErrInitDB     = &SAppError{"init database"}
-	ErrClose      = &SAppError{"close"}
-	ErrInitConfig = &SAppError{"init config"}
-	ErrSetBuild   = &SAppError{"set build"}
-	ErrMkdirPath  = &SAppError{"mkdir path"}
+	ErrRunning    = &SError{"app running"}
+	ErrService    = &SError{"service"}
+	ErrInitDB     = &SError{"init database"}
+	ErrClose      = &SError{"close"}
+	ErrInitConfig = &SError{"init config"}
+	ErrSetBuild   = &SError{"set build"}
+	ErrMkdirPath  = &SError{"mkdir path"}
 )

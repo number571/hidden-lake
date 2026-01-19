@@ -4,17 +4,17 @@ const (
 	errPrefix = "internal/utils/privkey = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrInvalidPrivateKey = &SAppError{"invalid private key"}
-	ErrReadPrivateKey    = &SAppError{"read private key"}
-	ErrWritePrivateKey   = &SAppError{"write private key"}
-	ErrSizePrivateKey    = &SAppError{"size private key"}
+	ErrInvalidPrivateKey = &SError{"invalid private key"}
+	ErrReadPrivateKey    = &SError{"read private key"}
+	ErrWritePrivateKey   = &SError{"write private key"}
+	ErrSizePrivateKey    = &SError{"size private key"}
 )

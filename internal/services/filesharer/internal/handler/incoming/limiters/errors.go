@@ -1,18 +1,18 @@
 package limiters
 
 const (
-	errPrefix = "internal/services/filesharer/internal/handler/stream = "
+	errPrefix = "internal/services/filesharer/internal/handler/incoming/limiters = "
 )
 
-type SLimiterError struct {
+type SError struct {
 	str string
 }
 
-func (err *SLimiterError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrMessageSizeGteLimit = &SLimiterError{"message size >= limit"}
-	ErrGetSettingsHLS      = &SLimiterError{"get settings hlk"}
+	ErrMessageSizeGteLimit = &SError{"message size >= limit"}
+	ErrGetSettingsHLS      = &SError{"get settings hlk"}
 )

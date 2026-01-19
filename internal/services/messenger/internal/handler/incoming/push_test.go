@@ -15,7 +15,7 @@ import (
 	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"

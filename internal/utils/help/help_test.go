@@ -1,6 +1,8 @@
 package help
 
 import (
+	"testing"
+
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
@@ -29,4 +31,30 @@ func ExamplePrintln() {
 	// [ -h, --help ] = print information about application
 	// [ -p, --path ] = set path to config, database files
 	// [ -n, --network ] = set network key of connections from build
+}
+
+func TestToFormatAppName(t *testing.T) {
+	formatName := toFormatAppName("hidden-lake-kernel")
+	if formatName != "Hidden Lake Kernel" {
+		t.Log(formatName)
+		t.Fatal("invalid full name")
+	}
+	formatName = toFormatAppName("hidden-lake-adapters=common")
+	if formatName != "Hidden Lake Adapters = Common" {
+		t.Log(formatName)
+		t.Fatal("invalid full name (with subname)")
+	}
+}
+
+func TestToShortAppName(t *testing.T) {
+	shortName := toShortAppName("hidden-lake-kernel")
+	if shortName != "HLK" {
+		t.Log(shortName)
+		t.Fatal("invalid short name")
+	}
+	shortName = toShortAppName("hidden-lake-adapters=common")
+	if shortName != "HLA=common" {
+		t.Log(shortName)
+		t.Fatal("invalid short name (with subname)")
+	}
 }

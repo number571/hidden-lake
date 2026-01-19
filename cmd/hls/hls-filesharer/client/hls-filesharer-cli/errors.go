@@ -4,16 +4,16 @@ const (
 	errPrefix = "cmd/hls/hls-filesharer/client/hls-filesharer-cli = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrMkdirPath     = &SAppError{"mkdir path"}
-	ErrRetryNum      = &SAppError{"retry num"}
-	ErrUnknownAction = &SAppError{"unknown action"}
+	ErrMkdirPath     = &SError{"mkdir path"}
+	ErrRetryNum      = &SError{"retry num"}
+	ErrUnknownAction = &SError{"unknown action"}
 )

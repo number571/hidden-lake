@@ -4,21 +4,21 @@ const (
 	errPrefix = "internal/adapters/http/pkg/app = "
 )
 
-type SAppError struct {
+type SError struct {
 	str string
 }
 
-func (err *SAppError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrRunning    = &SAppError{"app running"}
-	ErrService    = &SAppError{"service"}
-	ErrClose      = &SAppError{"close"}
-	ErrInitDB     = &SAppError{"init database"}
-	ErrExist      = &SAppError{"exist"}
-	ErrInitConfig = &SAppError{"init config"}
-	ErrSetBuild   = &SAppError{"set build"}
-	ErrMkdirPath  = &SAppError{"mkdir path"}
+	ErrRunning    = &SError{"app running"}
+	ErrService    = &SError{"service"}
+	ErrClose      = &SError{"close"}
+	ErrInitDB     = &SError{"init database"}
+	ErrExist      = &SError{"exist"}
+	ErrInitConfig = &SError{"init config"}
+	ErrSetBuild   = &SError{"set build"}
+	ErrMkdirPath  = &SError{"mkdir path"}
 )

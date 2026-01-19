@@ -4,31 +4,31 @@ const (
 	errPrefix = "internal/services/messenger/internal/handler = "
 )
 
-type SHandlerError struct {
+type SError struct {
 	str string
 }
 
-func (err *SHandlerError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrReadConnections       = &SHandlerError{"read connections"}
-	ErrReadOnlineConnections = &SHandlerError{"read online connections"}
-	ErrGetAllConnections     = &SHandlerError{"get all connections"}
-	ErrGetSettings           = &SHandlerError{"get settings"}
-	ErrGetPublicKey          = &SHandlerError{"get public key"}
-	ErrUnknownMessageType    = &SHandlerError{"unknown message type"}
-	ErrUnwrapFile            = &SHandlerError{"unwrap file"}
-	ErrHasNotWritableChars   = &SHandlerError{"had not writable chars"}
-	ErrMessageNull           = &SHandlerError{"message null"}
-	ErrUndefinedPublicKey    = &SHandlerError{"undefined public key"}
-	ErrGetFriends            = &SHandlerError{"get friends"}
-	ErrLenMessageGtLimit     = &SHandlerError{"len message > limit"}
-	ErrGetMessageLimit       = &SHandlerError{"get message limit"}
-	ErrPushMessage           = &SHandlerError{"push message"}
-	ErrReadFile              = &SHandlerError{"read file"}
-	ErrReadFileSize          = &SHandlerError{"read file size"}
-	ErrGetFormFile           = &SHandlerError{"get form file"}
-	ErrUploadFile            = &SHandlerError{"upload file"}
+	ErrReadConnections       = &SError{"read connections"}
+	ErrReadOnlineConnections = &SError{"read online connections"}
+	ErrGetAllConnections     = &SError{"get all connections"}
+	ErrGetSettings           = &SError{"get settings"}
+	ErrGetPublicKey          = &SError{"get public key"}
+	ErrUnknownMessageType    = &SError{"unknown message type"}
+	ErrUnwrapFile            = &SError{"unwrap file"}
+	ErrHasNotWritableChars   = &SError{"had not writable chars"}
+	ErrMessageNull           = &SError{"message null"}
+	ErrUndefinedPublicKey    = &SError{"undefined public key"}
+	ErrGetFriends            = &SError{"get friends"}
+	ErrLenMessageGtLimit     = &SError{"len message > limit"}
+	ErrGetMessageLimit       = &SError{"get message limit"}
+	ErrPushMessage           = &SError{"push message"}
+	ErrReadFile              = &SError{"read file"}
+	ErrReadFileSize          = &SError{"read file size"}
+	ErrGetFormFile           = &SError{"get form file"}
+	ErrUploadFile            = &SError{"upload file"}
 )

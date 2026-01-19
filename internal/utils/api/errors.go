@@ -4,19 +4,19 @@ const (
 	errPrefix = "internal/utils/api = "
 )
 
-type SApiError struct {
+type SError struct {
 	str string
 }
 
-func (err *SApiError) Error() string {
+func (err *SError) Error() string {
 	return errPrefix + err.str
 }
 
 var (
-	ErrBadStatusCode = &SApiError{"bad status code"}
-	ErrReadResponse  = &SApiError{"read response"}
-	ErrLoadResponse  = &SApiError{"load response"}
-	ErrBadRequest    = &SApiError{"bad request"}
-	ErrBuildRequest  = &SApiError{"build request"}
-	ErrCopyBytes     = &SApiError{"copy bytes"}
+	ErrBadStatusCode = &SError{"bad status code"}
+	ErrReadResponse  = &SError{"read response"}
+	ErrLoadResponse  = &SError{"load response"}
+	ErrBadRequest    = &SError{"bad request"}
+	ErrBuildRequest  = &SError{"build request"}
+	ErrCopyBytes     = &SError{"copy bytes"}
 )
