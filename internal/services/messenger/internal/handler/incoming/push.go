@@ -45,8 +45,8 @@ func HandleIncomingPushHTTP(
 
 		rawMsg := string(msgBytes)
 		if len(rawMsg) == 0 || chars.HasNotGraphicCharacters(rawMsg) {
-			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
-			_ = api.Response(pW, http.StatusConflict, "failed: response message")
+			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
 			return
 		}
 

@@ -39,8 +39,8 @@ func HandleChatMessageAPI(
 		if pR.Method == http.MethodGet {
 			size, err := getLimitOnPushRequestSize(pCtx, pHlkClient)
 			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
-				_ = api.Response(pW, http.StatusConflict, "failed: decode request")
+				pLogger.PushWarn(logBuilder.WithMessage("get_limit"))
+				_ = api.Response(pW, http.StatusBadGateway, "failed: get limit")
 				return
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
@@ -57,8 +57,8 @@ func HandleChatMessageAPI(
 
 		strBody := string(body)
 		if len(strBody) == 0 || chars.HasNotGraphicCharacters(strBody) {
-			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
-			_ = api.Response(pW, http.StatusConflict, "failed: response message")
+			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
 			return
 		}
 
@@ -79,7 +79,7 @@ func HandleChatMessageAPI(
 
 		if err := pHlkClient.SendRequest(pCtx, aliasName, newPushRequest(strBody)); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("send_request"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: send request")
+			_ = api.Response(pW, http.StatusBadGateway, "failed: send request")
 			return
 		}
 

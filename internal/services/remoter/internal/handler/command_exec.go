@@ -51,13 +51,13 @@ func HandleCommandExecAPI(
 		resp, err := pHlkClient.FetchRequest(pCtx, pR.URL.Query().Get("friend"), req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: fetch request")
+			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
 			return
 		}
 
 		if resp.GetCode() != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: status error")
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
 			return
 		}
 

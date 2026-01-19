@@ -8,6 +8,7 @@ import (
 	"hash"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -140,16 +141,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 func (p *sStream) loadFileChunk() ([]byte, error) {
 	var lastErr error
 	for i := uint64(0); i <= p.fRetryNum; i++ {
-		req := hlk_request.NewRequestBuilder().
-			WithMethod(http.MethodGet).
-			WithHost(hls_filesharer_settings.CAppShortName).
-			WithPath(fmt.Sprintf(
-				"%s?name=%s&chunk=%d",
-				hls_filesharer_settings.CLoadPath,
-				p.fFileInfo.GetName(),
-				p.fPosition/p.fChunkSize,
-			)).
-			Build()
+		req := newLoadChunkRequest(p.fFileInfo.GetName(), p.fPosition/p.fChunkSize)
 		resp, err := p.fHlkClient.FetchRequest(p.fContext, p.fAliasName, req)
 		if err != nil {
 			lastErr = err
@@ -174,4 +166,17 @@ func (p *sStream) appendToTempFile(chunk []byte) error {
 		return err
 	}
 	return nil
+}
+
+func newLoadChunkRequest(pFileName string, pChunk uint64) hlk_request.IRequest {
+	return hlk_request.NewRequestBuilder().
+		WithMethod(http.MethodGet).
+		WithHost(hls_filesharer_settings.CAppShortName).
+		WithPath(fmt.Sprintf(
+			"%s?name=%s&chunk=%d",
+			hls_filesharer_settings.CLoadPath,
+			url.QueryEscape(pFileName),
+			pChunk,
+		)).
+		Build()
 }

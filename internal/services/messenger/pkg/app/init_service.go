@@ -62,7 +62,7 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_messenger_settings.CHandleChatSubscribePath,
-		handler.HandleChatSubscribeAPI(pCtx, pMsgBroker),
+		handler.HandleChatSubscribeAPI(pCtx, p.fHTTPLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

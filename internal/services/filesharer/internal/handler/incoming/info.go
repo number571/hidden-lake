@@ -2,6 +2,7 @@ package incoming
 
 import (
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -40,10 +41,17 @@ func HandleIncomingInfoHTTP(
 		stgPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG)
 		fullPath := filepath.Join(stgPath, fileName)
 
+		stat, err := os.Stat(fullPath)
+		if os.IsNotExist(err) || stat.IsDir() {
+			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+			_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+			return
+		}
+
 		info, err := fileinfo.NewFileInfo(fullPath)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_file_info"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: get file info")
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
 			return
 		}
 

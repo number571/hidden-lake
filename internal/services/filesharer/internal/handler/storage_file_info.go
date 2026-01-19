@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
@@ -33,17 +33,26 @@ func HandleStorageFileInfoAPI(
 		}
 
 		queryParams := pR.URL.Query()
-
 		aliasName := queryParams.Get("friend")
-		info, err := getFileInfo(
-			pCtx,
-			pHlkClient,
-			aliasName,
-			queryParams.Get("name"),
-		)
+
+		req := newFileInfoRequest(queryParams.Get("name"))
+		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_file_info"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get file info")
+			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
+			return
+		}
+
+		if resp.GetCode() != http.StatusOK {
+			pLogger.PushErro(logBuilder.WithMessage("status_error"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			return
+		}
+
+		info, err := fileinfo.LoadFileInfo(resp.GetBody())
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
 			return
 		}
 
@@ -52,26 +61,10 @@ func HandleStorageFileInfoAPI(
 	}
 }
 
-func getFileInfo(
-	pCtx context.Context,
-	pHlkClient hlk_client.IClient,
-	pAliasName string,
-	pFileName string,
-) (fileinfo.IFileInfo, error) {
-	req := hlk_request.NewRequestBuilder().
+func newFileInfoRequest(pFileName string) hlk_request.IRequest {
+	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
-		WithPath(fmt.Sprintf("%s?name=%s", hls_settings.CInfoPath, pFileName)).
+		WithPath(fmt.Sprintf("%s?name=%s", hls_settings.CInfoPath, url.QueryEscape(pFileName))).
 		Build()
-
-	resp, err := pHlkClient.FetchRequest(pCtx, pAliasName, req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.GetCode() != http.StatusOK {
-		return nil, errors.New("bad status code") // nolint: err113
-	}
-
-	return fileinfo.LoadFileInfo(resp.GetBody())
 }

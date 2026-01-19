@@ -55,7 +55,7 @@ func HandleChatHistoryLoadAPI(
 			count, err = strconv.ParseUint(x, 10, 64)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("parse_count"))
-				_ = api.Response(pW, http.StatusBadGateway, "failed: parse count")
+				_ = api.Response(pW, http.StatusBadRequest, "failed: parse count")
 				return
 			}
 		}
@@ -66,7 +66,7 @@ func HandleChatHistoryLoadAPI(
 			start, err = strconv.ParseUint(x, 10, 64)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("parse_start"))
-				_ = api.Response(pW, http.StatusBadGateway, "failed: parse start")
+				_ = api.Response(pW, http.StatusBadRequest, "failed: parse start")
 				return
 			}
 		}
@@ -82,8 +82,8 @@ func HandleChatHistoryLoadAPI(
 
 		dbMsgs, err := pDatabase.Load(rel, start, count)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
+			pLogger.PushWarn(logBuilder.WithMessage("load_messages"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: load messages")
 			return
 		}
 
