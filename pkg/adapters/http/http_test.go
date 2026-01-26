@@ -16,7 +16,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/pkg/network/adapters"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
 	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"

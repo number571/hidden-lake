@@ -22,9 +22,9 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
-	"github.com/number571/hidden-lake/pkg/network/adapters"
-	hla_http "github.com/number571/hidden-lake/pkg/network/adapters/http"
-	hla_tcp "github.com/number571/hidden-lake/pkg/network/adapters/tcp"
+	"github.com/number571/hidden-lake/pkg/adapters"
+	hla_http "github.com/number571/hidden-lake/pkg/adapters/http"
+	hla_tcp "github.com/number571/hidden-lake/pkg/adapters/tcp"
 )
 
 var (

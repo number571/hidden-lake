@@ -8,7 +8,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	gopeer_logger "github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/pkg/network/adapters"
+	"github.com/number571/hidden-lake/pkg/adapters"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
