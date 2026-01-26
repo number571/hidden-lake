@@ -6,13 +6,13 @@ import (
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func HandleChatHistorySizeAPI(

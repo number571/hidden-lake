@@ -11,9 +11,9 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

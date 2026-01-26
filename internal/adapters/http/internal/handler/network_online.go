@@ -11,7 +11,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	hla_http "github.com/number571/hidden-lake/pkg/adapters/http"
+	hla_http "github.com/number571/hidden-lake/pkg/network/adapters/http"
 )
 
 func HandleNetworkOnlineAPI(

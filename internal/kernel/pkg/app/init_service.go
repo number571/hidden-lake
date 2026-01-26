@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
 	"github.com/number571/hidden-lake/internal/kernel/internal/handler"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 )
 
 func (p *sApp) initServiceHTTP(pCtx context.Context) {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_response "github.com/number571/hidden-lake/pkg/network/response"
 )
 

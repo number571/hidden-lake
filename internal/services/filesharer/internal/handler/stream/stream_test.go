@@ -11,9 +11,9 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )

@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/pinger/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/pinger/internal/handler/incoming"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func (p *sApp) initExternalServiceHTTP() {

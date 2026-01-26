@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func GetFriendPubKeyByAliasName(

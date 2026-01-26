@@ -6,7 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/storage/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
+	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
 
 type sKeyValueDB struct {

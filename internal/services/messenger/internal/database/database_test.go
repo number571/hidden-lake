@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
+	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
 
 const (

@@ -7,15 +7,16 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
+	message_dto "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func HandleIncomingPushHTTP(
@@ -65,7 +66,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		msg := message.NewMessage(true, rawMsg)
+		msg := message_dto.NewMessage(true, rawMsg)
 		pBroker.Produce(aliasName, msg)
 
 		if err := pDB.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {

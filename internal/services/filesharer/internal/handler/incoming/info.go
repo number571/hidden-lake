@@ -10,8 +10,8 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 func HandleIncomingInfoHTTP(

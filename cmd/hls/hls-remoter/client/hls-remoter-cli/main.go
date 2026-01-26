@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"github.com/number571/hidden-lake/build"
-	hls_remoter_client "github.com/number571/hidden-lake/internal/services/remoter/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
+	hls_remoter_client "github.com/number571/hidden-lake/pkg/api/services/remoter/client"
 )
 
 var (

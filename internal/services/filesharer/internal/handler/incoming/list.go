@@ -9,10 +9,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 )

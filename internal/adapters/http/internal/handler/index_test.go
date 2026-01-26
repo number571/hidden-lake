@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
+	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

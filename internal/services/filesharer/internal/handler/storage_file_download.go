@@ -8,14 +8,14 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/stream"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 func HandleStorageFileDownloadAPI(

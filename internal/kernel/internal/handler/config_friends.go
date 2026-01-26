@@ -13,6 +13,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 )
 
 func HandleConfigFriendsAPI(
@@ -23,7 +24,7 @@ func HandleConfigFriendsAPI(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppShortNameFMT(), pR)
 
-		var vFriend pkg_settings.SFriend
+		var vFriend friend.SFriend
 
 		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -34,9 +35,9 @@ func HandleConfigFriendsAPI(
 		if pR.Method == http.MethodGet {
 			friends := pWrapper.GetConfig().GetFriends()
 
-			listFriends := make([]pkg_settings.SFriend, 0, len(friends))
+			listFriends := make([]friend.SFriend, 0, len(friends))
 			for name, pubKey := range friends {
-				listFriends = append(listFriends, pkg_settings.SFriend{
+				listFriends = append(listFriends, friend.SFriend{
 					FAliasName: name,
 					FPublicKey: pubKey.ToString(),
 				})

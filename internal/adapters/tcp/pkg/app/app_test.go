@@ -13,10 +13,10 @@ import (
 	"github.com/number571/go-peer/pkg/payload"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/adapters/http/pkg/client"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
+	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

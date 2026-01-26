@@ -13,16 +13,16 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_config "github.com/number571/hidden-lake/internal/services/messenger/pkg/config"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 var (

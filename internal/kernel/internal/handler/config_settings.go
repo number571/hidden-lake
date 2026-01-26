@@ -6,10 +6,10 @@ import (
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	pkg_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	pkg_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 )
 
 func HandleConfigSettingsAPI(

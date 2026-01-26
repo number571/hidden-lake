@@ -1,0 +1,17 @@
+package client
+
+import (
+	"context"
+)
+
+type IClient interface {
+	GetIndex(context.Context) (string, error)
+
+	PingFriend(context.Context, string) error
+}
+
+type IRequester interface {
+	GetIndex(context.Context) (string, error)
+
+	PingFriend(context.Context, string) error
+}

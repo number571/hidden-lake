@@ -14,9 +14,9 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	"github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -76,7 +76,7 @@ func TestHandleFriendsAPI2(t *testing.T) {
 }
 
 func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "abc",
 	}
 
@@ -99,7 +99,7 @@ func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
 		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
 	}
@@ -123,7 +123,7 @@ func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestNotFound(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "notfound",
 	}
 
@@ -165,7 +165,7 @@ func friendsAPIRequestOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
 		FPublicKey: "abc",
 	}
@@ -189,7 +189,7 @@ func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestExist(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "abc",
 		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
 	}
@@ -213,7 +213,7 @@ func friendsAPIRequestExist(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "",
 		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
 	}
@@ -237,7 +237,7 @@ func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestDecode(handler http.HandlerFunc) error {
-	newFriend := settings.SFriend{
+	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
 		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
 	}

@@ -12,7 +12,6 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/remoter/pkg/app/config"
 	pkg_config "github.com/number571/hidden-lake/internal/services/remoter/pkg/config"
 	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
@@ -20,6 +19,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 var (

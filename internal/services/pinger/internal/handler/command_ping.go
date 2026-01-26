@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/pinger/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 

@@ -8,15 +8,15 @@ import (
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
 	hls_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 

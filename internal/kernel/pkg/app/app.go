@@ -16,12 +16,12 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	"github.com/number571/hidden-lake/pkg/network"
 
-	pkg_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	pkg_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 )
 
 var (

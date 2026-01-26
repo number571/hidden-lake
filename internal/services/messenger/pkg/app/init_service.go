@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler/incoming"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func (p *sApp) initExternalServiceHTTP(

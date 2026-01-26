@@ -12,6 +12,7 @@
 - `cmd/hls/*|cmd/hlk`: add CLI clients
 - `cmd/hls/*`: add internal API, update pkg/client, update examples
 - `cmd/hls/hls-filesharer`: add info API
+- `*/pkg/client|*/pkg/config`: move from internal -> pkg/api
 
 ### CHANGES
 

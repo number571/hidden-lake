@@ -14,13 +14,13 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_config "github.com/number571/hidden-lake/internal/services/filesharer/pkg/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 var (

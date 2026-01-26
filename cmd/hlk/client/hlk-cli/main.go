@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/hidden-lake/build"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/proc"
 	"github.com/number571/hidden-lake/pkg/network/request"
 )
 
@@ -146,17 +146,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		if err != nil {
 			return err
 		}
-		listFriends := make([]settings.SFriend, 0, len(friends))
-		for name, pubKey := range friends {
-			listFriends = append(listFriends, settings.SFriend{
-				FAliasName: name,
-				FPublicKey: pubKey.ToString(),
-			})
-		}
-		sort.Slice(listFriends, func(i, j int) bool {
-			return listFriends[i].FAliasName < listFriends[j].FAliasName
-		})
-		fmt.Println(serializeJSON(listFriends))
+		fmt.Println(serializeJSON(proc.FriendsMapToList(friends)))
 	case "del-friend":
 		friend := gFlags.Get("-a").GetStringValue(pArgs)
 		if err := hlkClient.DelFriend(pCtx, friend); err != nil {

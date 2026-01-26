@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 

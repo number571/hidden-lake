@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppServiceName = "pinger"
-	CAppDescription = "ping the node to check the online status"
+	CAppDescription = "ping the node to check online status"
 )
 
 const (

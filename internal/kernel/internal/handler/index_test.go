@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )

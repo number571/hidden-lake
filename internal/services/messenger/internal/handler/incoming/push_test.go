@@ -11,12 +11,13 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/pkg/client/message"
+	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
+	message_dto "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -216,7 +217,7 @@ func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (r
 type tsDatabase struct {
 	fPushOK bool
 	fLoadOK bool
-	fMsg    message.IMessage
+	fMsg    message_dto.IMessage
 }
 
 func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
@@ -235,7 +236,7 @@ func (p *tsDatabase) Size(database.IRelation) uint64 {
 	return 1
 }
 
-func (p *tsDatabase) Push(_ database.IRelation, pM message.IMessage) error {
+func (p *tsDatabase) Push(_ database.IRelation, pM message_dto.IMessage) error {
 	if !p.fPushOK {
 		return errors.New("some error") // nolint: err113
 	}
@@ -243,12 +244,12 @@ func (p *tsDatabase) Push(_ database.IRelation, pM message.IMessage) error {
 	return nil
 }
 
-func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]message.IMessage, error) {
+func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]message_dto.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	if p.fMsg == nil {
 		return nil, nil
 	}
-	return []message.IMessage{p.fMsg}, nil
+	return []message_dto.IMessage{p.fMsg}, nil
 }

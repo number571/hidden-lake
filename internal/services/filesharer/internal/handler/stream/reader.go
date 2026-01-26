@@ -14,10 +14,10 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/client/fileinfo"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 

@@ -14,10 +14,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	hls_filesharer_client "github.com/number571/hidden-lake/internal/services/filesharer/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
+	hls_filesharer_client "github.com/number571/hidden-lake/pkg/api/services/filesharer/client"
 )
 
 var (

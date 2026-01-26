@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/number571/hidden-lake/build"
-	hls_pinger_client "github.com/number571/hidden-lake/internal/services/pinger/pkg/client"
 	"github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
+	hls_pinger_client "github.com/number571/hidden-lake/pkg/api/services/pinger/client"
 )
 
 var (

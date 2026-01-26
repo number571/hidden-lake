@@ -10,9 +10,9 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )

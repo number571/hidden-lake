@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	hlk_client "github.com/number571/hidden-lake/internal/kernel/pkg/client"
-	hls_config "github.com/number571/hidden-lake/internal/kernel/pkg/config"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
