@@ -12,7 +12,7 @@ import (
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )

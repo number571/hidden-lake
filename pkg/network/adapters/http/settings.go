@@ -3,7 +3,7 @@ package http
 import (
 	"time"
 
-	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 )
 
 const (

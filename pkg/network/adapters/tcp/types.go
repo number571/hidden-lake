@@ -5,7 +5,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
-	"github.com/number571/hidden-lake/pkg/adapters"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 )
 
 type ITCPAdapter interface {

@@ -21,9 +21,9 @@
 - `cmd/hls/hls-filesharer|cmd/hls/hls-messenger`: delete webui -> change to cli
 - `cmd/hls/hls-remoter`: change separator [@remoter-separator] -> [@s]
 - `cmd/hlk`: change API of the /api/network/request path
-- `pkg`: change path /request, /response, /handler -> /network/request, /network/response, /network/handler
+- `pkg`: change path /request, /response, /handler, /adapters -> /network/request, /network/response, /network/handler, /network/adapters
 - `build`: move pkg/build -> build/environment
-- `*`: rename structs S**name**Error -> SError
+- `*`: rename structs S/name/Error -> SError
 - `cmd/hlk`: add sort list of friends (get function)
 - `cmd/hls-messenger`: change websocket -> longpoll method on listen messages from chat
 

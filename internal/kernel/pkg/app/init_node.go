@@ -7,9 +7,9 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/pkg/adapters"
-	"github.com/number571/hidden-lake/pkg/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
+	"github.com/number571/hidden-lake/pkg/network/adapters/http"
 
 	"github.com/number571/hidden-lake/internal/kernel/internal/handler"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"

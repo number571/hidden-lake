@@ -28,10 +28,10 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	hl_adapters "github.com/number571/hidden-lake/pkg/adapters"
-	"github.com/number571/hidden-lake/pkg/adapters/tcp"
 	hla_http_client "github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
+	hl_adapters "github.com/number571/hidden-lake/pkg/network/adapters"
+	"github.com/number571/hidden-lake/pkg/network/adapters/tcp"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
