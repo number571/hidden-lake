@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
@@ -33,7 +34,7 @@ func TestError(t *testing.T) {
 	}
 }
 
-func TestHTTPAdapter(t *testing.T) {
+func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	t.Parallel()
 
 	adapterSettings := adapters.NewSettings(&adapters.SSettings{
@@ -158,6 +159,76 @@ func TestHTTPAdapter(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	sCtx1, cancel1 := context.WithTimeout(ctx, time.Second)
+	defer cancel1()
+
+	req1, err := http.NewRequestWithContext(
+		sCtx1,
+		http.MethodGet,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		nil,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rsp1, err := http.DefaultClient.Do(req1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = rsp1.Body.Close() }()
+
+	if rsp1.StatusCode != http.StatusMethodNotAllowed {
+		t.Fatal("got another status code (1)")
+	}
+
+	sCtx2, cancel2 := context.WithTimeout(ctx, time.Second)
+	defer cancel2()
+
+	req2, err := http.NewRequestWithContext(
+		sCtx2,
+		http.MethodPost,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		bytes.NewBufferString(encoding.HexEncode([]byte{1})),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rsp2, err := http.DefaultClient.Do(req2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = rsp2.Body.Close() }()
+
+	if rsp2.StatusCode != http.StatusBadRequest {
+		t.Fatal("got another status code (2)")
+	}
+
+	sCtx3, cancel3 := context.WithTimeout(ctx, time.Second)
+	defer cancel3()
+
+	size := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
+	req3, err := http.NewRequestWithContext(
+		sCtx3,
+		http.MethodPost,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		bytes.NewBufferString(encoding.HexEncode(random.NewRandom().GetBytes(size))),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rsp3, err := http.DefaultClient.Do(req3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = rsp3.Body.Close() }()
+
+	if rsp3.StatusCode != http.StatusBadRequest {
+		t.Fatal("got another status code (3)")
+	}
+
 	// duplicate produce is ok (cache checker)
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {
 		t.Fatal(err)
@@ -171,6 +242,18 @@ func TestHTTPAdapter(t *testing.T) {
 	)
 	if err := client.ProduceMessage(ctx, netMsg2); err == nil {
 		t.Fatal("success produce invalid size message")
+	}
+
+	msgBytesX := []byte("hello, world!")
+	msgBytesX = append(msgBytesX, random.NewRandom().GetBytes(uint64(8192-len(msgBytesX)))...) //nolint:gosec
+	netMsgX := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(999, msgBytesX),
+	)
+	if err := client.ProduceMessage(ctx, netMsgX); err == nil {
+		t.Fatal("success produce invalid proto mask")
 	}
 
 	if err := testCustomProduceMessage(ctx, http.MethodGet, testutils.TgAddrs[18], netMsg.ToString()); err == nil {

@@ -52,7 +52,7 @@ func HandleStorageListAPI(
 			return
 		}
 
-		infos, err := fileinfo.LoadFileInfoList(resp.GetBody())
+		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
@@ -60,7 +60,7 @@ func HandleStorageListAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, infos)
+		_ = api.Response(pW, http.StatusOK, list.ToString())
 	}
 }
 

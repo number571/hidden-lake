@@ -40,9 +40,9 @@ func (p *sKeyValueDB) Load(pR IRelation, pStart, pCount uint64) ([]message.IMess
 		if err != nil {
 			return nil, errors.Join(ErrGetMessage, err)
 		}
-		msg := message.LoadMessage(data)
-		if msg == nil {
-			return nil, ErrLoadMessage
+		msg, err := message.LoadMessage(data)
+		if err != nil {
+			return nil, errors.Join(ErrLoadMessage, err)
 		}
 		res = append(res, msg)
 	}

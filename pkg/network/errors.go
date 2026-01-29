@@ -13,9 +13,8 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrSendRequest      = &SError{"send request"}
-	ErrFetchRequest     = &SError{"fetch request"}
-	ErrLoadResponse     = &SError{"load response"}
-	ErrAdapterNotRunner = &SError{"adapter not runner"}
-	ErrRunning          = &SError{"node running"}
+	ErrSendRequest  = &SError{"send request"}
+	ErrFetchRequest = &SError{"fetch request"}
+	ErrLoadResponse = &SError{"load response"}
+	ErrRunning      = &SError{"node running"}
 )

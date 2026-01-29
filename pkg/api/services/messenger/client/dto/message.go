@@ -17,20 +17,31 @@ type SMessage struct {
 	FTimestamp uint64 `json:"timestamp"`
 }
 
-func NewMessage(pIsIncoming bool, pMessage string) IMessage {
+func NewMessage(pIsIncoming bool, pMessage string, pTime time.Time) IMessage {
 	return &SMessage{
 		FIncoming:  pIsIncoming,
 		FMessage:   pMessage,
-		FTimestamp: uint64(time.Now().Unix()), //nolint:gosec
+		FTimestamp: uint64(pTime.Unix()), //nolint:gosec
 	}
 }
 
-func LoadMessage(pMsgBytes []byte) IMessage {
-	msg := &SMessage{}
-	if err := json.Unmarshal(pMsgBytes, msg); err != nil {
-		return nil
+func LoadMessage(pData interface{}) (IMessage, error) {
+	var msgBytes []byte
+
+	switch x := pData.(type) {
+	case []byte:
+		msgBytes = x
+	case string:
+		msgBytes = []byte(x)
+	default:
+		return nil, ErrUnknownType
 	}
-	return msg
+
+	msg := &SMessage{}
+	if err := json.Unmarshal(msgBytes, msg); err != nil {
+		return nil, err
+	}
+	return msg, nil
 }
 
 func (p *SMessage) IsIncoming() bool {
@@ -42,7 +53,7 @@ func (p *SMessage) GetMessage() string {
 }
 
 func (p *SMessage) GetTimestamp() string {
-	return time.Unix(int64(p.FTimestamp), 0).Format("2006-01-02T15:04:05") //nolint:gosec
+	return time.Unix(int64(p.FTimestamp), 0).Format(time.DateTime) //nolint:gosec
 }
 
 func (p *SMessage) ToBytes() []byte {

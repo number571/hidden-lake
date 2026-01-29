@@ -29,7 +29,7 @@ func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName str
 	return p.fRequester.GetFileInfo(pCtx, pAliasName, pName)
 }
 
-func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]fileinfo.IFileInfo, error) {
+func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) (fileinfo.IFileInfoList, error) {
 	return p.fRequester.GetListFiles(pCtx, pAliasName, pPage)
 }
 

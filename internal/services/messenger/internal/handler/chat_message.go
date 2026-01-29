@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
@@ -83,7 +84,7 @@ func HandleChatMessageAPI(
 			return
 		}
 
-		msg := message.NewMessage(false, string(body))
+		msg := message.NewMessage(false, string(body), time.Now())
 		if err := pDatabase.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")

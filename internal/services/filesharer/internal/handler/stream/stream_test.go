@@ -161,3 +161,11 @@ func (p *sFileInfo) GetHash() string {
 func (p *sFileInfo) GetSize() uint64 {
 	return p.FSize
 }
+
+func (p *sFileInfo) ToBytes() []byte {
+	return encoding.SerializeJSON(p)
+}
+
+func (p *sFileInfo) ToString() string {
+	return string(p.ToBytes())
+}

@@ -90,11 +90,7 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 	go func() {
 		defer func() { wg.Done(); cancel() }()
-		ra, ok := p.fOriginNode.GetAdapter().(adapters.IRunnerAdapter)
-		if !ok {
-			errs[0] = ErrAdapterNotRunner
-			return
-		}
+		ra := p.fOriginNode.GetAdapter().(adapters.IRunnerAdapter)
 		errs[0] = ra.Run(chCtx)
 	}()
 

@@ -21,32 +21,6 @@ type sFileInfo struct {
 	FSize uint64 `json:"size"`
 }
 
-func LoadFileInfo(b []byte) (IFileInfo, error) {
-	info := &sFileInfo{}
-	if err := encoding.DeserializeJSON(b, info); err != nil {
-		return nil, errors.Join(ErrDecodeInfo, err)
-	}
-	if ok := isValidHexHash(info.FHash); !ok {
-		return nil, ErrInvalidHash
-	}
-	return info, nil
-}
-
-func LoadFileInfoList(b []byte) ([]IFileInfo, error) {
-	list := []*sFileInfo{}
-	if err := encoding.DeserializeJSON(b, &list); err != nil {
-		return nil, errors.Join(ErrDecodeInfo, err)
-	}
-	fileInfos := make([]IFileInfo, 0, len(list))
-	for _, info := range list {
-		if ok := isValidHexHash(info.FHash); !ok {
-			return nil, ErrInvalidHash
-		}
-		fileInfos = append(fileInfos, info)
-	}
-	return fileInfos, nil
-}
-
 func NewFileInfo(pName string) (IFileInfo, error) {
 	hash, err := getFileHash(pName)
 	if err != nil {
@@ -63,6 +37,30 @@ func NewFileInfo(pName string) (IFileInfo, error) {
 	}, nil
 }
 
+func LoadFileInfo(pData interface{}) (IFileInfo, error) {
+	var fileInfoBytes []byte
+
+	switch x := pData.(type) {
+	case []byte:
+		fileInfoBytes = x
+	case string:
+		fileInfoBytes = []byte(x)
+	default:
+		return nil, ErrUnknownType
+	}
+
+	info := &sFileInfo{}
+	if err := encoding.DeserializeJSON(fileInfoBytes, info); err != nil {
+		return nil, errors.Join(ErrDecodeInfo, err)
+	}
+
+	if ok := isValidHexHash(info.FHash); !ok {
+		return nil, ErrInvalidHash
+	}
+
+	return info, nil
+}
+
 func (p *sFileInfo) GetName() string {
 	return p.FName
 }
@@ -73,6 +71,14 @@ func (p *sFileInfo) GetHash() string {
 
 func (p *sFileInfo) GetSize() uint64 {
 	return p.FSize
+}
+
+func (p *sFileInfo) ToBytes() []byte {
+	return encoding.SerializeJSON(p)
+}
+
+func (p *sFileInfo) ToString() string {
+	return string(p.ToBytes())
 }
 
 func isValidHexHash(hash string) bool {

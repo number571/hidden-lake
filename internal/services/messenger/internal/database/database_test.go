@@ -3,6 +3,7 @@ package database
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
@@ -38,8 +39,9 @@ func TestDatabase(t *testing.T) {
 	iam := asymmetric.NewPrivKey().GetPubKey()
 	friend := asymmetric.NewPrivKey().GetPubKey()
 
+	timeNow := time.Now()
 	rel := NewRelation(iam, friend)
-	err1 := db.Push(rel, message.NewMessage(true, tcBody))
+	err1 := db.Push(rel, message.NewMessage(true, tcBody, timeNow))
 	if err1 != nil {
 		t.Fatal(err1)
 	}
@@ -64,5 +66,9 @@ func TestDatabase(t *testing.T) {
 
 	if msgs[0].GetMessage() != tcBody {
 		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
+	}
+
+	if msgs[0].GetTimestamp() != timeNow.Format(time.DateTime) {
+		t.Fatal("msgs[0].GetTimestamp() != timeNow.Format(time.DateTime)")
 	}
 }

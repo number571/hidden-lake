@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/sha512"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -18,6 +17,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 	hls_filesharer_client "github.com/number571/hidden-lake/pkg/api/services/filesharer/client"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 var (
@@ -91,14 +91,14 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(serializeJSON(fileInfoList))
+		printFileInfoList(fileInfoList)
 	case "info":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
 		fileInfo, err := hlfClient.GetFileInfo(pCtx, friend, fileName)
 		if err != nil {
 			return err
 		}
-		fmt.Println(serializeJSON(fileInfo))
+		printFileInfo(fileInfo)
 	case "load":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
 
@@ -158,9 +158,15 @@ func (p *processWriter) Write(b []byte) (n int, err error) {
 	return n, err
 }
 
-func serializeJSON(pData interface{}) string {
-	res, _ := json.MarshalIndent(pData, "", "\t")
-	return string(res)
+func printFileInfoList(pFileInfoList dto.IFileInfoList) {
+	list := pFileInfoList.GetList()
+	for _, info := range list {
+		printFileInfo(info)
+	}
+}
+
+func printFileInfo(pFileInfo dto.IFileInfo) {
+	fmt.Printf("Name: %s\nHash: %s\nSize: %d\n\n", pFileInfo.GetName(), pFileInfo.GetHash(), pFileInfo.GetSize())
 }
 
 func getFileHash(filename string) (string, error) {

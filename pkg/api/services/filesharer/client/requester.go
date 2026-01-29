@@ -74,7 +74,7 @@ func (p *sRequester) GetFileInfo(pCtx context.Context, pAliasName string, pFileN
 	return info, nil
 }
 
-func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) ([]fileinfo.IFileInfo, error) {
+func (p *sRequester) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) (fileinfo.IFileInfoList, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,

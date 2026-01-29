@@ -56,6 +56,6 @@ func HandleIncomingInfoHTTP(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, info)
+		_ = api.Response(pW, http.StatusOK, info.ToString())
 	}
 }

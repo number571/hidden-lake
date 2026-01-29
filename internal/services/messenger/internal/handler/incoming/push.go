@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
@@ -66,7 +67,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		msg := message_dto.NewMessage(true, rawMsg)
+		msg := message_dto.NewMessage(true, rawMsg, time.Now())
 		pBroker.Produce(aliasName, msg)
 
 		if err := pDB.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {

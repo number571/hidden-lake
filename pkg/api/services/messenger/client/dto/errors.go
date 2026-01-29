@@ -1,7 +1,7 @@
 package dto
 
 const (
-	errPrefix = "pkg/api/services/filesharer/client/dto = "
+	errPrefix = "pkg/api/services/messenger/client/dto = "
 )
 
 type SError struct {
@@ -13,7 +13,5 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrDecodeInfo  = &SError{"decode info"}
-	ErrInvalidHash = &SError{"invalid hash"}
 	ErrUnknownType = &SError{"unknown type"}
 )

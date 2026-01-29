@@ -40,7 +40,7 @@ func HandleIncomingListHTTP(
 			return
 		}
 
-		result, err := getListFileInfo(pCfg, pPathTo, uint64(page)) //nolint:gosec
+		list, err := getListFileInfo(pCfg, pPathTo, uint64(page)) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
@@ -48,11 +48,11 @@ func HandleIncomingListHTTP(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, result)
+		_ = api.Response(pW, http.StatusOK, list.ToString())
 	}
 }
 
-func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]fileinfo.IFileInfo, error) {
+func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) (fileinfo.IFileInfoList, error) {
 	pageOffset := pCfg.GetSettings().GetPageOffset()
 	fileReader := pageOffset
 
@@ -88,5 +88,5 @@ func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) ([]filei
 		result = append(result, info)
 	}
 
-	return result, nil
+	return fileinfo.LoadFileInfoList(result)
 }
