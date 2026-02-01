@@ -28,9 +28,21 @@ func TestPanicInt64Value(t *testing.T) {
 	}()
 	argsSlice := []string{
 		"--key", "qwerty",
-		"--key2",
 	}
 	_ = NewFlagBuilder("--key").Build().GetInt64Value(argsSlice)
+}
+
+func TestPanicInt64Value2(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("nothing panics")
+		}
+	}()
+	argsSlice := []string{
+		"--key2",
+	}
 	_ = NewFlagBuilder("--key2").Build().GetInt64Value(argsSlice)
 }
 
@@ -44,6 +56,9 @@ func TestInt64Value(t *testing.T) {
 		"value", "571",
 	}
 
+	if NewFlagBuilder("--undefined").Build().GetInt64Value(argsSlice) != 0 {
+		t.Fatal("undefined != 0")
+	}
 	if NewFlagBuilder("--key").Build().GetInt64Value(argsSlice) != 123 {
 		t.Fatal("key != 123")
 	}

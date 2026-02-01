@@ -40,6 +40,10 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success get index with unknown host")
 	}
 
+	if _, err := client.GetSettings(context.Background()); err == nil {
+		t.Fatal("success get index with unknown host")
+	}
+
 	if _, err := client.GetConnections(context.Background()); err == nil {
 		t.Fatal("success get connections with unknown host")
 	}

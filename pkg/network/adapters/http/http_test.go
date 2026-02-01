@@ -120,6 +120,10 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal(err1)
 	}
 
+	if _, err := client.GetSettings(ctx); err != nil {
+		t.Fatal(err)
+	}
+
 	conns, err := client.GetConnections(ctx)
 	if err != nil {
 		t.Fatal(err)
