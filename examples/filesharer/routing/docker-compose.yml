@@ -17,6 +17,8 @@ services:
       dockerfile: cmd/hlc/Dockerfile
     environment:
       - SERVICE_PATH=examples/filesharer/routing/node2_hlf
+    ports:
+      - 7541:7541
     networks:
       - hidden-lake
   middle_hla_tcp_1:

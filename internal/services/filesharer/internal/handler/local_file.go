@@ -65,12 +65,19 @@ func HandleLocalFileAPI(
 				pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
 				return
 			}
+
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+
 		case http.MethodDelete:
 			if err := os.Remove(fullPath); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("delete_file"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete file")
 				return
 			}
+
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, "success: delete file")
+
 		case http.MethodPost:
 			if err := os.MkdirAll(stgPath, 0700); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
@@ -91,8 +98,9 @@ func HandleLocalFileAPI(
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: copy file")
 				return
 			}
-		}
 
-		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, "success: upload file")
+		}
 	}
 }

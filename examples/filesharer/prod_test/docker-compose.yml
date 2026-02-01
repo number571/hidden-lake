@@ -17,3 +17,5 @@ services:
     environment:
       - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
       - SERVICE_PATH=examples/filesharer/prod_test/node2_hlf
+    ports:
+      - 7541:7541

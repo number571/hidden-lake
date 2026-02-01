@@ -198,8 +198,8 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			return ErrAvailableOnlyForTypeLocal
 		}
 
-		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		fullPath := filepath.Join(inputPath, fileName)
+		filePath := gFlags.Get("-a").GetStringValue(pArgs)
+		fullPath := filepath.Join(inputPath, filePath)
 
 		file, err := os.Open(fullPath) // nolint: gosec
 		if err != nil {
@@ -207,6 +207,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 		defer func() { _ = file.Close() }()
 
+		fileName := filepath.Base(filePath)
 		if err := hlfClient.PutLocalFile(pCtx, friend, fileName, file); err != nil {
 			return err
 		}

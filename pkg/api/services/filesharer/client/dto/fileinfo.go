@@ -17,8 +17,8 @@ var (
 
 type sFileInfo struct {
 	FName string `json:"name"`
-	FHash string `json:"hash"`
 	FSize uint64 `json:"size"`
+	FHash string `json:"hash"`
 }
 
 func NewFileInfo(pName string) (IFileInfo, error) {
