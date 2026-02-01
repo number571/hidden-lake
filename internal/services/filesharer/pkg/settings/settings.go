@@ -31,6 +31,12 @@ const (
 )
 
 const (
+	CPathSharingSTG       = CPathSTG + "/sharing"
+	CPathPrivateSTG       = CPathSTG + "/private"
+	CPathSharingPublicSTG = CPathSharingSTG + "/public"
+)
+
+const (
 	CDefaultInternalAddress = "127.0.0.1:9541"
 	CDefaultExternalAddress = "127.0.0.1:9542"
 )
@@ -47,10 +53,13 @@ const (
 )
 
 const (
-	CHandleIndexPath               = "/api/index"
-	CHandleStorageListPath         = "/api/storage/list"
-	CHandleStorageFileInfoPath     = "/api/storage/file/info"
-	CHandleStorageFileDownloadPath = "/api/storage/file/download"
+	CHandleIndexPath          = "/api/index"
+	CHandleRemoteListPath     = "/api/remote/list"
+	CHandleRemoteFilePath     = "/api/remote/file"
+	CHandleRemoteFileInfoPath = "/api/remote/file/info"
+	CHandleLocalListPath      = "/api/local/list"
+	CHandleLocalFilePath      = "/api/local/file"
+	CHandleLocalFileInfoPath  = "/api/local/file/info"
 )
 
 const (

@@ -83,13 +83,13 @@ func TestFileInfo(t *testing.T) {
 	}
 	fileInfoXRaw := fileInfoX.(*sFileInfo)
 
-	fileInfoXRaw.FHash = "Q"
-	if _, err := LoadFileInfo(fileInfoX); err == nil {
+	fileInfoXRaw.FHash = "_"
+	if _, err := LoadFileInfo(fileInfoX.ToBytes()); err == nil {
 		t.Fatal("success load invalid hash value")
 	}
 
 	fileInfoXRaw.FHash = "FF"
-	if _, err := LoadFileInfo(fileInfoX); err == nil {
+	if _, err := LoadFileInfo(fileInfoX.ToBytes()); err == nil {
 		t.Fatal("success load invalid hash size")
 	}
 

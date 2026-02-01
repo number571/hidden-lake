@@ -8,6 +8,17 @@ import (
 )
 
 func (p *sApp) initStorage() error {
-	stgPath := filepath.Join(p.fPathTo, hls_filesharer_settings.CPathSTG)
-	return os.MkdirAll(stgPath, 0o777) //nolint:gosec
+	stgPrivatePath := filepath.Join(p.fPathTo, hls_filesharer_settings.CPathPrivateSTG)
+	if err := os.MkdirAll(stgPrivatePath, 0o700); err != nil { //nolint:gosec
+		return err
+	}
+	stgSharingPath := filepath.Join(p.fPathTo, hls_filesharer_settings.CPathSharingSTG)
+	if err := os.MkdirAll(stgSharingPath, 0o700); err != nil { //nolint:gosec
+		return err
+	}
+	stgSharingPublicPath := filepath.Join(p.fPathTo, hls_filesharer_settings.CPathSharingPublicSTG)
+	if err := os.MkdirAll(stgSharingPublicPath, 0o700); err != nil { //nolint:gosec
+		return err
+	}
+	return nil
 }

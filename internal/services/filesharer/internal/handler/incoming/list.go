@@ -1,26 +1,29 @@
 package incoming
 
 import (
-	"io/fs"
+	"context"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 )
 
 func HandleIncomingListHTTP(
+	pCtx context.Context,
 	pLogger logger.ILogger,
 	pCfg config.IConfig,
 	pPathTo string,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
@@ -33,14 +36,41 @@ func HandleIncomingListHTTP(
 			return
 		}
 
-		page, err := strconv.Atoi(pR.URL.Query().Get("page"))
+		queryParams := pR.URL.Query()
+		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			return
+		}
+
+		page, err := strconv.Atoi(queryParams.Get("page"))
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
 			return
 		}
 
-		list, err := getListFileInfo(pCfg, pPathTo, uint64(page)) //nolint:gosec
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, isPersonal)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+			return
+		}
+
+		stat, err := os.Stat(stgPath)
+		if os.IsNotExist(err) || !stat.IsDir() {
+			list, err := dto.LoadFileInfoList("[]")
+			if err != nil {
+				panic(err)
+			}
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, list.ToString())
+			return
+		}
+
+		list, err := utils.GetListFileInfo(stgPath, uint64(page), pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
@@ -50,43 +80,4 @@ func HandleIncomingListHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, list.ToString())
 	}
-}
-
-func getListFileInfo(pCfg config.IConfig, pPathTo string, pPage uint64) (fileinfo.IFileInfoList, error) {
-	pageOffset := pCfg.GetSettings().GetPageOffset()
-	fileReader := pageOffset
-
-	stgPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG)
-	entries, err := os.ReadDir(stgPath)
-	if err != nil {
-		return nil, err
-	}
-
-	files := make([]fs.DirEntry, 0, len(entries))
-	for _, e := range entries {
-		if e.IsDir() {
-			continue
-		}
-		files = append(files, e)
-	}
-
-	result := make([]fileinfo.IFileInfo, 0, pageOffset)
-	for i := (pPage * pageOffset); i < uint64(len(files)); i++ {
-		if fileReader == 0 {
-			break
-		}
-		fileReader--
-
-		fileName := files[i].Name()
-		fullPath := filepath.Join(stgPath, fileName)
-
-		info, err := fileinfo.NewFileInfo(fullPath)
-		if err != nil {
-			return nil, err
-		}
-
-		result = append(result, info)
-	}
-
-	return fileinfo.LoadFileInfoList(result)
 }

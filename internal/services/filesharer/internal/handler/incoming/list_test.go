@@ -1,6 +1,7 @@
 package incoming
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -33,7 +34,8 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 		},
 	}
 
-	handler := HandleIncomingListHTTP(httpLogger, config, "./testdata")
+	ctx := context.Background()
+	handler := HandleIncomingListHTTP(ctx, httpLogger, config, "./testdata", newTsHLSClient(true, true))
 
 	if err := incomingListRequestOK(handler); err != nil {
 		t.Fatal(err)

@@ -25,14 +25,34 @@ func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
 	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) GetFileInfo(pCtx context.Context, pAliasName string, pName string) (fileinfo.IFileInfo, error) {
-	return p.fRequester.GetFileInfo(pCtx, pAliasName, pName)
+func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) (fileinfo.IFileInfoList, error) {
+	return p.fRequester.GetRemoteList(pCtx, pFriend, pPage, pPersonal)
 }
 
-func (p *sClient) GetListFiles(pCtx context.Context, pAliasName string, pPage uint64) (fileinfo.IFileInfoList, error) {
-	return p.fRequester.GetListFiles(pCtx, pAliasName, pPage)
+func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (bool, string, error) {
+	return p.fRequester.GetRemoteFile(pW, pCtx, pFriend, pFilename, pPersonal)
 }
 
-func (p *sClient) DownloadFile(pW io.Writer, pCtx context.Context, pAliasName, pName string) (bool, string, error) {
-	return p.fRequester.DownloadFile(pW, pCtx, pAliasName, pName)
+func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (fileinfo.IFileInfo, error) {
+	return p.fRequester.GetRemoteFileInfo(pCtx, pFriend, pFilename, pPersonal)
+}
+
+func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) (fileinfo.IFileInfoList, error) {
+	return p.fRequester.GetLocalList(pCtx, pFriend, pPage)
+}
+
+func (p *sClient) GetLocalFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string) error {
+	return p.fRequester.GetLocalFile(pW, pCtx, pFriend, pFilename)
+}
+
+func (p *sClient) PutLocalFile(pCtx context.Context, pFriend string, pFilename string, pR io.Reader) error {
+	return p.fRequester.PutLocalFile(pCtx, pFriend, pFilename, pR)
+}
+
+func (p *sClient) DelLocalFile(pCtx context.Context, pFriend string, pFilename string) error {
+	return p.fRequester.DelLocalFile(pCtx, pFriend, pFilename)
+}
+
+func (p *sClient) GetLocalFileInfo(pCtx context.Context, pFriend string, pFilename string) (fileinfo.IFileInfo, error) {
+	return p.fRequester.GetLocalFileInfo(pCtx, pFriend, pFilename)
 }

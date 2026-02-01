@@ -32,11 +32,14 @@ var (
 		flag.NewFlagBuilder("-s", "--service").
 			WithDescription("set internal address of the HLS").
 			WithDefinedValue("localhost:9541"),
+		flag.NewFlagBuilder("-t", "--type").
+			WithDescription("set type [local|personal|public]").
+			WithDefinedValue("public"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
 		flag.NewFlagBuilder("-d", "--do").
-			WithDescription("set runner [list|info|load]").
+			WithDescription("set runner [list|info|download|upload|delete]").
 			WithDefinedValue(""),
 		flag.NewFlagBuilder("-a", "--arg").
 			WithDescription("set argument for runner <page|file>").
@@ -81,56 +84,107 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		),
 	)
 
+	stgType := gFlags.Get("-t").GetStringValue(pArgs)
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	do := gFlags.Get("-d").GetStringValue(pArgs)
 
+	var (
+		isLocal    = false
+		isPersonal = false
+	)
+	switch stgType {
+	case "local":
+		isLocal = true
+	case "personal":
+		isPersonal = true
+	case "public":
+		// used by default
+	default:
+		fmt.Println("AAA", stgType)
+		return ErrUnknownStorageType
+	}
+
 	switch do {
 	case "list":
+		var (
+			fileInfoList dto.IFileInfoList
+			err          error
+		)
 		page := gFlags.Get("-a").GetInt64Value(pArgs)
-		fileInfoList, err := hlfClient.GetListFiles(pCtx, friend, uint64(page)) // nolint:gosec
+		if isLocal {
+			fileInfoList, err = hlfClient.GetLocalList(pCtx, friend, uint64(page)) // nolint:gosec
+		} else {
+			fileInfoList, err = hlfClient.GetRemoteList(pCtx, friend, uint64(page), isPersonal) // nolint:gosec
+		}
 		if err != nil {
 			return err
 		}
 		printFileInfoList(fileInfoList)
 	case "info":
+		var (
+			fileInfo dto.IFileInfo
+			err      error
+		)
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		fileInfo, err := hlfClient.GetFileInfo(pCtx, friend, fileName)
+		if isLocal {
+			fileInfo, err = hlfClient.GetLocalFileInfo(pCtx, friend, fileName)
+		} else {
+			fileInfo, err = hlfClient.GetRemoteFileInfo(pCtx, friend, fileName, isPersonal)
+		}
 		if err != nil {
 			return err
 		}
 		printFileInfo(fileInfo)
-	case "load":
-		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+	case "download":
+		var (
+			tmpFile *os.File
+			err     error
+		)
 
-		tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s-*.tmp", fileName)) // nolint: perfsprint
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		tmpFile, err = os.CreateTemp("", fmt.Sprintf("%s-*.tmp", fileName)) // nolint: perfsprint
 		if err != nil {
 			return err
 		}
+
 		defer func() {
 			_ = tmpFile.Close()
 			_ = os.Remove(tmpFile.Name())
 		}()
 
-		inProcess, recvFileHash, err := hlfClient.DownloadFile(
-			&processWriter{fW: tmpFile},
-			pCtx,
-			friend,
-			fileName,
-		)
-		if err != nil {
-			return err
-		}
-		if inProcess {
-			fmt.Println("\nprocessing...")
-			return nil
-		}
+		if isLocal { // nolint: nestif
+			err := hlfClient.GetLocalFile(
+				&processWriter{fW: tmpFile},
+				pCtx,
+				friend,
+				fileName,
+			)
+			if err != nil {
+				return err
+			}
+		} else {
+			inProcess, recvFileHash, err := hlfClient.GetRemoteFile(
+				&processWriter{fW: tmpFile},
+				pCtx,
+				friend,
+				fileName,
+				isPersonal,
+			)
+			if err != nil {
+				return err
+			}
+			if inProcess {
+				fmt.Println("\nprocessing...")
+				return nil
+			}
 
-		gotFileHash, err := getFileHash(tmpFile.Name())
-		if err != nil {
-			return err
-		}
-		if recvFileHash != gotFileHash {
-			return ErrHashIsInvalid
+			gotFileHash, err := getFileHash(tmpFile.Name())
+			if err != nil {
+				return err
+			}
+			if recvFileHash != gotFileHash {
+				return ErrHashIsInvalid
+			}
 		}
 
 		fullPath := filepath.Join(inputPath, fileName)
@@ -139,6 +193,32 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 
 		fmt.Println("\ndone!")
+	case "upload":
+		if !isLocal {
+			return ErrAvailableOnlyForTypeLocal
+		}
+
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		fullPath := filepath.Join(inputPath, fileName)
+
+		file, err := os.Open(fullPath) // nolint: gosec
+		if err != nil {
+			return err
+		}
+		defer func() { _ = file.Close() }()
+
+		if err := hlfClient.PutLocalFile(pCtx, friend, fileName, file); err != nil {
+			return err
+		}
+	case "delete":
+		if !isLocal {
+			return ErrAvailableOnlyForTypeLocal
+		}
+
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		if err := hlfClient.DelLocalFile(pCtx, friend, fileName); err != nil {
+			return err
+		}
 	default:
 		return errors.Join(ErrUnknownAction, errors.New(do)) // nolint:err113
 	}

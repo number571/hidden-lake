@@ -1,6 +1,7 @@
 package incoming
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,13 +11,17 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 func HandleIncomingInfoHTTP(
+	pCtx context.Context,
 	pLogger logger.ILogger,
 	pPathTo string,
+	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
@@ -29,18 +34,30 @@ func HandleIncomingInfoHTTP(
 			return
 		}
 
-		query := pR.URL.Query()
+		queryParams := pR.URL.Query()
+		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			return
+		}
 
-		fileName := filepath.Base(query.Get("name"))
-		if fileName != query.Get("name") {
+		fileName := filepath.Base(queryParams.Get("name"))
+		if fileName != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
 		}
 
-		stgPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG)
-		fullPath := filepath.Join(stgPath, fileName)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, isPersonal)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+			return
+		}
 
+		fullPath := filepath.Join(stgPath, fileName)
 		stat, err := os.Stat(fullPath)
 		if os.IsNotExist(err) || stat.IsDir() {
 			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))

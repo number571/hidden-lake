@@ -48,6 +48,7 @@ func TestStreamReader(t *testing.T) {
 		"alias_name",
 		hlkClient,
 		newFileInfoFromBytes(filename, fileBytes),
+		false,
 	)
 	if err != nil {
 		t.Fatal(err)

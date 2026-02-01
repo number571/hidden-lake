@@ -13,8 +13,10 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrMkdirPath     = &SError{"mkdir path"}
-	ErrRetryNum      = &SError{"retry num"}
-	ErrUnknownAction = &SError{"unknown action"}
-	ErrHashIsInvalid = &SError{"hash is invalid"}
+	ErrMkdirPath                 = &SError{"mkdir path"}
+	ErrRetryNum                  = &SError{"retry num"}
+	ErrUnknownAction             = &SError{"unknown action"}
+	ErrHashIsInvalid             = &SError{"hash is invalid"}
+	ErrUnknownStorageType        = &SError{"unknown storage type"}
+	ErrAvailableOnlyForTypeLocal = &SError{"available only for type local"}
 )

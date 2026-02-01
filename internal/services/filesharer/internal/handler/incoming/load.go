@@ -15,6 +15,7 @@ import (
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
@@ -36,23 +37,37 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		query := pR.URL.Query()
+		queryParams := pR.URL.Query()
+		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			return
+		}
 
-		name := filepath.Base(query.Get("name"))
-		if name != query.Get("name") {
+		name := filepath.Base(queryParams.Get("name"))
+		if name != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
 		}
 
-		chunk, err := strconv.Atoi(query.Get("chunk"))
+		chunk, err := strconv.Atoi(queryParams.Get("chunk"))
 		if err != nil || chunk < 0 {
 			pLogger.PushWarn(logBuilder.WithMessage("incorrect_chunk"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect chunk")
 			return
 		}
 
-		fullPath := filepath.Join(pPathTo, hls_filesharer_settings.CPathSTG, name)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, isPersonal)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+			return
+		}
+
+		fullPath := filepath.Join(stgPath, name)
 		stat, err := os.Stat(fullPath)
 		if os.IsNotExist(err) || stat.IsDir() {
 			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))

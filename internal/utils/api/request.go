@@ -11,6 +11,39 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
+func RequestWithReader(
+	pCtx context.Context,
+	pClient *http.Client,
+	pMethod, pURL string,
+	pR io.Reader,
+) ([]byte, error) {
+	contentType := CApplicationOctetStream
+
+	req, err := http.NewRequestWithContext(
+		pCtx,
+		pMethod,
+		pURL,
+		pR,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBuildRequest, err)
+	}
+
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := pClient.Do(req)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	result, err := loadResponse(resp.StatusCode, resp.Body)
+	if err != nil {
+		return nil, errors.Join(ErrLoadResponse, err)
+	}
+	return result, nil
+}
+
 func RequestWithWriter(
 	pW io.Writer,
 	pCtx context.Context,
@@ -25,7 +58,7 @@ func RequestWithWriter(
 
 	switch x := pData.(type) {
 	case []byte:
-		contentType = CTextPlain
+		contentType = CApplicationOctetStream
 		reqBytes = x
 	case string:
 		contentType = CTextPlain
@@ -74,7 +107,7 @@ func Request(
 
 	switch x := pData.(type) {
 	case []byte:
-		contentType = CTextPlain
+		contentType = CApplicationOctetStream
 		reqBytes = x
 	case string:
 		contentType = CTextPlain

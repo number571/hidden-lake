@@ -38,6 +38,7 @@ type sStream struct {
 	fPosition     uint64
 	fHasher       hash.Hash
 	fChunkSize    uint64
+	fPersonal     bool
 }
 
 func BuildStreamReader(
@@ -47,6 +48,7 @@ func BuildStreamReader(
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
 	pFileInfo fileinfo.IFileInfo,
+	pPersonal bool,
 ) (io.Reader, error) {
 	chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 	if err != nil {
@@ -69,6 +71,7 @@ func BuildStreamReader(
 		fHasher:    sha512.New384(),
 		fChunkSize: chunkSize,
 		fFileInfo:  pFileInfo,
+		fPersonal:  pPersonal,
 	}, nil
 }
 
@@ -134,7 +137,7 @@ func createTempFile(pTempFile string) error {
 		return err
 	}
 	expired := time.Since(stat.ModTime()) > (30 * 24 * time.Hour)
-	if !expired {
+	if !expired { // 1 month
 		return nil
 	}
 	if err := os.Remove(pTempFile); err != nil {
@@ -147,7 +150,11 @@ func createTempFile(pTempFile string) error {
 func (p *sStream) loadFileChunk() ([]byte, error) {
 	var lastErr error
 	for i := uint64(0); i <= p.fRetryNum; i++ {
-		req := newLoadChunkRequest(p.fFileInfo.GetName(), p.fPosition/p.fChunkSize)
+		req := newLoadChunkRequest(
+			p.fFileInfo.GetName(),
+			p.fPosition/p.fChunkSize,
+			p.fPersonal,
+		)
 		resp, err := p.fHlkClient.FetchRequest(p.fContext, p.fAliasName, req)
 		if err != nil {
 			lastErr = err
@@ -192,15 +199,16 @@ func (p *sStream) appendChunkToTempFile(pChunk []byte) error {
 	return nil
 }
 
-func newLoadChunkRequest(pFileName string, pChunk uint64) hlk_request.IRequest {
+func newLoadChunkRequest(pFileName string, pChunk uint64, pPersonal bool) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_filesharer_settings.CAppShortName).
 		WithPath(fmt.Sprintf(
-			"%s?name=%s&chunk=%d",
+			"%s?name=%s&chunk=%d&personal=%t",
 			hls_filesharer_settings.CLoadPath,
 			url.QueryEscape(pFileName),
 			pChunk,
+			pPersonal,
 		)).
 		Build()
 }

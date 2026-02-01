@@ -74,14 +74,20 @@ Got response
 ## HLS API
 
 ```
-1. GET  /api/index                  | params = []
-                                    |> description = get name of service
-2. GET  /api/storage/list           | params = ["friend":string,"page":uint64]
-                                    |> description = get list of files from storage
-3. GET  /api/storage/file/info      | params = ["friend":string,"name":string]
-                                    |> description = get info of the file by name
-4. GET  /api/storage/file/download  | params = ["friend":string,"name":string]
-                                    |> description = download file content by name
+1. GET                  /api/index              | params = []
+                                                |> description = get name of service
+2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"personal":bool]
+                                                |> description = get list of files from storage
+3. GET                  /api/remote/file        | params = ["friend":string,"name":string,"personal":bool]
+                                                |> description = download file content by name
+4. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":bool]
+                                                |> description = get info of the file by name
+5. GET                  /api/local/list         | params = ["friend":string,"page":uint64]
+                                                |> description = get list of files from storage
+6. GET, POST, DELETE    /api/local/file         | params = ["friend":string,"name":string]
+                                                |> description = upload / delete file content by name
+7. GET                  /api/local/file/info    | params = ["friend":string,"name":string]
+                                                |> description = get info of the file by name
 ```
 
 ### 1. /api/index
@@ -103,12 +109,12 @@ Content-Length: 30
 hidden-lake-service=filesharer
 ```
 
-### 2. /api/storage/list
+### 2. /api/remote/list
 
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/storage/list?friend=Bob&page=0"
+curl -i -X GET "http://localhost:9541/api/remote/list?friend=Bob&page=0&personal=false"
 ```
 
 #### 2.1. GET Response
@@ -122,34 +128,15 @@ Content-Length: 280
 [{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14},{"name":"image.jpg","hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977","size":17792}]
 ```
 
-### 3. /api/storage/file/info
+### 3. /api/remote/file
 
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/storage/file/info?friend=Bob&name=example.txt"
+curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
 ```
 
 #### 3.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Date: Fri, 16 Jan 2026 21:25:55 GMT
-Content-Length: 138
-
-{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14}
-```
-
-### 4. /api/storage/file/download
-
-#### 4.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9541/api/storage/file/download?friend=Bob&name=example.txt"
-```
-
-#### 4.1. GET Response
 
 ```
 HTTP/1.1 200 OK
@@ -159,4 +146,23 @@ Content-Length: 14
 Content-Type: text/plain; charset=utf-8
 
 hello, world!
+```
+
+### 4. /api/remote/file/info
+
+#### 4.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=example.txt&personal=false"
+```
+
+#### 4.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 21:25:55 GMT
+Content-Length: 138
+
+{"name":"example.txt","hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43","size":14}
 ```

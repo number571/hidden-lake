@@ -21,12 +21,12 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CListPath,
-		incoming.HandleIncomingListHTTP(p.fHTTPLogger, p.fConfig, p.fPathTo),
+		incoming.HandleIncomingListHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fPathTo, pHlkClient),
 	) // GET
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CInfoPath,
-		incoming.HandleIncomingInfoHTTP(p.fHTTPLogger, p.fPathTo),
+		incoming.HandleIncomingInfoHTTP(pCtx, p.fHTTPLogger, p.fPathTo, pHlkClient),
 	) // GET
 
 	buildSettings := build.GetSettings()
@@ -47,18 +47,33 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 	) // GET
 
 	mux.HandleFunc(
-		hls_filesharer_settings.CHandleStorageFileInfoPath,
-		handler.HandleStorageFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		hls_filesharer_settings.CHandleRemoteFileInfoPath,
+		handler.HandleRemoteFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	mux.HandleFunc(
-		hls_filesharer_settings.CHandleStorageFileDownloadPath,
-		handler.HandleStorageFileDownloadAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		hls_filesharer_settings.CHandleRemoteFilePath,
+		handler.HandleRemoteFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	mux.HandleFunc(
-		hls_filesharer_settings.CHandleStorageListPath,
-		handler.HandleStorageListAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+		hls_filesharer_settings.CHandleRemoteListPath,
+		handler.HandleRemoteListAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleLocalListPath,
+		handler.HandleLocalListAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleLocalFilePath,
+		handler.HandleLocalFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleLocalFileInfoPath,
+		handler.HandleLocalFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	p.fIntServiceHTTP = &http.Server{ // nolint: gosec

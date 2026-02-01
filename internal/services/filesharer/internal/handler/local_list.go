@@ -2,21 +2,19 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"net/url"
+	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 
-func HandleStorageFileInfoAPI(
+func HandleLocalListAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,
@@ -35,36 +33,28 @@ func HandleStorageFileInfoAPI(
 		queryParams := pR.URL.Query()
 		aliasName := queryParams.Get("friend")
 
-		req := newFileInfoRequest(queryParams.Get("name"))
-		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
+		page, err := strconv.Atoi(queryParams.Get("page"))
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
+			pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
-			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, aliasName != "")
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
 			return
 		}
 
-		info, err := fileinfo.LoadFileInfo(resp.GetBody())
+		list, err := utils.GetListFileInfo(stgPath, uint64(page), pConfig.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			pLogger.PushErro(logBuilder.WithMessage("open storage"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, info.ToString())
+		_ = api.Response(pW, http.StatusOK, list.ToString())
 	}
-}
-
-func newFileInfoRequest(pFileName string) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodGet).
-		WithHost(hls_settings.CAppShortName).
-		WithPath(fmt.Sprintf("%s?name=%s", hls_settings.CInfoPath, url.QueryEscape(pFileName))).
-		Build()
 }

@@ -4,21 +4,20 @@ import (
 	"context"
 	"net/http"
 	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/stream"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
-func HandleStorageFileDownloadAPI(
+func HandleRemoteFileAPI(
 	pCtx context.Context,
 	pConfig config.IConfig,
 	pLogger logger.ILogger,
@@ -39,7 +38,14 @@ func HandleStorageFileDownloadAPI(
 		queryParams := pR.URL.Query()
 		aliasName := queryParams.Get("friend")
 
-		req := newFileInfoRequest(queryParams.Get("name"))
+		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			return
+		}
+
+		req := newFileInfoRequest(queryParams.Get("name"), isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -70,27 +76,27 @@ func HandleStorageFileDownloadAPI(
 			return
 		}
 
-		pubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
+		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get public key")
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
 			return
 		}
 
-		pathToDownload := filepath.Join(pPathTo, pubKey.GetHasher().ToString())
-		if err := os.MkdirAll(pathToDownload, 0700); err != nil {
+		if err := os.MkdirAll(stgPath, 0700); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
 			return
 		}
 
-		reader, err := stream.BuildStreamReader(
+		streamReader, err := stream.BuildStreamReader(
 			pCtx,
 			pConfig.GetSettings().GetRetryNum(),
-			pathToDownload,
+			stgPath,
 			aliasName,
 			pHlkClient,
 			info,
+			isPersonal,
 		)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("build_stream"))
@@ -102,7 +108,7 @@ func HandleStorageFileDownloadAPI(
 		defer downloadProcessesMap.Del(fileHash)
 
 		pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeN)
-		if err := api.ResponseWithReader(pW, http.StatusOK, reader); err != nil {
+		if err := api.ResponseWithReader(pW, http.StatusOK, streamReader); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
 			return
 		}

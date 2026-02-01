@@ -9,7 +9,7 @@ copy:
 		$(ROOPATH)/examples/_keys/priv_node2.key \
 		./node2_hlf/hlk.key
 	mkdir ./node2_hlf/hls-filesharer.stg | true
-	cp $(ROOPATH)/examples/filesharer/_storage/* ./node2_hlf/hls-filesharer.stg
+	cp -r $(ROOPATH)/examples/filesharer/_storage/* ./node2_hlf/hls-filesharer.stg
 run:
 	docker-compose build
 	docker-compose up

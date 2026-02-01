@@ -40,4 +40,11 @@ func TestMessage(t *testing.T) {
 	if loadMsg2.GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("timestamp is invalid")
 	}
+
+	if _, err := LoadMessage(1); err == nil {
+		t.Fatal("success load invalid type")
+	}
+	if _, err := LoadMessage([]byte{1}); err == nil {
+		t.Fatal("success load invalid json")
+	}
 }
