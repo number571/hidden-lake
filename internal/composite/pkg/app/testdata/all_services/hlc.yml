@@ -1,0 +1,12 @@
+logging:
+- info
+- warn
+- erro
+applications:
+- hlk
+- hla-tcp
+- hla-http
+- hls-pinger
+- hls-messenger
+- hls-filesharer
+- hls-remoter

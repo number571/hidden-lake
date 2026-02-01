@@ -81,6 +81,9 @@ func TestApp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if _, err := config.BuildConfig(tcPathConfigHLC, &config.SConfig{FApplications: []string{"test"}}); err == nil {
+		t.Fatal("success build with alredy exists config")
+	}
 
 	app := NewApp(cfg, []types.IRunner{&tsRunner{}})
 
@@ -126,5 +129,13 @@ func TestInitApp(t *testing.T) {
 
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Fatal(err)
+	}
+
+	if _, err := InitApp([]string{"--path", tcTestdataPath + "/all_services"}, tgFlags); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := InitApp([]string{"--path", tcTestdataPath + "/failed"}, tgFlags); err == nil {
+		t.Fatal("success init app with failed configs")
 	}
 }

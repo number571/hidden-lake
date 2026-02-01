@@ -83,7 +83,7 @@ func testIncorrectConfig(configFile string) error {
 		return errors.New("success load config on non exist file") // nolint: err113
 	}
 
-	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
+	if err := os.WriteFile(configFile, []byte("abc"), 0600); err != nil {
 		return err
 	}
 

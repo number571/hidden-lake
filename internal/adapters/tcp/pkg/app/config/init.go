@@ -59,7 +59,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 
 	cfg.FConnections = network.FConnections.GetByScheme(hla_settings.CAppAdapterName)
 
-	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
+	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)
 	}
 

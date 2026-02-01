@@ -10,7 +10,7 @@ import (
 func GetPrivKey(pKeyPath string) (asymmetric.IPrivKey, error) {
 	if _, err := os.Stat(pKeyPath); os.IsNotExist(err) {
 		privKey := asymmetric.NewPrivKey()
-		if err := os.WriteFile(pKeyPath, []byte(privKey.ToString()), 0o600); err != nil {
+		if err := os.WriteFile(pKeyPath, []byte(privKey.ToString()), 0600); err != nil {
 			return nil, errors.Join(ErrWritePrivateKey, err)
 		}
 		return privKey, nil

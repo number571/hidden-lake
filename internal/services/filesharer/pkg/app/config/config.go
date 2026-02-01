@@ -44,7 +44,7 @@ func BuildConfig(pFilepath string, pCfg *SConfig) (IConfig, error) {
 		return nil, errors.Join(ErrInitConfig, err)
 	}
 
-	if err := os.WriteFile(pFilepath, encoding.SerializeYAML(pCfg), 0o600); err != nil {
+	if err := os.WriteFile(pFilepath, encoding.SerializeYAML(pCfg), 0600); err != nil {
 		return nil, errors.Join(ErrWriteConfig, err)
 	}
 

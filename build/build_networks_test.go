@@ -28,6 +28,18 @@ func TestHiddenLakeNetworks(t *testing.T) {
 		t.Fatal("success validate with invalid connections (2)")
 	}
 
+	network.FConnections = []string{"http://127.0.0.1"}
+	if err := network.validate(); err != nil {
+		t.Fatal(err)
+	}
+
+	if len(network.FConnections.GetByScheme("tcp")) != 0 {
+		t.Fatal("len tcp connections != 0")
+	}
+	if len(network.FConnections.GetByScheme("http")) != 1 {
+		t.Fatal("len http connections != 1")
+	}
+
 	network, ok := gNetworks[CDefaultNetwork]
 	if !ok {
 		t.Fatal("not found network _test_network_")

@@ -64,6 +64,12 @@ func TestInitApp(t *testing.T) {
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := InitApp([]string{"--path", tcTestdataPath + "/failed/1"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid config")
+	}
+	if _, err := InitApp([]string{"--path", tcTestdataPath + "/failed/2"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid priv key")
+	}
 }
 
 func TestApp(t *testing.T) {
@@ -87,6 +93,9 @@ func TestApp(t *testing.T) {
 		},
 		FFriends: map[string]string{
 			"Alice": asymmetric.NewPrivKey().GetPubKey().ToString(),
+		},
+		FEndpoints: []string{
+			"127.0.0.1:9522",
 		},
 	})
 	if err != nil {

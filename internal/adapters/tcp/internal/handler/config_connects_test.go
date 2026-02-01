@@ -43,6 +43,9 @@ func TestHandleConfigConnectsAPI(t *testing.T) {
 	if err := configConnectsRequestAddConnection(handler, http.StatusOK); err != nil {
 		t.Fatal(err)
 	}
+	if err := configConnectsRequestAddConnection(handler, http.StatusOK); err != nil { // if conn exists
+		t.Fatal(err)
+	}
 	if err := configConnectsRequestDelConnection(handler, http.StatusOK); err != nil {
 		t.Fatal(err)
 	}
@@ -229,6 +232,7 @@ func (p *tsNetworkNode) GetCacheSetter() cache.ICacheSetter { return nil }
 func (p *tsNetworkNode) GetConnections() map[string]conn.IConn {
 	return map[string]conn.IConn{
 		"127.0.0.1:9999": nil,
+		"127.0.0.1:8888": nil,
 	}
 }
 func (p *tsNetworkNode) AddConnection(context.Context, string) error {

@@ -78,7 +78,7 @@ func testNewConfigString() string {
 }
 
 func testConfigDefaultInit(configPath string) {
-	_ = os.WriteFile(configPath, []byte(testNewConfigString()), 0o600)
+	_ = os.WriteFile(configPath, []byte(testNewConfigString()), 0600)
 }
 
 func TestError(t *testing.T) {
@@ -108,6 +108,9 @@ func TestBuildConfig(t *testing.T) {
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err == nil {
+		t.Fatal("success with already exist config")
+	}
 	defer func() { _ = os.Remove(config2File) }()
 
 	if _, err := BuildConfig(config2File, cfg.(*SConfig)); err == nil {
@@ -120,7 +123,7 @@ func testIncorrectConfig(configFile string) error {
 		return errors.New("success load config on non exist file") // nolint: err113
 	}
 
-	if err := os.WriteFile(configFile, []byte("abc"), 0o600); err != nil {
+	if err := os.WriteFile(configFile, []byte("abc"), 0600); err != nil {
 		return err
 	}
 
@@ -129,12 +132,12 @@ func testIncorrectConfig(configFile string) error {
 	}
 
 	cfg1Bytes := []byte(strings.ReplaceAll(testNewConfigString(), "settings", "settings_v2"))
-	if err := os.WriteFile(configFile, cfg1Bytes, 0o600); err != nil {
+	if err := os.WriteFile(configFile, cfg1Bytes, 0600); err != nil {
 		return err
 	}
 
 	cfg2Bytes := []byte(strings.ReplaceAll(testNewConfigString(), "erro", "erro_v2"))
-	if err := os.WriteFile(configFile, cfg2Bytes, 0o600); err != nil {
+	if err := os.WriteFile(configFile, cfg2Bytes, 0600); err != nil {
 		return err
 	}
 

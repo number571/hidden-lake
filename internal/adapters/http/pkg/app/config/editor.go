@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/internal/utils/slices"
 )
 
 var (
@@ -41,8 +42,8 @@ func (p *sEditor) UpdateConnections(pConns []string) error {
 	}
 
 	cfg := icfg.(*SConfig)
-	cfg.FConnections = deleteDuplicateStrings(pConns)
-	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
+	cfg.FConnections = slices.DeleteDuplicates(pConns)
+	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return errors.Join(ErrWriteConfig, err)
 	}
 
@@ -51,17 +52,4 @@ func (p *sEditor) UpdateConnections(pConns []string) error {
 
 	p.fConfig.FConnections = cfg.FConnections
 	return nil
-}
-
-func deleteDuplicateStrings(pStrs []string) []string {
-	result := make([]string, 0, len(pStrs))
-	mapping := make(map[string]struct{}, len(pStrs))
-	for _, s := range pStrs {
-		if _, ok := mapping[s]; ok {
-			continue
-		}
-		mapping[s] = struct{}{}
-		result = append(result, s)
-	}
-	return result
 }

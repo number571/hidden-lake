@@ -48,7 +48,7 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	cfg := icfg.(*SConfig)
 	cfg.fFriends = pFriends
 	cfg.FFriends = pubKeysToStrings(pFriends)
-	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0o600); err != nil {
+	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return errors.Join(ErrWriteConfig, err)
 	}
 
@@ -79,16 +79,3 @@ func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
 	}
 	return false
 }
-
-// func deleteDuplicateStrings(pStrs []string) []string {
-// 	result := make([]string, 0, len(pStrs))
-// 	mapping := make(map[string]struct{}, len(pStrs))
-// 	for _, s := range pStrs {
-// 		if _, ok := mapping[s]; ok {
-// 			continue
-// 		}
-// 		mapping[s] = struct{}{}
-// 		result = append(result, s)
-// 	}
-// 	return result
-// }

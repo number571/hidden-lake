@@ -3,6 +3,7 @@ package environment
 import (
 	"testing"
 
+	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 )
 
@@ -55,4 +56,14 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 	if !ok || testNetwork.FMessageSizeBytes != 4097 {
 		t.Fatal("networks are rewrites success with not found path")
 	}
+}
+
+func TestLogLoadedBuildFiles(t *testing.T) {
+	t.Parallel()
+
+	logger := logger.NewLogger(
+		logger.NewSettings(&logger.SSettings{}),
+		func(ia logger.ILogArg) string { return "" },
+	)
+	LogLoadedBuildFiles("", logger, [2]bool{true, false})
 }

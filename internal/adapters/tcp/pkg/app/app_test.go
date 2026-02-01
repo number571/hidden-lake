@@ -10,7 +10,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/network"
+	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/payload"
+	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
@@ -63,6 +66,10 @@ func TestInitApp(t *testing.T) {
 	app, err := InitApp([]string{"--path", tcPathConfig}, tgFlags)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if _, err := InitApp([]string{"--path", tcPathConfig + "/failed"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid config")
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -138,14 +145,16 @@ func TestApp(t *testing.T) {
 		t.Fatal(err1)
 	}
 
+	layer1Settings := layer1.NewSettings(&layer1.SSettings{
+		FWorkSizeBits: 10,
+		FNetworkKey:   "_",
+	})
+
 	msgBytes := []byte("hello, world!")
 	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...) //nolint:gosec
 	netMsg := layer1.NewMessage(
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
-			FSettings: layer1.NewSettings(&layer1.SSettings{
-				FWorkSizeBits: 10,
-				FNetworkKey:   "_",
-			}),
+			FSettings: layer1Settings,
 		}),
 		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
 	)
@@ -153,6 +162,34 @@ func TestApp(t *testing.T) {
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {
 		t.Fatal(err)
 	}
+
+	netNode := network.NewNode(
+		network.NewSettings(&network.SSettings{
+			FConnSettings: conn.NewSettings(&conn.SSettings{
+				FLimitMessageSizeBytes: 8192,
+				FWaitReadTimeout:       time.Second,
+				FDialTimeout:           time.Second,
+				FReadTimeout:           time.Second,
+				FWriteTimeout:          time.Second,
+				FMessageSettings:       layer1Settings,
+			}),
+			FAddress:      "",
+			FMaxConnects:  1,
+			FReadTimeout:  time.Second,
+			FWriteTimeout: time.Second,
+		}),
+		cache.NewLRUCache(128),
+	)
+
+	if err := netNode.AddConnection(ctx, testutils.TgAddrs[20]); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := netNode.BroadcastMessage(ctx, netMsg); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	// try twice running
 	go func() {

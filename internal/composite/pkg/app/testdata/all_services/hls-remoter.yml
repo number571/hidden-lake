@@ -1,0 +1,7 @@
+settings:
+  password: kiyl_NEalPWPSGL5Y8PdENO6TPEXZ6Uz
+logging:
+- info
+- warn
+- erro
+connection: 127.0.0.1:9572

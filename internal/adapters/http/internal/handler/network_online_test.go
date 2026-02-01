@@ -114,8 +114,7 @@ func networkOnlineRequestDelConnection(handler http.HandlerFunc, code int) error
 	return nil
 }
 
-type tsHTTPAdapter struct {
-}
+type tsHTTPAdapter struct{}
 
 func (p *tsHTTPAdapter) Run(context.Context) error                        { return nil }
 func (p *tsHTTPAdapter) Produce(context.Context, layer1.IMessage) error   { return nil }
@@ -125,4 +124,6 @@ func (p *tsHTTPAdapter) WithLogger(string, logger.ILogger) hla_http.IHTTPAdapter
 	return p
 }
 func (p *tsHTTPAdapter) WithHandlers(map[string]http.HandlerFunc) hla_http.IHTTPAdapter { return p }
-func (p *tsHTTPAdapter) GetOnlines() []string                                           { return nil }
+func (p *tsHTTPAdapter) GetOnlines() []string {
+	return []string{"127.0.0.1", "127.0.0.2"}
+}
