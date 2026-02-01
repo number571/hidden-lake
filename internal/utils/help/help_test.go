@@ -33,6 +33,30 @@ func ExamplePrintln() {
 	// [ -n, --network ] = set network key of connections from build
 }
 
+func TestPanicToFormatAppName(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("nothing panics")
+		}
+	}()
+
+	toFormatAppName("a=b=c")
+}
+
+func TestPanicToShortAppName(t *testing.T) {
+	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("nothing panics")
+		}
+	}()
+
+	toShortAppName("a=b=c")
+}
+
 func TestToFormatAppName(t *testing.T) {
 	formatName := toFormatAppName("hidden-lake-kernel")
 	if formatName != "Hidden Lake Kernel" {

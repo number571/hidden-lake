@@ -19,6 +19,9 @@ func TestVoidKVDatabase(t *testing.T) {
 	if !errors.Is(err, database.ErrNotFound) {
 		t.Fatal("got unsupported error")
 	}
+	if err := db.Del([]byte("aaa")); err != nil {
+		t.Fatal(err)
+	}
 	if err := db.Close(); err != nil {
 		t.Fatal(err)
 	}

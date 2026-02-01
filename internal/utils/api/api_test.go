@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -45,6 +46,14 @@ func TestError(t *testing.T) {
 	err := &SError{str}
 	if err.Error() != errPrefix+str {
 		t.Fatal("incorrect err.Error()")
+	}
+}
+
+func TestResponseWithReader(t *testing.T) {
+	t.Parallel()
+
+	if err := ResponseWithReader(&tsResponseWriter{}, 200, bytes.NewBuffer([]byte{123})); err == nil {
+		t.Fatal("success response with invalid response writer")
 	}
 }
 
@@ -131,8 +140,9 @@ func TestRequestResponseAPI(t *testing.T) {
 		t.Fatal("POST1: got message is invalid")
 	}
 
-	// string
-	respPOST2, err := Request(context.Background(), client, http.MethodPost, testURL, tcMessage)
+	// with reader
+	ctx := context.Background()
+	respPOST2, err := RequestWithReader(ctx, client, http.MethodPost, testURL, bytes.NewReader([]byte(tcMessage)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,14 +151,38 @@ func TestRequestResponseAPI(t *testing.T) {
 		t.Fatal("POST2: got message is invalid")
 	}
 
+	// with writer
+	sb := &strings.Builder{}
+	if _, err := RequestWithWriter(sb, ctx, client, http.MethodPost, testURL, []byte(tcMessage)); err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal([]byte(sb.String()), bytes.Join([][]byte{[]byte("echo"), []byte(tcMessage)}, []byte{1})) {
+		t.Fatal("POST2: got message is invalid")
+	}
+
+	if !bytes.Equal(respPOST2, bytes.Join([][]byte{[]byte("echo"), []byte(tcMessage)}, []byte{1})) {
+		t.Fatal("POST2: got message is invalid")
+	}
+
+	// string
+	respPOST3, err := Request(context.Background(), client, http.MethodPost, testURL, tcMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(respPOST3, bytes.Join([][]byte{[]byte("echo"), []byte(tcMessage)}, []byte{1})) {
+		t.Fatal("POST2: got message is invalid")
+	}
+
 	// struct
-	respPOST3, err := Request(context.Background(), client, http.MethodPost, testURL, tsRequest{FMessage: tcMessage})
+	respPOST4, err := Request(context.Background(), client, http.MethodPost, testURL, tsRequest{FMessage: tcMessage})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	msg := fmt.Sprintf(`{"message":"%s"}`, tcMessage)
-	if !bytes.Equal(respPOST3, bytes.Join([][]byte{[]byte("echo"), []byte(msg)}, []byte{1})) {
+	if !bytes.Equal(respPOST4, bytes.Join([][]byte{[]byte("echo"), []byte(msg)}, []byte{1})) {
 		t.Fatal("POST3: got message is invalid")
 	}
 }
