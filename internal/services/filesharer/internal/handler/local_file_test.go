@@ -41,6 +41,9 @@ func TestHandleLocalFileAPI(t *testing.T) {
 	if err := localFileRequestDeleteOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
+	if err := localFileRequestDeleteOK(handlerX); err == nil {
+		t.Fatal("success double delete file")
+	}
 	if err := localFileRequestInvalidMethod(handlerX); err != nil {
 		t.Fatal(err)
 	}
