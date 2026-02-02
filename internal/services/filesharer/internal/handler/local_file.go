@@ -32,8 +32,8 @@ func HandleLocalFileAPI(
 
 		queryParams := pR.URL.Query()
 		aliasName := queryParams.Get("friend")
-
 		fileName := filepath.Base(queryParams.Get("name"))
+
 		if fileName == "" || fileName != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
