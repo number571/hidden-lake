@@ -38,8 +38,17 @@ func testConfigDefaultInit(configPath string) {
 func TestConfig(t *testing.T) {
 	t.Parallel()
 
+	_ = os.Remove(tcConfigFile)
+	if _, err := LoadConfig(tcConfigFile); err == nil {
+		t.Fatal("success load config with not exist")
+	}
+
 	testConfigDefaultInit(tcConfigFile)
 	defer func() { _ = os.Remove(tcConfigFile) }()
+
+	if _, err := BuildConfig(tcConfigFile, &SConfig{}); err == nil {
+		t.Fatal("success build config with already exist")
+	}
 
 	cfg, err := LoadConfig(tcConfigFile)
 	if err != nil {

@@ -58,6 +58,7 @@ func TestApp(t *testing.T) {
 			FPageOffset: 10,
 		},
 		FAddress: &config.SAddress{
+			FInternal: testutils.TgAddrs[32],
 			FExternal: testutils.TgAddrs[29],
 		},
 		FConnection: "test_connection",
@@ -99,6 +100,33 @@ func TestApp(t *testing.T) {
 			t.Error(err)
 		}
 	}()
+	time.Sleep(100 * time.Millisecond)
+
+	cancel1()
+	_ = os.Remove(tcPathConfig)
+
+	cfg2, err := config.BuildConfig(tcPathConfig, &config.SConfig{
+		FSettings: &config.SConfigSettings{
+			FPageOffset: 10,
+		},
+		FAddress:    &config.SAddress{},
+		FConnection: "127.0.0.1:9999",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	app2 := NewApp(cfg2, ".")
+
+	ctx2, cancel2 := context.WithCancel(context.Background())
+	defer cancel2()
+
+	go func() {
+		if err := app2.Run(ctx2); err != nil && !errors.Is(err, context.Canceled) {
+			t.Error(err)
+		}
+	}()
+
 	time.Sleep(100 * time.Millisecond)
 }
 

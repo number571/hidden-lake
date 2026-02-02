@@ -90,13 +90,13 @@ func remoteListRequestInvalidPage(handler http.HandlerFunc) error {
 
 func remoteListRequestInvalidPersonal(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?page=0", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?page=0&personal=gjrid", nil)
 
 	handler(w, req)
 	res := w.Result()
 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusBadRequest {
 		return errors.New("bad status code") // nolint: err113
 	}
 
