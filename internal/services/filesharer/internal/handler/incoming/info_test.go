@@ -114,7 +114,7 @@ func incomingInfoRequestInvalidPersonal(handler http.HandlerFunc) error {
 
 func incomingInfoRequestInvalidFileName(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=&personal=qwefew", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=&personal", nil)
 
 	handler(w, req)
 	res := w.Result()

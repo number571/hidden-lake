@@ -45,15 +45,15 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		name := filepath.Base(queryParams.Get("name"))
-		if name != queryParams.Get("name") {
+		fileName := filepath.Base(queryParams.Get("name"))
+		if fileName != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
 		}
 
-		chunk, err := strconv.Atoi(queryParams.Get("chunk"))
-		if err != nil || chunk < 0 {
+		chunk, err := strconv.ParseUint(queryParams.Get("chunk"), 10, 64)
+		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("incorrect_chunk"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect chunk")
 			return
@@ -67,7 +67,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		fullPath := filepath.Join(stgPath, name)
+		fullPath := filepath.Join(stgPath, fileName)
 		stat, err := os.Stat(fullPath)
 		if os.IsNotExist(err) || stat.IsDir() {
 			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
@@ -83,7 +83,7 @@ func HandleIncomingLoadHTTP(
 		}
 
 		chunks := getChunksCount(uint64(stat.Size()), chunkSize) //nolint:gosec
-		if uint64(chunk) >= chunks {
+		if chunk >= chunks {
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusLengthRequired, "failed: chunk number")
 			return
@@ -108,7 +108,7 @@ func HandleIncomingLoadHTTP(
 		}
 
 		nR, err := file.Read(buf)
-		if err != nil || (uint64(chunk) != chunks-1 && uint64(nR) != chunkSize) { //nolint:gosec
+		if err != nil || (chunk != chunks-1 && uint64(nR) != chunkSize) { //nolint:gosec
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: chunk number")
 			return

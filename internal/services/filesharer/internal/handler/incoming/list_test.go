@@ -40,12 +40,18 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 	if err := incomingListRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
+	if err := incomingListRequestInvalidPersonal(handler); err != nil {
+		t.Fatal(err)
+	}
+	if err := incomingListRequestGetSharingStorage(handler); err != nil {
+		t.Fatal(err)
+	}
+	if err := incomingListRequestInvalidPage(handler); err != nil {
+		t.Fatal(err)
+	}
 
 	if err := incomingListRequestMethod(handler); err == nil {
 		t.Fatal("request success with invalid method")
-	}
-	if err := incomingListRequestPage(handler); err == nil {
-		t.Fatal("request success with invalid page")
 	}
 }
 
@@ -68,15 +74,53 @@ func incomingListRequestOK(handler http.HandlerFunc) error {
 	return nil
 }
 
-func incomingListRequestPage(handler http.HandlerFunc) error {
+func incomingListRequestGetSharingStorage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/list", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?page=0&personal", nil)
 
 	handler(w, req)
 	res := w.Result()
 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusForbidden {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingListRequestInvalidPersonal(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?personal=qwerty", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingListRequestInvalidPage(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?page=AAA", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
 		return errors.New("bad status code") // nolint: err113
 	}
 

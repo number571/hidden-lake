@@ -44,11 +44,15 @@ func HandleIncomingListHTTP(
 			return
 		}
 
-		page, err := strconv.Atoi(queryParams.Get("page"))
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
-			return
+		page := uint64(0)
+		if v, ok := queryParams["page"]; ok && len(v) > 0 {
+			var err error
+			page, err = strconv.ParseUint(v[0], 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
+				_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
+				return
+			}
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
@@ -70,7 +74,7 @@ func HandleIncomingListHTTP(
 			return
 		}
 
-		list, err := utils.GetFileInfoList(stgPath, uint64(page), pCfg.GetSettings().GetPageOffset()) //nolint:gosec
+		list, err := utils.GetFileInfoList(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")

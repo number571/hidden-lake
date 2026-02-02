@@ -3,6 +3,7 @@ package incoming
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -65,6 +66,52 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	if err := incomingLoadRequestOK(handlerx); err == nil {
 		t.Fatal("success request with failed get message size")
 	}
+
+	if err := incomingLoadRequestInvalidPersonal(handler); err != nil {
+		t.Fatal(err)
+	}
+	if err := incomingLoadRequestGetSharingStorage(handler); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func incomingLoadRequestGetSharingStorage(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&chunk=0&personal", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusForbidden {
+		fmt.Println(res.StatusCode)
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingLoadRequestInvalidPersonal(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?personal=qwerty", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func incomingLoadRequestBigChunk(handler http.HandlerFunc) error {
