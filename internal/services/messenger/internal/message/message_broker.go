@@ -6,6 +6,10 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
 
+const (
+	subscribeChanSize = 256
+)
+
 var (
 	_ IMessageBroker = &sMessageBroker{}
 )
@@ -18,7 +22,7 @@ type sMessageBroker struct {
 func NewMessageBroker() IMessageBroker {
 	return &sMessageBroker{
 		fMutex:       &sync.RWMutex{},
-		fSubscribers: make(map[string]chan IMessageContainer, 256),
+		fSubscribers: make(map[string]chan IMessageContainer, 512),
 	}
 }
 
@@ -31,8 +35,8 @@ func (p *sMessageBroker) Produce(pFriend string, pMessage dto.IMessage) {
 		select {
 		case ch <- c:
 		default:
-			delete(p.fSubscribers, id)
 			close(ch)
+			delete(p.fSubscribers, id)
 		}
 	}
 }
@@ -47,7 +51,7 @@ func (p *sMessageBroker) Consume(pID string) <-chan IMessageContainer {
 
 	ch, ok := p.fSubscribers[pID]
 	if !ok {
-		ch = make(chan IMessageContainer, 32)
+		ch = make(chan IMessageContainer, subscribeChanSize)
 		p.fSubscribers[pID] = ch
 	}
 

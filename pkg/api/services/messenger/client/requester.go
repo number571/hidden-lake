@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
 
 var (
@@ -74,7 +75,7 @@ func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return limit, nil
 }
 
-func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (string, error) {
+func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -83,9 +84,13 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 		pBody,
 	)
 	if err != nil {
-		return "", errors.Join(ErrBadRequest, err)
+		return time.Time{}, errors.Join(ErrBadRequest, err)
 	}
-	return string(rsp), nil
+	t, err := dto.ParseTimestamp(string(rsp))
+	if err != nil {
+		return time.Time{}, errors.Join(ErrDecodeResponse, err)
+	}
+	return t, nil
 }
 
 func (p *sRequester) CountMessages(pCtx context.Context, pFriend string) (uint64, error) {
@@ -106,7 +111,7 @@ func (p *sRequester) CountMessages(pCtx context.Context, pFriend string) (uint64
 	return count, nil
 }
 
-func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pStart uint64, pCount uint64, pDesc bool) ([]message.IMessage, error) {
+func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pStart uint64, pCount uint64, pDesc bool) ([]dto.IMessage, error) {
 	selectType := "asc"
 	if pDesc {
 		selectType = "desc"
@@ -121,18 +126,18 @@ func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pStart u
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	var msgs []*message.SMessage
+	var msgs []*dto.SMessage
 	if err := encoding.DeserializeJSON(res, &msgs); err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-	result := make([]message.IMessage, 0, len(msgs))
+	result := make([]dto.IMessage, 0, len(msgs))
 	for _, m := range msgs {
 		result = append(result, m)
 	}
 	return result, nil
 }
 
-func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid string) (message.IMessage, error) {
+func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid string) (dto.IMessage, error) {
 	for {
 		res, err := api.Request(
 			pCtx,
@@ -147,7 +152,7 @@ func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid strin
 		if len(res) == 0 {
 			continue
 		}
-		msg := &message.SMessage{}
+		msg := &dto.SMessage{}
 		if err := encoding.DeserializeJSON(res, msg); err != nil {
 			return nil, errors.Join(ErrDecodeResponse, err)
 		}

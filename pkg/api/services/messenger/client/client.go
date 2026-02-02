@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"time"
 
 	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
@@ -28,7 +29,7 @@ func (p *sClient) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return p.fRequester.GetMessageLimit(pCtx)
 }
 
-func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (string, error) {
+func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (time.Time, error) {
 	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
 }
 
