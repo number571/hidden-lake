@@ -11,6 +11,8 @@ func TestMessageBroker(t *testing.T) {
 	t.Parallel()
 
 	msgBroker := NewMessageBroker()
+
+	_ = msgBroker.Consume("consumer_id")
 	msgChan := msgBroker.Consume("consumer_id")
 
 	friendName := "Alice"

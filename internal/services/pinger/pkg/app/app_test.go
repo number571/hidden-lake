@@ -52,8 +52,11 @@ func TestApp(t *testing.T) {
 
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
-		FSettings:   &config.SConfigSettings{},
-		FAddress:    &config.SAddress{},
+		FSettings: &config.SConfigSettings{},
+		FAddress: &config.SAddress{
+			FInternal: testutils.TgAddrs[25],
+			FExternal: testutils.TgAddrs[26],
+		},
 		FConnection: testutils.TgAddrs[39],
 	})
 	if err != nil {

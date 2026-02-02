@@ -60,7 +60,7 @@ func TestHandleChatMessageAPI(t *testing.T) {
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false))
+	handlerB := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, false))
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}

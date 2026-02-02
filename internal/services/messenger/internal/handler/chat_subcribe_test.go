@@ -46,6 +46,17 @@ func TestHandleChatSubscribeAPI(t *testing.T) {
 	if err := chatSubscribeRequestInvalidMethod(handlerX); err != nil {
 		t.Fatal(err)
 	}
+
+	// used for check got message from another friend
+	msgBroker.Produce("qwerty", msg)
+
+	chCtx, cancel := context.WithTimeout(ctx, 200*time.Millisecond)
+	defer cancel()
+
+	handlerY := HandleChatSubscribeAPI(chCtx, httpLogger, msgBroker)
+	if err := chatSubscribeRequestNoContent(handlerY); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessage) error {
@@ -71,6 +82,21 @@ func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessage) erro
 	}
 	if msg.ToString() != msgSend.ToString() {
 		return errors.New("invalid message") // nolint: err113
+	}
+
+	return nil
+}
+
+func chatSubscribeRequestNoContent(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusNoContent {
+		return errors.New("bad status code") // nolint: err113
 	}
 
 	return nil

@@ -5,6 +5,16 @@ import (
 	"time"
 )
 
+func TestError(t *testing.T) {
+	t.Parallel()
+
+	str := "value"
+	err := &SError{str}
+	if err.Error() != errPrefix+str {
+		t.Fatal("incorrect err.Error()")
+	}
+}
+
 func TestMessage(t *testing.T) {
 	t.Parallel()
 
@@ -27,6 +37,14 @@ func TestMessage(t *testing.T) {
 		t.Fatal("timestamp is invalid")
 	}
 
+	y, err := ParseTimestamp(timeNow.Format(time.DateTime))
+	if err != nil {
+		panic(err)
+	}
+	if x, err := ParseTimestamp(loadMsg.GetTimestamp()); err != nil || !x.Equal(y) {
+		t.Fatal("parse message timestamp")
+	}
+
 	loadMsg2, err := LoadMessage(msg.ToString())
 	if err != nil {
 		t.Fatal(err)
@@ -39,6 +57,9 @@ func TestMessage(t *testing.T) {
 	}
 	if loadMsg2.GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("timestamp is invalid")
+	}
+	if x, err := ParseTimestamp(loadMsg2.GetTimestamp()); err != nil || !x.Equal(y) {
+		t.Fatal("parse message timestamp")
 	}
 
 	if _, err := LoadMessage(1); err == nil {
