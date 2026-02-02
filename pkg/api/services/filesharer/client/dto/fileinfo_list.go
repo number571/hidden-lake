@@ -20,9 +20,6 @@ func LoadFileInfoList(pData interface{}) (IFileInfoList, error) {
 		fileInfoListBytes = x
 	case string:
 		fileInfoListBytes = []byte(x)
-	case IFileInfo:
-		info := &sFileInfo{FName: x.GetName(), FHash: x.GetHash(), FSize: x.GetSize()}
-		return sFileInfoList{info}, nil
 	case []IFileInfo:
 		list := make(sFileInfoList, 0, len(x))
 		for _, f := range x {

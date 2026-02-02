@@ -33,9 +33,6 @@ func TestFileInfoList(t *testing.T) {
 		}
 	}
 
-	if _, err := LoadFileInfoList(f1); err != nil {
-		t.Fatal(err)
-	}
 	if _, err := LoadFileInfoList(fileInfoList.ToBytes()); err != nil {
 		t.Fatal(err)
 	}
