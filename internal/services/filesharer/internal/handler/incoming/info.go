@@ -43,7 +43,7 @@ func HandleIncomingInfoHTTP(
 		}
 
 		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName != queryParams.Get("name") {
+		if fileName == "" || fileName != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
@@ -69,6 +69,12 @@ func HandleIncomingInfoHTTP(
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("get_file_info"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
+			return
+		}
+
+		if info.GetName() != fileName {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
 			return
 		}
 

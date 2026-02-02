@@ -8,7 +8,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -19,7 +18,6 @@ import (
 
 func HandleRemoteListAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
@@ -33,11 +31,16 @@ func HandleRemoteListAPI(
 		}
 
 		queryParams := pR.URL.Query()
-		page, err := strconv.ParseUint(queryParams.Get("page"), 10, 64)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_page"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse page")
-			return
+
+		page := uint64(0)
+		if v, ok := queryParams["page"]; ok && len(v) > 0 {
+			var err error
+			page, err = strconv.ParseUint(v[0], 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
+				_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
+				return
+			}
 		}
 
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")

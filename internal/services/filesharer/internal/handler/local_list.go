@@ -33,11 +33,15 @@ func HandleLocalListAPI(
 		queryParams := pR.URL.Query()
 		aliasName := queryParams.Get("friend")
 
-		page, err := strconv.Atoi(queryParams.Get("page"))
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
-			return
+		page := uint64(0)
+		if v, ok := queryParams["page"]; ok && len(v) > 0 {
+			var err error
+			page, err = strconv.ParseUint(v[0], 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
+				_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
+				return
+			}
 		}
 
 		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, aliasName != "")
@@ -47,7 +51,7 @@ func HandleLocalListAPI(
 			return
 		}
 
-		list, err := utils.GetListFileInfo(stgPath, uint64(page), pConfig.GetSettings().GetPageOffset()) //nolint:gosec
+		list, err := utils.GetFileInfoList(stgPath, page, pConfig.GetSettings().GetPageOffset())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")

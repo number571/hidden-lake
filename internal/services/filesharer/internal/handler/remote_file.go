@@ -36,6 +36,8 @@ func HandleRemoteFileAPI(
 		}
 
 		queryParams := pR.URL.Query()
+
+		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
@@ -45,7 +47,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		req := newFileInfoRequest(queryParams.Get("name"), isPersonal)
+		req := newFileInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -66,15 +68,22 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		if info.GetName() != fileName {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			return
+		}
+
 		fileHash := info.GetHash()
 		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
 
-		if ok := downloadProcessesMap.Exist(fileHash); ok {
+		if ok := downloadProcessesMap.TryLock(fileHash); !ok {
 			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusAccepted, "process: download")
 			return
 		}
+		defer downloadProcessesMap.Unlock(fileHash)
 
 		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
 		if err != nil {
@@ -104,9 +113,6 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		downloadProcessesMap.Set(fileHash)
-		defer downloadProcessesMap.Del(fileHash)
-
 		pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeN)
 		if err := api.ResponseWithReader(pW, http.StatusOK, streamReader); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
@@ -119,34 +125,41 @@ func HandleRemoteFileAPI(
 
 type downloadProcessesMap struct {
 	fMutex *sync.RWMutex
-	fMap   map[string]struct{}
+	fMap   map[string]*sync.Mutex
 }
 
 func newDownloadProcessesMap() *downloadProcessesMap {
 	return &downloadProcessesMap{
 		fMutex: &sync.RWMutex{},
-		fMap:   make(map[string]struct{}, 256),
+		fMap:   make(map[string]*sync.Mutex, 256),
 	}
 }
 
-func (p *downloadProcessesMap) Set(k string) {
+func (p *downloadProcessesMap) Unlock(k string) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	p.fMap[k] = struct{}{}
-}
+	mtx, ok := p.fMap[k]
+	if !ok {
+		panic("unlock mutex without lock")
+	}
 
-func (p *downloadProcessesMap) Del(k string) {
-	p.fMutex.Lock()
-	defer p.fMutex.Unlock()
-
+	mtx.Unlock()
 	delete(p.fMap, k)
 }
 
-func (p *downloadProcessesMap) Exist(k string) bool {
-	p.fMutex.RLock()
-	defer p.fMutex.RUnlock()
+func (p *downloadProcessesMap) TryLock(k string) bool {
+	p.fMutex.Lock()
+	defer p.fMutex.Unlock()
 
 	_, ok := p.fMap[k]
-	return ok
+	if ok {
+		return false
+	}
+
+	mtx := &sync.Mutex{}
+	p.fMap[k] = mtx
+	mtx.Lock()
+
+	return true
 }

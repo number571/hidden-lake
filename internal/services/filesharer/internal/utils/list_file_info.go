@@ -8,7 +8,7 @@ import (
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
-func GetListFileInfo(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IFileInfoList, error) {
+func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IFileInfoList, error) {
 	fileReader := pOffset
 
 	entries, err := os.ReadDir(pStgPath)

@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -17,7 +17,6 @@ import (
 
 func HandleLocalFileInfoAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
 	pPathTo string,
@@ -35,9 +34,9 @@ func HandleLocalFileInfoAPI(
 		aliasName := queryParams.Get("friend")
 
 		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName != queryParams.Get("name") {
-			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
+		if fileName == "" || fileName != queryParams.Get("name") {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
 			return
 		}
 
@@ -48,10 +47,24 @@ func HandleLocalFileInfoAPI(
 			return
 		}
 
-		info, err := fileinfo.NewFileInfo(filepath.Join(stgPath, fileName))
+		fullPath := filepath.Join(stgPath, fileName)
+		stat, err := os.Stat(fullPath)
+		if os.IsNotExist(err) || stat.IsDir() {
+			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+			_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+			return
+		}
+
+		info, err := fileinfo.NewFileInfo(fullPath)
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			pLogger.PushErro(logBuilder.WithMessage("not_found"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: not found")
+			return
+		}
+
+		if info.GetName() != fileName {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
 			return
 		}
 

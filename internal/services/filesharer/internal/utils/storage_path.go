@@ -59,5 +59,6 @@ func getStoragePath(
 	if err != nil {
 		return "", err
 	}
+
 	return filepath.Join(directPath, fPubKey.GetHasher().ToString()), nil
 }

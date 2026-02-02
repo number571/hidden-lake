@@ -48,7 +48,7 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleRemoteFileInfoPath,
-		handler.HandleRemoteFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		handler.HandleRemoteFileInfoAPI(pCtx, p.fHTTPLogger, pHlkClient),
 	) // GET
 
 	mux.HandleFunc(
@@ -58,7 +58,7 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleRemoteListPath,
-		handler.HandleRemoteListAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+		handler.HandleRemoteListAPI(pCtx, p.fHTTPLogger, pHlkClient),
 	) // GET
 
 	mux.HandleFunc(
@@ -68,12 +68,12 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleLocalFilePath,
-		handler.HandleLocalFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		handler.HandleLocalFileAPI(pCtx, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleLocalFileInfoPath,
-		handler.HandleLocalFileInfoAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
+		handler.HandleLocalFileInfoAPI(pCtx, p.fHTTPLogger, pHlkClient, p.fPathTo),
 	) // GET
 
 	p.fIntServiceHTTP = &http.Server{ // nolint: gosec

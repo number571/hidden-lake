@@ -35,7 +35,7 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	handler := HandleIncomingListHTTP(ctx, httpLogger, config, "./testdata", newTsHLSClient(true, true))
+	handler := HandleIncomingListHTTP(ctx, httpLogger, config, "./testdata", newTsHLSClient(true))
 
 	if err := incomingListRequestOK(handler); err != nil {
 		t.Fatal(err)

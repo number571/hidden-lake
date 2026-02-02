@@ -34,7 +34,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 
 	ctx := context.Background()
 
-	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, true))
+	handler := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true))
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 		t.Fatal("request success with big chunk number")
 	}
 
-	handlerx := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(true, false))
+	handlerx := HandleIncomingLoadHTTP(ctx, httpLogger, "./testdata", newTsHLSClient(false))
 	if err := incomingLoadRequestOK(handlerx); err == nil {
 		t.Fatal("success request with failed get message size")
 	}
@@ -204,22 +204,20 @@ var (
 )
 
 type tsHLSClient struct {
-	fFetchOK bool
-	fWithOK  bool
-	fPrivKey asymmetric.IPrivKey
+	fSettingsOK bool
+	fPrivKey    asymmetric.IPrivKey
 }
 
-func newTsHLSClient(pFetchOK, pWithOK bool) *tsHLSClient {
+func newTsHLSClient(pSettingsOK bool) *tsHLSClient {
 	return &tsHLSClient{
-		fFetchOK: pFetchOK,
-		fWithOK:  pWithOK,
-		fPrivKey: asymmetric.NewPrivKey(),
+		fSettingsOK: pSettingsOK,
+		fPrivKey:    asymmetric.NewPrivKey(),
 	}
 }
 
 func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
-	if !p.fWithOK {
+	if !p.fSettingsOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	return &hls_config.SConfigSettings{
@@ -254,9 +252,6 @@ func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) err
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	if !p.fFetchOK {
-		return nil, errors.New("some error") // nolint: err113
-	}
 	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"file.txt","size":500,"hash":"114a856f792c4c292599dba6fa41adba45ef4f851b1d17707e2729651968ff64be375af9cff6f9547b878d5c73c16a11"}]`))
 	return resp.Build(), nil
 }

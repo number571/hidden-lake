@@ -9,7 +9,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -18,7 +17,6 @@ import (
 
 func HandleLocalFileAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
 	pPathTo string,
@@ -36,7 +34,7 @@ func HandleLocalFileAPI(
 		aliasName := queryParams.Get("friend")
 
 		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName != queryParams.Get("name") {
+		if fileName == "" || fileName != queryParams.Get("name") {
 			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
@@ -56,7 +54,7 @@ func HandleLocalFileAPI(
 			file, err := os.Open(fullPath) // nolint: gosec
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("read_file"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
+				_ = api.Response(pW, http.StatusNotFound, "failed: read file")
 				return
 			}
 			defer func() { _ = file.Close() }()

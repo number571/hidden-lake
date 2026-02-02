@@ -8,7 +8,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -19,10 +18,8 @@ import (
 
 func HandleRemoteFileInfoAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
-	pPathTo string,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
@@ -34,6 +31,8 @@ func HandleRemoteFileInfoAPI(
 		}
 
 		queryParams := pR.URL.Query()
+
+		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
@@ -43,7 +42,7 @@ func HandleRemoteFileInfoAPI(
 			return
 		}
 
-		req := newFileInfoRequest(queryParams.Get("name"), isPersonal)
+		req := newFileInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -61,6 +60,12 @@ func HandleRemoteFileInfoAPI(
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			return
+		}
+
+		if info.GetName() != fileName {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
 			return
 		}
 

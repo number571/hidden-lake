@@ -70,7 +70,7 @@ func HandleIncomingListHTTP(
 			return
 		}
 
-		list, err := utils.GetListFileInfo(stgPath, uint64(page), pCfg.GetSettings().GetPageOffset()) //nolint:gosec
+		list, err := utils.GetFileInfoList(stgPath, uint64(page), pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
