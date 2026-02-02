@@ -6,8 +6,6 @@
 
 The `Hidden Lake Service (Filesharer)` is a file sharing service based on the anonymous network core (HLK) with theoretically provable anonymity. A feature of this file sharing service is the anonymity of the fact of transactions (file downloads), taking into account the existence of a global observer.
 
-HLS=filesharer is an application that implements a graphical user interface (GUI) on a browser-based HTML/CSS/JS display. Most of the code is based on the bootstrap library https://getbootstrap.com/. GUI is adapted to the size of the window, so it can be used both in a desktop and in a smartphone.
-
 > More information about HLS=filesharer in the [habr.com/ru/articles/789968](https://habr.com/ru/articles/789968/ "Habr HLS=filesharer")
 
 ## Installation
