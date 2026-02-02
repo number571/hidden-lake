@@ -39,4 +39,11 @@ func TestFileInfoList(t *testing.T) {
 	if _, err := LoadFileInfoList(fileInfoList.ToString()); err != nil {
 		t.Fatal(err)
 	}
+
+	if _, err := LoadFileInfoList(111); err == nil {
+		t.Fatal("success load file info with invalid type")
+	}
+	if _, err := LoadFileInfoList(`["name":"xxx.txt","size":10,"hash":"123"]`); err == nil {
+		t.Fatal("success load file info with invalid hash")
+	}
 }

@@ -40,23 +40,26 @@ func TestError(t *testing.T) {
 	}
 }
 
-func testDeleteFiles(prefixPath string) {
-	_ = os.RemoveAll(prefixPath + tcPathConfig)
+func testDeleteFiles(pathConfig string) {
+	_ = os.RemoveAll(pathConfig)
 }
 
 func TestApp(t *testing.T) {
 	t.Parallel()
 
-	testDeleteFiles("./")
-	defer testDeleteFiles("./")
+	testDeleteFiles(tcPathConfig)
+	defer testDeleteFiles(tcPathConfig)
 
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
 		FSettings: &config.SConfigSettings{
 			FPassword: "test_password",
 		},
-		FAddress:    &config.SAddress{},
-		FConnection: testutils.TgAddrs[35],
+		FAddress: &config.SAddress{
+			FInternal: testutils.TgAddrs[30],
+			FExternal: testutils.TgAddrs[31],
+		},
+		FConnection: "127.0.0.1:9999",
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -95,6 +98,33 @@ func TestApp(t *testing.T) {
 			t.Error(err)
 		}
 	}()
+	time.Sleep(100 * time.Millisecond)
+
+	cancel1()
+	_ = os.Remove(tcPathConfig)
+
+	cfg2, err := config.BuildConfig(tcPathConfig, &config.SConfig{
+		FSettings: &config.SConfigSettings{
+			FPassword: "test_password",
+		},
+		FAddress:    &config.SAddress{},
+		FConnection: "127.0.0.1:9999",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	app2 := NewApp(cfg2)
+
+	ctx2, cancel2 := context.WithCancel(context.Background())
+	defer cancel2()
+
+	go func() {
+		if err := app2.Run(ctx2); err != nil && !errors.Is(err, context.Canceled) {
+			t.Error(err)
+		}
+	}()
+
 	time.Sleep(100 * time.Millisecond)
 }
 
