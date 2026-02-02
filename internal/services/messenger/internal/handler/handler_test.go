@@ -37,7 +37,7 @@ func TestHandler(t *testing.T) {
 	)
 
 	msgBroker := message.NewMessageBroker()
-	server := initInternalServiceHTTP(
+	server := testInitInternalServiceHTTP(
 		ctx,
 		httpLogger,
 		&tsConfig{},
@@ -88,7 +88,7 @@ func TestHandler(t *testing.T) {
 	}
 }
 
-func initInternalServiceHTTP(
+func testInitInternalServiceHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

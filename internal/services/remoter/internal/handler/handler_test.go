@@ -32,7 +32,7 @@ func TestHandler(t *testing.T) {
 		},
 	)
 
-	server := initInternalServiceHTTP(ctx, httpLogger, newTsHLKClient(0), testutils.TgAddrs[23])
+	server := testInitInternalServiceHTTP(ctx, httpLogger, newTsHLKClient(0), testutils.TgAddrs[23])
 	defer func() { _ = server.Close() }()
 
 	go func() { _ = server.ListenAndServe() }()
@@ -54,7 +54,7 @@ func TestHandler(t *testing.T) {
 	}
 }
 
-func initInternalServiceHTTP(
+func testInitInternalServiceHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,

@@ -69,7 +69,7 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleLocalFilePath,
 		handler.HandleLocalFileAPI(pCtx, p.fHTTPLogger, pHlkClient, p.fPathTo),
-	) // GET
+	) // GET, POST, DELETE
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleLocalFileInfoPath,

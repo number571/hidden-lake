@@ -66,6 +66,7 @@ func HandleRemoteListAPI(
 
 		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
 		if err != nil {
+			fmt.Println(string(resp.GetBody()))
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
 			return

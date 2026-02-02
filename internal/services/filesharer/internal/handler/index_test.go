@@ -107,7 +107,52 @@ func indexAPIRequestOK(handler http.HandlerFunc) error {
 
 var (
 	_ hlk_client.IClient = &tsHLKClient{}
+	_ hlk_client.IClient = &tsHLKClientWrapper{}
 )
+
+type tsHLKClientWrapper struct {
+	fClient hlk_client.IClient
+}
+
+func (p *tsHLKClientWrapper) GetIndex(a context.Context) (string, error) {
+	return p.fClient.GetIndex(a)
+}
+func (p *tsHLKClientWrapper) GetSettings(a context.Context) (hlk_config.IConfigSettings, error) {
+	return p.fClient.GetSettings(a)
+}
+func (p *tsHLKClientWrapper) GetPubKey(a context.Context) (asymmetric.IPubKey, error) {
+	return p.fClient.GetPubKey(a)
+}
+func (p *tsHLKClientWrapper) GetOnlines(a context.Context) ([]string, error) {
+	return p.fClient.GetOnlines(a)
+}
+func (p *tsHLKClientWrapper) DelOnline(a context.Context, b string) error {
+	return p.fClient.DelOnline(a, b)
+}
+func (p *tsHLKClientWrapper) GetFriends(a context.Context) (map[string]asymmetric.IPubKey, error) {
+	return p.fClient.GetFriends(a)
+}
+func (p *tsHLKClientWrapper) AddFriend(a context.Context, b string, c asymmetric.IPubKey) error {
+	return p.fClient.AddFriend(a, b, c)
+}
+func (p *tsHLKClientWrapper) DelFriend(a context.Context, b string) error {
+	return p.fClient.DelFriend(a, b)
+}
+func (p *tsHLKClientWrapper) GetConnections(a context.Context) ([]string, error) {
+	return p.fClient.GetConnections(a)
+}
+func (p *tsHLKClientWrapper) AddConnection(a context.Context, b string) error {
+	return p.fClient.AddConnection(a, b)
+}
+func (p *tsHLKClientWrapper) DelConnection(a context.Context, b string) error {
+	return p.fClient.DelConnection(a, b)
+}
+func (p *tsHLKClientWrapper) SendRequest(a context.Context, b string, c request.IRequest) error {
+	return p.fClient.SendRequest(a, b, c)
+}
+func (p *tsHLKClientWrapper) FetchRequest(a context.Context, b string, c request.IRequest) (response.IResponse, error) {
+	return p.fClient.FetchRequest(a, b, c)
+}
 
 type tsHLKClient struct {
 	fFetchType  int
