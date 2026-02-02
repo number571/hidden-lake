@@ -42,7 +42,7 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_settings.CHandleCommandExecPath,
-		handler.HandleCommandExecAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient),
+		handler.HandleCommandExecAPI(pCtx, p.fHTTPLogger, pHlkClient),
 	) // POST
 
 	buildSettings := build.GetSettings()

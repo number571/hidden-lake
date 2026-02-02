@@ -13,7 +13,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
-	hls_client "github.com/number571/hidden-lake/pkg/api/services/pinger/client"
+	hls_client "github.com/number571/hidden-lake/pkg/api/services/remoter/client"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -22,14 +22,15 @@ func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
 	client := hls_client.NewClient(
+		hls_client.NewBuilder(""),
 		hls_client.NewRequester("", &http.Client{}),
 	)
 
 	if _, err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
-	if err := client.PingFriend(context.Background(), ""); err == nil {
-		t.Fatal("success incorrect pingFriend")
+	if _, err := client.ExecCommand(context.Background(), ""); err == nil {
+		t.Fatal("success incorrect execCommand")
 	}
 }
 
@@ -134,9 +135,6 @@ func (p *tsHLKClient) FetchRequest(context.Context, string, request.IRequest) (r
 		return resp.Build(), nil
 	case -1:
 		resp := response.NewResponseBuilder().WithCode(500).WithBody([]byte(`500`))
-		return resp.Build(), nil
-	case -2:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{1})
 		return resp.Build(), nil
 	}
 	panic("unknown fetch type")

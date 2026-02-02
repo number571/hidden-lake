@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/remoter/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -17,7 +16,6 @@ import (
 
 func HandleCommandExecAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
