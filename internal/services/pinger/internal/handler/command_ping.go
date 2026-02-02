@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/pinger/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
@@ -16,7 +15,6 @@ import (
 
 func HandleCommandPingAPI(
 	pCtx context.Context,
-	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {

@@ -199,9 +199,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 
 		filePath := gFlags.Get("-a").GetStringValue(pArgs)
-		fullPath := filepath.Join(inputPath, filePath)
-
-		file, err := os.Open(fullPath) // nolint: gosec
+		file, err := os.Open(filePath) // nolint: gosec
 		if err != nil {
 			return err
 		}
