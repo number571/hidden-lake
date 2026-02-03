@@ -63,8 +63,8 @@ func HandleLocalFileInfoAPI(
 		}
 
 		if info.GetName() != fileName {
-			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			pLogger.PushErro(logBuilder.WithMessage("invalid_filename"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid filename")
 			return
 		}
 

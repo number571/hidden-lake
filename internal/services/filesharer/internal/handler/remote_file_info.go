@@ -50,22 +50,22 @@ func HandleRemoteFileInfoAPI(
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
+		if code := resp.GetCode(); code != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		info, err := fileinfo.LoadFileInfo(resp.GetBody())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
 		if info.GetName() != fileName {
 			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			_ = api.Response(pW, http.StatusTeapot, "failed: invalid response")
 			return
 		}
 

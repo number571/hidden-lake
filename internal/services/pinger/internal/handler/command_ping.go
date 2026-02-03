@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -40,16 +41,16 @@ func HandleCommandPingAPI(
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
+		if code := resp.GetCode(); code != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		respBody := string(resp.GetBody())
 		if chars.HasNotGraphicCharacters(respBody) {
 			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			_ = api.Response(pW, http.StatusServiceUnavailable, "failed: invalid response")
 			return
 		}
 

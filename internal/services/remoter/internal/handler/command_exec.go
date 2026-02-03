@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -53,9 +54,9 @@ func HandleCommandExecAPI(
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
+		if code := resp.GetCode(); code != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 

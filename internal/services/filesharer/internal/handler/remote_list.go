@@ -58,17 +58,16 @@ func HandleRemoteListAPI(
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
+		if code := resp.GetCode(); code != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
 		if err != nil {
-			fmt.Println(string(resp.GetBody()))
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
