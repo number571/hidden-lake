@@ -143,6 +143,40 @@ func TestStreamReader(t *testing.T) {
 			t.Fatal("n != 1")
 		}
 	}
+
+	_ = os.Remove(inputPath + tempname)
+	stream4, err := BuildStreamReader(
+		context.Background(),
+		0,
+		inputPath,
+		"alias_name",
+		newTsHLSClient(3, fileBytes, 0),
+		newFileInfoFromBytes(filename, fileBytes),
+		false,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := stream4.Read(b); !errors.Is(err, ErrLoadFileChunk) {
+		t.Fatal("success read with invalid load chunk")
+	}
+
+	_ = os.Remove(inputPath + tempname)
+	stream5, err := BuildStreamReader(
+		context.Background(),
+		0,
+		inputPath,
+		"alias_name",
+		newTsHLSClient(4, fileBytes, 0),
+		newFileInfoFromBytes(filename, fileBytes),
+		false,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := stream5.Read(b); !errors.Is(err, ErrInvalidResponseCode) {
+		t.Fatal("success read with invalid response code")
+	}
 }
 
 var (
@@ -151,15 +185,15 @@ var (
 
 type tsHLSClient struct {
 	fCounter   int
-	fValidHash int
+	fErrType   int
 	fFileBytes []byte
 	fPrivKey   asymmetric.IPrivKey
 }
 
-func newTsHLSClient(pValidHash int, pFileBytes []byte, pOffset int) *tsHLSClient {
+func newTsHLSClient(pErrType int, pFileBytes []byte, pOffset int) *tsHLSClient {
 	return &tsHLSClient{
 		fFileBytes: pFileBytes,
-		fValidHash: pValidHash,
+		fErrType:   pErrType,
 		fPrivKey:   asymmetric.NewPrivKey(),
 		fCounter:   pOffset,
 	}
@@ -201,6 +235,15 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 		fileInfo := newFileInfoFromBytes("file.txt", p.fFileBytes)
 		resp = response.NewResponseBuilder().WithCode(200).WithBody(encoding.SerializeJSON(fileInfo))
 	case strings.Contains(r.GetPath(), "/load"):
+		switch p.fErrType {
+		case 3:
+			return nil, errors.New("error") // nolint: err113
+		case 4:
+			return response.NewResponseBuilder().
+				WithCode(500).
+				WithHead(map[string]string{}).
+				WithBody([]byte{}).Build(), nil
+		}
 		const localChunk = 5
 		var respBytes []byte
 		if p.fCounter+localChunk >= len(p.fFileBytes) {
@@ -211,7 +254,7 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 			p.fCounter += len(p.fFileBytes) - p.fCounter
 		}
 		hash := "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9"
-		switch p.fValidHash {
+		switch p.fErrType {
 		case 0:
 			// ok
 		case 1:

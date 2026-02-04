@@ -165,7 +165,7 @@ func (p *sStream) loadFileChunk() ([]byte, error) {
 			continue
 		}
 		if resp.GetCode() != http.StatusOK {
-			lastErr = err
+			lastErr = ErrInvalidResponseCode
 			continue
 		}
 		hash, ok := resp.GetHead()[hls_filesharer_settings.CHeaderFileHash]
