@@ -11,7 +11,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/pinger/request"
 )
 
 func HandleCommandPingAPI(
@@ -28,12 +28,7 @@ func HandleCommandPingAPI(
 			return
 		}
 
-		req := hlk_request.NewRequestBuilder().
-			WithMethod(http.MethodGet).
-			WithHost(hls_settings.CAppShortName).
-			WithPath(hls_settings.CPingPath).
-			Build()
-
+		req := request.NewPingRequest()
 		resp, err := pHlkClient.FetchRequest(pCtx, pR.URL.Query().Get("friend"), req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))

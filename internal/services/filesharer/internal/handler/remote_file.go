@@ -16,6 +16,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
 func HandleRemoteFileAPI(
@@ -48,7 +49,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		req := newFileInfoRequest(fileName, isPersonal)
+		req := request.NewInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))

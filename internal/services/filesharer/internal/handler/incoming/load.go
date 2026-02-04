@@ -16,8 +16,9 @@ import (
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 func HandleIncomingLoadHTTP(
@@ -29,7 +30,7 @@ func HandleIncomingLoadHTTP(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -68,10 +69,15 @@ func HandleIncomingLoadHTTP(
 		}
 
 		fullPath := filepath.Join(stgPath, fileName)
-		stat, err := os.Stat(fullPath)
-		if os.IsNotExist(err) || stat.IsDir() {
-			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
-			_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+		info, err := fileinfo.NewFileInfo(fullPath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+				return
+			}
+			pLogger.PushErro(logBuilder.WithMessage("get_file_info"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
 			return
 		}
 
@@ -82,8 +88,8 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunks := getChunksCount(uint64(stat.Size()), chunkSize) //nolint:gosec
-		if chunk >= chunks {
+		chunksCount := getChunksCount(info.GetSize(), chunkSize) //nolint:gosec
+		if chunk >= chunksCount {
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusLengthRequired, "failed: chunk number")
 			return
@@ -97,9 +103,7 @@ func HandleIncomingLoadHTTP(
 		}
 		defer func() { _ = file.Close() }()
 
-		buf := make([]byte, chunkSize)
 		chunkOffset := int64(chunk) * int64(chunkSize) //nolint:gosec
-
 		nS, err := file.Seek(chunkOffset, io.SeekStart)
 		if err != nil || nS != chunkOffset {
 			pLogger.PushWarn(logBuilder.WithMessage("seek_file"))
@@ -107,12 +111,16 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
+		buf := make([]byte, chunkSize)
 		nR, err := file.Read(buf)
-		if err != nil || (chunk != chunks-1 && uint64(nR) != chunkSize) { //nolint:gosec
+		if err != nil || (chunk != chunksCount-1 && uint64(nR) != chunkSize) { //nolint:gosec
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: chunk number")
 			return
 		}
+
+		fileHash := info.GetHash()
+		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, buf[:nR])

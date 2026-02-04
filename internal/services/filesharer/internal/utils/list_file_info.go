@@ -5,11 +5,18 @@ import (
 	"os"
 	"path/filepath"
 
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
-func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IFileInfoList, error) {
-	fileReader := pOffset
+func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (dto.IFileInfoList, error) {
+	stat, err := os.Stat(pStgPath)
+	if os.IsNotExist(err) || !stat.IsDir() {
+		list, err := dto.LoadFileInfoList("[]")
+		if err != nil {
+			panic(err)
+		}
+		return list, nil
+	}
 
 	entries, err := os.ReadDir(pStgPath)
 	if err != nil {
@@ -24,7 +31,9 @@ func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IF
 		files = append(files, e)
 	}
 
-	result := make([]fileinfo.IFileInfo, 0, pOffset)
+	fileReader := pOffset
+
+	result := make([]dto.IFileInfo, 0, pOffset)
 	for i := (pPage * pOffset); i < uint64(len(files)); i++ {
 		if fileReader == 0 {
 			break
@@ -34,7 +43,7 @@ func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IF
 		fileName := files[i].Name()
 		fullPath := filepath.Join(pStgPath, fileName)
 
-		info, err := fileinfo.NewFileInfo(fullPath)
+		info, err := dto.NewFileInfo(fullPath)
 		if err != nil {
 			return nil, err
 		}
@@ -42,5 +51,5 @@ func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (fileinfo.IF
 		result = append(result, info)
 	}
 
-	return fileinfo.LoadFileInfoList(result)
+	return dto.LoadFileInfoList(result)
 }

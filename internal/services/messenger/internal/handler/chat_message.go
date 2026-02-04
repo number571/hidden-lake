@@ -18,7 +18,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/messenger/request"
 )
 
 func HandleChatMessageAPI(
@@ -78,7 +78,8 @@ func HandleChatMessageAPI(
 			return
 		}
 
-		if err := pHlkClient.SendRequest(pCtx, aliasName, newPushRequest(strBody)); err != nil {
+		req := request.NewPushRequest(strBody)
+		if err := pHlkClient.SendRequest(pCtx, aliasName, req); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("send_request"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: send request")
 			return
@@ -96,22 +97,13 @@ func HandleChatMessageAPI(
 	}
 }
 
-func newPushRequest(body string) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodPost).
-		WithHost(hls_settings.CAppShortName).
-		WithPath(hls_settings.CPushPath).
-		WithBody([]byte(body)).
-		Build()
-}
-
 func getLimitOnPushRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
 	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
 		return 0, err
 	}
 
-	reqSize := uint64(len(newPushRequest("").ToBytes()))
+	reqSize := uint64(len(request.NewPushRequest("").ToBytes()))
 	pldLimit := sett.GetPayloadSizeBytes()
 	if reqSize >= pldLimit {
 		return 0, errors.New("request size >= payload limit") // nolint: err113

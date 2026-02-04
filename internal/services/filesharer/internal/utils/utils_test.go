@@ -1,6 +1,8 @@
 package utils
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestGetFileInfoList(t *testing.T) {
 	fileInfoList, err := GetFileInfoList("./testdata", 1, 1)
@@ -11,7 +13,7 @@ func TestGetFileInfoList(t *testing.T) {
 	if len(list) != 1 {
 		t.Fatal("len(list) != 1")
 	}
-	if _, err := GetFileInfoList("./testdata/not_found", 1, 1); err == nil {
-		t.Fatal("success get file info list with not found directory")
+	if _, err := GetFileInfoList("./testdata/not_found", 1, 1); err != nil {
+		t.Fatal(err) // return []
 	}
 }

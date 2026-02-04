@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/number571/go-peer/pkg/crypto/hashing"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_response "github.com/number571/hidden-lake/pkg/network/response"
@@ -13,7 +15,10 @@ var (
 	gLoadRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
-			WithHead(map[string]string{"Content-Type": api.CApplicationOctetStream}).
+			WithHead(map[string]string{
+				"Content-Type":               api.CApplicationOctetStream,
+				hls_settings.CHeaderFileHash: hashing.NewHasher([]byte{}).ToString(),
+			}).
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

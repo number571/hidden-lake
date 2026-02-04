@@ -6,6 +6,14 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hls/hls-filesharer`: add check hash/size of file on load chunk
+
+### CHANGES
+
+- `cmd/hls/*`: move requests to HLK from HLS -> pkg/api/services/*/request
+
 <!-- ... -->
 
 ## v1.10.0

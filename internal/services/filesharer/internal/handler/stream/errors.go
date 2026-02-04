@@ -18,7 +18,9 @@ var (
 	ErrLoadFileChunk    = &SError{"load file chunk"}
 	ErrHashWriteChunk   = &SError{"hash write chunk"}
 	ErrInvalidHash      = &SError{"invalid hash"}
+	ErrInvalidSize      = &SError{"invalid size"}
 	ErrRetryFailed      = &SError{"retry failed"}
+	ErrGotAnotherHash   = &SError{"got another hash"}
 	ErrInvalidWhence    = &SError{"invalid whence"}
 	ErrNegativePosition = &SError{"negative position"}
 	ErrGetMessageLimit  = &SError{"get message limit"}

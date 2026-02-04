@@ -12,7 +12,7 @@ import (
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
-	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
@@ -26,7 +26,7 @@ func HandleIncomingInfoHTTP(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -58,15 +58,13 @@ func HandleIncomingInfoHTTP(
 		}
 
 		fullPath := filepath.Join(stgPath, fileName)
-		stat, err := os.Stat(fullPath)
-		if os.IsNotExist(err) || stat.IsDir() {
-			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
-			_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
-			return
-		}
-
 		info, err := fileinfo.NewFileInfo(fullPath)
 		if err != nil {
+			if os.IsNotExist(err) {
+				pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+				return
+			}
 			pLogger.PushWarn(logBuilder.WithMessage("get_file_info"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
 			return

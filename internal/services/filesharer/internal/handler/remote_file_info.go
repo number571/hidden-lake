@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
@@ -13,7 +12,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
 func HandleRemoteFileInfoAPI(
@@ -42,7 +41,7 @@ func HandleRemoteFileInfoAPI(
 			return
 		}
 
-		req := newFileInfoRequest(fileName, isPersonal)
+		req := request.NewInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -72,17 +71,4 @@ func HandleRemoteFileInfoAPI(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, info.ToString())
 	}
-}
-
-func newFileInfoRequest(pFileName string, pPersonal bool) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodGet).
-		WithHost(hls_settings.CAppShortName).
-		WithPath(fmt.Sprintf(
-			"%s?name=%s&personal=%t",
-			hls_settings.CInfoPath,
-			url.QueryEscape(pFileName),
-			pPersonal,
-		)).
-		Build()
 }

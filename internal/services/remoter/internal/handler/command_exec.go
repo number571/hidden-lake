@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/number571/go-peer/pkg/logger"
 	hls_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/remoter/request"
 )
 
 func HandleCommandExecAPI(
@@ -37,16 +36,7 @@ func HandleCommandExecAPI(
 			return
 		}
 
-		req := hlk_request.NewRequestBuilder().
-			WithMethod(http.MethodPost).
-			WithHost(hls_settings.CAppShortName).
-			WithPath(hls_settings.CExecPath).
-			WithHead(map[string]string{
-				hls_settings.CHeaderPassword: vRequest.FPassword,
-			}).
-			WithBody([]byte(strings.Join(vRequest.FCommand, hls_settings.CExecSeparator))).
-			Build()
-
+		req := request.NewExecRequest(vRequest.FPassword, vRequest.FCommand)
 		resp, err := pHlkClient.FetchRequest(pCtx, pR.URL.Query().Get("friend"), req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
