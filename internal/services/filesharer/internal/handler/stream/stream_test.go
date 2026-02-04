@@ -35,6 +35,11 @@ func TestStreamReader(t *testing.T) {
 
 	inputPath := "./testdata/"
 	filename := "file.txt"
+	tempname := "hls-filesharer-bf880b2a.tmp" // generated
+
+	_ = os.Remove(inputPath + tempname)
+	defer func() { _ = os.Remove(inputPath + tempname) }()
+
 	fileBytes, err := os.ReadFile(inputPath + filename)
 	if err != nil {
 		t.Fatal(err)
@@ -137,8 +142,8 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 				"Content-Type":                          api.CApplicationOctetStream,
 				hls_filesharer_settings.CHeaderFileHash: "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9",
 			}).
-			WithBody([]byte{p.fFileBytes[p.fCounter]})
-		p.fCounter++
+			WithBody([]byte{p.fFileBytes[p.fCounter], p.fFileBytes[p.fCounter+1]})
+		p.fCounter += 2
 	default:
 		return nil, errors.New("unknown path") // nolint:err113
 	}
