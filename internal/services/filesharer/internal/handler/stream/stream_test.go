@@ -11,6 +11,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/encoding"
+	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
@@ -129,7 +131,13 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 		fileInfo := newFileInfoFromBytes("file.txt", p.fFileBytes)
 		resp = response.NewResponseBuilder().WithCode(200).WithBody(encoding.SerializeJSON(fileInfo))
 	case strings.Contains(r.GetPath(), "/load"):
-		resp = response.NewResponseBuilder().WithCode(200).WithBody([]byte{p.fFileBytes[p.fCounter]})
+		resp = response.NewResponseBuilder().
+			WithCode(200).
+			WithHead(map[string]string{
+				"Content-Type":                          api.CApplicationOctetStream,
+				hls_filesharer_settings.CHeaderFileHash: "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9",
+			}).
+			WithBody([]byte{p.fFileBytes[p.fCounter]})
 		p.fCounter++
 	default:
 		return nil, errors.New("unknown path") // nolint:err113
