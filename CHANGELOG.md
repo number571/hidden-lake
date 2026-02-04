@@ -14,6 +14,10 @@
 
 - `cmd/hls/*`: move requests to HLK from HLS -> pkg/api/services/*/request
 
+### BUG FIXES
+
+- `cmd/hls/hls-filesharer`: fix check error on loadChunk (status code)
+
 <!-- ... -->
 
 ## v1.10.0
