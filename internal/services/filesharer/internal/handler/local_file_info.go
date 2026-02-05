@@ -48,23 +48,21 @@ func HandleLocalFileInfoAPI(
 		}
 
 		fullPath := filepath.Join(stgPath, fileName)
-		stat, err := os.Stat(fullPath)
-		if os.IsNotExist(err) || stat.IsDir() {
-			pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
-			_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
-			return
-		}
-
 		info, err := fileinfo.NewFileInfo(fullPath)
 		if err != nil {
+			if os.IsNotExist(err) {
+				pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+				return
+			}
 			pLogger.PushErro(logBuilder.WithMessage("not_found"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: not found")
 			return
 		}
 
 		if info.GetName() != fileName {
-			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			pLogger.PushErro(logBuilder.WithMessage("invalid_filename"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid filename")
 			return
 		}
 

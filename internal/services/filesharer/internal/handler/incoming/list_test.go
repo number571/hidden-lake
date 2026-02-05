@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/logger"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -40,6 +41,9 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 	if err := incomingListRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
+	if err := incomingListRequestVoidDir(handler); err != nil {
+		t.Fatal(err)
+	}
 	if err := incomingListRequestInvalidPersonal(handler); err != nil {
 		t.Fatal(err)
 	}
@@ -58,6 +62,26 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 func incomingListRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/list?page=0", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingListRequestVoidDir(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/list?page=0&personal", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()

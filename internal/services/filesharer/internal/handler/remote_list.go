@@ -13,7 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
 func HandleRemoteListAPI(
@@ -50,7 +50,7 @@ func HandleRemoteListAPI(
 			return
 		}
 
-		req := newListFilesRequest(page, isPersonal)
+		req := request.NewListRequest(page, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, queryParams.Get("friend"), req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -58,34 +58,20 @@ func HandleRemoteListAPI(
 			return
 		}
 
-		if resp.GetCode() != http.StatusOK {
+		if code := resp.GetCode(); code != http.StatusOK {
 			pLogger.PushErro(logBuilder.WithMessage("status_error"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: status error")
+			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
 		if err != nil {
-			fmt.Println(string(resp.GetBody()))
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: decode response")
+			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, list.ToString())
 	}
-}
-
-func newListFilesRequest(pPage uint64, pPersonal bool) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodGet).
-		WithHost(hls_settings.CAppShortName).
-		WithPath(fmt.Sprintf(
-			"%s?page=%d&personal=%t",
-			hls_settings.CListPath,
-			pPage,
-			pPersonal,
-		)).
-		Build()
 }

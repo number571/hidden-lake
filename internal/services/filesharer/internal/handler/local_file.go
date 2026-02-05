@@ -79,7 +79,7 @@ func HandleLocalFileAPI(
 		case http.MethodPost:
 			if err := os.MkdirAll(stgPath, 0700); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
-				_ = api.Response(pW, http.StatusForbidden, "failed: mkdir all")
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
 				return
 			}
 

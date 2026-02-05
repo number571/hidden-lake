@@ -2,9 +2,27 @@
 
 <!-- ... -->
 
-## v1.10.1~
+## v1.10.2~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.10.1
+
+*February 05, 2026*
+
+### IMPROVEMENTS
+
+- `cmd/hls/hls-filesharer`: add check hash/size of file on load chunk
+
+### CHANGES
+
+- `cmd/hls/*`: move requests to HLK from HLS -> pkg/api/services/*/request
+
+### BUG FIXES
+
+- `cmd/hls/hls-filesharer`: fix check error on loadChunk (status code)
 
 <!-- ... -->
 

@@ -8,7 +8,6 @@ import (
 	"hash"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -18,7 +17,7 @@ import (
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
-	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
 var (
@@ -114,8 +113,13 @@ func (p *sStream) Read(b []byte) (int, error) {
 		return 0, errors.Join(ErrHashWriteChunk, err)
 	}
 
-	if p.fPosition < p.fFileInfo.GetSize() {
+	fileSize := p.fFileInfo.GetSize()
+	switch {
+	case p.fPosition < fileSize:
 		return n, nil
+	case p.fPosition > fileSize:
+		return 0, ErrInvalidSize
+	default:
 	}
 
 	hashSum := encoding.HexEncode(p.fHasher.Sum(nil))
@@ -150,7 +154,7 @@ func createTempFile(pTempFile string) error {
 func (p *sStream) loadFileChunk() ([]byte, error) {
 	var lastErr error
 	for i := uint64(0); i <= p.fRetryNum; i++ {
-		req := newLoadChunkRequest(
+		req := request.NewLoadRequest(
 			p.fFileInfo.GetName(),
 			p.fPosition/p.fChunkSize,
 			p.fPersonal,
@@ -161,8 +165,12 @@ func (p *sStream) loadFileChunk() ([]byte, error) {
 			continue
 		}
 		if resp.GetCode() != http.StatusOK {
-			lastErr = err
+			lastErr = ErrInvalidResponseCode
 			continue
+		}
+		hash, ok := resp.GetHead()[hls_filesharer_settings.CHeaderFileHash]
+		if !ok || p.fFileInfo.GetHash() != hash {
+			return nil, ErrGotAnotherHash
 		}
 		return resp.GetBody(), nil
 	}
@@ -197,18 +205,4 @@ func (p *sStream) appendChunkToTempFile(pChunk []byte) error {
 		return err
 	}
 	return nil
-}
-
-func newLoadChunkRequest(pFileName string, pChunk uint64, pPersonal bool) hlk_request.IRequest {
-	return hlk_request.NewRequestBuilder().
-		WithMethod(http.MethodGet).
-		WithHost(hls_filesharer_settings.CAppShortName).
-		WithPath(fmt.Sprintf(
-			"%s?name=%s&chunk=%d&personal=%t",
-			hls_filesharer_settings.CLoadPath,
-			url.QueryEscape(pFileName),
-			pChunk,
-			pPersonal,
-		)).
-		Build()
 }

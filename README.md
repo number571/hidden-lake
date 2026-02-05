@@ -181,7 +181,7 @@ After receiving the public key, it must be transferred to the future interlocuto
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-remoter-cli](cmd/hls/hls-remoter/client/hls-remoter-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
+__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-remoter-cli](cmd/hls/hls-remoter/client/hls-remoter-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
 
 ## Star History
 

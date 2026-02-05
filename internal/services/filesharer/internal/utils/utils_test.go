@@ -1,8 +1,10 @@
 package utils
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestNothing(t *testing.T) {
+func TestGetFileInfoList(t *testing.T) {
 	fileInfoList, err := GetFileInfoList("./testdata", 1, 1)
 	if err != nil {
 		t.Fatal(err)
@@ -10,5 +12,8 @@ func TestNothing(t *testing.T) {
 	list := fileInfoList.GetList()
 	if len(list) != 1 {
 		t.Fatal("len(list) != 1")
+	}
+	if _, err := GetFileInfoList("./testdata/not_found", 1, 1); err != nil {
+		t.Fatal(err) // return []
 	}
 }

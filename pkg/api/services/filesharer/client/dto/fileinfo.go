@@ -22,6 +22,10 @@ type sFileInfo struct {
 }
 
 func NewFileInfo(pName string) (IFileInfo, error) {
+	stat, err := os.Stat(pName)
+	if os.IsNotExist(err) || stat.IsDir() {
+		return nil, os.ErrNotExist
+	}
 	hash, err := getFileHash(pName)
 	if err != nil {
 		return nil, err

@@ -3,17 +3,15 @@ package incoming
 import (
 	"context"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
-	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 )
@@ -28,7 +26,7 @@ func HandleIncomingListHTTP(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
-		logBuilder := http_logger.NewLogBuilder(hls_filesharer_settings.GetAppShortNameFMT(), pR)
+		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -60,17 +58,6 @@ func HandleIncomingListHTTP(
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
 			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
-			return
-		}
-
-		stat, err := os.Stat(stgPath)
-		if os.IsNotExist(err) || !stat.IsDir() {
-			list, err := dto.LoadFileInfoList("[]")
-			if err != nil {
-				panic(err)
-			}
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, list.ToString())
 			return
 		}
 

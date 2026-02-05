@@ -64,18 +64,13 @@ func toShortAppName(pFullName string) string {
 	splitedSb := strings.Split(splitedEq[0], "-")
 	for _, v := range splitedSb {
 		firstCh := unicode.ToUpper(rune(v[0]))
-		if _, err := result.WriteRune(firstCh); err != nil {
-			panic(err)
-		}
+		_, _ = result.WriteRune(firstCh)
 	}
 
 	if len(splitedEq) == 2 {
-		if err := result.WriteByte('='); err != nil {
-			panic(err)
-		}
-		if _, err := result.WriteString(splitedEq[1]); err != nil {
-			panic(err)
-		}
+		_ = result.WriteByte('=')
+		_, _ = result.WriteString(splitedEq[1])
 	}
+
 	return result.String()
 }
