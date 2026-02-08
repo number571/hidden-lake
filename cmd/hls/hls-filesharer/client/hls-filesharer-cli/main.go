@@ -190,7 +190,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 				return err
 			}
 		} else {
-			if err := hlfClient.DelRemoteFile(pCtx, friend, fileName); err != nil {
+			if err := hlfClient.DelRemoteFile(pCtx, friend, fileName, isPersonal); err != nil {
 				return err
 			}
 		}

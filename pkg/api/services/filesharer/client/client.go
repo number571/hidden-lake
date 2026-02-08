@@ -33,8 +33,8 @@ func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend stri
 	return p.fRequester.GetRemoteFile(pW, pCtx, pFriend, pFilename, pPersonal)
 }
 
-func (p *sClient) DelRemoteFile(pCtx context.Context, pFriend string, pFilename string) error {
-	return p.fRequester.DelRemoteFile(pCtx, pFriend, pFilename)
+func (p *sClient) DelRemoteFile(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) error {
+	return p.fRequester.DelRemoteFile(pCtx, pFriend, pFilename, pPersonal)
 }
 
 func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (fileinfo.IFileInfo, error) {

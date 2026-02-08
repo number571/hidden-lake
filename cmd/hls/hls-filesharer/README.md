@@ -149,7 +149,7 @@ hello, world!
 #### 3.2. DELETE Request
 
 ```bash
-curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt"
+curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
 ```
 
 #### 3.2. DELETE Response

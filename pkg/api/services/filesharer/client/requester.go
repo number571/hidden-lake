@@ -121,12 +121,12 @@ func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasNam
 	return false, nil
 }
 
-func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string) error {
+func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) error {
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
-		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), true),
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
 		nil,
 	)
 	if err != nil {
