@@ -6,6 +6,14 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hls/hls-filesharer`: add API function DelRemoteFile
+
+### CHANGES
+
+- `cmd/hls/hls-filesharer`: change API function GetRemoteFile
+
 <!-- ... -->
 
 ## v1.10.1

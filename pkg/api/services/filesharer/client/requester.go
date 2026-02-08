@@ -2,12 +2,15 @@ package client
 
 import (
 	"context"
+	"crypto/sha512"
 	"errors"
 	"fmt"
+	"hash"
 	"io"
 	"net/http"
 	"net/url"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
@@ -30,6 +33,25 @@ const (
 type sRequester struct {
 	fHost   string
 	fClient *http.Client
+}
+
+type sWriterWithHash struct {
+	fMain io.Writer
+	fHash hash.Hash
+}
+
+func newWriterWithHash(pW io.Writer) *sWriterWithHash {
+	return &sWriterWithHash{
+		fMain: pW,
+		fHash: sha512.New384(),
+	}
+}
+
+func (p *sWriterWithHash) Write(b []byte) (n int, err error) {
+	if _, err := p.fHash.Write(b); err != nil {
+		return 0, err
+	}
+	return p.fMain.Write(b)
 }
 
 func NewRequester(pHost string, pClient *http.Client) IRequester {
@@ -77,9 +99,10 @@ func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPag
 	return infos, nil
 }
 
-func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (bool, string, error) {
+func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (bool, error) {
+	writer := newWriterWithHash(pW)
 	headers, err := api.RequestWithWriter(
-		pW,
+		writer,
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -87,10 +110,29 @@ func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasNam
 		nil,
 	)
 	if err != nil {
-		return false, "", errors.Join(ErrBadRequest, err)
+		return false, errors.Join(ErrBadRequest, err)
 	}
-	alreadyDownload := headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY
-	return alreadyDownload, headers.Get(hls_settings.CHeaderFileHash), nil
+	if headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY {
+		return true, nil
+	}
+	if encoding.HexEncode(writer.fHash.Sum(nil)) != headers.Get(hls_settings.CHeaderFileHash) {
+		return false, errors.Join(ErrInvalidFileHash, err)
+	}
+	return false, nil
+}
+
+func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string) error {
+	_, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), true),
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
 func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (fileinfo.IFileInfo, error) {

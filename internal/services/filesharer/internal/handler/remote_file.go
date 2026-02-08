@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -31,7 +32,7 @@ func HandleRemoteFileAPI(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
-		if pR.Method != http.MethodGet {
+		if pR.Method != http.MethodGet && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
 			return
@@ -46,6 +47,32 @@ func HandleRemoteFileAPI(
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			return
+		}
+
+		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+			return
+		}
+
+		if err := os.MkdirAll(stgPath, 0700); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
+			return
+		}
+
+		fullPath := filepath.Join(stgPath, fileName)
+
+		if pR.Method == http.MethodDelete {
+			if err := os.Remove(fullPath); err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("delete_file"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete file")
+				return
+			}
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, "success: delete file")
 			return
 		}
 
@@ -87,23 +114,10 @@ func HandleRemoteFileAPI(
 		}
 		defer downloadProcessesMap.Unlock(fileHash)
 
-		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
-			return
-		}
-
-		if err := os.MkdirAll(stgPath, 0700); err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
-			return
-		}
-
 		streamReader, err := stream.BuildStreamReader(
 			pCtx,
 			pConfig.GetSettings().GetRetryNum(),
-			stgPath,
+			fullPath,
 			aliasName,
 			pHlkClient,
 			info,
@@ -120,7 +134,6 @@ func HandleRemoteFileAPI(
 			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
 			return
 		}
-
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 	}
 }

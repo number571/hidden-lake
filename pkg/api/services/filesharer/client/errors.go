@@ -17,4 +17,5 @@ var (
 	ErrDecodeResponse  = &SError{"decode response"}
 	ErrInvalidResponse = &SError{"invalid response"}
 	ErrInvalidTitle    = &SError{"invalid title"}
+	ErrInvalidFileHash = &SError{"invalid file hash"}
 )

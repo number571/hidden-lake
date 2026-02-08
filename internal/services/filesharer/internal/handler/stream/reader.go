@@ -4,12 +4,10 @@ import (
 	"context"
 	"crypto/sha512"
 	"errors"
-	"fmt"
 	"hash"
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -43,7 +41,7 @@ type sStream struct {
 func BuildStreamReader(
 	pCtx context.Context,
 	pRetryNum uint64,
-	pInputPath string,
+	pTempFile string,
 	pAliasName string,
 	pHlkClient hlk_client.IClient,
 	pFileInfo fileinfo.IFileInfo,
@@ -54,17 +52,14 @@ func BuildStreamReader(
 		return nil, errors.Join(ErrGetMessageLimit, err)
 	}
 
-	tempName := fmt.Sprintf(hls_filesharer_settings.CPathTMP, pFileInfo.GetHash()[:8])
-	tempFile := filepath.Join(pInputPath, tempName)
-
-	if err := createTempFile(tempFile); err != nil {
+	if err := createTempFile(pTempFile); err != nil {
 		return nil, errors.Join(ErrReadTempFile, err)
 	}
 
 	return &sStream{
 		fContext:   pCtx,
 		fRetryNum:  pRetryNum,
-		fTempFile:  tempFile,
+		fTempFile:  pTempFile,
 		fHlkClient: pHlkClient,
 		fAliasName: pAliasName,
 		fHasher:    sha512.New384(),
@@ -124,7 +119,6 @@ func (p *sStream) Read(b []byte) (int, error) {
 
 	hashSum := encoding.HexEncode(p.fHasher.Sum(nil))
 	if hashSum != p.fFileInfo.GetHash() {
-		_ = os.Remove(p.fTempFile)
 		return 0, ErrInvalidHash
 	}
 

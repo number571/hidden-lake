@@ -29,8 +29,12 @@ func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint
 	return p.fRequester.GetRemoteList(pCtx, pFriend, pPage, pPersonal)
 }
 
-func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (bool, string, error) {
+func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (bool, error) {
 	return p.fRequester.GetRemoteFile(pW, pCtx, pFriend, pFilename, pPersonal)
+}
+
+func (p *sClient) DelRemoteFile(pCtx context.Context, pFriend string, pFilename string) error {
+	return p.fRequester.DelRemoteFile(pCtx, pFriend, pFilename)
 }
 
 func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (fileinfo.IFileInfo, error) {

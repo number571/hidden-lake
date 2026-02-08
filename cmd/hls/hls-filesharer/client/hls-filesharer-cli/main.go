@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/sha512"
 	"errors"
 	"fmt"
 	"io"
@@ -11,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
@@ -163,7 +161,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 				return err
 			}
 		} else {
-			inProcess, recvFileHash, err := hlfClient.GetRemoteFile(
+			inProcess, err := hlfClient.GetRemoteFile(
 				&processWriter{fW: tmpFile},
 				pCtx,
 				friend,
@@ -176,14 +174,6 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			if inProcess {
 				fmt.Println("\nprocessing...")
 				return nil
-			}
-
-			gotFileHash, err := getFileHash(tmpFile.Name())
-			if err != nil {
-				return err
-			}
-			if recvFileHash != gotFileHash {
-				return ErrHashIsInvalid
 			}
 		}
 
@@ -246,19 +236,6 @@ func printFileInfoList(pFileInfoList dto.IFileInfoList) {
 
 func printFileInfo(pFileInfo dto.IFileInfo) {
 	fmt.Printf("Name: %s\nHash: %s\nSize: %d\n\n", pFileInfo.GetName(), pFileInfo.GetHash(), pFileInfo.GetSize())
-}
-
-func getFileHash(filename string) (string, error) {
-	f, err := os.Open(filename) //nolint:gosec
-	if err != nil {
-		return "", err
-	}
-	defer func() { _ = f.Close() }()
-	h := sha512.New384()
-	if _, err := io.Copy(h, f); err != nil {
-		return "", err
-	}
-	return encoding.HexEncode(h.Sum(nil)), nil
 }
 
 func copyFile(dstFilePath string, tmpFile *os.File) error {
