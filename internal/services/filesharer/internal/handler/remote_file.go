@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -63,7 +64,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		fullPath := filepath.Join(stgPath, fileName)
+		fullPath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPersonal))
 
 		if pR.Method == http.MethodDelete {
 			if err := os.Remove(fullPath); err != nil {
@@ -129,11 +130,28 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		// temp file used as buffer
+		if _, err := io.Copy(io.Discard, streamReader); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("read_stream"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: read stream")
+			return
+		}
+
+		file, err := os.Open(fullPath) // nolint: gosec
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("read_file"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
+			return
+		}
+		defer func() { _ = file.Close() }()
+
 		pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeN)
-		if err := api.ResponseWithReader(pW, http.StatusOK, streamReader); err != nil {
+
+		if err := api.ResponseWithReader(pW, http.StatusOK, file); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
 			return
 		}
+
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 	}
 }

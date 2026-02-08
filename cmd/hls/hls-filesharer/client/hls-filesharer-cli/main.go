@@ -183,6 +183,17 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 
 		fmt.Println("\ndone!")
+	case "delete":
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		if isLocal {
+			if err := hlfClient.DelLocalFile(pCtx, friend, fileName); err != nil {
+				return err
+			}
+		} else {
+			if err := hlfClient.DelRemoteFile(pCtx, friend, fileName); err != nil {
+				return err
+			}
+		}
 	case "upload":
 		if !isLocal {
 			return ErrAvailableOnlyForTypeLocal
@@ -197,15 +208,6 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 
 		fileName := filepath.Base(filePath)
 		if err := hlfClient.PutLocalFile(pCtx, friend, fileName, file); err != nil {
-			return err
-		}
-	case "delete":
-		if !isLocal {
-			return ErrAvailableOnlyForTypeLocal
-		}
-
-		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		if err := hlfClient.DelLocalFile(pCtx, friend, fileName); err != nil {
 			return err
 		}
 	default:

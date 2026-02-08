@@ -58,7 +58,19 @@ $ hls-filesharer-cli -f {{friend-name}} -d download -a {{filename}}
 $ hls-filesharer-cli -f {{friend-name}} -t personal -d download -a {{filename}}
 ```
 
-4. Local list
+4. Remote delete
+
+```bash
+### Delete file from private storage of friend's (public) ###
+$ hls-filesharer-cli -f {{friend-name}} -d delete -a {{filename}}
+```
+
+```bash
+### Delete file from private storage of friend's (personal) ###
+$ hls-filesharer-cli -f {{friend-name}} -t personal -d delete -a {{filename}}
+```
+
+5. Local list
 
 ```bash
 ### Get list of files (public) ###
@@ -70,7 +82,7 @@ $ hls-filesharer-cli -t local -d list -a {{page}}
 $ hls-filesharer-cli -f {{friend-name}} -t local -d list -a {{page}}
 ```
 
-5. Local info
+6. Local info
 
 ```bash
 ### Get info of the file (public) ###
@@ -82,7 +94,7 @@ $ hls-filesharer-cli -t local -d info -a {{filename}}
 $ hls-filesharer-cli -f {{friend-name}} -t local -d info -a {{filename}}
 ```
 
-6. Local download
+7. Local download
 
 ```bash
 ### Download file (public) ###
@@ -94,7 +106,7 @@ $ hls-filesharer-cli -t local -d download -a {{filename}}
 $ hls-filesharer-cli -f {{friend-name}} -t local -d download -a {{filename}}
 ```
 
-7. Local upload
+8. Local upload
 
 ```bash
 ### Upload file (public) ###
@@ -106,7 +118,7 @@ $ hls-filesharer-cli -t local -d upload -a {{path-to-file}}
 $ hls-filesharer-cli -f {{friend-name}} -t local -d upload -a {{path-to-file}}
 ```
 
-8. Local delete
+9. Local delete
 
 ```bash
 ### Delete file (public) ###

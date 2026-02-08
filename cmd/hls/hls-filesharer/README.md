@@ -76,7 +76,7 @@ Got response
                                                 |> description = get name of service
 2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"personal":?bool]
                                                 |> description = get list of files from storage
-3. GET                  /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
+3. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
                                                 |> description = download file content by name
 4. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":?bool]
                                                 |> description = get info of the file by name
@@ -144,6 +144,23 @@ Content-Length: 14
 Content-Type: text/plain; charset=utf-8
 
 hello, world!
+```
+
+#### 3.2. DELETE Request
+
+```bash
+curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt"
+```
+
+#### 3.2. DELETE Response
+
+```
+HTTP/1.1 200 OK
+Date: Mon, 19 Jan 2026 08:05:06 GMT
+Content-Length: 20
+Content-Type: text/plain; charset=utf-8
+
+success: delete file
 ```
 
 ### 4. /api/remote/file/info
