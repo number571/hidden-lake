@@ -5,6 +5,7 @@ import (
 	"os"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -38,6 +39,7 @@ func initConfig() *SConfig {
 			hla_tcp_settings.CAppShortName,
 			hls_pinger_settings.CAppShortName,
 			hls_messenger_settings.CAppShortName,
+			hls_filesharer_settings.CAppShortName,
 		},
 	}
 }
