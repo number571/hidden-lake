@@ -12,6 +12,7 @@
 
 ### CHANGES
 
+- `cmd/hls/hls-remoter`: deleted
 - `cmd/hls/hls-filesharer`: change API function GetRemoteFile
 - `cmd/hls/hls-filesharer`: The file names in private are now different when downloading a file with the same name from the personal and sharing directories
 

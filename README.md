@@ -69,7 +69,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLK` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLS=filesharer`, `HLS=messenger`, `HLS=remoter` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLK` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLS=filesharer`, `HLS=messenger`, `HLS=pinger` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 ## Coverage map
 
@@ -130,7 +130,6 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 3. Services:
    * [HLS=messenger](cmd/hls/hls-messenger) - send and recv text messages
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
-   * [HLS=remoter](cmd/hls/hls-remoter) - executes remote access commands
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
 
 ## Build and run
@@ -181,7 +180,7 @@ After receiving the public key, it must be transferred to the future interlocuto
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"friend", "public_key":"PubKey{...}"}'
 ```
 
-__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-remoter-cli](cmd/hls/hls-remoter/client/hls-remoter-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
+__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
 
 ## Star History
 

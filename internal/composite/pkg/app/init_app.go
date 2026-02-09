@@ -25,9 +25,6 @@ import (
 	hls_filesharer_app "github.com/number571/hidden-lake/internal/services/filesharer/pkg/app"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 
-	hls_remoter_app "github.com/number571/hidden-lake/internal/services/remoter/pkg/app"
-	hls_remoter_settings "github.com/number571/hidden-lake/internal/services/remoter/pkg/settings"
-
 	hls_pinger_app "github.com/number571/hidden-lake/internal/services/pinger/pkg/app"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 
@@ -88,8 +85,6 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 			runner, err = hls_messenger_app.InitApp(pArgs, pFlags)
 		case hls_filesharer_settings.CAppShortName:
 			runner, err = hls_filesharer_app.InitApp(pArgs, pFlags)
-		case hls_remoter_settings.CAppShortName:
-			runner, err = hls_remoter_app.InitApp(pArgs, pFlags)
 		case hls_pinger_settings.CAppShortName:
 			runner, err = hls_pinger_app.InitApp(pArgs, pFlags)
 		case hla_tcp_settings.CAppShortName:

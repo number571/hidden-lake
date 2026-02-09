@@ -1,8 +1,0 @@
-logging:
-  - info
-  - warn
-  - erro
-applications:
-  - hlk
-  - hla-tcp
-  - hls-remoter
