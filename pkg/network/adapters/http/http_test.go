@@ -125,7 +125,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(conns) != 1 || conns[0] != "tcp://abc_1" {
+	if len(conns) != 1 || conns[0] != "http://abc_1" {
 		t.Fatal("invalid connections")
 	}
 
@@ -133,17 +133,17 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(onlines) != 1 || onlines[0] != "tcp://abc_2" {
+	if len(onlines) != 1 || onlines[0] != "http://abc_2" {
 		t.Fatal("invalid onlines")
 	}
 
-	if err := client.AddConnection(ctx, "tcp://new"); err != nil {
+	if err := client.AddConnection(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
-	if err := client.DelConnection(ctx, "tcp://new"); err != nil {
+	if err := client.DelConnection(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
-	if err := client.DelOnline(ctx, "tcp://new"); err != nil {
+	if err := client.DelOnline(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
 
