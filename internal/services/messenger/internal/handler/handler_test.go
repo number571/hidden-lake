@@ -58,7 +58,7 @@ func TestHandler(t *testing.T) {
 		),
 	)
 
-	if _, err := client.GetIndex(context.Background()); err != nil {
+	if err := client.GetIndex(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.GetMessageLimit(context.Background()); err != nil {

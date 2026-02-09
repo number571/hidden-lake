@@ -53,7 +53,7 @@ func newTsHLSClient(pMsgSize uint64) *tsHLSClient {
 	}
 }
 
-func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLSClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
 	return &hls_config.SConfigSettings{
 		FPayloadSizeBytes: p.fMsgSize,

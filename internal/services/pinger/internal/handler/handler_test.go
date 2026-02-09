@@ -45,7 +45,7 @@ func TestHandler(t *testing.T) {
 		),
 	)
 
-	if _, err := client.GetIndex(context.Background()); err != nil {
+	if err := client.GetIndex(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 	if err := client.PingFriend(context.Background(), "abc"); err != nil {

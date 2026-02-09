@@ -29,7 +29,7 @@ func TestErrorsAPI(t *testing.T) {
 		hls_client.NewRequester("", &http.Client{}),
 	)
 
-	if _, err := client.GetIndex(context.Background()); err == nil {
+	if err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
 	if _, err := client.GetMessageLimit(context.Background()); err == nil {
@@ -110,7 +110,7 @@ func newTsHLKClient(pPubKeyOK bool, pSettingsOK bool, pSendOK bool) *tsHLKClient
 	}
 }
 
-func (p *tsHLKClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLKClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, error) {
 	if !p.fSettingsOK {
 		return nil, errors.New("error") // nolint: err113

@@ -12,7 +12,7 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetPubKey(context.Context) (asymmetric.IPubKey, error)
@@ -33,7 +33,7 @@ type IClient interface {
 }
 
 type IRequester interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
 	GetPubKey(context.Context) (asymmetric.IPubKey, error)

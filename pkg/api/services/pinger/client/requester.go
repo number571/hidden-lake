@@ -32,7 +32,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 	}
 }
 
-func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
+func (p *sRequester) GetIndex(pCtx context.Context) error {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -41,13 +41,12 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", errors.Join(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
-	result := string(res)
-	if result != hls_settings.CAppFullName {
-		return "", ErrInvalidTitle
+	if string(res) != hls_settings.CAppFullName {
+		return ErrInvalidTitle
 	}
-	return result, nil
+	return nil
 }
 
 func (p *sRequester) PingFriend(pCtx context.Context, pFriend string) error {

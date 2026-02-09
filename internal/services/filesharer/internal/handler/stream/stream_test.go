@@ -199,7 +199,7 @@ func newTsHLSClient(pErrType int, pFileBytes []byte, pOffset int) *tsHLSClient {
 	}
 }
 
-func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLSClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
 	return &hls_config.SConfigSettings{
 		FPayloadSizeBytes: 197 + 1, // gRespSize + 1

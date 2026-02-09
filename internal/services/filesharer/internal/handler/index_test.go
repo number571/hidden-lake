@@ -37,7 +37,7 @@ func TestErrorsAPI(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	if _, err := client.GetIndex(ctx); err == nil {
+	if err := client.GetIndex(ctx); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
 	if _, err := client.GetRemoteList(ctx, "", 0, false); err == nil {
@@ -116,7 +116,7 @@ type tsHLKClientWrapper struct {
 	fClient hlk_client.IClient
 }
 
-func (p *tsHLKClientWrapper) GetIndex(a context.Context) (string, error) {
+func (p *tsHLKClientWrapper) GetIndex(a context.Context) error {
 	return p.fClient.GetIndex(a)
 }
 func (p *tsHLKClientWrapper) GetSettings(a context.Context) (hlk_config.IConfigSettings, error) {
@@ -170,7 +170,7 @@ func newTsHLKClient(pFetchType int, pSettingsOK bool) *tsHLKClient {
 	}
 }
 
-func (p *tsHLKClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLKClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, error) {
 	if !p.fSettingsOK {
 		return nil, errors.New("error") // nolint: err113

@@ -78,7 +78,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 
 	adapter1.WithHandlers(map[string]http.HandlerFunc{
 		settings.CHandleIndexPath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, "http-adapter")
+			_, _ = fmt.Fprint(w, "hidden-lake-adapter=http")
 		},
 		settings.CHandleConfigSettingsPath: func(w http.ResponseWriter, _ *http.Request) {
 			_, _ = fmt.Fprint(w, `{"message_size_bytes":8192}`)
@@ -106,12 +106,9 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		50,
 		10*time.Millisecond,
 		func() error {
-			res, err := client.GetIndex(ctx)
+			err := client.GetIndex(ctx, settings.CAppAdapterName)
 			if err != nil {
 				return err
-			}
-			if res != "http-adapter" {
-				return errors.New("failed get index") // nolint: err113
 			}
 			return nil
 		},

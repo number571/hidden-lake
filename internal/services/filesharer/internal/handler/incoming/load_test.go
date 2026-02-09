@@ -262,7 +262,7 @@ func newTsHLSClient(pSettingsOK bool) *tsHLSClient {
 	}
 }
 
-func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLSClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
 	if !p.fSettingsOK {
 		return nil, errors.New("some error") // nolint: err113

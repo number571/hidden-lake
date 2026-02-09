@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
-	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/network/request"
@@ -53,7 +52,7 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success fetch request with unknown host")
 	}
 
-	if _, err := client.GetIndex(context.Background()); err == nil {
+	if err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success get index with unknown host")
 	}
 
@@ -141,12 +140,8 @@ func TestHandleIndexAPI(t *testing.T) {
 		),
 	)
 
-	title, err := client.GetIndex(context.Background())
+	err := client.GetIndex(context.Background())
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if title != pkg_settings.CAppFullName {
-		t.Fatal("incorrect title pattern")
 	}
 }

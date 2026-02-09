@@ -26,12 +26,11 @@ func NewClient(pBuilder IBuilder, pRequester IRequester) IClient {
 	}
 }
 
-func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
-	res, err := p.fRequester.GetIndex(pCtx)
-	if err != nil {
-		return "", fmt.Errorf("get index (client): %w", err)
+func (p *sClient) GetIndex(pCtx context.Context) error {
+	if err := p.fRequester.GetIndex(pCtx); err != nil {
+		return fmt.Errorf("get index (client): %w", err)
 	}
-	return res, nil
+	return nil
 }
 
 func (p *sClient) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {
