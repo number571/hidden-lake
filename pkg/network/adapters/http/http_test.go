@@ -84,10 +84,10 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			_, _ = fmt.Fprint(w, `{"message_size_bytes":8192}`)
 		},
 		settings.CHandleConfigConnectsPath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, `["tcp://abc_1"]`)
+			_, _ = fmt.Fprint(w, `["http://abc_1"]`)
 		},
 		settings.CHandleNetworkOnlinePath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, `["tcp://abc_2"]`)
+			_, _ = fmt.Fprint(w, `["http://abc_2"]`)
 		},
 	})
 
