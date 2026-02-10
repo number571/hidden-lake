@@ -132,6 +132,11 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
 
+### Network-related applications
+
+1. [hl-client](https://github.com/number571/hl-client) - client for «Hidden Lake» network
+2. [hl-chat](https://github.com/number571/hl-chat) - console group chat based on «Hidden Lake» network
+
 ## Build and run
 
 > [!IMPORTANT]
