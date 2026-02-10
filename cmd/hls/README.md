@@ -10,8 +10,7 @@
 
 1. [HLS=messenger](hls-messenger) - send and recv text messages
 2. [HLS=filesharer](hls-filesharer) - view storage and download files 
-3. [HLS=remoter](hls-remoter) - executes remote access commands
-4. [HLS=pinger](hls-pinger) - ping the node to check online status
+3. [HLS=pinger](hls-pinger) - ping the node to check online status
 
 ## Installation
 

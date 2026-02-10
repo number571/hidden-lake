@@ -55,7 +55,7 @@ func TestHandler(t *testing.T) {
 		),
 	)
 
-	if _, err := client.GetIndex(context.Background()); err != nil {
+	if err := client.GetIndex(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 
@@ -79,13 +79,15 @@ func TestHandler(t *testing.T) {
 	if _, err := client.GetRemoteFileInfo(context.Background(), "abc", "example.txt", false); err != nil {
 		t.Fatal(err)
 	}
-	w2 := &strings.Builder{}
-	if _, _, err := client.GetRemoteFile(w2, context.Background(), "abc", "example.txt", false); err != nil {
-		t.Fatal(err)
-	}
 
 	hlkClient.fClient = newTsHLKClient(2, true)
 	if _, err := client.GetRemoteList(context.Background(), "abc", 0, false); err != nil {
+		t.Fatal(err)
+	}
+
+	hlkClient.fClient = newTsHLKClient(3, true)
+	w2 := &strings.Builder{}
+	if _, err := client.GetRemoteFile(w2, context.Background(), "abc", "example.txt", false); err != nil {
 		t.Fatal(err)
 	}
 }

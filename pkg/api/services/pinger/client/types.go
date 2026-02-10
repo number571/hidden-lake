@@ -5,13 +5,13 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	PingFriend(context.Context, string) error
 }
 
 type IRequester interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	PingFriend(context.Context, string) error
 }

@@ -14,7 +14,6 @@ build:
 		hla/hla-http \
 		hls/hls-messenger \
 		hls/hls-filesharer \
-		hls/hls-remoter \
 		hls/hls-pinger; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
@@ -38,7 +37,6 @@ build-cli:
 		hlk/client/hlk-cli \
 		hls/hls-messenger/client/hls-messenger-cli \
 		hls/hls-filesharer/client/hls-filesharer-cli \
-		hls/hls-remoter/client/hls-remoter-cli \
 		hls/hls-pinger/client/hls-pinger-cli; \
 	do \
 		$(GC) -o $(BINPATH)/cli/$$(basename "$${app}") ./$${app}; \

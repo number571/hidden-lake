@@ -6,11 +6,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
@@ -35,13 +37,13 @@ func TestErrorsAPI(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	if _, err := client.GetIndex(ctx); err == nil {
+	if err := client.GetIndex(ctx); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
 	if _, err := client.GetRemoteList(ctx, "", 0, false); err == nil {
 		t.Fatal("success incorrect getRemoteList")
 	}
-	if _, _, err := client.GetRemoteFile(nil, ctx, "", "", false); err == nil {
+	if _, err := client.GetRemoteFile(nil, ctx, "", "", false); err == nil {
 		t.Fatal("success incorrect getRemoteFile")
 	}
 	if _, err := client.GetRemoteFileInfo(ctx, "", "", false); err == nil {
@@ -114,7 +116,7 @@ type tsHLKClientWrapper struct {
 	fClient hlk_client.IClient
 }
 
-func (p *tsHLKClientWrapper) GetIndex(a context.Context) (string, error) {
+func (p *tsHLKClientWrapper) GetIndex(a context.Context) error {
 	return p.fClient.GetIndex(a)
 }
 func (p *tsHLKClientWrapper) GetSettings(a context.Context) (hlk_config.IConfigSettings, error) {
@@ -168,7 +170,7 @@ func newTsHLKClient(pFetchType int, pSettingsOK bool) *tsHLKClient {
 	}
 }
 
-func (p *tsHLKClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLKClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, error) {
 	if !p.fSettingsOK {
 		return nil, errors.New("error") // nolint: err113
@@ -206,15 +208,22 @@ func (p *tsHLKClient) SendRequest(context.Context, string, request.IRequest) err
 	return nil
 }
 
-func (p *tsHLKClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
+func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRequest) (response.IResponse, error) {
 	switch p.fFetchType {
+	case 3:
+		if strings.HasPrefix(pReq.GetPath(), "/load") {
+			resp := response.NewResponseBuilder().WithCode(200).WithHead(map[string]string{settings.CHeaderFileHash: "7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}).WithBody([]byte("hello, world!\n"))
+			return resp.Build(), nil
+		}
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		return resp.Build(), nil
 	case 2:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"example.txt","size":13,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}]`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}]`))
 		return resp.Build(), nil
 	case 1:
 		return nil, errors.New("error") // nolint: err113
 	case 0:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":13,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
 		return resp.Build(), nil
 	case -1:
 		resp := response.NewResponseBuilder().WithCode(500).WithBody([]byte(`500`))
@@ -223,7 +232,7 @@ func (p *tsHLKClient) FetchRequest(context.Context, string, request.IRequest) (r
 		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{1})
 		return resp.Build(), nil
 	case -3:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example1.txt","size":13,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example1.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
 		return resp.Build(), nil
 	}
 	panic("unknown fetch type")

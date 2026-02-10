@@ -228,7 +228,7 @@ type tsRequester struct {
 	fWithFail bool
 }
 
-func (p *tsRequester) GetIndex(context.Context) (string, error)                    { return "", nil }
+func (p *tsRequester) GetIndex(context.Context, string) error                      { return nil }
 func (p *tsRequester) GetSettings(context.Context) (config.IConfigSettings, error) { return nil, nil }
 func (p *tsRequester) GetOnlines(context.Context) ([]string, error) {
 	if p.fWithFail {

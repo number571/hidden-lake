@@ -78,16 +78,16 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 
 	adapter1.WithHandlers(map[string]http.HandlerFunc{
 		settings.CHandleIndexPath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, "http-adapter")
+			_, _ = fmt.Fprint(w, "hidden-lake-adapter=http")
 		},
 		settings.CHandleConfigSettingsPath: func(w http.ResponseWriter, _ *http.Request) {
 			_, _ = fmt.Fprint(w, `{"message_size_bytes":8192}`)
 		},
 		settings.CHandleConfigConnectsPath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, `["tcp://abc_1"]`)
+			_, _ = fmt.Fprint(w, `["http://abc_1"]`)
 		},
 		settings.CHandleNetworkOnlinePath: func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = fmt.Fprint(w, `["tcp://abc_2"]`)
+			_, _ = fmt.Fprint(w, `["http://abc_2"]`)
 		},
 	})
 
@@ -106,12 +106,9 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		50,
 		10*time.Millisecond,
 		func() error {
-			res, err := client.GetIndex(ctx)
+			err := client.GetIndex(ctx, settings.CAppAdapterName)
 			if err != nil {
 				return err
-			}
-			if res != "http-adapter" {
-				return errors.New("failed get index") // nolint: err113
 			}
 			return nil
 		},
@@ -128,7 +125,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(conns) != 1 || conns[0] != "tcp://abc_1" {
+	if len(conns) != 1 || conns[0] != "http://abc_1" {
 		t.Fatal("invalid connections")
 	}
 
@@ -136,17 +133,17 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(onlines) != 1 || onlines[0] != "tcp://abc_2" {
+	if len(onlines) != 1 || onlines[0] != "http://abc_2" {
 		t.Fatal("invalid onlines")
 	}
 
-	if err := client.AddConnection(ctx, "tcp://new"); err != nil {
+	if err := client.AddConnection(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
-	if err := client.DelConnection(ctx, "tcp://new"); err != nil {
+	if err := client.DelConnection(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
-	if err := client.DelOnline(ctx, "tcp://new"); err != nil {
+	if err := client.DelOnline(ctx, "http://new"); err != nil {
 		t.Fatal(err)
 	}
 

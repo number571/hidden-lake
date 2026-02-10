@@ -3,8 +3,10 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -31,7 +33,7 @@ func HandleRemoteFileAPI(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
-		if pR.Method != http.MethodGet {
+		if pR.Method != http.MethodGet && pR.Method != http.MethodDelete {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
 			return
@@ -49,6 +51,40 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
+			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+			return
+		}
+
+		if err := os.MkdirAll(stgPath, 0700); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
+			return
+		}
+
+		fullPath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPersonal))
+
+		if pR.Method == http.MethodDelete {
+			if err := os.Remove(fullPath); err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("delete_file"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete file")
+				return
+			}
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, "success: delete file")
+			return
+		}
+
+		if ok := downloadProcessesMap.TryLock(fullPath); !ok {
+			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusAccepted, "process: download")
+			return
+		}
+		defer downloadProcessesMap.Unlock(fullPath)
+
 		req := request.NewInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
@@ -63,50 +99,26 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		info, err := fileinfo.LoadFileInfo(resp.GetBody())
+		fileInfo, err := fileinfo.LoadFileInfo(resp.GetBody())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
-		if info.GetName() != fileName {
+		if fileInfo.GetName() != fileName {
 			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: invalid response")
-			return
-		}
-
-		fileHash := info.GetHash()
-		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
-
-		if ok := downloadProcessesMap.TryLock(fileHash); !ok {
-			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusAccepted, "process: download")
-			return
-		}
-		defer downloadProcessesMap.Unlock(fileHash)
-
-		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
-			return
-		}
-
-		if err := os.MkdirAll(stgPath, 0700); err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")
 			return
 		}
 
 		streamReader, err := stream.BuildStreamReader(
 			pCtx,
 			pConfig.GetSettings().GetRetryNum(),
-			stgPath,
+			fullPath,
 			aliasName,
 			pHlkClient,
-			info,
+			fileInfo,
 			isPersonal,
 		)
 		if err != nil {
@@ -115,8 +127,24 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		// temp file used as buffer
+		if _, err := io.Copy(io.Discard, streamReader); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("read_stream"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: read stream")
+			return
+		}
+
+		file, err := os.Open(fullPath) // nolint: gosec
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("read_file"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
+			return
+		}
+		defer func() { _ = file.Close() }()
+
 		pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeN)
-		if err := api.ResponseWithReader(pW, http.StatusOK, streamReader); err != nil {
+
+		if err := api.ResponseWithReader(pW, http.StatusOK, file); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("stream_reader"))
 			return
 		}

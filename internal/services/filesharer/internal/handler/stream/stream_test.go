@@ -35,7 +35,7 @@ func TestStreamReader(t *testing.T) {
 
 	inputPath := "./testdata/"
 	filename := "file.txt"
-	tempname := "hls-filesharer-bf880b2a.tmp" // generated
+	tempname := "hls-filesharer-bf880b2a.tmp"
 
 	_ = os.Remove(inputPath + tempname)
 	defer func() { _ = os.Remove(inputPath + tempname) }()
@@ -53,7 +53,7 @@ func TestStreamReader(t *testing.T) {
 	stream, err := BuildStreamReader(
 		context.Background(),
 		0,
-		inputPath,
+		inputPath+tempname,
 		"alias_name",
 		newTsHLSClient(0, fileBytes, offset),
 		newFileInfoFromBytes(filename, fileBytes),
@@ -88,7 +88,7 @@ func TestStreamReader(t *testing.T) {
 	stream2, err := BuildStreamReader(
 		context.Background(),
 		0,
-		inputPath,
+		inputPath+tempname,
 		"alias_name",
 		newTsHLSClient(1, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
@@ -118,7 +118,7 @@ func TestStreamReader(t *testing.T) {
 	stream3, err := BuildStreamReader(
 		context.Background(),
 		0,
-		inputPath,
+		inputPath+tempname,
 		"alias_name",
 		newTsHLSClient(2, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
@@ -148,7 +148,7 @@ func TestStreamReader(t *testing.T) {
 	stream4, err := BuildStreamReader(
 		context.Background(),
 		0,
-		inputPath,
+		inputPath+tempname,
 		"alias_name",
 		newTsHLSClient(3, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
@@ -165,7 +165,7 @@ func TestStreamReader(t *testing.T) {
 	stream5, err := BuildStreamReader(
 		context.Background(),
 		0,
-		inputPath,
+		inputPath+tempname,
 		"alias_name",
 		newTsHLSClient(4, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
@@ -199,7 +199,7 @@ func newTsHLSClient(pErrType int, pFileBytes []byte, pOffset int) *tsHLSClient {
 	}
 }
 
-func (p *tsHLSClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLSClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
 	return &hls_config.SConfigSettings{
 		FPayloadSizeBytes: 197 + 1, // gRespSize + 1

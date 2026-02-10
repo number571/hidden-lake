@@ -36,7 +36,7 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success del connection with unknown host")
 	}
 
-	if _, err := client.GetIndex(context.Background()); err == nil {
+	if err := client.GetIndex(context.Background(), ""); err == nil {
 		t.Fatal("success get index with unknown host")
 	}
 

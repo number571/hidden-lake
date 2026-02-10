@@ -15,7 +15,7 @@ _GO_TEST_LIST=\
 	grep -vsE '/cmd/' | \
 	grep -vsE '/examples/' | \
 	grep -vsE '/test/prod' | \
-	grep -vsE '/test/utils' 
+	grep -vsE '/test/utils'
 
 .PHONY: default \
 	build clean \

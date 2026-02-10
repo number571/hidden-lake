@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/message/layer1"
@@ -37,7 +38,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 	}
 }
 
-func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
+func (p *sRequester) GetIndex(pCtx context.Context, pScheme string) error {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -46,9 +47,16 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", errors.Join(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
-	return string(res), nil
+	index := strings.Index(string(res), "=")
+	if index == -1 {
+		return ErrInvalidTitle
+	}
+	if string(res[index+1:]) != pScheme {
+		return ErrInvalidTitle
+	}
+	return nil
 }
 
 func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {

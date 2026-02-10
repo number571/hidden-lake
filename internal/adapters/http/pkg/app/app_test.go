@@ -134,7 +134,7 @@ func TestApp(t *testing.T) {
 		50,
 		10*time.Millisecond,
 		func() error {
-			_, err := intClient.GetIndex(context.Background())
+			err := intClient.GetIndex(context.Background(), settings.CAppAdapterName)
 			return err
 		},
 	)

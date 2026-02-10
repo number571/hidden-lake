@@ -8,7 +8,7 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	GetMessageLimit(context.Context) (uint64, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)
@@ -18,7 +18,7 @@ type IClient interface {
 }
 
 type IRequester interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	GetMessageLimit(context.Context) (uint64, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)

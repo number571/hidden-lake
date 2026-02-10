@@ -58,7 +58,7 @@ func newTsHLKClient(pFriendOK bool) *tsHLKClient {
 	}
 }
 
-func (p *tsHLKClient) GetIndex(context.Context) (string, error) { return "", nil }
+func (p *tsHLKClient) GetIndex(context.Context) error { return nil }
 func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, error) {
 	return &hlk_config.SConfigSettings{
 		FPayloadSizeBytes: 1024,

@@ -43,7 +43,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 	}
 }
 
-func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
+func (p *sRequester) GetIndex(pCtx context.Context) error {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -52,15 +52,12 @@ func (p *sRequester) GetIndex(pCtx context.Context) (string, error) {
 		nil,
 	)
 	if err != nil {
-		return "", errors.Join(ErrBadRequest, err)
+		return errors.Join(ErrBadRequest, err)
 	}
-
-	result := string(res)
-	if result != hlk_settings.CAppFullName {
-		return "", ErrInvalidTitle
+	if string(res) != hlk_settings.CAppFullName {
+		return ErrInvalidTitle
 	}
-
-	return result, nil
+	return nil
 }
 
 func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {

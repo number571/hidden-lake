@@ -21,7 +21,7 @@ func NewClient(pRequester IRequester) IClient {
 	}
 }
 
-func (p *sClient) GetIndex(pCtx context.Context) (string, error) {
+func (p *sClient) GetIndex(pCtx context.Context) error {
 	return p.fRequester.GetIndex(pCtx)
 }
 

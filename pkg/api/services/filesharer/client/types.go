@@ -8,10 +8,11 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	GetRemoteList(context.Context, string, uint64, bool) (fileinfo.IFileInfoList, error)
-	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, string, error)
+	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, error)
+	DelRemoteFile(context.Context, string, string, bool) error
 	GetRemoteFileInfo(context.Context, string, string, bool) (fileinfo.IFileInfo, error)
 
 	GetLocalList(context.Context, string, uint64) (fileinfo.IFileInfoList, error)
@@ -22,10 +23,11 @@ type IClient interface {
 }
 
 type IRequester interface {
-	GetIndex(context.Context) (string, error)
+	GetIndex(context.Context) error
 
 	GetRemoteFileInfo(context.Context, string, string, bool) (fileinfo.IFileInfo, error)
-	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, string, error)
+	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, error)
+	DelRemoteFile(context.Context, string, string, bool) error
 	GetRemoteList(context.Context, string, uint64, bool) (fileinfo.IFileInfoList, error)
 
 	GetLocalFileInfo(context.Context, string, string) (fileinfo.IFileInfo, error)
