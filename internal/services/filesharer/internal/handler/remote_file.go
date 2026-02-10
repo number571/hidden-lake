@@ -77,6 +77,14 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		if ok := downloadProcessesMap.TryLock(fullPath); !ok {
+			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusAccepted, "process: download")
+			return
+		}
+		defer downloadProcessesMap.Unlock(fullPath)
+
 		req := request.NewInfoRequest(fileName, isPersonal)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
@@ -91,29 +99,18 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		info, err := fileinfo.LoadFileInfo(resp.GetBody())
+		fileInfo, err := fileinfo.LoadFileInfo(resp.GetBody())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
-		if info.GetName() != fileName {
+		if fileInfo.GetName() != fileName {
 			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: invalid response")
 			return
 		}
-
-		fileHash := info.GetHash()
-		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
-
-		if ok := downloadProcessesMap.TryLock(fileHash); !ok {
-			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusAccepted, "process: download")
-			return
-		}
-		defer downloadProcessesMap.Unlock(fileHash)
 
 		streamReader, err := stream.BuildStreamReader(
 			pCtx,
@@ -121,7 +118,7 @@ func HandleRemoteFileAPI(
 			fullPath,
 			aliasName,
 			pHlkClient,
-			info,
+			fileInfo,
 			isPersonal,
 		)
 		if err != nil {

@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
@@ -109,13 +108,8 @@ func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasNam
 	if err != nil {
 		return false, errors.Join(ErrBadRequest, err)
 	}
-	if headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY {
-		return true, nil
-	}
-	if encoding.HexEncode(writer.fHash.Sum(nil)) != headers.Get(hls_settings.CHeaderFileHash) {
-		return false, errors.Join(ErrInvalidFileHash, err)
-	}
-	return false, nil
+	inProcess := headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY
+	return inProcess, nil
 }
 
 func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) error {
