@@ -13,9 +13,10 @@ _CHECK_ERROR_FUNC=if [ $$? != 0 ]; then exit 1; fi
 _GO_TEST_LIST=\
 	go list ./... | \
 	grep -vsE '/cmd/' | \
+	grep -vsE '/projects/' | \
 	grep -vsE '/examples/' | \
 	grep -vsE '/test/prod' | \
-	grep -vsE '/test/utils' 
+	grep -vsE '/test/utils'
 
 .PHONY: default \
 	build clean \
