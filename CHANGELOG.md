@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/hls/hls-filesharer`: add check filename on HasNotGraphicCharacters
+
 <!-- ... -->
 
 ## v1.10.2

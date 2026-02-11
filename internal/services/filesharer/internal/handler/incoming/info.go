@@ -8,6 +8,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -43,9 +44,9 @@ func HandleIncomingInfoHTTP(
 		}
 
 		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName == "" || fileName != queryParams.Get("name") {
-			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
+		if fileName == "" || chars.HasNotGraphicCharacters(fileName) || fileName != queryParams.Get("name") {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
 			return
 		}
 
