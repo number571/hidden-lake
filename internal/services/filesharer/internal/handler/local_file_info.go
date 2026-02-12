@@ -10,7 +10,6 @@ import (
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
@@ -32,10 +31,10 @@ func HandleLocalFileInfoAPI(
 		}
 
 		queryParams := pR.URL.Query()
+		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
-		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName == "" || chars.HasNotGraphicCharacters(fileName) || fileName != queryParams.Get("name") {
+		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
 			return

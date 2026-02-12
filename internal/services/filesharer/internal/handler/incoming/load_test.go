@@ -70,6 +70,9 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	if err := incomingLoadRequestInvalidPersonal(handler); err != nil {
 		t.Fatal(err)
 	}
+	if err := incomingLoadRequestInvalidFileName(handler); err != nil {
+		t.Fatal(err)
+	}
 	if err := incomingLoadRequestGetSharingStorage(handler); err != nil {
 		t.Fatal(err)
 	}
@@ -114,6 +117,25 @@ func incomingLoadRequestInvalidPersonal(handler http.HandlerFunc) error {
 	return nil
 }
 
+func incomingLoadRequestInvalidFileName(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?name=", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func incomingLoadRequestBigChunk(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=10000", nil)
@@ -135,7 +157,7 @@ func incomingLoadRequestBigChunk(handler http.HandlerFunc) error {
 
 func incomingLoadRequestNotFound(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/load?name=norfound.txt&chunk=0", nil)
+	req := httptest.NewRequest(http.MethodGet, "/load?name=not_found.txt&chunk=0", nil)
 
 	handler(w, req)
 	res := w.Result()

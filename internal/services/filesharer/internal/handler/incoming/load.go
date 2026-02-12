@@ -11,7 +11,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -40,17 +39,18 @@ func HandleIncomingLoadHTTP(
 		}
 
 		queryParams := pR.URL.Query()
+		fileName := queryParams.Get("name")
+
+		if utils.FileNameIsInvalid(fileName) {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			return
+		}
+
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
-			return
-		}
-
-		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName == "" || chars.HasNotGraphicCharacters(fileName) || fileName != queryParams.Get("name") {
-			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
 			return
 		}
 
