@@ -100,7 +100,7 @@ func incomingLoadRequestGetSharingStorage(handler http.HandlerFunc) error {
 
 func incomingLoadRequestInvalidPersonal(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?personal=qwerty", nil)
+	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0&personal=qwerty", nil)
 
 	handler(w, req)
 	res := w.Result()
