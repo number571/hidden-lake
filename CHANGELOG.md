@@ -9,6 +9,7 @@
 ### CHANGES
 
 - `cmd/hls/hls-filesharer`: add check filename on HasNotGraphicCharacters
+- `go-peer`: update version
 
 <!-- ... -->
 
