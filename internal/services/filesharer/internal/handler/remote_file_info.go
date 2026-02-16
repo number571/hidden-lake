@@ -30,9 +30,14 @@ func HandleRemoteFileInfoAPI(
 		}
 
 		queryParams := pR.URL.Query()
-
 		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
+
+		if utils.FileNameIsInvalid(fileName) {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			return
+		}
 
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {

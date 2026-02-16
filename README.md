@@ -56,6 +56,9 @@
         <a href="https://github.com/redecentralize/alternative-internet">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Alternative-Internet" />
 		</a>
+		<a href="https://github.com/number571/awesome-anonymity">
+        	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Anonymity" />
+		</a>
 		<a href="https://vk.me/join/6Px6b0Qh/uZIK4ixUYWQm4Krepzq5xbYjYw=">
         	<img src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white" alt="VKontakte" />
 		</a>
@@ -132,10 +135,10 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
 
-### Network-related applications
+### External applications
 
-1. [hl-client](https://github.com/number571/hl-client) - client for «Hidden Lake» network written in Go &amp; Fyne
-2. [hl-chat](https://github.com/number571/hl-chat) - console group chat based on «Hidden Lake» network
+1. [HL-Client](https://github.com/number571/hl-client) - client for «Hidden Lake» network written in Go &amp; Fyne
+2. [HL-Chat](https://github.com/number571/hl-chat) - console group chat based on «Hidden Lake» network
 
 ## Build and run
 

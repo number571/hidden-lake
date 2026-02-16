@@ -35,6 +35,9 @@ func TestHandleRemoteFileInfoAPI(t *testing.T) {
 	if err := remoteFileInfoRequestInvalidMethod(handlerX); err != nil {
 		t.Fatal(err)
 	}
+	if err := remoteFileInfoRequestInvalidFileName(handlerX); err != nil {
+		t.Fatal(err)
+	}
 	if err := remoteFileInfoRequestInvalidPersonal(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -84,6 +87,21 @@ func remoteFileInfoRequestInvalidMethod(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func remoteFileInfoRequestInvalidFileName(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?name=", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
 		return errors.New("bad status code") // nolint: err113
 	}
 

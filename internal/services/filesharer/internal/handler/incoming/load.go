@@ -39,17 +39,18 @@ func HandleIncomingLoadHTTP(
 		}
 
 		queryParams := pR.URL.Query()
+		fileName := queryParams.Get("name")
+
+		if utils.FileNameIsInvalid(fileName) {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			return
+		}
+
 		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
-			return
-		}
-
-		fileName := filepath.Base(queryParams.Get("name"))
-		if fileName != queryParams.Get("name") {
-			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
 			return
 		}
 

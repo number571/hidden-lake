@@ -31,12 +31,12 @@ func HandleLocalFileAPI(
 		}
 
 		queryParams := pR.URL.Query()
+		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
-		fileName := filepath.Base(queryParams.Get("name"))
 
-		if fileName == "" || fileName != queryParams.Get("name") {
-			pLogger.PushWarn(logBuilder.WithMessage("got_another_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got another name")
+		if utils.FileNameIsInvalid(fileName) {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
 			return
 		}
 

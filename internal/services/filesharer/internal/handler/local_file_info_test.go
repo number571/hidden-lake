@@ -96,7 +96,7 @@ func localFileInfoRequestInvalidMethod(handler http.HandlerFunc) error {
 
 func localFileInfoRequestInvalidName(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=", nil)
 
 	handler(w, req)
 	res := w.Result()

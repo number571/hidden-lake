@@ -2,9 +2,20 @@
 
 <!-- ... -->
 
-## v1.10.3~
+## v1.10.4~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.10.3
+
+*February 16, 2026*
+
+### CHANGES
+
+- `cmd/hls/hls-filesharer`: add check filename on HasNotGraphicCharacters
+- `go-peer`: update version
 
 <!-- ... -->
 
