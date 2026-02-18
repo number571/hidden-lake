@@ -13,7 +13,5 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrMkdirPath     = &SError{"mkdir path"}
-	ErrRetryNum      = &SError{"retry num"}
 	ErrUnknownAction = &SError{"unknown action"}
 )
