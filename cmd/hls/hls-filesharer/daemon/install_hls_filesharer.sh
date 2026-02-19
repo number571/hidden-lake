@@ -6,7 +6,7 @@ echo "
 Description=HiddenLakeFilesharer
 
 [Service]
-ExecStart=/usr/local/bin/hls-filesharer_amd64_linux --path ~/.config/hidden-lake
+ExecStart=/usr/local/bin/hls-filesharer_amd64_linux --path /usr/local/etc/hidden-lake
 Restart=always
 RestartSec=10
 

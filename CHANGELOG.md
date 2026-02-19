@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/*/daemon/install*.sh`: change path `~/.config/hidden-lake` -> `/usr/local/etc/hidden-lake`
+
 <!-- ... -->
 
 ## v1.10.3
