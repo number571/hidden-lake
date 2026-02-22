@@ -1,3 +1,3 @@
 #!/bin/bash
 
-journalctl -eu hidden_lake_composite.service
+journalctl --user -eu hidden_lake_composite.service

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-journalctl -eu hidden_lake_service_pinger.service
+journalctl --user -eu hidden_lake_service_pinger.service
