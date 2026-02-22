@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user restart hidden_lake_kernel.service
+systemctl --user restart hidden-lake-kernel.service

@@ -11,7 +11,7 @@ RestartSec=10
 
 [Install]
 WantedBy=default.target
-" > ~/.config/systemd/user/hidden_lake_service_messenger.service
+" > ~/.config/systemd/user/hidden-lake-service.messenger.service
 
 mkdir -p ~/.hidden-lake/bin
 cd ~/.hidden-lake/bin && \
@@ -20,5 +20,5 @@ cd ~/.hidden-lake/bin && \
     chmod +x hls-messenger_amd64_linux
 
 systemctl --user daemon-reload
-systemctl --user enable hidden_lake_service_messenger.service
-systemctl --user restart hidden_lake_service_messenger.service
+systemctl --user enable hidden-lake-service.messenger.service
+systemctl --user restart hidden-lake-service.messenger.service

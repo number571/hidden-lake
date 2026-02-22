@@ -11,7 +11,7 @@ RestartSec=10
 
 [Install]
 WantedBy=default.target
-" > ~/.config/systemd/user/hidden_lake_service_pinger.service
+" > ~/.config/systemd/user/hidden-lake-service.pinger.service
 
 mkdir -p ~/.hidden-lake/bin
 cd ~/.hidden-lake/bin && \
@@ -20,5 +20,5 @@ cd ~/.hidden-lake/bin && \
     chmod +x hls-pinger_amd64_linux
 
 systemctl --user daemon-reload
-systemctl --user enable hidden_lake_service_pinger.service
-systemctl --user restart hidden_lake_service_pinger.service
+systemctl --user enable hidden-lake-service.pinger.service
+systemctl --user restart hidden-lake-service.pinger.service

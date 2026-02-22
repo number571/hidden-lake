@@ -1,3 +1,3 @@
 #!/bin/bash
 
-watch -c SYSTEMD_COLORS=1 systemctl --user status -o cat hidden_lake_service_messenger.service
+watch -c SYSTEMD_COLORS=1 systemctl --user status -o cat hidden-lake-service.messenger.service

@@ -11,7 +11,7 @@ RestartSec=10
 
 [Install]
 WantedBy=default.target
-" > ~/.config/systemd/user/hidden_lake_composite.service
+" > ~/.config/systemd/user/hidden-lake-composite.service
 
 mkdir -p ~/.hidden-lake/bin
 cd ~/.hidden-lake/bin && \
@@ -20,5 +20,5 @@ cd ~/.hidden-lake/bin && \
     chmod +x hlc_amd64_linux
 
 systemctl --user daemon-reload
-systemctl --user enable hidden_lake_composite.service
-systemctl --user restart hidden_lake_composite.service
+systemctl --user enable hidden-lake-composite.service
+systemctl --user restart hidden-lake-composite.service

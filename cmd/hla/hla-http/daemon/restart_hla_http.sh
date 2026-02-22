@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user restart hidden_lake_adapter_http.service
+systemctl --user restart hidden-lake-adapter.http.service

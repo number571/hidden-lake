@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user disable hidden_lake_service_filesharer.service
+systemctl --user disable hidden-lake-service.filesharer.service

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user stop hidden_lake_adapter_tcp.service
+systemctl --user stop hidden_lake_adapter.tcp.service

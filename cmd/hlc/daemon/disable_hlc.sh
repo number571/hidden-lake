@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user disable hidden_lake_composite.service
+systemctl --user disable hidden-lake-composite.service

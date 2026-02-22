@@ -1,3 +1,3 @@
 #!/bin/bash
 
-journalctl --user -eu hidden_lake_kernel.service
+journalctl --user -eu hidden-lake-kernel.service

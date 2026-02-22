@@ -1,3 +1,3 @@
 #!/bin/bash
 
-journalctl --user -eu hidden_lake_service_messenger.service
+journalctl --user -eu hidden-lake-service.messenger.service

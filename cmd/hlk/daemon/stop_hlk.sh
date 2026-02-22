@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user stop hidden_lake_kernel.service
+systemctl --user stop hidden-lake-kernel.service

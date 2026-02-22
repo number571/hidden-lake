@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl --user disable hidden_lake_service_pinger.service
+systemctl --user disable hidden-lake-service.pinger.service
