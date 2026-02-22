@@ -1,24 +1,24 @@
 #!/bin/bash
 
-# root mode
 echo "
 [Unit]
-Description=HiddenLakeService
+Description=HiddenLakeKernel
 
 [Service]
-ExecStart=/usr/local/bin/hls_amd64_linux --path /usr/local/etc/hidden-lake
+ExecStart=$HOME/.hidden-lake/bin/hls_amd64_linux --path $HOME/hidden-lake/etc
 Restart=always
 RestartSec=10
 
 [Install]
-WantedBy=multi-user.target
-" > /etc/systemd/system/hidden_lake_kernel.service
+WantedBy=default.target
+" > ~/.config/systemd/user/hidden_lake_kernel.service
 
-cd /usr/local/bin && \
+mkdir -p ~/.hidden-lake/bin
+cd ~/.hidden-lake/bin && \
     rm -f hls_amd64_linux && \
     wget https://github.com/number571/hidden-lake/releases/latest/download/hlk_amd64_linux && \
     chmod +x hls_amd64_linux
 
-systemctl daemon-reload
-systemctl enable hidden_lake_kernel.service
-systemctl restart hidden_lake_kernel.service
+systemctl --user daemon-reload
+systemctl --user enable hidden_lake_kernel.service
+systemctl --user restart hidden_lake_kernel.service

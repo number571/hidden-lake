@@ -8,7 +8,7 @@
 
 ### CHANGES
 
-- `cmd/*/daemon/install*.sh`: change path `~/.config/hidden-lake` -> `/usr/local/etc/hidden-lake`
+- `cmd/*/daemon/install*.sh`: change root mode -> user mode
 
 <!-- ... -->
 

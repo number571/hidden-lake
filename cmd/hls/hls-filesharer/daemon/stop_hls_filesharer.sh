@@ -1,4 +1,3 @@
 #!/bin/bash
 
-# root mode
-systemctl stop hidden_lake_service_filesharer.service
+systemctl --user stop hidden_lake_service_filesharer.service

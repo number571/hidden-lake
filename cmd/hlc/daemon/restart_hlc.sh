@@ -1,4 +1,3 @@
 #!/bin/bash
 
-# root mode
-systemctl restart hidden_lake_composite.service
+systemctl --user restart hidden_lake_composite.service
