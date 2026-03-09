@@ -7,15 +7,15 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/handler/incoming"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
-	pMsgBroker message.IMessageBroker,
+	pMsgBroker broker.IDataBroker,
 ) {
 	mux := http.NewServeMux()
 
@@ -36,7 +36,7 @@ func (p *sApp) initExternalServiceHTTP(
 func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
-	pMsgBroker message.IMessageBroker,
+	pMsgBroker broker.IDataBroker,
 ) {
 	mux := http.NewServeMux()
 

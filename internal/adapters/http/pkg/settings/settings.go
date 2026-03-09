@@ -36,8 +36,10 @@ const (
 
 const (
 	CHandleIndexPath          = "/api/index"
+	CHandleNetworkOnlinePath  = "/api/network/online"
 	CHandleConfigSettingsPath = "/api/config/settings"
 	CHandleConfigConnectsPath = "/api/config/connects"
-	CHandleNetworkOnlinePath  = "/api/network/online"
-	CHandleNetworkAdapterPath = "/api/network/adapter"
+
+	CHandleAdapterProducePath = "/adapter/produce"
+	CHandleAdapterConsumePath = "/adapter/consume"
 )

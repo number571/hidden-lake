@@ -4,5 +4,3 @@ logging:
 - erro
 address:
   internal: 127.0.0.1:8522
-endpoints: 
-- 127.0.0.1:8571

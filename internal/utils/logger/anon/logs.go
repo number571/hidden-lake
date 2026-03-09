@@ -24,7 +24,8 @@ var gLogMap = map[anon_logger.ILogType]string{
 	CLogBaseResponseModeFromService: "RSPMD",
 	CLogBaseSendNetworkMessage:      "SNMSG",
 	CLogInfoResponseFromService:     "RSPSR",
-	CLogInfoRecvNetworkMessage:      "RNMSG",
+	CLogBaseRecvNetworkMessage:      "RNMSG",
+	CLogInfoNoContent:               "NOCNT",
 	CLogWarnRequestToService:        "RQTSR",
 	CLogWarnUndefinedService:        "UNDSR",
 	CLogWarnInvalidRequestMethod:    "IRMTH",
@@ -32,16 +33,18 @@ var gLogMap = map[anon_logger.ILogType]string{
 	CLogWarnNoConnections:           "NOCON",
 	CLogErroLoadRequestType:         "LDRQT",
 	CLogErroProxyRequestType:        "PXRQT",
+	CLogErroInvalidMessageType:      "INVMT",
 }
 
 const (
 	// BASE
 	CLogBaseResponseModeFromService anon_logger.ILogType = iota + anon_logger.CLogFinal + 1
 	CLogBaseSendNetworkMessage
+	CLogBaseRecvNetworkMessage
 
 	// INFO
 	CLogInfoResponseFromService
-	CLogInfoRecvNetworkMessage
+	CLogInfoNoContent
 
 	// WARN
 	CLogWarnRequestToService
@@ -53,4 +56,5 @@ const (
 	// ERRO
 	CLogErroLoadRequestType
 	CLogErroProxyRequestType
+	CLogErroInvalidMessageType
 )

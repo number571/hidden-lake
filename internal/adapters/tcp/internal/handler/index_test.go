@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -25,6 +26,7 @@ func TestErrorsAPI(t *testing.T) {
 		client.NewRequester(
 			testutils.TcUnknownHost,
 			&http.Client{Timeout: time.Second},
+			adapters.NewSettings(&adapters.SSettings{}),
 		),
 	)
 

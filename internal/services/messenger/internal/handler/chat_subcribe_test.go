@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
@@ -33,10 +34,10 @@ func TestHandleChatSubscribeAPI(t *testing.T) {
 	)
 
 	msg := dto.NewMessage(true, "hello, world!", time.Now())
-	msgBroker := message.NewMessageBroker()
+	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		msgBroker.Produce("abc", msg)
+		msgBroker.Produce(message.NewMessageContainer("abc", msg))
 	}()
 
 	handlerX := HandleChatSubscribeAPI(ctx, httpLogger, msgBroker)
@@ -48,7 +49,7 @@ func TestHandleChatSubscribeAPI(t *testing.T) {
 	}
 
 	// used for check got message from another friend
-	msgBroker.Produce("qwerty", msg)
+	msgBroker.Produce(message.NewMessageContainer("qwerty", msg))
 
 	chCtx, cancel := context.WithTimeout(ctx, 200*time.Millisecond)
 	defer cancel()

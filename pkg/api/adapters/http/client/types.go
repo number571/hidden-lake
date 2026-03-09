@@ -19,6 +19,7 @@ type IClient interface {
 	DelConnection(context.Context, string) error
 
 	ProduceMessage(context.Context, layer1.IMessage) error
+	ConsumeMessage(context.Context, string) (layer1.IMessage, error)
 }
 
 type IRequester interface {
@@ -33,4 +34,5 @@ type IRequester interface {
 	DelConnection(context.Context, string) error
 
 	ProduceMessage(context.Context, layer1.IMessage) error
+	ConsumeMessage(context.Context, string) (layer1.IMessage, error)
 }

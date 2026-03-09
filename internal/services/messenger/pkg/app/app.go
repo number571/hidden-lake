@@ -13,11 +13,11 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/services/messenger/pkg/config"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -99,7 +99,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			return errors.Join(ErrInitDB, err)
 		}
 
-		msgBroker := message.NewMessageBroker()
+		msgBroker := broker.NewDataBroker(256, 256)
 		hlkClient := hlk_client.NewClient(
 			hlk_client.NewBuilder(),
 			hlk_client.NewRequester(

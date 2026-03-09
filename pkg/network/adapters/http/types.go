@@ -19,6 +19,7 @@ type IHTTPAdapter interface {
 type ISettings interface {
 	GetAdapterSettings() adapters.ISettings
 	GetAddress() string
+	GetSubscribeID() string
 	GetReadTimeout() time.Duration
 	GetHandleTimeout() time.Duration
 }

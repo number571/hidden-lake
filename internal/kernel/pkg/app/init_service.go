@@ -8,6 +8,7 @@ import (
 	"github.com/number571/hidden-lake/internal/kernel/internal/handler"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 )
 
 func (p *sApp) initServiceHTTP(pCtx context.Context) {
@@ -19,8 +20,20 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 
 	endpoints := cfg.GetEndpoints()
 	epClients := make([]client.IClient, 0, len(endpoints))
+
+	qbProcessor := p.fNode.GetOriginNode().GetQBProcessor()
+	msgSettings := qbProcessor.GetSettings().GetMessageConstructSettings().GetSettings()
+
 	for _, ep := range endpoints {
-		requester := client.NewRequester(ep, &http.Client{Timeout: buildSettings.GetHttpHandleTimeout()})
+		requester := client.NewRequester(
+			ep,
+			&http.Client{Timeout: buildSettings.GetHttpHandleTimeout()},
+			adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: qbProcessor.GetClient().GetMessageSize(),
+				FWorkSizeBits:     msgSettings.GetWorkSizeBits(),
+				FNetworkKey:       msgSettings.GetNetworkKey(),
+			}),
+		)
 		epClients = append(epClients, client.NewClient(requester))
 	}
 

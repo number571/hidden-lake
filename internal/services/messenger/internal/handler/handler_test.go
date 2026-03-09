@@ -12,6 +12,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/messenger/client"
@@ -36,7 +37,7 @@ func TestHandler(t *testing.T) {
 		},
 	)
 
-	msgBroker := message.NewMessageBroker()
+	msgBroker := broker.NewDataBroker(256, 256)
 	server := testInitInternalServiceHTTP(
 		ctx,
 		httpLogger,
@@ -77,7 +78,7 @@ func TestHandler(t *testing.T) {
 	msg := dto.NewMessage(true, "hello, world!", time.Now())
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		msgBroker.Produce("abc", msg)
+		msgBroker.Produce(message.NewMessageContainer("abc", msg))
 	}()
 	gotMsg, err := client.ListenChat(context.Background(), "abc", "sid")
 	if err != nil {
@@ -94,7 +95,7 @@ func testInitInternalServiceHTTP(
 	pConfig config.IConfig,
 	pHlkClient hlk_client.IClient,
 	pDatabase database.IKVDatabase,
-	pMsgBroker message.IMessageBroker,
+	pMsgBroker broker.IDataBroker,
 	pAddress string,
 ) *http.Server {
 	mux := http.NewServeMux()

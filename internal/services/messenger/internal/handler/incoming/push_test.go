@@ -13,7 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
@@ -38,7 +38,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	msgBroker := message.NewMessageBroker()
+	msgBroker := broker.NewDataBroker(256, 256)
 	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
 
 	if err := incomingPushRequestOK(handler); err != nil {

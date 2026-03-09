@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
@@ -88,6 +89,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
 					FAddress:       pCfg.GetAddress().GetInternal(),
+					FSubscribeID:   fmt.Sprintf("%s-%s", hla_tcp_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},

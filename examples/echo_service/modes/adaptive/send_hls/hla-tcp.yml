@@ -5,5 +5,3 @@ logging:
 address:
   internal: 127.0.0.1:7522
   external: :7521
-endpoints: 
-- 127.0.0.1:7571

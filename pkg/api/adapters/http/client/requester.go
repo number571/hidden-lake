@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -12,6 +13,7 @@ import (
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/config"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 )
 
 var (
@@ -23,18 +25,21 @@ const (
 	cHandleConfigSettingsTemplate = "http://" + "%s" + hla_settings.CHandleConfigSettingsPath
 	cHandleConfigConnectsTemplate = "http://" + "%s" + hla_settings.CHandleConfigConnectsPath
 	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hla_settings.CHandleNetworkOnlinePath
-	cHandleNetworkAdapterTemplate = "http://" + "%s" + hla_settings.CHandleNetworkAdapterPath
+	cHandleAdapterProduceTemplate = "http://" + "%s" + hla_settings.CHandleAdapterProducePath
+	cHandleAdapterConsumeTemplate = "http://" + "%s" + hla_settings.CHandleAdapterConsumePath + "?sid=%s"
 )
 
 type sRequester struct {
-	fHost   string
-	fClient *http.Client
+	fHost            string
+	fClient          *http.Client
+	fAdapterSettings adapters.ISettings
 }
 
-func NewRequester(pHost string, pClient *http.Client) IRequester {
+func NewRequester(pHost string, pClient *http.Client, pAdapterSettings adapters.ISettings) IRequester {
 	return &sRequester{
-		fHost:   pHost,
-		fClient: pClient,
+		fHost:            pHost,
+		fClient:          pClient,
+		fAdapterSettings: pAdapterSettings,
 	}
 }
 
@@ -162,15 +167,41 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 }
 
 func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessage) error {
+	if _, err := layer1.LoadMessage(p.fAdapterSettings, pNetMsg.ToString()); err != nil {
+		return errors.Join(ErrDecodeRequest, err)
+	}
 	_, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleNetworkAdapterTemplate, p.fHost),
+		fmt.Sprintf(cHandleAdapterProduceTemplate, p.fHost),
 		pNetMsg.ToString(),
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
+}
+
+func (p *sRequester) ConsumeMessage(pCtx context.Context, pSid string) (layer1.IMessage, error) {
+	for {
+		res, err := api.Request(
+			pCtx,
+			p.fClient,
+			http.MethodGet,
+			fmt.Sprintf(cHandleAdapterConsumeTemplate, p.fHost, url.QueryEscape(pSid)),
+			nil,
+		)
+		if err != nil {
+			return nil, errors.Join(ErrBadRequest, err)
+		}
+		if len(res) == 0 {
+			continue
+		}
+		msg, err := layer1.LoadMessage(p.fAdapterSettings, string(res))
+		if err != nil {
+			return nil, errors.Join(ErrDecodeResponse, err)
+		}
+		return msg, nil
+	}
 }

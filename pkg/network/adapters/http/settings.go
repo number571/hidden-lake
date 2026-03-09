@@ -23,6 +23,7 @@ type sSettings struct {
 
 type SServeSettings struct {
 	FAddress       string
+	FSubscribeID   string
 	FReadTimeout   time.Duration
 	FHandleTimeout time.Duration
 }
@@ -54,6 +55,10 @@ func (p *sSettings) initDefault() *sSettings {
 
 func (p *sSettings) GetAddress() string {
 	return p.FServeSettings.FAddress
+}
+
+func (p *sSettings) GetSubscribeID() string {
+	return p.FServeSettings.FSubscribeID
 }
 
 func (p *sSettings) GetAdapterSettings() adapters.ISettings {

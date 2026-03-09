@@ -80,3 +80,11 @@ func (p *sClient) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessage) 
 	}
 	return nil
 }
+
+func (p *sClient) ConsumeMessage(pCtx context.Context, pSid string) (layer1.IMessage, error) {
+	msg, err := p.fRequester.ConsumeMessage(pCtx, pSid)
+	if err != nil {
+		return nil, fmt.Errorf("consume message (client): %w", err)
+	}
+	return msg, nil
+}

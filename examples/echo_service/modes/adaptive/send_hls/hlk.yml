@@ -6,7 +6,6 @@ logging:
   - warn
   - erro
 address:
-  external: :7571
   internal: :7572
 endpoints:
 - 127.0.0.1:7522

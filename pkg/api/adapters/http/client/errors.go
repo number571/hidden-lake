@@ -14,6 +14,7 @@ func (err *SError) Error() string {
 
 var (
 	ErrBadRequest       = &SError{"bad request"}
+	ErrDecodeRequest    = &SError{"decode request"}
 	ErrDecodeResponse   = &SError{"decode response"}
 	ErrInvalidPublicKey = &SError{"invalid public key"}
 	ErrInvalidTitle     = &SError{"invalid title"}

@@ -74,7 +74,7 @@ func NewTCPAdapter(
 		func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
 			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 			p.fLogger.PushInfo(logBuilder.
-				WithType(internal_anon_logger.CLogInfoRecvNetworkMessage).
+				WithType(internal_anon_logger.CLogBaseRecvNetworkMessage).
 				WithHash(msg.GetHash()).
 				WithProof(msg.GetProof()).
 				WithSize(len(msg.ToBytes())).

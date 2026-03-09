@@ -261,3 +261,6 @@ func (p *tsRequester) DelConnection(context.Context, string) error {
 	return nil
 }
 func (p *tsRequester) ProduceMessage(context.Context, layer1.IMessage) error { return nil }
+func (p *tsRequester) ConsumeMessage(context.Context, string) (layer1.IMessage, error) {
+	return nil, nil
+}

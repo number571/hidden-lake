@@ -10,6 +10,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/pubkey"
@@ -24,7 +25,7 @@ func HandleIncomingPushHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pDB database.IKVDatabase,
-	pBroker message.IMessageBroker,
+	pBroker broker.IDataBroker,
 	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -68,7 +69,7 @@ func HandleIncomingPushHTTP(
 		}
 
 		msg := message_dto.NewMessage(true, rawMsg, time.Now())
-		pBroker.Produce(aliasName, msg)
+		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
 
 		if err := pDB.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))

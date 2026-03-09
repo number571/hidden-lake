@@ -99,7 +99,11 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	go func() { _ = adapter1.Run(ctx) }()
 
 	client := client.NewClient(
-		client.NewRequester(testutils.TgAddrs[18], &http.Client{Timeout: 5 * time.Second}),
+		client.NewRequester(
+			testutils.TgAddrs[18],
+			&http.Client{Timeout: 5 * time.Second},
+			adapterSettings,
+		),
 	)
 
 	err1 := testutils_gopeer.TryN(
@@ -166,7 +170,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	req1, err := http.NewRequestWithContext(
 		sCtx1,
 		http.MethodGet,
-		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleAdapterProducePath,
 		nil,
 	)
 	if err != nil {
@@ -189,7 +193,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	req2, err := http.NewRequestWithContext(
 		sCtx2,
 		http.MethodPost,
-		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleAdapterProducePath,
 		bytes.NewBufferString(encoding.HexEncode([]byte{1})),
 	)
 	if err != nil {
@@ -213,7 +217,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	req3, err := http.NewRequestWithContext(
 		sCtx3,
 		http.MethodPost,
-		"http://"+testutils.TgAddrs[18]+settings.CHandleNetworkAdapterPath,
+		"http://"+testutils.TgAddrs[18]+settings.CHandleAdapterProducePath,
 		bytes.NewBufferString(encoding.HexEncode(random.NewRandom().GetBytes(size))),
 	)
 	if err != nil {

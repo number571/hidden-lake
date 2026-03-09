@@ -9,13 +9,14 @@ import (
 	"github.com/number571/hidden-lake/internal/services/messenger/internal/message"
 	hls_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/broker"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
 func HandleChatSubscribeAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
-	pBroker message.IMessageBroker,
+	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	buildSettings := build.GetSettings()
 
@@ -46,12 +47,18 @@ func HandleChatSubscribeAPI(
 					_ = api.Response(pW, http.StatusNoContent, []byte{})
 					return
 				}
-				if c.GetFriend() != friend {
+				v, ok := c.(message.IMessageContainer)
+				if !ok {
+					pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
+					_ = api.Response(pW, http.StatusInternalServerError, []byte{})
+					return
+				}
+				if v.GetFriend() != friend {
 					pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
 					continue
 				}
 				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-				_ = api.Response(pW, http.StatusOK, c.GetMessage().ToString())
+				_ = api.Response(pW, http.StatusOK, v.GetMessage().ToString())
 				return
 			}
 		}

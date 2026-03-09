@@ -20,6 +20,7 @@ import (
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -130,6 +131,11 @@ func TestApp(t *testing.T) {
 		client.NewRequester(
 			testutils.TgAddrs[17],
 			&http.Client{Timeout: time.Minute},
+			adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: 8192,
+				FWorkSizeBits:     10,
+				FNetworkKey:       "_",
+			}),
 		),
 	)
 

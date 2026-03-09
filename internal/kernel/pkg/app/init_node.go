@@ -2,8 +2,10 @@ package app
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
 
+	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -52,7 +54,8 @@ func (p *sApp) initAnonNode() error {
 			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
 				FServeSettings: &http.SServeSettings{
-					FAddress: cfg.GetAddress().GetExternal(),
+					FAddress:     cfg.GetAddress().GetExternal(),
+					FSubscribeID: fmt.Sprintf("%s-%s", hlk_settings.CAppShortName, random.NewRandom().GetString(16)),
 				},
 			}),
 			cache.NewLRUCache(build.GetSettings().FStorageManager.FCacheHashesCap),
