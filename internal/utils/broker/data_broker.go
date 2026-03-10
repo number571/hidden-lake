@@ -61,7 +61,7 @@ func (p *sDataBroker) Consume(pID string) <-chan interface{} {
 	return ch
 }
 
-func (p *sDataBroker) GetConsumersCount() uint64 {
+func (p *sDataBroker) CountSubscribers() uint64 {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 

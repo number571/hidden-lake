@@ -133,6 +133,9 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
+		if p.fDataBroker.CountSubscribers() > 0 {
+			return nil
+		}
 		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
 		return ErrNoConnections
 	}
@@ -257,7 +260,7 @@ func (p *sHTTPAdapter) consumeMessage(pCtx context.Context, pHost string) (layer
 	hlaClient := client.NewClient(
 		client.NewRequester(
 			pHost,
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()}, // TODO:
+			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 			p.fSettings.GetAdapterSettings(),
 		),
 	)
