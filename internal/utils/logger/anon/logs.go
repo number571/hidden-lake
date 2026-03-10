@@ -26,6 +26,7 @@ var gLogMap = map[anon_logger.ILogType]string{
 	CLogInfoResponseFromService:     "RSPSR",
 	CLogBaseRecvNetworkMessage:      "RNMSG",
 	CLogInfoNoContent:               "NOCNT",
+	CLogInfoHasOnlySubscribers:      "HONLS",
 	CLogWarnRequestToService:        "RQTSR",
 	CLogWarnUndefinedService:        "UNDSR",
 	CLogWarnInvalidRequestMethod:    "IRMTH",
@@ -45,6 +46,7 @@ const (
 	// INFO
 	CLogInfoResponseFromService
 	CLogInfoNoContent
+	CLogInfoHasOnlySubscribers
 
 	// WARN
 	CLogWarnRequestToService

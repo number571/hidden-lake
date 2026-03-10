@@ -134,6 +134,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
 		if p.fDataBroker.CountSubscribers() > 0 {
+			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoHasOnlySubscribers))
 			return nil
 		}
 		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
