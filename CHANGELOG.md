@@ -9,6 +9,11 @@
 ### CHANGES
 
 - `cmd/*/daemon/install*.sh`: change root mode -> user mode
+- `go-peer`: update version
+
+### IMPROVEMENTS
+
+- `pkg/network/adapters/http`: add subscribe function
 
 <!-- ... -->
 

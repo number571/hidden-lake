@@ -18,6 +18,10 @@ func TestMessageBroker(t *testing.T) {
 	msg := "hello, world"
 	msgBroker.Produce(msg)
 
+	if msgBroker.CountSubscribers() != 1 {
+		t.Fatal("count subscribers != 1")
+	}
+
 	select {
 	case x := <-msgChan:
 		if x.(string) != msg {
@@ -34,6 +38,10 @@ func TestMessageBroker(t *testing.T) {
 	}
 	for range msgChan {
 		// if channel closed -> cycle has end
+	}
+
+	if msgBroker.CountSubscribers() != 0 {
+		t.Fatal("count subscribers != 0")
 	}
 
 	// update channel
