@@ -37,9 +37,7 @@ func TestError(t *testing.T) {
 func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	t.Parallel()
 
-	adapterSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: 8192,
-	})
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8192})
 
 	adapter3 := NewHTTPAdapter(
 		NewSettings(&SSettings{
@@ -160,7 +158,33 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
 	)
 
-	if err := client.ProduceMessage(ctx, netMsg); err != nil {
+	errCh := make(chan error, 1)
+	go func() {
+		time.Sleep(time.Second)
+		if err := client.ProduceMessage(ctx, netMsg); err != nil {
+			errCh <- err
+			return
+		}
+		msg, err := adapter1.Consume(ctx)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		if !bytes.HasPrefix(msg.GetPayload().GetBody(), msgBytes) {
+			errCh <- errors.New("get invalid message bytes") // nolint: err113
+			return
+		}
+		errCh <- nil
+	}()
+
+	msg, err := client.ConsumeMessage(ctx, "123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(msg.GetHmac(), netMsg.GetHmac()) {
+		t.Fatal("invalid hmac")
+	}
+	if err := <-errCh; err != nil {
 		t.Fatal(err)
 	}
 
@@ -267,14 +291,6 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	invalidMsg := random.NewRandom().GetString(8192 << 1)
 	if err := testCustomProduceMessage(ctx, http.MethodPost, testutils.TgAddrs[18], invalidMsg); err == nil {
 		t.Fatal("success produce message with invalid message")
-	}
-
-	msg, err := adapter1.Consume(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.HasPrefix(msg.GetPayload().GetBody(), msgBytes) {
-		t.Fatal("get invalid message bytes")
 	}
 
 	if err := adapter1.Produce(ctx, msg); err != nil {
