@@ -8,6 +8,7 @@
 
 ### CHANGES
 
+- `internal/adapters/http/pkg/settings`: /api/adapter/produce -> /adapter/produce
 - `cmd/*/daemon/install*.sh`: change root mode -> user mode
 - `go-peer`: update version
 
