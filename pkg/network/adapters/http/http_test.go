@@ -21,6 +21,7 @@ import (
 	testutils "github.com/number571/hidden-lake/test/utils"
 
 	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 )
 
@@ -39,25 +40,6 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 
 	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8192})
 
-	adapter3 := NewHTTPAdapter(
-		NewSettings(&SSettings{
-			FAdapterSettings: adapterSettings,
-		}),
-		cache.NewLRUCache(1),
-		func() []string { return nil },
-	)
-
-	adapter2 := NewHTTPAdapter(
-		NewSettings(&SSettings{
-			FAdapterSettings: adapterSettings,
-			FServeSettings: &SServeSettings{
-				FAddress: testutils.TgAddrs[19],
-			},
-		}),
-		cache.NewLRUCache(1024),
-		func() []string { return nil },
-	)
-
 	adapter1 := NewHTTPAdapter(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
@@ -66,11 +48,20 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			},
 		}),
 		cache.NewLRUCache(1024),
-		func() []string { return []string{testutils.TgAddrs[19]} },
+		func() []string { return nil },
 	)
 
-	onlines := adapter1.GetOnlines()
-	if len(onlines) != 1 || onlines[0] != testutils.TgAddrs[19] {
+	adapter2 := NewHTTPAdapter(
+		NewSettings(&SSettings{
+			FAdapterSettings: adapterSettings,
+			FServeSettings:   &SServeSettings{},
+		}),
+		cache.NewLRUCache(1024),
+		func() []string { return []string{testutils.TgAddrs[18]} },
+	)
+
+	onlines := adapter2.GetOnlines()
+	if len(onlines) != 1 || onlines[0] != testutils.TgAddrs[18] {
 		t.Fatal("adapter: get onlines")
 	}
 
@@ -92,7 +83,6 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go func() { _ = adapter3.Run(ctx) }()
 	go func() { _ = adapter2.Run(ctx) }()
 	go func() { _ = adapter1.Run(ctx) }()
 
@@ -165,13 +155,27 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			errCh <- err
 			return
 		}
-		msg, err := adapter1.Consume(ctx)
+		// retry produce
+		if err := client.ProduceMessage(ctx, netMsg); err != nil {
+			errCh <- err
+			return
+		}
+		msg1, err := adapter2.Consume(ctx)
 		if err != nil {
 			errCh <- err
 			return
 		}
-		if !bytes.HasPrefix(msg.GetPayload().GetBody(), msgBytes) {
-			errCh <- errors.New("get invalid message bytes") // nolint: err113
+		msg2, err := adapter1.Consume(ctx)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		if !bytes.Equal(msg1.GetHmac(), msg2.GetHmac()) {
+			errCh <- errors.New("invalid hmac (1)") // nolint: err113
+			return
+		}
+		if !bytes.Equal(msg1.GetHmac(), netMsg.GetHmac()) {
+			errCh <- errors.New("invalid hmac (2)") // nolint: err113
 			return
 		}
 		errCh <- nil
@@ -186,6 +190,17 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	}
 	if err := <-errCh; err != nil {
 		t.Fatal(err)
+	}
+
+	_, err = api.Request(
+		context.Background(),
+		&http.Client{Timeout: time.Second},
+		http.MethodPost,
+		testutils.TgAddrs[18],
+		nil,
+	)
+	if err == nil {
+		t.Fatal("success request with invalid method")
 	}
 
 	sCtx1, cancel1 := context.WithTimeout(ctx, time.Second)

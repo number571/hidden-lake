@@ -133,6 +133,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 	connects := p.fConnsGetter()
 	if len(connects) == 0 {
 		if p.fDataBroker.CountSubscribers() > 0 {
+			// produces messages with `adapterConsumeHandler` function
 			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoHasOnlySubscribers))
 			return nil
 		}
@@ -180,10 +181,6 @@ func (p *sHTTPAdapter) Consume(pCtx context.Context) (layer1.IMessage, error) {
 		case <-pCtx.Done():
 			return nil, pCtx.Err()
 		case msg := <-p.fNetMsgChan:
-			if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
-				continue
-			}
-			p.fDataBroker.Produce(msg)
 			return msg, nil
 		}
 	}
@@ -203,6 +200,10 @@ func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 					// internal logger
 					continue
 				}
+				if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
+					continue
+				}
+				p.fDataBroker.Produce(msg)
 				p.fNetMsgChan <- msg
 			}
 		}
@@ -321,18 +322,22 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 			return
 		}
 
+		logBuilder.
+			WithHash(msg.GetHash()).
+			WithProof(msg.GetProof()).
+			WithSize(len(msg.ToBytes()))
+
 		if msg.GetPayload().GetHead() != build.GetSettings().FProtoMask.FNetwork {
 			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnPayloadNull))
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		logBuilder.
-			WithHash(msg.GetHash()).
-			WithProof(msg.GetProof()).
-			WithSize(len(msg.ToBytes()))
-
 		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
+		if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
+			return
+		}
+		p.fDataBroker.Produce(msg)
 		p.fNetMsgChan <- msg
 	}
 }
