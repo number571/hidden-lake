@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	CDefaultConnNumLimit  = 256
 	CDefaultReadTimeout   = 5 * time.Second
 	CDefaultHandleTimeout = 5 * time.Second
 )
@@ -24,6 +25,7 @@ type sSettings struct {
 type SServeSettings struct {
 	FAddress       string
 	FSubscribeID   string
+	FConnNumLimit  uint64
 	FReadTimeout   time.Duration
 	FHandleTimeout time.Duration
 }
@@ -44,6 +46,9 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings == nil {
 		p.FServeSettings = &SServeSettings{}
 	}
+	if p.FServeSettings.FConnNumLimit == 0 {
+		p.FServeSettings.FConnNumLimit = CDefaultConnNumLimit
+	}
 	if p.FServeSettings.FReadTimeout == 0 {
 		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
 	}
@@ -55,6 +60,10 @@ func (p *sSettings) initDefault() *sSettings {
 
 func (p *sSettings) GetAddress() string {
 	return p.FServeSettings.FAddress
+}
+
+func (p *sSettings) GetConnNumLimit() uint64 {
+	return p.FServeSettings.FConnNumLimit
 }
 
 func (p *sSettings) GetSubscribeID() string {

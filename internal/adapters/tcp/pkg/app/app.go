@@ -72,8 +72,8 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_tcp.NewSettings(&hla_tcp.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_tcp.SServeSettings{
+					FConnNumLimit:   buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:        pCfg.GetAddress().GetExternal(),
-					FConnNumLimit:   cfgSettings.GetConnNumLimit(),
 					FConnKeepPeriod: cfgSettings.GetConnKeepPeriod(),
 					FSendTimeout:    cfgSettings.GetSendTimeout(),
 					FRecvTimeout:    cfgSettings.GetRecvTimeout(),
@@ -90,6 +90,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 				FServeSettings: &hla_http.SServeSettings{
 					FAddress:       pCfg.GetAddress().GetInternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hla_tcp_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},

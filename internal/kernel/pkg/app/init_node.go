@@ -19,8 +19,9 @@ import (
 
 func (p *sApp) initAnonNode() error {
 	var (
-		cfg         = p.fCfgW.GetConfig()
-		cfgSettings = cfg.GetSettings()
+		cfg           = p.fCfgW.GetConfig()
+		cfgSettings   = cfg.GetSettings()
+		buildSettings = build.GetSettings()
 	)
 
 	kvDatabase, err := database.NewKVDatabase(filepath.Join(p.fPathTo, hlk_settings.CPathDB))
@@ -54,11 +55,14 @@ func (p *sApp) initAnonNode() error {
 			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
 				FServeSettings: &http.SServeSettings{
-					FAddress:     cfg.GetAddress().GetExternal(),
-					FSubscribeID: fmt.Sprintf("%s-%s", hlk_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
+					FAddress:       cfg.GetAddress().GetExternal(),
+					FSubscribeID:   fmt.Sprintf("%s-%s", hlk_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
+					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},
 			}),
-			cache.NewLRUCache(build.GetSettings().FStorageManager.FCacheHashesCap),
+			cache.NewLRUCache(buildSettings.FStorageManager.FCacheHashesCap),
 			func() []string { return p.fCfgW.GetConfig().GetEndpoints() },
 		),
 		handler.HandleServiceFunc(cfg, p.fAnonLogger),

@@ -22,9 +22,8 @@ import (
 )
 
 const (
-	netMessageChanSize  = 32
-	subscribeChanSize   = 32
-	subscribersNumLimit = 32
+	netMessageChanSize = 32
+	subscribeChanSize  = 32
 )
 
 var (
@@ -65,7 +64,7 @@ func NewHTTPAdapter(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
 		),
-		fDataBroker: broker.NewDataBroker(subscribeChanSize, subscribersNumLimit),
+		fDataBroker: broker.NewDataBroker(subscribeChanSize, pSettings.GetConnNumLimit()),
 	}
 }
 

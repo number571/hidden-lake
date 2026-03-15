@@ -20,7 +20,6 @@ type SConfigSettings struct {
 	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
 	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
-	FConnNumLimit     uint64 `json:"conn_num_limit,omitempty" yaml:"conn_num_limit,omitempty"`
 	FConnKeepPeriodMS uint64 `json:"conn_keep_period_ms,omitempty" yaml:"conn_keep_period_ms,omitempty"`
 	FSendTimeoutMS    uint64 `json:"send_timeout_ms,omitempty" yaml:"send_timeout_ms,omitempty"`
 	FRecvTimeoutMS    uint64 `json:"recv_timeout_ms,omitempty" yaml:"recv_timeout_ms,omitempty"`
@@ -163,10 +162,6 @@ func (p *SAddress) GetExternal() string {
 
 func (p *SAddress) GetInternal() string {
 	return p.FInternal
-}
-
-func (p *SConfigSettings) GetConnNumLimit() uint64 {
-	return p.FConnNumLimit
 }
 
 func (p *SConfigSettings) GetConnKeepPeriod() time.Duration {

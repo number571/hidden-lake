@@ -31,7 +31,6 @@ type IConfigSettings interface {
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
 
-	GetConnNumLimit() uint64
 	GetConnKeepPeriod() time.Duration
 	GetSendTimeout() time.Duration
 	GetRecvTimeout() time.Duration

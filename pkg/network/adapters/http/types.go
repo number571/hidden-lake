@@ -12,13 +12,20 @@ type IHTTPAdapter interface {
 	adapters.IRunnerAdapter
 
 	WithLogger(string, logger.ILogger) IHTTPAdapter
+
 	WithHandlers(map[string]http.HandlerFunc) IHTTPAdapter
 	GetOnlines() []string
 }
 
 type ISettings interface {
+	ISrvSettings
+
 	GetAdapterSettings() adapters.ISettings
+}
+
+type ISrvSettings interface {
 	GetAddress() string
+	GetConnNumLimit() uint64
 	GetSubscribeID() string
 	GetReadTimeout() time.Duration
 	GetHandleTimeout() time.Duration

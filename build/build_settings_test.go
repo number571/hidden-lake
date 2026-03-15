@@ -19,6 +19,7 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Fatal("success validate with invalid network_manager")
 	}
 
+	settings.FNetworkManager.FConnNumLimit = 256
 	settings.FNetworkManager.FHttpReadTimeoutMS = 5000
 	settings.FNetworkManager.FHttpHandleTimeoutMS = 5000
 	settings.FNetworkManager.FHttpCallbackTimeoutMS = 3600000

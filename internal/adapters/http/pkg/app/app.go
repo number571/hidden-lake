@@ -71,6 +71,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:       pCfg.GetAddress().GetExternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hla_http_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   cfgSettings.GetReadTimeout(),
@@ -86,6 +87,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 				FServeSettings: &hla_http.SServeSettings{
 					FAddress:       pCfg.GetAddress().GetInternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hla_http_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
 				},
