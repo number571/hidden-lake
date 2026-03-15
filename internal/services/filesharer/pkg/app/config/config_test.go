@@ -21,7 +21,7 @@ const (
   retry_num: %d
 logging:
   - info
-  - erro
+  - %s
 address:
   external: '%s'
 connection: '%s'`
@@ -50,6 +50,18 @@ func testNewConfigString() string {
 		tcConfigTemplate,
 		tcPageOffset,
 		tcRetryNum,
+		"erro",
+		tcAddressIncoming,
+		tcConnectionService,
+	)
+}
+
+func testNewConfigStringWithInvalidLogging() string {
+	return fmt.Sprintf(
+		tcConfigTemplate,
+		tcPageOffset,
+		tcRetryNum,
+		"erro111",
 		tcAddressIncoming,
 		tcConnectionService,
 	)
@@ -57,6 +69,10 @@ func testNewConfigString() string {
 
 func testConfigDefaultInit(configPath string) {
 	_ = os.WriteFile(configPath, []byte(testNewConfigString()), 0600)
+}
+
+func testConfigDefaultInitWithInvalidLogging(configPath string) {
+	_ = os.WriteFile(configPath, []byte(testNewConfigStringWithInvalidLogging()), 0600)
 }
 
 func TestConfig(t *testing.T) {
@@ -105,5 +121,12 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetSettings().GetRetryNum() != tcRetryNum {
 		t.Fatal("settings.retry_num is invalid")
+	}
+
+	_ = os.Remove(tcConfigFile)
+	testConfigDefaultInitWithInvalidLogging(tcConfigFile)
+
+	if _, err := LoadConfig(tcConfigFile); err == nil {
+		t.Fatal("success init config with invalid logging")
 	}
 }

@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -8,7 +9,7 @@ func TestMessageBroker(t *testing.T) {
 	t.Parallel()
 
 	chanSize := uint64(256)
-	subLimit := uint64(256)
+	subLimit := uint64(32)
 
 	msgBroker := NewDataBroker(chanSize, subLimit)
 
@@ -60,5 +61,14 @@ func TestMessageBroker(t *testing.T) {
 		}
 	default:
 		t.Fatal("chan is empty")
+	}
+
+	for i := range subLimit {
+		_ = msgBroker.Consume(fmt.Sprintf("%d", i)) // nolint: perfsprint
+	}
+	select {
+	case <-msgBroker.Consume("9999"):
+	default:
+		t.Fatal("success consume with overflow subscribes")
 	}
 }

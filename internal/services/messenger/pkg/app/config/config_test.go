@@ -16,7 +16,7 @@ const (
   messages_capacity: %d
 logging:
   - info
-  - erro
+  - %s
 address:
   internal: '%s'
   external: '%s'
@@ -44,6 +44,18 @@ func testNewConfigString() string {
 	return fmt.Sprintf(
 		tcConfigTemplate,
 		tcMessagesCapacity,
+		"erro",
+		tcAddressInterface,
+		tcAddressIncoming,
+		tcConnectionService,
+	)
+}
+
+func testNewConfigStringWithInvalidLogging() string {
+	return fmt.Sprintf(
+		tcConfigTemplate,
+		tcMessagesCapacity,
+		"erro111",
 		tcAddressInterface,
 		tcAddressIncoming,
 		tcConnectionService,
@@ -52,6 +64,10 @@ func testNewConfigString() string {
 
 func testConfigDefaultInit(configPath string) {
 	_ = os.WriteFile(configPath, []byte(testNewConfigString()), 0600)
+}
+
+func testConfigDefaultInitWithInvalidLogging(configPath string) {
+	_ = os.WriteFile(configPath, []byte(testNewConfigStringWithInvalidLogging()), 0600)
 }
 
 func TestConfig(t *testing.T) {
@@ -102,4 +118,10 @@ func TestConfig(t *testing.T) {
 		t.Fatal("connection.service is invalid")
 	}
 
+	_ = os.Remove(tcConfigFile)
+	testConfigDefaultInitWithInvalidLogging(tcConfigFile)
+
+	if _, err := LoadConfig(tcConfigFile); err == nil {
+		t.Fatal("success init config with invalid logging")
+	}
 }

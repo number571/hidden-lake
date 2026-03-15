@@ -35,6 +35,19 @@ func testConfigDefaultInit(configPath string) {
 	})
 }
 
+func testConfigDefaultInitWithInvalidLogging(configPath string) error {
+	_, err := BuildConfig(configPath, &SConfig{
+		FSettings: &SConfigSettings{},
+		FLogging:  []string{"info", "erro111"},
+		FAddress: &SAddress{
+			FInternal: tcAddress2,
+			FExternal: tcAddress1,
+		},
+		FConnection: tcAddress3,
+	})
+	return err
+}
+
 func TestConfig(t *testing.T) {
 	t.Parallel()
 
@@ -69,5 +82,10 @@ func TestConfig(t *testing.T) {
 
 	if cfg.GetAddress().GetExternal() != tcAddress1 {
 		t.Fatal("address incoming is invalid")
+	}
+
+	_ = os.Remove(tcConfigFile)
+	if err := testConfigDefaultInitWithInvalidLogging(tcConfigFile); err == nil {
+		t.Fatal("success init config with invalid logging")
 	}
 }
