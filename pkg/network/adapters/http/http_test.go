@@ -51,13 +51,14 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		func() []string { return nil },
 	)
 
+	adapter2Connects := []string{testutils.TgAddrs[18]}
 	adapter2 := NewHTTPAdapter(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
 			FServeSettings:   &SServeSettings{},
 		}),
 		cache.NewLRUCache(1024),
-		func() []string { return []string{testutils.TgAddrs[18]} },
+		func() []string { return adapter2Connects },
 	)
 
 	onlines := adapter2.GetOnlines()
@@ -196,7 +197,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		context.Background(),
 		&http.Client{Timeout: time.Second},
 		http.MethodPost,
-		testutils.TgAddrs[18],
+		"http://"+testutils.TgAddrs[18]+settings.CHandleAdapterConsumePath,
 		nil,
 	)
 	if err == nil {
@@ -311,6 +312,17 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err := adapter1.Produce(ctx, msg); err != nil {
 		t.Fatal(err)
 	}
+	if err := adapter2.Produce(ctx, msg); err != nil {
+		t.Fatal(err)
+	}
+
+	adapter2Connects = append(adapter2Connects, "http://localhost:60999")
+	if err := adapter2.Produce(ctx, msg); err == nil {
+		t.Fatal("success produce with incorect request to undefined adapter")
+	}
+
+	cancel()
+	time.Sleep(200 * time.Millisecond)
 }
 
 func testCustomProduceMessage(ctx context.Context, method, host, msg string) error {
