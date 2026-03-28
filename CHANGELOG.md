@@ -14,7 +14,7 @@
 
 ### IMPROVEMENTS
 
-- `pkg/network/adapters/http`: add subscribe function
+- `pkg/network/adapters/http`: add subscribe (consume) function
 
 <!-- ... -->
 
