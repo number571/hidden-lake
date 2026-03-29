@@ -33,6 +33,7 @@ var gLogMap = map[anon_logger.ILogType]string{
 	CLogWarnFailedReadFullBytes:     "RFBTS",
 	CLogWarnNoConnections:           "NOCON",
 	CLogWarnLimitOfSubscribers:      "LMSUB",
+	CLogWarnMessageChanOverflow:     "MCOVR",
 	CLogErroLoadRequestType:         "LDRQT",
 	CLogErroProxyRequestType:        "PXRQT",
 	CLogErroInvalidMessageType:      "INVMT",
@@ -56,6 +57,7 @@ const (
 	CLogWarnFailedReadFullBytes
 	CLogWarnNoConnections
 	CLogWarnLimitOfSubscribers
+	CLogWarnMessageChanOverflow
 
 	// ERRO
 	CLogErroLoadRequestType

@@ -25,6 +25,7 @@ type ISettings interface {
 
 type ISrvSettings interface {
 	GetAddress() string
+	GetChannelSize() uint64
 	GetConnNumLimit() uint64
 	GetSubscribeID() string
 	GetReadTimeout() time.Duration

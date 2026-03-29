@@ -22,11 +22,6 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 )
 
-const (
-	netMessageChanSize = 32
-	subscribeChanSize  = 32
-)
-
 var (
 	_ IHTTPAdapter = &sHTTPAdapter{}
 )
@@ -58,14 +53,17 @@ func NewHTTPAdapter(
 	return &sHTTPAdapter{
 		fSettings:    pSettings,
 		fCache:       pCache,
-		fNetMsgChan:  make(chan layer1.IMessage, netMessageChanSize),
+		fNetMsgChan:  make(chan layer1.IMessage, pSettings.GetChannelSize()),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 		fLogger: logger.NewLogger(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
 		),
-		fDataBroker: broker.NewDataBroker(subscribeChanSize, pSettings.GetConnNumLimit()),
+		fDataBroker: broker.NewDataBroker(
+			pSettings.GetChannelSize(),
+			pSettings.GetConnNumLimit(),
+		),
 	}
 }
 
@@ -190,6 +188,9 @@ func (p *sHTTPAdapter) Consume(pCtx context.Context) (layer1.IMessage, error) {
 
 func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 	connListener := func(addr string, closed chan struct{}) {
+		logBuilder := anon_logger.NewLogBuilder(p.fShortName)
+		logBuilder.WithConn(addr)
+
 		for {
 			select {
 			case <-pCtx.Done():
@@ -199,15 +200,26 @@ func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 			default:
 				msg, err := p.consumeMessage(pCtx, addr)
 				if err != nil {
-					// internal logger
+					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 					continue
 				}
+
+				logBuilder.
+					WithHash(msg.GetHash()).
+					WithProof(msg.GetProof()).
+					WithSize(len(msg.ToBytes()))
+
+				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
+
 				hash := encoding.HexEncode(msg.GetHash())
 				if ok := p.fCache.Set(hash, []byte{}); !ok {
 					continue
 				}
-				p.fDataBroker.Produce(msg)
-				p.fNetMsgChan <- msg
+
+				if ok := p.pushMessageToChan(msg); !ok {
+					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+					continue
+				}
 			}
 		}
 	}
@@ -258,9 +270,6 @@ func (p *sHTTPAdapter) produceMessage(pCtx context.Context, pHost string, pMsg l
 }
 
 func (p *sHTTPAdapter) consumeMessage(pCtx context.Context, pHost string) (layer1.IMessage, error) {
-	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
-	logBuilder.WithConn(pHost)
-
 	hlaClient := client.NewClient(
 		client.NewRequester(
 			pHost,
@@ -275,16 +284,9 @@ func (p *sHTTPAdapter) consumeMessage(pCtx context.Context, pHost string) (layer
 		case <-pCtx.Done():
 		case <-time.After(time.Second):
 		}
-		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 		return nil, err
 	}
 
-	logBuilder.
-		WithHash(msg.GetHash()).
-		WithProof(msg.GetProof()).
-		WithSize(len(msg.ToBytes()))
-
-	p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 	return msg, nil
 }
 
@@ -343,8 +345,19 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 			return
 		}
 
-		p.fDataBroker.Produce(msg)
-		p.fNetMsgChan <- msg
+		if ok := p.pushMessageToChan(msg); !ok {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+		}
+	}
+}
+
+func (p *sHTTPAdapter) pushMessageToChan(pMsg layer1.IMessage) bool {
+	p.fDataBroker.Produce(pMsg)
+	select {
+	case p.fNetMsgChan <- pMsg:
+		return true
+	default:
+		return false
 	}
 }
 
