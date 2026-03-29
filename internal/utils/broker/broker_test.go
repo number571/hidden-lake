@@ -69,4 +69,11 @@ func TestMessageBroker(t *testing.T) {
 	if err := msgBroker.Register("9999"); err == nil { // nolint: perfsprint
 		t.Fatal("success consume with overflow subscribes")
 	}
+
+	msgBroker1 := NewDataBroker(2, 1)
+
+	if err := msgBroker1.Register("consumer_id"); err != nil {
+		t.Fatal(err)
+	}
+
 }

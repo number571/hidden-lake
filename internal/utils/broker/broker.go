@@ -13,20 +13,20 @@ var (
 )
 
 type sDataBroker struct {
-	fMutex       *sync.RWMutex
-	fChanSize    uint64
-	fSubLimit    uint64
-	fSubscribers map[string]chan string
-	fCache       cache.ICache
+	fMutex    *sync.RWMutex
+	fChanSize uint64
+	fSubLimit uint64
+	fSubChans map[string]chan string
+	fCache    cache.ICache
 }
 
 func NewDataBroker(pChanSize, pSubLimit uint64) IDataBroker {
 	return &sDataBroker{
-		fMutex:       &sync.RWMutex{},
-		fChanSize:    pChanSize,
-		fSubLimit:    pSubLimit,
-		fSubscribers: make(map[string]chan string, pSubLimit),
-		fCache:       cache.NewLRUCache(pChanSize),
+		fMutex:    &sync.RWMutex{},
+		fChanSize: pChanSize,
+		fSubLimit: pSubLimit,
+		fSubChans: make(map[string]chan string, pSubLimit),
+		fCache:    cache.NewLRUCache(pChanSize),
 	}
 }
 
@@ -37,12 +37,12 @@ func (p *sDataBroker) Produce(pData interface{}) {
 	uniqID := random.NewRandom().GetString(32)
 	p.fCache.Set(uniqID, pData)
 
-	for id, ch := range p.fSubscribers {
+	for id, ch := range p.fSubChans {
 		select {
 		case ch <- uniqID:
 		default:
 			close(ch)
-			delete(p.fSubscribers, id)
+			delete(p.fSubChans, id)
 		}
 	}
 }
@@ -51,18 +51,18 @@ func (p *sDataBroker) Register(pID string) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	if uint64(len(p.fSubscribers)) >= p.fSubLimit {
+	if uint64(len(p.fSubChans)) >= p.fSubLimit {
 		return ErrLimitSubscribers
 	}
-	if _, ok := p.fSubscribers[pID]; !ok {
-		p.fSubscribers[pID] = make(chan string, p.fChanSize)
+	if _, ok := p.fSubChans[pID]; !ok {
+		p.fSubChans[pID] = make(chan string, p.fChanSize)
 	}
 
 	return nil
 }
 
 func (p *sDataBroker) Consume(pCtx context.Context, pID string) (interface{}, error) {
-	ch, ok := p.getChannel(pID)
+	ch, ok := p.getSubChannel(pID)
 	if !ok {
 		return nil, ErrNotRegistered
 	}
@@ -82,13 +82,13 @@ func (p *sDataBroker) CountSubscribers() uint64 {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	return uint64(len(p.fSubscribers))
+	return uint64(len(p.fSubChans))
 }
 
-func (p *sDataBroker) getChannel(pID string) (chan string, bool) {
+func (p *sDataBroker) getSubChannel(pID string) (chan string, bool) {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	ch, ok := p.fSubscribers[pID]
+	ch, ok := p.fSubChans[pID]
 	return ch, ok
 }
