@@ -1,6 +1,8 @@
 package message
 
 import (
+	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -13,29 +15,36 @@ func TestMessageBroker(t *testing.T) {
 
 	chanSize := uint64(256)
 	subLimit := uint64(256)
+
 	msgBroker := broker.NewDataBroker(chanSize, subLimit)
 
-	_ = msgBroker.Consume("consumer_id")
-	msgChan := msgBroker.Consume("consumer_id")
+	if err := msgBroker.Register("consumer_id"); err != nil {
+		t.Fatal(err)
+	}
 
 	friendName := "Alice"
 	msg := dto.NewMessage(true, "hello, world", time.Now())
 	msgBroker.Produce(NewMessageContainer(friendName, msg))
 
-	select {
-	case x := <-msgChan:
-		v, ok := x.(IMessageContainer)
-		if !ok {
-			t.Fatal("invalid type")
-		}
-		if v.GetFriend() != friendName {
-			t.Fatal("x.GetFriend() != friendName")
-		}
-		if v.GetMessage().ToString() != msg.ToString() {
-			t.Fatal("x.GetMessage().ToString() != msg.ToString()")
-		}
-	default:
-		t.Fatal("chan is empty")
+	if msgBroker.CountSubscribers() != 1 {
+		t.Fatal("count subscribers != 1")
+	}
+
+	ctx := context.Background()
+	x, err := msgBroker.Consume(ctx, "consumer_id")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	v, ok := x.(IMessageContainer)
+	if !ok {
+		t.Fatal("invalid type")
+	}
+	if v.GetFriend() != friendName {
+		t.Fatal("x.GetFriend() != friendName")
+	}
+	if v.GetMessage().ToString() != msg.ToString() {
+		t.Fatal("x.GetMessage().ToString() != msg.ToString()")
 	}
 
 	// check auto close channel after overflow
@@ -43,32 +52,41 @@ func TestMessageBroker(t *testing.T) {
 	for range chanSize + 1 {
 		msgBroker.Produce(NewMessageContainer(friendName, newMsg))
 	}
-	for range msgChan {
-		// if channel closed -> cycle has end
+	if _, err := msgBroker.Consume(ctx, "consumer_id"); err == nil {
+		t.Fatal("success get value from closed consumer")
+	}
+	if msgBroker.CountSubscribers() != 0 {
+		t.Fatal("count subscribers != 0")
 	}
 
 	// update channel
-	msgChan = msgBroker.Consume("consumer_id")
-	select {
-	case <-msgChan:
-		t.Fatal("chan is not refreshed")
-	default:
+	if err := msgBroker.Register("consumer_id"); err != nil {
+		t.Fatal(err)
 	}
+
 	msgBroker.Produce(NewMessageContainer(friendName, newMsg))
 
-	select {
-	case x := <-msgChan:
-		v, ok := x.(IMessageContainer)
-		if !ok {
-			t.Fatal("invalid type")
+	x1, err := msgBroker.Consume(ctx, "consumer_id")
+	if err != nil {
+		t.Fatal(err)
+	}
+	v1, ok := x1.(IMessageContainer)
+	if !ok {
+		t.Fatal("invalid type")
+	}
+	if v1.GetFriend() != friendName {
+		t.Fatal("x.GetFriend() != friendName")
+	}
+	if v1.GetMessage().ToString() != newMsg.ToString() {
+		t.Fatal("x.GetMessage().ToString() != newMsg.ToString()")
+	}
+
+	for i := range subLimit - 1 {
+		if err := msgBroker.Register(fmt.Sprintf("%d", i)); err != nil { // nolint: perfsprint
+			t.Fatal(err)
 		}
-		if v.GetFriend() != friendName {
-			t.Fatal("x.GetFriend() != friendName")
-		}
-		if v.GetMessage().ToString() != newMsg.ToString() {
-			t.Fatal("x.GetMessage().ToString() != newMsg.ToString()")
-		}
-	default:
-		t.Fatal("chan is empty")
+	}
+	if err := msgBroker.Register("9999"); err == nil { // nolint: perfsprint
+		t.Fatal("success consume with overflow subscribes")
 	}
 }

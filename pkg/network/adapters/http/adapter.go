@@ -9,6 +9,7 @@ import (
 	"time"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
@@ -127,7 +128,8 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 		WithConn("http")
 
 	// adapter can redirect received message
-	_ = p.fCache.Set(pNetMsg.GetHash(), []byte{})
+	hash := encoding.HexEncode(pNetMsg.GetHash())
+	_ = p.fCache.Set(hash, []byte{})
 	p.fDataBroker.Produce(pNetMsg)
 
 	connects := p.fConnsGetter()
@@ -200,7 +202,8 @@ func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 					// internal logger
 					continue
 				}
-				if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
+				hash := encoding.HexEncode(msg.GetHash())
+				if ok := p.fCache.Set(hash, []byte{}); !ok {
 					continue
 				}
 				p.fDataBroker.Produce(msg)
@@ -334,9 +337,12 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 		}
 
 		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
-		if ok := p.fCache.Set(msg.GetHash(), []byte{}); !ok {
+
+		hash := encoding.HexEncode(msg.GetHash())
+		if ok := p.fCache.Set(hash, []byte{}); !ok {
 			return
 		}
+
 		p.fDataBroker.Produce(msg)
 		p.fNetMsgChan <- msg
 	}
@@ -357,37 +363,35 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 
 		sid := r.URL.Query().Get("sid")
 
+		if err := p.fDataBroker.Register(sid); err != nil {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnLimitOfSubscribers))
+			w.WriteHeader(http.StatusNotAcceptable)
+			return
+		}
+
 		ctx, cancel := context.WithTimeout(pCtx, buildSettings.GetHttpReadTimeout())
 		defer cancel()
 
-		for {
-			select {
-			case <-ctx.Done():
-				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoContent))
-				_ = api.Response(w, http.StatusNoContent, []byte{})
-				return
-			case x, ok := <-p.fDataBroker.Consume(sid):
-				if !ok {
-					p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoContent))
-					_ = api.Response(w, http.StatusNoContent, []byte{})
-					return
-				}
-				msg, ok := x.(layer1.IMessage)
-				if !ok {
-					p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroInvalidMessageType))
-					_ = api.Response(w, http.StatusInternalServerError, []byte{})
-					return
-				}
-
-				logBuilder.
-					WithHash(msg.GetHash()).
-					WithProof(msg.GetProof()).
-					WithSize(len(msg.ToBytes()))
-
-				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseSendNetworkMessage))
-				_ = api.Response(w, http.StatusOK, msg.ToString())
-				return
-			}
+		v, err := p.fDataBroker.Consume(ctx, sid)
+		if err != nil {
+			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoContent))
+			_ = api.Response(w, http.StatusNoContent, []byte{})
+			return
 		}
+
+		msg, ok := v.(layer1.IMessage)
+		if !ok {
+			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroInvalidMessageType))
+			_ = api.Response(w, http.StatusInternalServerError, []byte{})
+			return
+		}
+
+		logBuilder.
+			WithHash(msg.GetHash()).
+			WithProof(msg.GetProof()).
+			WithSize(len(msg.ToBytes()))
+
+		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseSendNetworkMessage))
+		_ = api.Response(w, http.StatusOK, msg.ToString())
 	}
 }

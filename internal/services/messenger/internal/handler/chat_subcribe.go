@@ -32,35 +32,38 @@ func HandleChatSubscribeAPI(
 		friend := pR.URL.Query().Get("friend")
 		sid := pR.URL.Query().Get("sid")
 
+		if err := pBroker.Register(sid); err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("limit_subs"))
+			_ = api.Response(pW, http.StatusNotAcceptable, "has limit of subscribers")
+			return
+		}
+
 		ctx, cancel := context.WithTimeout(pCtx, buildSettings.GetHttpReadTimeout())
 		defer cancel()
 
 		for {
-			select {
-			case <-ctx.Done():
+			v, err := pBroker.Consume(ctx, sid)
+			if err != nil {
 				pLogger.PushInfo(logBuilder.WithMessage("no_content"))
 				_ = api.Response(pW, http.StatusNoContent, []byte{})
 				return
-			case c, ok := <-pBroker.Consume(sid):
-				if !ok {
-					pLogger.PushInfo(logBuilder.WithMessage("no_content"))
-					_ = api.Response(pW, http.StatusNoContent, []byte{})
-					return
-				}
-				v, ok := c.(message.IMessageContainer)
-				if !ok {
-					pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
-					_ = api.Response(pW, http.StatusInternalServerError, []byte{})
-					return
-				}
-				if v.GetFriend() != friend {
-					pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
-					continue
-				}
-				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-				_ = api.Response(pW, http.StatusOK, v.GetMessage().ToString())
+			}
+
+			mc, ok := v.(message.IMessageContainer)
+			if !ok {
+				pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
+				_ = api.Response(pW, http.StatusInternalServerError, []byte{})
 				return
 			}
+
+			if mc.GetFriend() != friend {
+				pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
+				continue
+			}
+
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, mc.GetMessage().ToString())
+			return
 		}
 	}
 }

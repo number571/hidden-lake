@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"context"
 	"fmt"
 	"testing"
 )
@@ -13,8 +14,9 @@ func TestMessageBroker(t *testing.T) {
 
 	msgBroker := NewDataBroker(chanSize, subLimit)
 
-	_ = msgBroker.Consume("consumer_id")
-	msgChan := msgBroker.Consume("consumer_id")
+	if err := msgBroker.Register("consumer_id"); err != nil {
+		t.Fatal(err)
+	}
 
 	msg := "hello, world"
 	msgBroker.Produce(msg)
@@ -23,13 +25,13 @@ func TestMessageBroker(t *testing.T) {
 		t.Fatal("count subscribers != 1")
 	}
 
-	select {
-	case x := <-msgChan:
-		if x.(string) != msg {
-			t.Fatal("x != msg")
-		}
-	default:
-		t.Fatal("chan is empty")
+	ctx := context.Background()
+	x, err := msgBroker.Consume(ctx, "consumer_id")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if x.(string) != msg {
+		t.Fatal("x != msg")
 	}
 
 	// check auto close channel after overflow
@@ -37,38 +39,34 @@ func TestMessageBroker(t *testing.T) {
 	for range chanSize + 1 {
 		msgBroker.Produce(newMsg)
 	}
-	for range msgChan {
-		// if channel closed -> cycle has end
+	if _, err := msgBroker.Consume(ctx, "consumer_id"); err == nil {
+		t.Fatal("success get value from closed consumer")
 	}
-
 	if msgBroker.CountSubscribers() != 0 {
 		t.Fatal("count subscribers != 0")
 	}
 
 	// update channel
-	msgChan = msgBroker.Consume("consumer_id")
-	select {
-	case <-msgChan:
-		t.Fatal("chan is not refreshed")
-	default:
+	if err := msgBroker.Register("consumer_id"); err != nil {
+		t.Fatal(err)
 	}
+
 	msgBroker.Produce(newMsg)
 
-	select {
-	case x := <-msgChan:
-		if x.(string) != newMsg {
-			t.Fatal("x != newMsg")
-		}
-	default:
-		t.Fatal("chan is empty")
+	x1, err := msgBroker.Consume(ctx, "consumer_id")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if x1.(string) != newMsg {
+		t.Fatal("x1 != newMsg")
 	}
 
-	for i := range subLimit {
-		_ = msgBroker.Consume(fmt.Sprintf("%d", i)) // nolint: perfsprint
+	for i := range subLimit - 1 {
+		if err := msgBroker.Register(fmt.Sprintf("%d", i)); err != nil { // nolint: perfsprint
+			t.Fatal(err)
+		}
 	}
-	select {
-	case <-msgBroker.Consume("9999"):
-	default:
+	if err := msgBroker.Register("9999"); err == nil { // nolint: perfsprint
 		t.Fatal("success consume with overflow subscribes")
 	}
 }
