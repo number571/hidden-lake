@@ -62,7 +62,7 @@ move_apps:
 	rm -r $(BINPATH)/hla $(BINPATH)/hls 
 
 remove-std:
-	make -C $(BINPATH) remove-std
+	cd $(BINPATH) && ls | grep -xv -E ".*_.*_.*" | xargs rm -r 
 
 clean:
-	make -C $(BINPATH) clean
+	cd $(BINPATH) && rm -f *
