@@ -65,4 +65,4 @@ remove-std:
 	cd $(BINPATH) && ls | grep -xv -E ".*_.*_.*" | xargs rm -r 
 
 clean:
-	cd $(BINPATH) && rm -f *
+	rm -f $(BINPATH)/*
