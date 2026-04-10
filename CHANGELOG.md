@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### CHANGES
+
+- `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage
+
 <!-- ... -->
 
 ## v1.10.4

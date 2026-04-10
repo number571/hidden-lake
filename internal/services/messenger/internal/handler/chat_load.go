@@ -15,7 +15,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
-func HandleChatHistoryLoadAPI(
+func HandleChatLoadAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -32,6 +32,7 @@ func HandleChatHistoryLoadAPI(
 		}
 
 		queryParams := pR.URL.Query()
+
 		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, queryParams.Get("friend"))
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
@@ -46,48 +47,29 @@ func HandleChatHistoryLoadAPI(
 			return
 		}
 
+		index, err := strconv.ParseUint(queryParams.Get("index"), 10, 64)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("parse_index"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse index")
+			return
+		}
+
 		rel := database.NewRelation(myPubKey, fPubKey)
 		size := pDatabase.Size(rel)
-
-		count := pConfig.GetSettings().GetMessagesCapacity()
-		if x := queryParams.Get("count"); x != "" {
-			var err error
-			count, err = strconv.ParseUint(x, 10, 64)
-			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("parse_count"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: parse count")
-				return
-			}
+		if index >= size {
+			pLogger.PushWarn(logBuilder.WithMessage("index_gte_size"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: index >= size")
+			return
 		}
 
-		start := uint64(0)
-		if x := queryParams.Get("start"); x != "" {
-			var err error
-			start, err = strconv.ParseUint(x, 10, 64)
-			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("parse_start"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: parse start")
-				return
-			}
-		}
-
-		// ASC select used by default
-		if x := queryParams.Get("select"); x == "desc" {
-			if size < start {
-				start = 0
-			} else {
-				start = (size - start)
-			}
-		}
-
-		dbMsgs, err := pDatabase.Load(rel, start, count)
-		if err != nil {
+		dbMsgs, err := pDatabase.Load(rel, index, 1)
+		if err != nil || len(dbMsgs) != 1 {
 			pLogger.PushWarn(logBuilder.WithMessage("load_messages"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: load messages")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, dbMsgs)
+		_ = api.Response(pW, http.StatusOK, dbMsgs[0])
 	}
 }

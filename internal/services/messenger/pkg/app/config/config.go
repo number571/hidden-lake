@@ -15,7 +15,6 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessagesCapacity uint64 `json:"messages_capacity" yaml:"messages_capacity"`
 }
 
 type SConfig struct {
@@ -77,14 +76,9 @@ func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
 }
 
-func (p *SConfigSettings) GetMessagesCapacity() uint64 {
-	return p.FMessagesCapacity
-}
-
 func (p *SConfig) isValid() bool {
 	return true &&
-		p.FConnection != "" &&
-		p.FSettings.FMessagesCapacity != 0
+		p.FConnection != ""
 }
 
 func (p *SConfig) initConfig() error {

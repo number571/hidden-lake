@@ -12,7 +12,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleChatMessageAPI(t *testing.T) {
+func TestHandleChatPushAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -29,12 +29,12 @@ func TestHandleChatMessageAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
 	if err := chatMessageGetRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, true), newTsDatabase(true, true))
+	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, true), newTsDatabase(true, true))
 	if err := chatMessageGetRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get settings error")
 	}
@@ -52,15 +52,15 @@ func TestHandleChatMessageAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerZ := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
+	handlerZ := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
 	if err := chatMessagePostRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with get pub key error")
 	}
-	handlerA := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true))
+	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true))
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChatMessageAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, false))
+	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, false))
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}

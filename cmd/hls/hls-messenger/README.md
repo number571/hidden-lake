@@ -70,13 +70,13 @@ $ make request-node2
 ```
 1. GET      /api/index              | params = [] 
                                     |> description = get name of service
-2. GET/POST /api/chat/message       | params = ["friend":string]
+2. GET/POST /api/chat/push       | params = ["friend":string]
                                     |> description = get limit message size / send message to chat
-3. GET      /api/chat/history/load  | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
+3. GET      /api/chat/load  | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
                                     |> description = get list of messages from chat
-4. GET      /api/chat/history/size  | params = ["friend":string]
+4. GET      /api/chat/size  | params = ["friend":string]
                                     |> description = get count of messages in the chat
-5. GET      /api/chat/subscribe     | params = ["friend":string]
+5. GET      /api/chat/listen     | params = ["friend":string]
                                     |> description = try get message from chat with longpoll method 
 ```
 
@@ -99,12 +99,12 @@ Content-Length: 29
 hidden-lake-service=messenger
 ```
 
-### 2. /api/chat/message
+### 2. /api/chat/push
 
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/message"
+curl -i -X GET "http://localhost:9591/api/chat/push"
 ```
 
 #### 2.1. GET Response
@@ -121,7 +121,7 @@ Content-Length: 4
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chat/message?friend=Bob" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chat/push?friend=Bob" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
@@ -135,12 +135,12 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-### 3. /api/chat/history/load
+### 3. /api/chat/load
 
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/history/load?friend=Bob&start=0&count=10&select=asc"
+curl -i -X GET "http://localhost:9591/api/chat/load?friend=Bob&index=0"
 ```
 
 #### 3.1. GET Response
@@ -154,12 +154,12 @@ Content-Length: 69
 [{"incoming":false,"message":"hello, world!","timestamp":1768589712}]
 ```
 
-### 4. /api/chat/history/size
+### 4. /api/chat/size
 
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/history/size?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chat/size?friend=Bob"
 ```
 
 #### 4.1. GET Response
@@ -173,12 +173,12 @@ Content-Length: 1
 1
 ```
 
-### 5. /api/chat/subscribe
+### 5. /api/chat/listen
 
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/subscribe?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chat/listen?friend=Bob"
 ```
 
 #### 5.1. GET Response

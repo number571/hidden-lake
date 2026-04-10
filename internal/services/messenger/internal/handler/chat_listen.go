@@ -13,7 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
-func HandleChatSubscribeAPI(
+func HandleChatListenAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pBroker broker.IDataBroker,
@@ -29,8 +29,10 @@ func HandleChatSubscribeAPI(
 			return
 		}
 
-		friend := pR.URL.Query().Get("friend")
-		sid := pR.URL.Query().Get("sid")
+		queryParams := pR.URL.Query()
+
+		friend := queryParams.Get("friend")
+		sid := queryParams.Get("sid")
 
 		if err := pBroker.Register(sid); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("limit_subs"))

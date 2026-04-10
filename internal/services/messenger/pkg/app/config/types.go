@@ -12,7 +12,6 @@ type IConfig interface {
 }
 
 type IConfigSettings interface {
-	GetMessagesCapacity() uint64
 }
 
 type IAddress interface {

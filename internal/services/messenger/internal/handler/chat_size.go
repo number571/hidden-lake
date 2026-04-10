@@ -15,7 +15,7 @@ import (
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
-func HandleChatHistorySizeAPI(
+func HandleChatSizeAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

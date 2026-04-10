@@ -21,7 +21,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/messenger/request"
 )
 
-func HandleChatMessageAPI(
+func HandleChatPushAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

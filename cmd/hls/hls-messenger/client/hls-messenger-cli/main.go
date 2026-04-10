@@ -69,19 +69,29 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
-	msgs, err := hlsClient.LoadMessages(pCtx, friend, 256, 256, true)
+	count, err := hlsClient.CountMessages(pCtx, friend)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return
 	}
 
-	iam := "<iam>"
-	for _, m := range msgs {
+	index := uint64(0)
+	if count > 256 {
+		index = count - 256
+	}
+
+	const iam = "<iam>"
+	for ; index < count; index++ {
+		msg, err := hlsClient.LoadMessage(pCtx, friend, index)
+		if err != nil {
+			fmt.Printf("error: %s\n", err.Error())
+			return
+		}
 		sender := iam
-		if m.IsIncoming() {
+		if msg.IsIncoming() {
 			sender = friend
 		}
-		fmt.Printf("%s: %s [%s]\n", sender, m.GetMessage(), m.GetTimestamp())
+		fmt.Printf("%s: %s [%s]\n", sender, msg.GetMessage(), msg.GetTimestamp())
 	}
 
 	go func() {

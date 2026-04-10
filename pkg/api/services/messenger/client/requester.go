@@ -21,10 +21,10 @@ var (
 
 const (
 	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChatMessageTemplate     = "http://" + "%s" + hls_settings.CHandleChatMessagePath + "?friend=%s"
-	cHandleChatHistorySizeTemplate = "http://" + "%s" + hls_settings.CHandleChatHistorySizePath + "?friend=%s"
-	cHandleChatHistoryLoadTemplate = "http://" + "%s" + hls_settings.CHandleChatHistoryLoadPath + "?friend=%s&start=%d&count=%d&select=%s"
-	cHandleChatSubscribeTemplate   = "http://" + "%s" + hls_settings.CHandleChatSubscribePath + "?friend=%s&sid=%s"
+	cHandleChatMessageTemplate     = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s"
+	cHandleChatHistorySizeTemplate = "http://" + "%s" + hls_settings.CHandleChatSizePath + "?friend=%s"
+	cHandleChatHistoryLoadTemplate = "http://" + "%s" + hls_settings.CHandleChatLoadPath + "?friend=%s&index=%d"
+	cHandleChatSubscribeTemplate   = "http://" + "%s" + hls_settings.CHandleChatListenPath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -110,30 +110,22 @@ func (p *sRequester) CountMessages(pCtx context.Context, pFriend string) (uint64
 	return count, nil
 }
 
-func (p *sRequester) LoadMessages(pCtx context.Context, pFriend string, pStart uint64, pCount uint64, pDesc bool) ([]dto.IMessage, error) {
-	selectType := "asc"
-	if pDesc {
-		selectType = "desc"
-	}
+func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChatHistoryLoadTemplate, p.fHost, url.QueryEscape(pFriend), pStart, pCount, selectType),
+		fmt.Sprintf(cHandleChatHistoryLoadTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
 		nil,
 	)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	var msgs []*dto.SMessage
-	if err := encoding.DeserializeJSON(res, &msgs); err != nil {
+	msg := new(dto.SMessage)
+	if err := encoding.DeserializeJSON(res, msg); err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-	result := make([]dto.IMessage, 0, len(msgs))
-	for _, m := range msgs {
-		result = append(result, m)
-	}
-	return result, nil
+	return msg, nil
 }
 
 func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid string) (dto.IMessage, error) {

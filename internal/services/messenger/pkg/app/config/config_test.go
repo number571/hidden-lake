@@ -90,10 +90,6 @@ func TestConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if cfg.GetSettings().GetMessagesCapacity() != tcMessagesCapacity {
-		t.Fatal("settings message capacity size is invalid")
-	}
-
 	if cfg.GetLogging().HasInfo() != tcLogging {
 		t.Fatal("logging.info is invalid")
 	}

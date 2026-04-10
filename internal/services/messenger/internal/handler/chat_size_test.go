@@ -11,7 +11,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleChatHistorySizeAPI(t *testing.T) {
+func TestHandleChatSizeAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -28,7 +28,7 @@ func TestHandleChatHistorySizeAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatHistorySizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func TestHandleChatHistorySizeAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatHistorySizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
+	handlerY := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get pub key error")
 	}

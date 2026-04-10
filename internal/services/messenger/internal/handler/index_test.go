@@ -41,8 +41,8 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.PushMessage(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
-	if _, err := client.LoadMessages(context.Background(), "", 0, 0, false); err == nil {
-		t.Fatal("success incorrect loadMessages")
+	if _, err := client.LoadMessage(context.Background(), "", 0); err == nil {
+		t.Fatal("success incorrect loadMessage")
 	}
 	if _, err := client.CountMessages(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect countMessages")
@@ -163,9 +163,7 @@ type tsConfig struct {
 }
 
 func (p *tsConfig) GetSettings() config.IConfigSettings {
-	return &config.SConfigSettings{
-		FMessagesCapacity: 128,
-	}
+	return &config.SConfigSettings{}
 }
 func (p *tsConfig) GetAddress() config.IAddress {
 	return nil

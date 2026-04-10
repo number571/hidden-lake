@@ -54,9 +54,7 @@ func TestApp(t *testing.T) {
 
 	// Run application
 	cfg, err := config.BuildConfig(tcPathConfig, &config.SConfig{
-		FSettings: &config.SConfigSettings{
-			FMessagesCapacity: 64,
-		},
+		FSettings: &config.SConfigSettings{},
 		FAddress: &config.SAddress{
 			FInternal: testutils.TgAddrs[36],
 			FExternal: testutils.TgAddrs[38],
@@ -106,9 +104,7 @@ func TestApp(t *testing.T) {
 	_ = os.Remove(tcPathConfig)
 
 	cfg2, err := config.BuildConfig(tcPathConfig, &config.SConfig{
-		FSettings: &config.SConfigSettings{
-			FMessagesCapacity: 64,
-		},
+		FSettings:   &config.SConfigSettings{},
 		FAddress:    &config.SAddress{},
 		FConnection: "127.0.0.1:9999",
 	})

@@ -43,9 +43,9 @@ const (
 )
 
 const (
-	CHandleIndexPath           = "/api/index"
-	CHandleChatMessagePath     = "/api/chat/message"
-	CHandleChatSubscribePath   = "/api/chat/subscribe"
-	CHandleChatHistoryLoadPath = "/api/chat/history/load"
-	CHandleChatHistorySizePath = "/api/chat/history/size"
+	CHandleIndexPath      = "/api/index"
+	CHandleChatPushPath   = "/api/chat/push"
+	CHandleChatLoadPath   = "/api/chat/load"
+	CHandleChatSizePath   = "/api/chat/size"
+	CHandleChatListenPath = "/api/chat/listen"
 )

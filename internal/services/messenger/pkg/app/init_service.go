@@ -46,23 +46,23 @@ func (p *sApp) initInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleChatMessagePath,
-		handler.HandleChatMessageAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatPushPath,
+		handler.HandleChatPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // POST
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleChatHistoryLoadPath,
-		handler.HandleChatHistoryLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatLoadPath,
+		handler.HandleChatLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleChatHistorySizePath,
-		handler.HandleChatHistorySizeAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		hls_messenger_settings.CHandleChatSizePath,
+		handler.HandleChatSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_messenger_settings.CHandleChatSubscribePath,
-		handler.HandleChatSubscribeAPI(pCtx, p.fHTTPLogger, pMsgBroker),
+		hls_messenger_settings.CHandleChatListenPath,
+		handler.HandleChatListenAPI(pCtx, p.fHTTPLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

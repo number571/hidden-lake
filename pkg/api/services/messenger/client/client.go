@@ -33,8 +33,8 @@ func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody str
 	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
 }
 
-func (p *sClient) LoadMessages(pCtx context.Context, pAliasName string, pStart uint64, pCount uint64, pDesc bool) ([]message.IMessage, error) {
-	return p.fRequester.LoadMessages(pCtx, pAliasName, pStart, pCount, pDesc)
+func (p *sClient) LoadMessage(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {
+	return p.fRequester.LoadMessage(pCtx, pAliasName, pIndex)
 }
 
 func (p *sClient) CountMessages(pCtx context.Context, pAliasName string) (uint64, error) {

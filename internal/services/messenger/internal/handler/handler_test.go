@@ -68,7 +68,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.PushMessage(context.Background(), "abc", "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessages(context.Background(), "abc", 0, 1, true); err != nil {
+	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.CountMessages(context.Background(), "abc"); err != nil {
@@ -106,23 +106,23 @@ func testInitInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatMessagePath,
-		HandleChatMessageAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		hls_settings.CHandleChatPushPath,
+		HandleChatPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // POST
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatHistoryLoadPath,
-		HandleChatHistoryLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		hls_settings.CHandleChatLoadPath,
+		HandleChatLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatHistorySizePath,
-		HandleChatHistorySizeAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		hls_settings.CHandleChatSizePath,
+		HandleChatSizeAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatSubscribePath,
-		HandleChatSubscribeAPI(pCtx, pLogger, pMsgBroker),
+		hls_settings.CHandleChatListenPath,
+		HandleChatListenAPI(pCtx, pLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

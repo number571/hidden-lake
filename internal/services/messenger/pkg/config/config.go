@@ -5,10 +5,7 @@ import (
 )
 
 func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
-	sett := pCfg.GetSettings()
 	return SConfigSettings{
-		SConfigSettings: config.SConfigSettings{
-			FMessagesCapacity: sett.GetMessagesCapacity(),
-		},
+		SConfigSettings: config.SConfigSettings{},
 	}
 }

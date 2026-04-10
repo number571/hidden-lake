@@ -11,7 +11,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleChatHistoryLoadAPI(t *testing.T) {
+func TestHandleChatLoadAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -28,7 +28,7 @@ func TestHandleChatHistoryLoadAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatHistoryLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
 	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -45,12 +45,12 @@ func TestHandleChatHistoryLoadAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatHistoryLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
+	handlerY := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
 	if err := chatHistoryLoadRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get pub key error")
 	}
 
-	handlerZ := HandleChatHistoryLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
+	handlerZ := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
 	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with load message error")
 	}
@@ -58,7 +58,7 @@ func TestHandleChatHistoryLoadAPI(t *testing.T) {
 
 func chatHistoryLoadRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&index=0", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -118,7 +118,7 @@ func chatHistoryLoadRequestCountParse(handler http.HandlerFunc) error {
 
 func chatHistoryLoadRequestStartParse(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&start=qqq", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc", nil)
 
 	handler(w, req)
 	res := w.Result()
