@@ -151,7 +151,7 @@ Content-Type: application/json
 Date: Fri, 16 Jan 2026 18:56:08 GMT
 Content-Length: 69
 
-[{"incoming":false,"message":"hello, world!","timestamp":1768589712}]
+{"incoming":false,"message":"hello, world!","timestamp":1768589712}
 ```
 
 ### 4. /api/chat/size
