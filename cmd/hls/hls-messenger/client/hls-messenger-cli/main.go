@@ -53,6 +53,11 @@ func main() {
 }
 
 func runFunction(pCtx context.Context, pArgs []string) {
+	const (
+		load = 256
+		iam  = "<iam>"
+	)
+
 	hlsClient := hls_client.NewClient(
 		hls_client.NewRequester(
 			gFlags.Get("-s").GetStringValue(pArgs),
@@ -76,11 +81,10 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	}
 
 	index := uint64(0)
-	if count > 256 {
-		index = count - 256
+	if count >= load {
+		index = count - load
 	}
 
-	const iam = "<iam>"
 	for ; index < count; index++ {
 		msg, err := hlsClient.LoadMessage(pCtx, friend, index)
 		if err != nil {
