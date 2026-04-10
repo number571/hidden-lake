@@ -8,7 +8,7 @@
 
 ### CHANGES
 
-- `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage
+- `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetSizeChat
 
 <!-- ... -->
 

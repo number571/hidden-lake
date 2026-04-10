@@ -37,8 +37,8 @@ func (p *sClient) LoadMessage(pCtx context.Context, pAliasName string, pIndex ui
 	return p.fRequester.LoadMessage(pCtx, pAliasName, pIndex)
 }
 
-func (p *sClient) CountMessages(pCtx context.Context, pAliasName string) (uint64, error) {
-	return p.fRequester.CountMessages(pCtx, pAliasName)
+func (p *sClient) GetSizeChat(pCtx context.Context, pAliasName string) (uint64, error) {
+	return p.fRequester.GetSizeChat(pCtx, pAliasName)
 }
 
 func (p *sClient) ListenChat(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessage, error) {

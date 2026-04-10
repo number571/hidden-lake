@@ -92,7 +92,7 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 	return t, nil
 }
 
-func (p *sRequester) CountMessages(pCtx context.Context, pFriend string) (uint64, error) {
+func (p *sRequester) GetSizeChat(pCtx context.Context, pFriend string) (uint64, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,

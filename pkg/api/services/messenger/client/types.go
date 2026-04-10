@@ -11,18 +11,22 @@ type IClient interface {
 	GetIndex(context.Context) error
 
 	GetMessageLimit(context.Context) (uint64, error)
+
+	GetSizeChat(context.Context, string) (uint64, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)
+
 	PushMessage(context.Context, string, string) (time.Time, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
-	CountMessages(context.Context, string) (uint64, error)
 }
 
 type IRequester interface {
 	GetIndex(context.Context) error
 
 	GetMessageLimit(context.Context) (uint64, error)
+
+	GetSizeChat(context.Context, string) (uint64, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)
+
 	PushMessage(context.Context, string, string) (time.Time, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
-	CountMessages(context.Context, string) (uint64, error)
 }
