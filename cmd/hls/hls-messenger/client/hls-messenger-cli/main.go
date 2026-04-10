@@ -74,7 +74,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
-	count, err := hlsClient.GetSizeChat(pCtx, friend)
+	count, err := hlsClient.GetChatSize(pCtx, friend)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return

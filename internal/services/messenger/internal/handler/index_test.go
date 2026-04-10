@@ -44,8 +44,8 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.LoadMessage(context.Background(), "", 0); err == nil {
 		t.Fatal("success incorrect loadMessage")
 	}
-	if _, err := client.GetSizeChat(context.Background(), ""); err == nil {
-		t.Fatal("success incorrect getSizeChat")
+	if _, err := client.GetChatSize(context.Background(), ""); err == nil {
+		t.Fatal("success incorrect GetChatSize")
 	}
 }
 

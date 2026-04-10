@@ -71,7 +71,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.GetSizeChat(context.Background(), "abc"); err != nil {
+	if _, err := client.GetChatSize(context.Background(), "abc"); err != nil {
 		t.Fatal(err)
 	}
 
