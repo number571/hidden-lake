@@ -11,3 +11,5 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/number571/hidden-lake/projects/hl-client => ./projects/hl-client
