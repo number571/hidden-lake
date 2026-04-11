@@ -1,0 +1,26 @@
+version: "3"
+services:
+  node1_hlc:
+    build:
+      context: https://github.com/number571/hidden-lake.git#master
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
+      - SERVICE_PATH=/hidden-lake/node1
+    ports:
+      - 8572:8572
+      - 8551:8551
+      - 8591:8591
+      - 8541:8541
+  node2_hlc:
+    build:
+      context: https://github.com/number571/hidden-lake.git#master
+      dockerfile: cmd/hlc/Dockerfile
+    environment:
+      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
+      - SERVICE_PATH=/hidden-lake/node2
+    ports:
+      - 7572:7572
+      - 7551:7551
+      - 7591:7591
+      - 7541:7541

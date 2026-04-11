@@ -1,0 +1,11 @@
+settings:
+  page_offset: 10
+  retry_num: 2
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :7541
+  external: 127.0.0.1:7542
+connection: 127.0.0.1:7572

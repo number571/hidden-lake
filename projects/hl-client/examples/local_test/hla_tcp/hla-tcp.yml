@@ -1,0 +1,6 @@
+logging:
+- info
+- warn
+- erro
+address:
+  external: :6581

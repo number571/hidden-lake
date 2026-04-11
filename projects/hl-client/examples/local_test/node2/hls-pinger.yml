@@ -1,0 +1,10 @@
+settings:
+  response_message: hello
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :7551
+  external: 127.0.0.1:7552
+connection: 127.0.0.1:7572
