@@ -1,6 +1,6 @@
 module github.com/number571/hidden-lake
 
-go 1.24.0
+go 1.24.5
 
 require github.com/number571/go-peer v1.7.15
 

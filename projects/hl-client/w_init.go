@@ -17,6 +17,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/hidden-lake/build"
 )
 
 func initWindowAbout(a fyne.App, w fyne.Window) *fyne.Container {
@@ -26,33 +27,18 @@ func initWindowAbout(a fyne.App, w fyne.Window) *fyne.Container {
 		func() { setChatListContent(w) },
 	)
 
-	versionLabel := widget.NewLabel(clientVersion)
+	versionLabel := widget.NewLabel(build.GetVersion())
 	versionLabel.Importance = widget.WarningImportance
 
-	clientVersionGrid := container.NewGridWithColumns(
+	versionGrid := container.NewGridWithColumns(
 		2,
-		widget.NewLabel("Client version"),
+		widget.NewLabel("Version"),
 		versionLabel,
-	)
-
-	hlVersionLabel := widget.NewLabel(hiddenLakeVersion)
-	hlVersionLabel.Importance = widget.WarningImportance
-
-	hiddenLakeVersionGrid := container.NewGridWithColumns(
-		2,
-		widget.NewLabel("Hidden Lake version"),
-		hlVersionLabel,
-	)
-
-	versionsContainer := container.NewGridWithRows(
-		2,
-		clientVersionGrid,
-		hiddenLakeVersionGrid,
 	)
 
 	coloredVersionsContainer := container.NewStack(
 		canvas.NewRectangle(color.RGBA{R: 0, G: 0, B: 0, A: 100}),
-		versionsContainer,
+		versionGrid,
 	)
 
 	aboutBodyContainer = container.NewGridWithRows(
