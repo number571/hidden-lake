@@ -1,0 +1,11 @@
+settings: {}
+logging:
+- info
+- warn
+- erro
+address:
+  cert_tls: localhost
+  external: 127.0.0.1:9531
+  internal: 127.0.0.1:9532
+endpoints:
+- 127.0.0.1:9571

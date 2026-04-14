@@ -1,0 +1,259 @@
+package app
+
+import (
+	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"errors"
+	"fmt"
+	"sync"
+
+	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/state"
+	"github.com/number571/go-peer/pkg/storage/cache"
+	"github.com/number571/go-peer/pkg/storage/database"
+	"github.com/number571/go-peer/pkg/types"
+	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/internal/adapters/https/pkg/app/config"
+	hla_https_config "github.com/number571/hidden-lake/internal/adapters/https/pkg/config"
+	hla_https_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/closer"
+	anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	internal_types "github.com/number571/hidden-lake/internal/utils/types"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
+	hla_http "github.com/number571/hidden-lake/pkg/network/adapters/http"
+	hla_https "github.com/number571/hidden-lake/pkg/network/adapters/https"
+)
+
+var (
+	_ types.IRunner = &sApp{}
+)
+
+type sApp struct {
+	fState   state.IState
+	fWrapper config.IWrapper
+
+	fPathTo   string
+	fDatabase database.IKVDatabase
+
+	fAnonLogger logger.ILogger
+	fHTTPLogger logger.ILogger
+	fStdfLogger logger.ILogger
+
+	fIntAdapter hla_http.IHTTPAdapter
+	fExtAdapter hla_https.IHTTPSAdapter
+}
+
+func NewApp(
+	pCfg config.IConfig,
+	pCertificate *tls.Certificate,
+	pCertPool *x509.CertPool,
+	pPathTo string,
+) types.IRunner {
+	var (
+		logging       = pCfg.GetLogging()
+		cfgSettings   = pCfg.GetSettings()
+		buildSettings = build.GetSettings()
+	)
+
+	lruCache := cache.NewLRUCache(buildSettings.FStorageManager.FCacheHashesCap)
+	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
+		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
+		FWorkSizeBits:     cfgSettings.GetWorkSizeBits(),
+		FNetworkKey:       cfgSettings.GetNetworkKey(),
+	})
+
+	return &sApp{
+		fState:      state.NewBoolState(),
+		fPathTo:     pPathTo,
+		fWrapper:    config.NewWrapper(pCfg),
+		fAnonLogger: std_logger.NewStdLogger(logging, anon_logger.GetLogFunc()),
+		fStdfLogger: std_logger.NewStdLogger(logging, std_logger.GetLogFunc()),
+		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
+		fExtAdapter: hla_https.NewHTTPSAdapter(
+			hla_http.NewSettings(&hla_http.SSettings{
+				FAdapterSettings: adaptersSettings,
+				FServeSettings: &hla_http.SServeSettings{
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
+					FAddress:       pCfg.GetAddress().GetExternal(),
+					FSubscribeID:   fmt.Sprintf("%s-%s", hla_https_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FReadTimeout:   cfgSettings.GetReadTimeout(),
+					FHandleTimeout: cfgSettings.GetHandleTimeout(),
+				},
+			}),
+			lruCache,
+			func() []string { return pCfg.GetConnections() },
+			pCfg.GetAuthMapper(),
+			pCertificate,
+			pCertPool,
+		),
+		fIntAdapter: hla_http.NewHTTPAdapter(
+			hla_http.NewSettings(&hla_http.SSettings{
+				FAdapterSettings: adaptersSettings,
+				FServeSettings: &hla_http.SServeSettings{
+					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
+					FAddress:       pCfg.GetAddress().GetInternal(),
+					FSubscribeID:   fmt.Sprintf("%s-%s", hla_https_settings.CAppShortName, random.NewRandom().GetString(16)),
+					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
+					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
+				},
+			}),
+			lruCache,
+			func() []string { return pCfg.GetEndpoints() },
+		),
+	}
+}
+
+func (p *sApp) Run(pCtx context.Context) error {
+	services := []internal_types.IServiceF{
+		p.runHTTPIntAdapter,
+		p.runHTTPExtAdapter,
+		p.runHTTPIntRelayer,
+		p.runHTTPExtRelayer,
+	}
+
+	ctx, cancel := context.WithCancel(pCtx)
+	defer cancel()
+
+	wg := &sync.WaitGroup{}
+	wg.Add(len(services))
+
+	if err := p.fState.Enable(p.enable(ctx)); err != nil {
+		return errors.Join(ErrRunning, err)
+	}
+	defer func() { _ = p.fState.Disable(p.disable(cancel, wg)) }()
+
+	chErr := make(chan error, len(services))
+	for _, f := range services {
+		go f(ctx, wg, chErr)
+	}
+
+	select {
+	case <-pCtx.Done():
+		return pCtx.Err()
+	case err := <-chErr:
+		return errors.Join(ErrService, err)
+	}
+}
+
+func (p *sApp) enable(pCtx context.Context) state.IStateF {
+	return func() error {
+		if err := p.initDatabase(); err != nil {
+			return errors.Join(ErrInitDB, err)
+		}
+
+		p.initLoggers()
+		p.initHandlers(pCtx)
+
+		p.fStdfLogger.PushInfo(fmt.Sprintf(
+			"%s is started; %s",
+			hla_https_settings.GetAppShortNameFMT(),
+			encoding.SerializeJSON(hla_https_config.GetConfigSettings(p.fWrapper.GetConfig())),
+		))
+		return nil
+	}
+}
+
+func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IStateF {
+	return func() error {
+		pCancel()
+		pWg.Wait() // wait canceled context
+
+		p.fStdfLogger.PushInfo(fmt.Sprintf( // nolint: perfsprint
+			"%s is stopped",
+			hla_https_settings.GetAppShortNameFMT(),
+		))
+		return p.stop()
+	}
+}
+
+func (p *sApp) runHTTPIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	if err := p.fIntAdapter.Run(pCtx); err != nil {
+		pChErr <- err
+		return
+	}
+}
+
+func (p *sApp) runHTTPExtAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	if err := p.fExtAdapter.Run(pCtx); err != nil {
+		pChErr <- err
+		return
+	}
+}
+
+func (p *sApp) runHTTPIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	for {
+		select {
+		case <-pCtx.Done():
+			pChErr <- pCtx.Err()
+			return
+		default:
+			// HTTP (endpoints) -> HTTPS (connections)
+			msg, err := p.fIntAdapter.Consume(pCtx)
+			if err != nil {
+				continue
+			}
+			if err := p.setIntoDB(msg); err != nil {
+				continue
+			}
+			_ = p.fExtAdapter.Produce(pCtx, msg)
+		}
+	}
+}
+
+func (p *sApp) runHTTPExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+	defer wg.Done()
+
+	for {
+		select {
+		case <-pCtx.Done():
+			pChErr <- pCtx.Err()
+			return
+		default:
+			// HTTPS (connections) -> HTTP (endpoints), HTTPS (connections)
+			msg, err := p.fExtAdapter.Consume(pCtx)
+			if err != nil {
+				continue
+			}
+			if err := p.setIntoDB(msg); err != nil {
+				continue
+			}
+			if err := p.fIntAdapter.Produce(pCtx, msg); err != nil {
+				if !errors.Is(err, hla_http.ErrNoConnections) {
+					continue
+				}
+			}
+			_ = p.fExtAdapter.Produce(pCtx, msg)
+		}
+	}
+}
+
+func (p *sApp) setIntoDB(msg layer1.IMessage) error {
+	_, err := p.fDatabase.Get(msg.GetHash())
+	if err == nil {
+		return ErrExist
+	}
+	if !errors.Is(err, database.ErrNotFound) {
+		return err
+	}
+	return p.fDatabase.Set(msg.GetHash(), []byte{})
+}
+
+func (p *sApp) stop() error {
+	closer := closer.NewCloser(p.fDatabase)
+	if err := closer.Close(); err != nil {
+		return errors.Join(ErrClose, err)
+	}
+	return nil
+}

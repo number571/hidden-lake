@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/encoding"
@@ -15,6 +16,7 @@ func RequestWithReader(
 	pCtx context.Context,
 	pClient *http.Client,
 	pMethod, pURL string,
+	pHeader http.Header,
 	pR io.Reader,
 ) ([]byte, error) {
 	contentType := CApplicationOctetStream
@@ -29,6 +31,7 @@ func RequestWithReader(
 		return nil, errors.Join(ErrBuildRequest, err)
 	}
 
+	maps.Copy(req.Header, pHeader)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := pClient.Do(req)
@@ -49,6 +52,7 @@ func RequestWithWriter(
 	pCtx context.Context,
 	pClient *http.Client,
 	pMethod, pURL string,
+	pHeader http.Header,
 	pData interface{},
 ) (http.Header, error) {
 	var (
@@ -78,6 +82,7 @@ func RequestWithWriter(
 		return nil, errors.Join(ErrBuildRequest, err)
 	}
 
+	maps.Copy(req.Header, pHeader)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := pClient.Do(req)
@@ -98,6 +103,7 @@ func Request(
 	pCtx context.Context,
 	pClient *http.Client,
 	pMethod, pURL string,
+	pHeader http.Header,
 	pData interface{},
 ) ([]byte, error) {
 	var (
@@ -127,6 +133,7 @@ func Request(
 		return nil, errors.Join(ErrBuildRequest, err)
 	}
 
+	maps.Copy(req.Header, pHeader)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := pClient.Do(req)

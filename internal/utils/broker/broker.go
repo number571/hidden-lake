@@ -30,6 +30,20 @@ func NewDataBroker(pChanSize, pSubLimit uint64) IDataBroker {
 	}
 }
 
+func (p *sDataBroker) Register(pID string) error {
+	p.fMutex.Lock()
+	defer p.fMutex.Unlock()
+
+	if uint64(len(p.fSubChans)) >= p.fSubLimit {
+		return ErrLimitSubscribers
+	}
+	if _, ok := p.fSubChans[pID]; !ok {
+		p.fSubChans[pID] = make(chan string, p.fChanSize)
+	}
+
+	return nil
+}
+
 func (p *sDataBroker) Produce(pData interface{}) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
@@ -45,20 +59,6 @@ func (p *sDataBroker) Produce(pData interface{}) {
 			delete(p.fSubChans, id)
 		}
 	}
-}
-
-func (p *sDataBroker) Register(pID string) error {
-	p.fMutex.Lock()
-	defer p.fMutex.Unlock()
-
-	if uint64(len(p.fSubChans)) >= p.fSubLimit {
-		return ErrLimitSubscribers
-	}
-	if _, ok := p.fSubChans[pID]; !ok {
-		p.fSubChans[pID] = make(chan string, p.fChanSize)
-	}
-
-	return nil
 }
 
 func (p *sDataBroker) Consume(pCtx context.Context, pID string) (interface{}, error) {

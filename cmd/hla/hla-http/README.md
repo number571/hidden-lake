@@ -4,7 +4,7 @@
 
 <img src="images/hla_http_logo.png" alt="hla_http_logo.png"/>
 
-The `Hidden Lake Adapter (HTTP)` allows adapt HL traffic based on the HTT[] protocol.
+The `Hidden Lake Adapter (HTTP)` allows adapt HL traffic based on the HTTP protocol.
 
 ## Installation
 
@@ -14,7 +14,7 @@ $ go install github.com/number571/hidden-lake/cmd/hla/hla-http@latest
 
 ## How it works
 
-HLA=http uses `/api/network/adapter` handle function to Produce/Consume HL messages.
+HLA=http uses `/adapter/produce`, `/adapter/consume` handle functions to Produce/Consume HL messages.
 
 ## Supported platforms
 

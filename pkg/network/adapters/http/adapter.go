@@ -201,6 +201,10 @@ func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 				msg, err := p.consumeMessage(pCtx, addr)
 				if err != nil {
 					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
+					select {
+					case <-pCtx.Done():
+					case <-time.After(time.Second):
+					}
 					continue
 				}
 
@@ -277,17 +281,7 @@ func (p *sHTTPAdapter) consumeMessage(pCtx context.Context, pHost string) (layer
 			p.fSettings.GetAdapterSettings(),
 		),
 	)
-
-	msg, err := hlaClient.ConsumeMessage(pCtx, p.fSettings.GetSubscribeID())
-	if err != nil {
-		select {
-		case <-pCtx.Done():
-		case <-time.After(time.Second):
-		}
-		return nil, err
-	}
-
-	return msg, nil
+	return hlaClient.ConsumeMessage(pCtx, p.fSettings.GetSubscribeID())
 }
 
 func (p *sHTTPAdapter) GetOnlines() []string {
@@ -342,6 +336,7 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 
 		hash := encoding.HexEncode(msg.GetHash())
 		if ok := p.fCache.Set(hash, []byte{}); !ok {
+			w.WriteHeader(http.StatusAccepted)
 			return
 		}
 

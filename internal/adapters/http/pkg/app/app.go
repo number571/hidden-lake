@@ -42,8 +42,8 @@ type sApp struct {
 	fHTTPLogger logger.ILogger
 	fStdfLogger logger.ILogger
 
-	fHTTPIntAdapter hla_http.IHTTPAdapter
-	fHTTPExtAdapter hla_http.IHTTPAdapter
+	fIntAdapter hla_http.IHTTPAdapter
+	fExtAdapter hla_http.IHTTPAdapter
 }
 
 func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
@@ -67,7 +67,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 		fAnonLogger: std_logger.NewStdLogger(logging, anon_logger.GetLogFunc()),
 		fStdfLogger: std_logger.NewStdLogger(logging, std_logger.GetLogFunc()),
 		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
-		fHTTPExtAdapter: hla_http.NewHTTPAdapter(
+		fExtAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
@@ -81,7 +81,7 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			lruCache,
 			func() []string { return pCfg.GetConnections() },
 		),
-		fHTTPIntAdapter: hla_http.NewHTTPAdapter(
+		fIntAdapter: hla_http.NewHTTPAdapter(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
@@ -164,7 +164,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 func (p *sApp) runHTTPIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if err := p.fHTTPIntAdapter.Run(pCtx); err != nil {
+	if err := p.fIntAdapter.Run(pCtx); err != nil {
 		pChErr <- err
 		return
 	}
@@ -173,7 +173,7 @@ func (p *sApp) runHTTPIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChEr
 func (p *sApp) runHTTPExtAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
-	if err := p.fHTTPExtAdapter.Run(pCtx); err != nil {
+	if err := p.fExtAdapter.Run(pCtx); err != nil {
 		pChErr <- err
 		return
 	}
@@ -189,14 +189,14 @@ func (p *sApp) runHTTPIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			return
 		default:
 			// HTTP (endpoints) -> HTTP (connections)
-			msg, err := p.fHTTPIntAdapter.Consume(pCtx)
+			msg, err := p.fIntAdapter.Consume(pCtx)
 			if err != nil {
 				continue
 			}
 			if err := p.setIntoDB(msg); err != nil {
 				continue
 			}
-			_ = p.fHTTPExtAdapter.Produce(pCtx, msg)
+			_ = p.fExtAdapter.Produce(pCtx, msg)
 		}
 	}
 }
@@ -211,19 +211,19 @@ func (p *sApp) runHTTPExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 			return
 		default:
 			// HTTP (connections) -> HTTP (endpoints), HTTP (connections)
-			msg, err := p.fHTTPExtAdapter.Consume(pCtx)
+			msg, err := p.fExtAdapter.Consume(pCtx)
 			if err != nil {
 				continue
 			}
 			if err := p.setIntoDB(msg); err != nil {
 				continue
 			}
-			if err := p.fHTTPIntAdapter.Produce(pCtx, msg); err != nil {
+			if err := p.fIntAdapter.Produce(pCtx, msg); err != nil {
 				if !errors.Is(err, hla_http.ErrNoConnections) {
 					continue
 				}
 			}
-			_ = p.fHTTPExtAdapter.Produce(pCtx, msg)
+			_ = p.fExtAdapter.Produce(pCtx, msg)
 		}
 	}
 }

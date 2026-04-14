@@ -46,6 +46,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 		http.MethodGet,
 		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -62,6 +63,7 @@ func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, "_"),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -80,6 +82,7 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
+		nil,
 		pBody,
 	)
 	if err != nil {
@@ -99,6 +102,7 @@ func (p *sRequester) GetChatSize(pCtx context.Context, pFriend string) (uint64, 
 		http.MethodGet,
 		fmt.Sprintf(cHandleChatHistorySizeTemplate, p.fHost, url.QueryEscape(pFriend)),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return 0, errors.Join(ErrBadRequest, err)
@@ -116,6 +120,7 @@ func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex ui
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleChatHistoryLoadTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -135,6 +140,7 @@ func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid strin
 			p.fClient,
 			http.MethodGet,
 			fmt.Sprintf(cHandleChatSubscribeTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			nil,
 			nil,
 		)
 		if err != nil {

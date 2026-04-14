@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hla/hla-https`: add new adapter - HTTPS
+
 ### CHANGES
 
 - `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetChatSize
@@ -16,15 +20,15 @@
 
 *March 30, 2026*
 
+### IMPROVEMENTS
+
+- `pkg/network/adapters/http`: add subscribe (consume) function
+
 ### CHANGES
 
 - `internal/adapters/http/pkg/settings`: /api/adapter/produce -> /adapter/produce
 - `cmd/*/daemon/install*.sh`: change root mode -> user mode
 - `go-peer`: update version
-
-### IMPROVEMENTS
-
-- `pkg/network/adapters/http`: add subscribe (consume) function
 
 <!-- ... -->
 

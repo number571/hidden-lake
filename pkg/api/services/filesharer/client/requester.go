@@ -67,6 +67,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 		http.MethodGet,
 		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -83,6 +84,7 @@ func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPag
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleRemoteListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage, pPersonal),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -104,6 +106,7 @@ func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasNam
 		http.MethodGet,
 		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return false, errors.Join(ErrBadRequest, err)
@@ -119,6 +122,7 @@ func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFil
 		http.MethodDelete,
 		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -132,6 +136,7 @@ func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, 
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleRemoteFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -150,6 +155,7 @@ func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleLocalListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -170,6 +176,7 @@ func (p *sRequester) GetLocalFile(pW io.Writer, pCtx context.Context, pAliasName
 		http.MethodGet,
 		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -183,6 +190,7 @@ func (p *sRequester) PutLocalFile(pCtx context.Context, pAliasName string, pFile
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
 		pR,
 	)
 	if err != nil {
@@ -198,6 +206,7 @@ func (p *sRequester) DelLocalFile(pCtx context.Context, pAliasName string, pFile
 		http.MethodDelete,
 		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -211,6 +220,7 @@ func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, p
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleLocalFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
 		nil,
 	)
 	if err != nil {

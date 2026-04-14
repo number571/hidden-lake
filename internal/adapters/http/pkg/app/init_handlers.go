@@ -9,10 +9,10 @@ import (
 )
 
 func (p *sApp) initHandlers(pCtx context.Context) {
-	p.fHTTPIntAdapter.WithHandlers(map[string]http.HandlerFunc{
+	p.fIntAdapter.WithHandlers(map[string]http.HandlerFunc{
 		hla_settings.CHandleIndexPath:          handler.HandleIndexAPI(p.fHTTPLogger),
 		hla_settings.CHandleConfigSettingsPath: handler.HandleConfigSettingsAPI(p.fWrapper.GetConfig(), p.fHTTPLogger),
 		hla_settings.CHandleConfigConnectsPath: handler.HandleConfigConnectsAPI(pCtx, p.fWrapper, p.fHTTPLogger),
-		hla_settings.CHandleNetworkOnlinePath:  handler.HandleNetworkOnlineAPI(p.fHTTPLogger, p.fHTTPExtAdapter),
+		hla_settings.CHandleNetworkOnlinePath:  handler.HandleNetworkOnlineAPI(p.fHTTPLogger, p.fExtAdapter),
 	})
 }

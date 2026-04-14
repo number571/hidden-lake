@@ -50,6 +50,7 @@ func (p *sRequester) GetIndex(pCtx context.Context, pScheme string) error {
 		http.MethodGet,
 		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -71,6 +72,7 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 		http.MethodGet,
 		fmt.Sprintf(cHandleConfigSettingsTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
@@ -91,6 +93,7 @@ func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
 		http.MethodGet,
 		fmt.Sprintf(cHandleNetworkOnlineTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
@@ -110,6 +113,7 @@ func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
 		p.fClient,
 		http.MethodDelete,
 		fmt.Sprintf(cHandleNetworkOnlineTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -124,6 +128,7 @@ func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -144,6 +149,7 @@ func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error 
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -158,6 +164,7 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 		p.fClient,
 		http.MethodDelete,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -175,6 +182,7 @@ func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessag
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleAdapterProduceTemplate, p.fHost),
+		nil,
 		pNetMsg.ToString(),
 	)
 	if err != nil {
@@ -190,6 +198,7 @@ func (p *sRequester) ConsumeMessage(pCtx context.Context, pSid string) (layer1.I
 			p.fClient,
 			http.MethodGet,
 			fmt.Sprintf(cHandleAdapterConsumeTemplate, p.fHost, url.QueryEscape(pSid)),
+			nil,
 			nil,
 		)
 		if err != nil {

@@ -199,6 +199,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		http.MethodPost,
 		"http://"+testutils.TgAddrs[18]+settings.CHandleAdapterConsumePath,
 		nil,
+		nil,
 	)
 	if err == nil {
 		t.Fatal("success request with invalid method")

@@ -39,6 +39,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 		http.MethodGet,
 		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -55,6 +56,7 @@ func (p *sRequester) PingFriend(pCtx context.Context, pFriend string) error {
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleCommandPingTemplate, p.fHost, url.QueryEscape(pFriend)),
+		nil,
 		nil,
 	)
 	if err != nil {

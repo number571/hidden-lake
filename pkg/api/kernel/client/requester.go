@@ -50,6 +50,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 		http.MethodGet,
 		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
 		nil,
+		nil,
 	)
 	if err != nil {
 		return errors.Join(ErrBadRequest, err)
@@ -66,6 +67,7 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleConfigSettingsTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -86,6 +88,7 @@ func (p *sRequester) FetchRequest(pCtx context.Context, pFriend string, pRequest
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost, url.QueryEscape(pFriend)),
+		nil,
 		pRequest,
 	)
 	if err != nil {
@@ -105,6 +108,7 @@ func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest 
 		p.fClient,
 		http.MethodPut,
 		fmt.Sprintf(cHandleNetworkRequestTemplate, p.fHost, url.QueryEscape(pFriend)),
+		nil,
 		pRequest,
 	)
 	if err != nil {
@@ -119,6 +123,7 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPu
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -148,6 +153,7 @@ func (p *sRequester) AddFriend(pCtx context.Context, pFriend *friend.SFriend) er
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		nil,
 		pFriend,
 	)
 	if err != nil {
@@ -162,6 +168,7 @@ func (p *sRequester) DelFriend(pCtx context.Context, pFriend *friend.SFriend) er
 		p.fClient,
 		http.MethodDelete,
 		fmt.Sprintf(cHandleConfigFriendsTemplate, p.fHost),
+		nil,
 		pFriend,
 	)
 	if err != nil {
@@ -176,6 +183,7 @@ func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleNetworkOnlineTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -196,6 +204,7 @@ func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
 		p.fClient,
 		http.MethodDelete,
 		fmt.Sprintf(cHandleNetworkOnlineTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -210,6 +219,7 @@ func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {
@@ -230,6 +240,7 @@ func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error 
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -244,6 +255,7 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 		p.fClient,
 		http.MethodDelete,
 		fmt.Sprintf(cHandleConfigConnectsTemplate, p.fHost),
+		nil,
 		pConnect,
 	)
 	if err != nil {
@@ -258,6 +270,7 @@ func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error)
 		p.fClient,
 		http.MethodGet,
 		fmt.Sprintf(cHandleServicePubKeyTemplate, p.fHost),
+		nil,
 		nil,
 	)
 	if err != nil {

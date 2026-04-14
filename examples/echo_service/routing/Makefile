@@ -1,18 +1,6 @@
-ROOPATH=./../../..
-.PHONY: default copy run clean stop
-default: copy run 
-copy:
-	cp \
-		$(ROOPATH)/examples/_keys/priv_node1.key \
-		./recv_hls/hlk.key
-	cp \
-		$(ROOPATH)/examples/_keys/priv_node2.key \
-		./send_hls/hlk.key
-run:
-	docker-compose build
-	docker-compose up
+.PHONY: default clean
+default: clean 
 clean:
-	rm -f ./recv_hls/hlk.key ./send_hls/hlk.key
-stop:
-	docker-compose down 
-	docker-compose rm -f
+	make -C ./hla_tcp clean
+	make -C ./hla_http clean
+	make -C ./hla_https clean
