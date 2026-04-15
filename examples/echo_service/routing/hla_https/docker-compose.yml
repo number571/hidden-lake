@@ -11,7 +11,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/routing/hla_tcp/recv_hls
+      - SERVICE_PATH=examples/echo_service/routing/hla_https/recv_hls
     networks:
       - local-network
       - hidden-lake
@@ -20,7 +20,7 @@ services:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/routing/hla_tcp/send_hls
+      - SERVICE_PATH=examples/echo_service/routing/hla_https/send_hls
     ports:
       - 7572:7572
     networks:
@@ -28,25 +28,25 @@ services:
   middle_hla_1:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla-tcp/Dockerfile
+      dockerfile: cmd/hla/hla-https/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/routing/hla_tcp/middle_hla_1
+      - SERVICE_PATH=examples/echo_service/routing/hla_https/middle_hla_1
     networks:
       - hidden-lake
   middle_hla_2:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla-tcp/Dockerfile
+      dockerfile: cmd/hla/hla-https/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/routing/hla_tcp/middle_hla_2
+      - SERVICE_PATH=examples/echo_service/routing/hla_https/middle_hla_2
     networks:
       - hidden-lake
   middle_hla_3:
     build:
       context: ./../../../../
-      dockerfile: cmd/hla/hla-tcp/Dockerfile
+      dockerfile: cmd/hla/hla-https/Dockerfile
     environment:
-      - SERVICE_PATH=examples/echo_service/routing/hla_tcp/middle_hla_3
+      - SERVICE_PATH=examples/echo_service/routing/hla_https/middle_hla_3
     networks:
       - hidden-lake
 networks:

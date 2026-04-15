@@ -19,6 +19,9 @@ import (
 	hla_http_app "github.com/number571/hidden-lake/internal/adapters/http/pkg/app"
 	hla_http_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 
+	hla_https_app "github.com/number571/hidden-lake/internal/adapters/https/pkg/app"
+	hla_https_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
+
 	hls_messenger_app "github.com/number571/hidden-lake/internal/services/messenger/pkg/app"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 
@@ -91,6 +94,8 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
 		case hla_http_settings.CAppShortName:
 			runner, err = hla_http_app.InitApp(pArgs, pFlags)
+		case hla_https_settings.CAppShortName:
+			runner, err = hla_https_app.InitApp(pArgs, pFlags)
 		default:
 			return nil, ErrUnknownService
 		}

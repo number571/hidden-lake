@@ -7,6 +7,8 @@ logging:
 - warn
 - erro
 address:
-  internal: 127.0.0.1:7522
+  internal: 127.0.0.1:8522
+endpoints: 
+- 127.0.0.1:8571
 connections:
-- middle_hla_1:6581
+- receiver:y@middle_hla_3:6581

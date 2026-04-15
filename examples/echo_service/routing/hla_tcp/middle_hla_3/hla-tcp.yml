@@ -9,4 +9,4 @@ logging:
 address:
   external: :6581
 connections:
-  - middle_hla_tcp_1:6581
+  - middle_hla_2:6581

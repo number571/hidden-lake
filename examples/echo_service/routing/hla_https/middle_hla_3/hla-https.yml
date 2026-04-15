@@ -9,4 +9,6 @@ logging:
 address:
   external: :6581
 connections:
-  - middle_hla_tcp_1:6581
+  - hla_3:a@middle_hla_2:6581
+auth_mapper:
+  receiver: y

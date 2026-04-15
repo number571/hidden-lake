@@ -226,6 +226,7 @@ func (p *sHTTPSAdapter) runSubscriber(pCtx context.Context) error {
 			default:
 				msg, err := p.consumeMessage(pCtx, conn)
 				if err != nil {
+					fmt.Println(err)
 					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 					select {
 					case <-pCtx.Done():
@@ -350,6 +351,7 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		}
 
 		sid := r.URL.Query().Get("sid")
+		// TODO: check
 
 		at, ok := p.fRAuthMapper[sid]
 		if !ok || at != r.Header.Get(cPasswordHeader) {
@@ -414,6 +416,7 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 		}
 
 		sid := r.URL.Query().Get("sid")
+		// TODO: check len(consume[sid]) > 1?
 
 		at, ok := p.fRAuthMapper[sid]
 		if !ok || at != r.Header.Get(cPasswordHeader) {

@@ -7,6 +7,8 @@ logging:
 - warn
 - erro
 address:
-  external: :6581
+  internal: 127.0.0.1:7522
+endpoints: 
+- 127.0.0.1:7571
 connections:
-  - middle_hla_tcp_2:6581
+- sender:x@middle_hla_1:6581

@@ -7,6 +7,8 @@ logging:
 - warn
 - erro
 address:
-  internal: 127.0.0.1:7522
+  external: :6581
 connections:
-- middle_hla_1:6581
+  - hla_2:b@middle_hla_1:6581
+auth_mapper:
+  hla_3: a

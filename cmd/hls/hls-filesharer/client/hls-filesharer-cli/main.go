@@ -98,7 +98,6 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 	case "public":
 		// used by default
 	default:
-		fmt.Println("AAA", stgType)
 		return ErrUnknownStorageType
 	}
 

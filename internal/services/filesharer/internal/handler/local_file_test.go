@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -94,7 +93,6 @@ func localFileRequestPersonalNotFound(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusForbidden {
-		fmt.Println(res.StatusCode)
 		return errors.New("bad status code") // nolint: err113
 	}
 
