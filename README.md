@@ -130,6 +130,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 2. Adapters:
    * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
    * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
+   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS ptotocol
 3. Services:
    * [HLS=messenger](cmd/hls/hls-messenger) - send and recv text messages
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 

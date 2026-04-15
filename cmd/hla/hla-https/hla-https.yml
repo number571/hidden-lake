@@ -1,4 +1,10 @@
-settings: {}
+# settings:
+#   message_size_bytes: 0 # -> 8192
+#   work_size_bits: 0
+#   network_key: ""
+#   database_enabled: false
+#   read_timeout_ms: 0 # -> 5000
+#   handle_timeout_ms: 0 # -> 5000
 logging:
 - info
 - warn
@@ -9,3 +15,7 @@ address:
   internal: 127.0.0.1:9532
 endpoints:
 - 127.0.0.1:9571
+# connections:
+# - <username:password@https-address>
+# auth_mapper:
+#   username: password

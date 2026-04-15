@@ -10,8 +10,8 @@ var (
 	gAppShortNameFMT = strings.ToUpper(CAppShortName)
 )
 
-func GetAppShortNameFMT() string {
-	return gAppShortNameFMT
+func GetAppShortNameFMT(suf ...string) string {
+	return gAppShortNameFMT + strings.Join(suf, "")
 }
 
 const (
