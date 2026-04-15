@@ -137,7 +137,7 @@ func (p *sHTTPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) er
 			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoHasOnlySubscribers))
 			return nil
 		}
-		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
+		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoConnections))
 		return ErrNoConnections
 	}
 

@@ -31,7 +31,7 @@ var gLogMap = map[anon_logger.ILogType]string{
 	CLogWarnUndefinedService:        "UNDSR",
 	CLogWarnInvalidRequestMethod:    "IRMTH",
 	CLogWarnFailedReadFullBytes:     "RFBTS",
-	CLogWarnNoConnections:           "NOCON",
+	CLogInfoNoConnections:           "NOCON",
 	CLogWarnAuthSubscriber:          "AUTHS",
 	CLogWarnLimitOfSubscribers:      "LMSUB",
 	CLogWarnMessageChanOverflow:     "MCOVR",
@@ -50,13 +50,13 @@ const (
 	CLogInfoResponseFromService
 	CLogInfoNoContent
 	CLogInfoHasOnlySubscribers
+	CLogInfoNoConnections
 
 	// WARN
 	CLogWarnRequestToService
 	CLogWarnUndefinedService
 	CLogWarnInvalidRequestMethod
 	CLogWarnFailedReadFullBytes
-	CLogWarnNoConnections
 	CLogWarnAuthSubscriber
 	CLogWarnLimitOfSubscribers
 	CLogWarnMessageChanOverflow

@@ -116,14 +116,14 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			FAdapterSettings: adapterSettings,
 			FServeSettings: &SServeSettings{
 				FAddress: testutils.TgAddrs[19],
+				FAuthMapper: map[string]string{
+					"username1": "password1",
+					"username2": "password2",
+				},
 			},
 		}),
 		cache.NewLRUCache(1024),
 		func() []string { return nil },
-		map[string]string{
-			"username1": "password1",
-			"username2": "password2",
-		},
 		&cert,
 		nil,
 	)
@@ -139,7 +139,6 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 				fmt.Sprintf("%s:%s@%s", "username1", "password1", testutils.TgAddrs[19]),
 			}
 		},
-		nil,
 		nil,
 		certPool,
 	)
@@ -208,7 +207,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		httpClient,
 		http.MethodGet,
 		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
-		http.Header{hla_https_settings.CPasswordHeader: []string{"password1"}},
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
 		netMsg.ToString(),
 	)
 	if err == nil {
@@ -220,7 +219,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		httpClient,
 		http.MethodPost,
 		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
-		http.Header{hla_https_settings.CPasswordHeader: []string{"password1"}},
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
 		encoding.HexEncode([]byte{1}),
 	)
 	if err == nil {
@@ -233,7 +232,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		httpClient,
 		http.MethodPost,
 		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
-		http.Header{hla_https_settings.CPasswordHeader: []string{"password1"}},
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
 		encoding.HexEncode(random.NewRandom().GetBytes(size)),
 	)
 	if err == nil {
@@ -257,7 +256,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			httpClient,
 			http.MethodPost,
 			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
-			http.Header{hla_https_settings.CPasswordHeader: []string{"password1"}},
+			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
 			netMsg2.ToString(),
 		)
 		chErr <- err
@@ -268,7 +267,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		httpClient,
 		http.MethodGet,
 		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterConsumePath+"?sid=username2",
-		http.Header{hla_https_settings.CPasswordHeader: []string{"password2"}},
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
 		nil,
 	)
 	if err != nil {

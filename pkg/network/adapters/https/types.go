@@ -25,6 +25,7 @@ type ISrvSettings interface {
 	GetAddress() string
 	GetChannelSize() uint64
 	GetConnNumLimit() uint64
+	GetAuthMapper() map[string]string
 	GetReadTimeout() time.Duration
 	GetHandleTimeout() time.Duration
 }

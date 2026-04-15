@@ -13,6 +13,8 @@
 ### CHANGES
 
 - `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetChatSize
+- `cmd/hla/*`: add prefix `(INT)` for internal adapter
+- `cmd/hla/*`: log NOCON: WARN -> INFO
 
 <!-- ... -->
 

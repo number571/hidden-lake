@@ -139,7 +139,7 @@ func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) err
 	networkNode := p.fConnKeeper.GetNetworkNode()
 	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {
 		if errors.Is(err, network.ErrNoConnections) {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
+			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoConnections))
 		} else {
 			p.fLogger.PushWarn(logBuilder)
 		}

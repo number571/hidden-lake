@@ -43,5 +43,5 @@ const (
 )
 
 const (
-	CPasswordHeader = "Password"
+	CAuthTokenHeader = "Auth-Token"
 )

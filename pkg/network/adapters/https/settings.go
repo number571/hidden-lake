@@ -25,12 +25,14 @@ type sSettings struct {
 
 type SServeSettings struct {
 	FAddress       string
+	FAuthMapper    map[string]string
 	FChannelSize   uint64
 	FConnNumLimit  uint64
 	FReadTimeout   time.Duration
 	FHandleTimeout time.Duration
 }
 
+// TODO: authMapper
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
 		pSett = &SSettings{
@@ -64,6 +66,10 @@ func (p *sSettings) initDefault() *sSettings {
 
 func (p *sSettings) GetAddress() string {
 	return p.FServeSettings.FAddress
+}
+
+func (p *sSettings) GetAuthMapper() map[string]string {
+	return p.FServeSettings.FAuthMapper
 }
 
 func (p *sSettings) GetChannelSize() uint64 {

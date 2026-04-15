@@ -76,19 +76,18 @@ func NewApp(
 		fStdfLogger: std_logger.NewStdLogger(logging, std_logger.GetLogFunc()),
 		fHTTPLogger: std_logger.NewStdLogger(logging, http_logger.GetLogFunc()),
 		fExtAdapter: hla_https.NewHTTPSAdapter(
-			hla_http.NewSettings(&hla_http.SSettings{
+			hla_https.NewSettings(&hla_https.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FServeSettings: &hla_http.SServeSettings{
+				FServeSettings: &hla_https.SServeSettings{
+					FAuthMapper:    pCfg.GetAuthMapper(),
 					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:       pCfg.GetAddress().GetExternal(),
-					FSubscribeID:   fmt.Sprintf("%s-%s", hla_https_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   cfgSettings.GetReadTimeout(),
 					FHandleTimeout: cfgSettings.GetHandleTimeout(),
 				},
 			}),
 			lruCache,
 			func() []string { return pCfg.GetConnections() },
-			pCfg.GetAuthMapper(),
 			pCertificate,
 			pCertPool,
 		),

@@ -22,12 +22,6 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
-
-	"github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
-)
-
-const (
-	cPasswordHeader = "Password"
 )
 
 const (
@@ -45,7 +39,6 @@ type sHTTPSAdapter struct {
 
 	fCertPool    *x509.CertPool
 	fCertificate *tls.Certificate
-	fRAuthMapper map[string]string
 	fConnsGetter func() []string
 	fOnlines     *sOnlines
 	fCache       cache.ICache
@@ -65,7 +58,6 @@ func NewHTTPSAdapter(
 	pSettings ISettings,
 	pCache cache.ICache,
 	pConnsGetter func() []string,
-	pRAuthMapper map[string]string,
 	pCertificate *tls.Certificate,
 	pCertPool *x509.CertPool,
 ) IHTTPSAdapter {
@@ -75,7 +67,6 @@ func NewHTTPSAdapter(
 		fNetMsgChan:  make(chan layer1.IMessage, pSettings.GetChannelSize()),
 		fCertPool:    pCertPool,
 		fCertificate: pCertificate,
-		fRAuthMapper: pRAuthMapper,
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 		fLogger: logger.NewLogger(
@@ -109,8 +100,8 @@ func (p *sHTTPSAdapter) Run(pCtx context.Context) error {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc(settings.CHandleAdapterProducePath, p.adapterProduceHandler(pCtx))
-	mux.HandleFunc(settings.CHandleAdapterConsumePath, p.adapterConsumeHandler(pCtx))
+	mux.HandleFunc(hla_settings.CHandleAdapterProducePath, p.adapterProduceHandler(pCtx))
+	mux.HandleFunc(hla_settings.CHandleAdapterConsumePath, p.adapterConsumeHandler(pCtx))
 
 	for k, v := range p.fHandlers {
 		mux.HandleFunc(k, v)
@@ -158,7 +149,7 @@ func (p *sHTTPSAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) e
 			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoHasOnlySubscribers))
 			return nil
 		}
-		p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnNoConnections))
+		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoConnections))
 		return ErrNoConnections
 	}
 
@@ -226,7 +217,6 @@ func (p *sHTTPSAdapter) runSubscriber(pCtx context.Context) error {
 			default:
 				msg, err := p.consumeMessage(pCtx, conn)
 				if err != nil {
-					fmt.Println(err)
 					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 					select {
 					case <-pCtx.Done():
@@ -299,7 +289,7 @@ func (p *sHTTPSAdapter) produceMessage(pCtx context.Context, pConn string, pMsg 
 		p.newHTTPClient(),
 		http.MethodPost,
 		fmt.Sprintf(cHandleAdapterProduceTemplate, conn[0], url.QueryEscape(conn[1])),
-		http.Header{cPasswordHeader: []string{conn[2]}},
+		http.Header{hla_settings.CAuthTokenHeader: []string{conn[2]}},
 		pMsg.ToString(),
 	)
 	return err
@@ -313,7 +303,7 @@ func (p *sHTTPSAdapter) consumeMessage(pCtx context.Context, pConn [3]string) (l
 			httpClient,
 			http.MethodGet,
 			fmt.Sprintf(cHandleAdapterConsumeTemplate, pConn[0], url.QueryEscape(pConn[1])),
-			http.Header{cPasswordHeader: []string{pConn[2]}},
+			http.Header{hla_settings.CAuthTokenHeader: []string{pConn[2]}},
 			nil,
 		)
 		if err != nil {
@@ -353,8 +343,8 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		sid := r.URL.Query().Get("sid")
 		// TODO: check
 
-		at, ok := p.fRAuthMapper[sid]
-		if !ok || at != r.Header.Get(cPasswordHeader) {
+		at, ok := p.fSettings.GetAuthMapper()[sid]
+		if !ok || at != r.Header.Get(hla_settings.CAuthTokenHeader) {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnAuthSubscriber))
 			w.WriteHeader(http.StatusForbidden)
 			return
@@ -418,8 +408,8 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 		sid := r.URL.Query().Get("sid")
 		// TODO: check len(consume[sid]) > 1?
 
-		at, ok := p.fRAuthMapper[sid]
-		if !ok || at != r.Header.Get(cPasswordHeader) {
+		at, ok := p.fSettings.GetAuthMapper()[sid]
+		if !ok || at != r.Header.Get(hla_settings.CAuthTokenHeader) {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnAuthSubscriber))
 			w.WriteHeader(http.StatusForbidden)
 			return
