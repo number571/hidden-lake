@@ -100,10 +100,10 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 
 func (p *sApp) Run(pCtx context.Context) error {
 	services := []internal_types.IServiceF{
-		p.runHTTPIntAdapter,
-		p.runHTTPExtAdapter,
-		p.runHTTPIntRelayer,
-		p.runHTTPExtRelayer,
+		p.runIntAdapter,
+		p.runExtAdapter,
+		p.runIntRelayer,
+		p.runExtRelayer,
 	}
 
 	ctx, cancel := context.WithCancel(pCtx)
@@ -161,7 +161,7 @@ func (p *sApp) disable(pCancel context.CancelFunc, pWg *sync.WaitGroup) state.IS
 	}
 }
 
-func (p *sApp) runHTTPIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	if err := p.fIntAdapter.Run(pCtx); err != nil {
@@ -170,7 +170,7 @@ func (p *sApp) runHTTPIntAdapter(pCtx context.Context, wg *sync.WaitGroup, pChEr
 	}
 }
 
-func (p *sApp) runHTTPExtAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runExtAdapter(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	if err := p.fExtAdapter.Run(pCtx); err != nil {
@@ -179,7 +179,7 @@ func (p *sApp) runHTTPExtAdapter(pCtx context.Context, wg *sync.WaitGroup, pChEr
 	}
 }
 
-func (p *sApp) runHTTPIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	for {
@@ -201,7 +201,7 @@ func (p *sApp) runHTTPIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChEr
 	}
 }
 
-func (p *sApp) runHTTPExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
+func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr chan<- error) {
 	defer wg.Done()
 
 	for {

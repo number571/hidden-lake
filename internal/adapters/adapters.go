@@ -6,5 +6,5 @@ const (
 )
 
 const (
-	CAdapterInternalSuffix = "&"
+	CAdapterInternalSuffix = "<"
 )
