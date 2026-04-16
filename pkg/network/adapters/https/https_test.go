@@ -257,7 +257,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			http.MethodPost,
 			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
 			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
-			netMsg2.ToString(),
+			netMsg2.ToBytes(),
 		)
 		chErr <- err
 	}()
@@ -276,7 +276,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	if err := <-chErr; err != nil {
 		t.Fatal(err)
 	}
-	gotMsg, err := layer1.LoadMessage(adapterSettings, string(msgBytes))
+	gotMsg, err := layer1.LoadMessage(adapterSettings, msgBytes)
 	if err != nil {
 		t.Fatal(err)
 	}

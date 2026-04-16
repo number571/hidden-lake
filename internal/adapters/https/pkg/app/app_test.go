@@ -237,7 +237,7 @@ func TestApp(t *testing.T) {
 		http.MethodPost,
 		"https://"+testutils.TgAddrs[28]+settings.CHandleAdapterProducePath+"?sid=username1",
 		http.Header{settings.CAuthTokenHeader: []string{"password1"}},
-		net2Msg.ToString(),
+		net2Msg.ToBytes(),
 	)
 	if err != nil {
 		t.Fatal(err)

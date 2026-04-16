@@ -290,7 +290,7 @@ func (p *sHTTPSAdapter) produceMessage(pCtx context.Context, pConn string, pMsg 
 		http.MethodPost,
 		fmt.Sprintf(cHandleAdapterProduceTemplate, conn[0], url.QueryEscape(conn[1])),
 		http.Header{hla_settings.CAuthTokenHeader: []string{conn[2]}},
-		pMsg.ToString(),
+		pMsg.ToBytes(),
 	)
 	return err
 }
@@ -298,7 +298,7 @@ func (p *sHTTPSAdapter) produceMessage(pCtx context.Context, pConn string, pMsg 
 func (p *sHTTPSAdapter) consumeMessage(pCtx context.Context, pConn [3]string) (layer1.IMessage, error) {
 	httpClient := p.newHTTPClient()
 	for {
-		res, err := api.Request(
+		msgBytes, err := api.Request(
 			pCtx,
 			httpClient,
 			http.MethodGet,
@@ -309,10 +309,10 @@ func (p *sHTTPSAdapter) consumeMessage(pCtx context.Context, pConn [3]string) (l
 		if err != nil {
 			return nil, errors.Join(ErrBadRequest, err)
 		}
-		if len(res) == 0 {
+		if len(msgBytes) == 0 {
 			continue
 		}
-		msg, err := layer1.LoadMessage(p.fSettings.GetAdapterSettings(), string(res))
+		msg, err := layer1.LoadMessage(p.fSettings.GetAdapterSettings(), msgBytes)
 		if err != nil {
 			return nil, errors.Join(ErrDecodeResponse, err)
 		}
@@ -351,16 +351,15 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		}
 
 		msgLen := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
-		msgLen <<= 1 // message hex_encoded
-		msgStr := make([]byte, msgLen)
-		n, err := io.ReadFull(r.Body, msgStr)
+		msgBytes := make([]byte, msgLen)
+		n, err := io.ReadFull(r.Body, msgBytes)
 		if err != nil || uint64(n) != msgLen { //nolint:gosec
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		msg, err := layer1.LoadMessage(adapterSettings, string(msgStr))
+		msg, err := layer1.LoadMessage(adapterSettings, msgBytes)
 		if err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
 			w.WriteHeader(http.StatusBadRequest)
@@ -444,7 +443,7 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 			WithSize(len(msg.ToBytes()))
 
 		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseSendNetworkMessage))
-		_ = api.Response(w, http.StatusOK, msg.ToString())
+		_ = api.Response(w, http.StatusOK, msg.ToBytes())
 	}
 }
 
