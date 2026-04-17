@@ -29,6 +29,7 @@ type IConfig interface {
 type IConfigSettings interface {
 	layer1.ISettings
 
+	GetRateLimitParams() [2]float64
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
 	GetReadTimeout() time.Duration

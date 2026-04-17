@@ -16,12 +16,13 @@ var (
 )
 
 type SConfigSettings struct {
-	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
-	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
-	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
-	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
-	FReadTimeoutMS    uint64 `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
-	FHandleTimeoutMS  uint64 `json:"handle_timeout_ms,omitempty" yaml:"handle_timeout_ms,omitempty"`
+	FMessageSizeBytes uint64     `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
+	FWorkSizeBits     uint64     `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FNetworkKey       string     `json:"network_key,omitempty" yaml:"network_key,omitempty"`
+	FDatabaseEnabled  bool       `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
+	FRateLimitParams  [2]float64 `json:"rate_limit_params,omitempty" yaml:"rate_limit_params,omitempty"`
+	FReadTimeoutMS    uint64     `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
+	FHandleTimeoutMS  uint64     `json:"handle_timeout_ms,omitempty" yaml:"handle_timeout_ms,omitempty"`
 }
 
 type SConfig struct {
@@ -137,6 +138,10 @@ func (p *SConfig) GetConnections() []string {
 
 func (p *SConfig) GetAuthMapper() map[string]string {
 	return p.FAuthMapper
+}
+
+func (p *SConfigSettings) GetRateLimitParams() [2]float64 {
+	return p.FRateLimitParams
 }
 
 func (p *SConfigSettings) GetMessageSizeBytes() uint64 {

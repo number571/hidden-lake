@@ -21,6 +21,7 @@ import (
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
+	"github.com/number571/hidden-lake/internal/utils/limiter"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 )
 
@@ -37,11 +38,12 @@ type sHTTPSAdapter struct {
 	fSettings   ISettings
 	fNetMsgChan chan layer1.IMessage
 
-	fCertPool    *x509.CertPool
-	fCertificate *tls.Certificate
-	fConnsGetter func() []string
-	fOnlines     *sOnlines
-	fCache       cache.ICache
+	fCertPool     *x509.CertPool
+	fCertificate  *tls.Certificate
+	fConnsGetter  func() []string
+	fOnlines      *sOnlines
+	fLimitManager limiter.ILimitManager
+	fCache        cache.ICache
 
 	fShortName  string
 	fLogger     logger.ILogger
@@ -61,21 +63,21 @@ func NewHTTPSAdapter(
 	pCertificate *tls.Certificate,
 	pCertPool *x509.CertPool,
 ) IHTTPSAdapter {
+	dataBrokerParams := pSettings.GetDataBrokerParams()
+	rateLimitParams := pSettings.GetRateLimitParams()
 	return &sHTTPSAdapter{
-		fSettings:    pSettings,
-		fCache:       pCache,
-		fNetMsgChan:  make(chan layer1.IMessage, pSettings.GetChannelSize()),
-		fCertPool:    pCertPool,
-		fCertificate: pCertificate,
-		fConnsGetter: pConnsGetter,
-		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
+		fSettings:     pSettings,
+		fCache:        pCache,
+		fLimitManager: limiter.NewLimitManager(rateLimitParams[0], rateLimitParams[1]),
+		fDataBroker:   broker.NewDataBroker(dataBrokerParams[0], dataBrokerParams[1]),
+		fNetMsgChan:   make(chan layer1.IMessage, dataBrokerParams[0]),
+		fCertPool:     pCertPool,
+		fCertificate:  pCertificate,
+		fConnsGetter:  pConnsGetter,
+		fOnlines:      &sOnlines{fSlice: pConnsGetter()},
 		fLogger: logger.NewLogger(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
-		),
-		fDataBroker: broker.NewDataBroker(
-			pSettings.GetChannelSize(),
-			pSettings.GetConnNumLimit(),
 		),
 	}
 }
@@ -341,12 +343,17 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		}
 
 		sid := r.URL.Query().Get("sid")
-		// TODO: check
 
 		at, ok := p.fSettings.GetAuthMapper()[sid]
 		if !ok || at != r.Header.Get(hla_settings.CAuthTokenHeader) {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnAuthSubscriber))
 			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
+		if ok := p.fLimitManager.Get(sid).Allow(); !ok {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnTooManyRequests))
+			w.WriteHeader(http.StatusTooManyRequests)
 			return
 		}
 
@@ -394,6 +401,9 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.ResponseWriter, r *http.Request) {
 	buildSettings := build.GetSettings()
 
+	consumersMtx := &sync.Mutex{}
+	consumers := make(map[string]*sync.Mutex, 256)
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 		logBuilder.WithConn(r.RemoteAddr)
@@ -405,7 +415,6 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 		}
 
 		sid := r.URL.Query().Get("sid")
-		// TODO: check len(consume[sid]) > 1?
 
 		at, ok := p.fSettings.GetAuthMapper()[sid]
 		if !ok || at != r.Header.Get(hla_settings.CAuthTokenHeader) {
@@ -413,6 +422,21 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
+
+		consumersMtx.Lock()
+		mtx, ok := consumers[sid]
+		if !ok {
+			mtx = &sync.Mutex{}
+			consumers[sid] = mtx
+		}
+		consumersMtx.Unlock()
+
+		if ok := mtx.TryLock(); !ok {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnConsumeLocked))
+			w.WriteHeader(http.StatusLocked)
+			return
+		}
+		defer mtx.Unlock()
 
 		if err := p.fDataBroker.Register(sid); err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnLimitOfSubscribers))

@@ -50,19 +50,17 @@ func NewHTTPAdapter(
 	pCache cache.ICache,
 	pConnsGetter func() []string,
 ) IHTTPAdapter {
+	dataBrokerParams := pSettings.GetDataBrokerParams()
 	return &sHTTPAdapter{
 		fSettings:    pSettings,
 		fCache:       pCache,
-		fNetMsgChan:  make(chan layer1.IMessage, pSettings.GetChannelSize()),
+		fDataBroker:  broker.NewDataBroker(dataBrokerParams[0], dataBrokerParams[1]),
+		fNetMsgChan:  make(chan layer1.IMessage, dataBrokerParams[0]),
 		fConnsGetter: pConnsGetter,
 		fOnlines:     &sOnlines{fSlice: pConnsGetter()},
 		fLogger: logger.NewLogger(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
-		),
-		fDataBroker: broker.NewDataBroker(
-			pSettings.GetChannelSize(),
-			pSettings.GetConnNumLimit(),
 		),
 	}
 }

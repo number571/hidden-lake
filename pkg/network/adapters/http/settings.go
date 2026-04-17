@@ -24,12 +24,11 @@ type sSettings struct {
 }
 
 type SServeSettings struct {
-	FAddress       string
-	FSubscribeID   string
-	FChannelSize   uint64
-	FConnNumLimit  uint64
-	FReadTimeout   time.Duration
-	FHandleTimeout time.Duration
+	FAddress          string
+	FSubscribeID      string
+	FDataBrokerParams [2]uint64
+	FReadTimeout      time.Duration
+	FHandleTimeout    time.Duration
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -48,11 +47,11 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings == nil {
 		p.FServeSettings = &SServeSettings{}
 	}
-	if p.FServeSettings.FChannelSize == 0 {
-		p.FServeSettings.FChannelSize = CDefaultChannelSize
+	if p.FServeSettings.FDataBrokerParams[0] == 0 {
+		p.FServeSettings.FDataBrokerParams[0] = CDefaultChannelSize
 	}
-	if p.FServeSettings.FConnNumLimit == 0 {
-		p.FServeSettings.FConnNumLimit = CDefaultConnNumLimit
+	if p.FServeSettings.FDataBrokerParams[1] == 0 {
+		p.FServeSettings.FDataBrokerParams[1] = CDefaultConnNumLimit
 	}
 	if p.FServeSettings.FReadTimeout == 0 {
 		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
@@ -67,12 +66,8 @@ func (p *sSettings) GetAddress() string {
 	return p.FServeSettings.FAddress
 }
 
-func (p *sSettings) GetChannelSize() uint64 {
-	return p.FServeSettings.FChannelSize
-}
-
-func (p *sSettings) GetConnNumLimit() uint64 {
-	return p.FServeSettings.FConnNumLimit
+func (p *sSettings) GetDataBrokerParams() [2]uint64 {
+	return p.FServeSettings.FDataBrokerParams
 }
 
 func (p *sSettings) GetSubscribeID() string {

@@ -6,6 +6,7 @@ storage_manager:
   cache_hashes_cap: 2048
 network_manager:
   conn_num_limit: 2048
+  message_buffer: 256
   http_read_timeout_ms: 5000
   http_handle_timeout_ms: 5000
   http_callback_timeout_ms: 3600000

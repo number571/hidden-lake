@@ -200,6 +200,7 @@ func (p *tsConfigSettings) GetReadTimeout() time.Duration    { return 5 * time.S
 func (p *tsConfigSettings) GetWriteTimeout() time.Duration   { return 5 * time.Second }
 func (p *tsConfigSettings) GetRequestTimeout() time.Duration { return 5 * time.Second }
 func (p *tsConfigSettings) GetHandleTimeout() time.Duration  { return 30 * time.Second }
+func (p *tsConfigSettings) GetRateLimitParams() [2]float64   { return [2]float64{5, 10} }
 
 type tsNetworkNode struct {
 	fWithFail bool

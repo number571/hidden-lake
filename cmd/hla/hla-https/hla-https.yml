@@ -3,6 +3,7 @@
 #   work_size_bits: 0
 #   network_key: ""
 #   database_enabled: false
+#   rate_limit_params: [0, 0] # -> [5, 10]
 #   read_timeout_ms: 0 # -> 5000
 #   handle_timeout_ms: 0 # -> 5000
 logging:

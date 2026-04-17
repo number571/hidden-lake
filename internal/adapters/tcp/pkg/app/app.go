@@ -88,11 +88,14 @@ func NewApp(pCfg config.IConfig, pPathTo string) types.IRunner {
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:       pCfg.GetAddress().GetInternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hla_tcp_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
+					FDataBrokerParams: [2]uint64{
+						buildSettings.FNetworkManager.FMessageBuffer,
+						buildSettings.FNetworkManager.FConnNumLimit,
+					},
 				},
 			}),
 			lruCache,

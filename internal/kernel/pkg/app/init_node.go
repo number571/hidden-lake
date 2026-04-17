@@ -55,11 +55,14 @@ func (p *sApp) initAnonNode() error {
 			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
 				FServeSettings: &http.SServeSettings{
-					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:       cfg.GetAddress().GetExternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hlk_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
+					FDataBrokerParams: [2]uint64{
+						buildSettings.FNetworkManager.FMessageBuffer,
+						buildSettings.FNetworkManager.FConnNumLimit,
+					},
 				},
 			}),
 			cache.NewLRUCache(buildSettings.FStorageManager.FCacheHashesCap),

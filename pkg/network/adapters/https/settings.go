@@ -7,6 +7,8 @@ import (
 )
 
 const (
+	CDefaultRateLimit     = 5
+	CDefaultCapacityLimit = 10
 	CDefaultChannelSize   = 64
 	CDefaultConnNumLimit  = 256
 	CDefaultReadTimeout   = 5 * time.Second
@@ -24,15 +26,14 @@ type sSettings struct {
 }
 
 type SServeSettings struct {
-	FAddress       string
-	FAuthMapper    map[string]string
-	FChannelSize   uint64
-	FConnNumLimit  uint64
-	FReadTimeout   time.Duration
-	FHandleTimeout time.Duration
+	FAddress          string
+	FAuthMapper       map[string]string
+	FRateLimitParams  [2]float64
+	FDataBrokerParams [2]uint64
+	FReadTimeout      time.Duration
+	FHandleTimeout    time.Duration
 }
 
-// TODO: authMapper
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
 		pSett = &SSettings{
@@ -49,11 +50,17 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FServeSettings == nil {
 		p.FServeSettings = &SServeSettings{}
 	}
-	if p.FServeSettings.FChannelSize == 0 {
-		p.FServeSettings.FChannelSize = CDefaultChannelSize
+	if p.FServeSettings.FRateLimitParams[0] <= 0 {
+		p.FServeSettings.FRateLimitParams[0] = CDefaultRateLimit
 	}
-	if p.FServeSettings.FConnNumLimit == 0 {
-		p.FServeSettings.FConnNumLimit = CDefaultConnNumLimit
+	if p.FServeSettings.FRateLimitParams[1] <= 0 {
+		p.FServeSettings.FRateLimitParams[1] = CDefaultCapacityLimit
+	}
+	if p.FServeSettings.FDataBrokerParams[0] == 0 {
+		p.FServeSettings.FDataBrokerParams[0] = CDefaultChannelSize
+	}
+	if p.FServeSettings.FDataBrokerParams[1] == 0 {
+		p.FServeSettings.FDataBrokerParams[1] = CDefaultConnNumLimit
 	}
 	if p.FServeSettings.FReadTimeout == 0 {
 		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
@@ -72,12 +79,12 @@ func (p *sSettings) GetAuthMapper() map[string]string {
 	return p.FServeSettings.FAuthMapper
 }
 
-func (p *sSettings) GetChannelSize() uint64 {
-	return p.FServeSettings.FChannelSize
+func (p *sSettings) GetRateLimitParams() [2]float64 {
+	return p.FServeSettings.FRateLimitParams
 }
 
-func (p *sSettings) GetConnNumLimit() uint64 {
-	return p.FServeSettings.FConnNumLimit
+func (p *sSettings) GetDataBrokerParams() [2]uint64 {
+	return p.FServeSettings.FDataBrokerParams
 }
 
 func (p *sSettings) GetAdapterSettings() adapters.ISettings {

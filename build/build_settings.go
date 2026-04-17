@@ -55,6 +55,7 @@ type SSettings struct {
 	} `yaml:"storage_manager"`
 	FNetworkManager struct {
 		FConnNumLimit          uint64 `yaml:"conn_num_limit"`
+		FMessageBuffer         uint64 `yaml:"message_buffer"`
 		FHttpReadTimeoutMS     uint64 `yaml:"http_read_timeout_ms"`
 		FHttpHandleTimeoutMS   uint64 `yaml:"http_handle_timeout_ms"`
 		FHttpCallbackTimeoutMS uint64 `yaml:"http_callback_timeout_ms"`
@@ -70,6 +71,7 @@ func (p SSettings) validate() error {
 		return errors.New("storage_manager is invalid")
 	case
 		p.FNetworkManager.FConnNumLimit == 0,
+		p.FNetworkManager.FMessageBuffer == 0,
 		p.FNetworkManager.FHttpReadTimeoutMS == 0,
 		p.FNetworkManager.FHttpHandleTimeoutMS == 0,
 		p.FNetworkManager.FHttpCallbackTimeoutMS == 0:

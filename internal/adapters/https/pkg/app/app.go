@@ -79,11 +79,15 @@ func NewApp(
 			hla_https.NewSettings(&hla_https.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_https.SServeSettings{
-					FAuthMapper:    pCfg.GetAuthMapper(),
-					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
-					FAddress:       pCfg.GetAddress().GetExternal(),
-					FReadTimeout:   cfgSettings.GetReadTimeout(),
-					FHandleTimeout: cfgSettings.GetHandleTimeout(),
+					FAuthMapper:      pCfg.GetAuthMapper(),
+					FAddress:         pCfg.GetAddress().GetExternal(),
+					FReadTimeout:     cfgSettings.GetReadTimeout(),
+					FHandleTimeout:   cfgSettings.GetHandleTimeout(),
+					FRateLimitParams: cfgSettings.GetRateLimitParams(),
+					FDataBrokerParams: [2]uint64{
+						buildSettings.FNetworkManager.FMessageBuffer,
+						buildSettings.FNetworkManager.FConnNumLimit,
+					},
 				},
 			}),
 			lruCache,
@@ -95,11 +99,14 @@ func NewApp(
 			hla_http.NewSettings(&hla_http.SSettings{
 				FAdapterSettings: adaptersSettings,
 				FServeSettings: &hla_http.SServeSettings{
-					FConnNumLimit:  buildSettings.FNetworkManager.FConnNumLimit,
 					FAddress:       pCfg.GetAddress().GetInternal(),
 					FSubscribeID:   fmt.Sprintf("%s-%s", hla_https_settings.CAppShortName, random.NewRandom().GetString(16)),
 					FReadTimeout:   buildSettings.GetHttpReadTimeout(),
 					FHandleTimeout: buildSettings.GetHttpHandleTimeout(),
+					FDataBrokerParams: [2]uint64{
+						buildSettings.FNetworkManager.FMessageBuffer,
+						buildSettings.FNetworkManager.FConnNumLimit,
+					},
 				},
 			}),
 			lruCache,
