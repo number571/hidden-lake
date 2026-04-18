@@ -79,6 +79,12 @@ func TestInitApp(t *testing.T) {
 	if _, err := InitApp([]string{"--path", tcPathConfig + "/failed/2"}, tgFlags); err == nil {
 		t.Fatal("success init app with invalid config (2)")
 	}
+	if _, err := InitApp([]string{"--path", tcPathConfig + "/failed/3"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid config (3)")
+	}
+	if _, err := InitApp([]string{"--path", tcPathConfig + "/failed/4"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid config (4)")
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
