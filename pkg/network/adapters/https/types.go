@@ -24,7 +24,7 @@ type ISettings interface {
 type ISrvSettings interface {
 	GetAddress() string
 	GetRateLimitParams() [2]float64
-	GetDataBrokerParams() [2]uint64
+	GetDataBrokerParam() uint64
 	GetAuthMapper() map[string]string
 	GetReadTimeout() time.Duration
 	GetHandleTimeout() time.Duration

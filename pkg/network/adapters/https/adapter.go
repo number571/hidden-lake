@@ -48,7 +48,6 @@ type sHTTPSAdapter struct {
 	fShortName  string
 	fLogger     logger.ILogger
 	fDataBroker broker.IDataBroker
-	fHandlers   map[string]http.HandlerFunc
 }
 
 type sOnlines struct {
@@ -63,14 +62,14 @@ func NewHTTPSAdapter(
 	pCertificate *tls.Certificate,
 	pCertPool *x509.CertPool,
 ) IHTTPSAdapter {
-	dataBrokerParams := pSettings.GetDataBrokerParams()
+	dataBrokerParam := pSettings.GetDataBrokerParam()
 	rateLimitParams := pSettings.GetRateLimitParams()
 	return &sHTTPSAdapter{
 		fSettings:     pSettings,
 		fCache:        pCache,
 		fLimitManager: limiter.NewLimitManager(rateLimitParams[0], rateLimitParams[1]),
-		fDataBroker:   broker.NewDataBroker(dataBrokerParams[0], dataBrokerParams[1]),
-		fNetMsgChan:   make(chan layer1.IMessage, dataBrokerParams[0]),
+		fDataBroker:   broker.NewDataBroker(dataBrokerParam, uint64(len(pSettings.GetAuthMapper()))),
+		fNetMsgChan:   make(chan layer1.IMessage, dataBrokerParam),
 		fCertPool:     pCertPool,
 		fCertificate:  pCertificate,
 		fConnsGetter:  pConnsGetter,
@@ -104,10 +103,6 @@ func (p *sHTTPSAdapter) Run(pCtx context.Context) error {
 
 	mux.HandleFunc(hla_settings.CHandleAdapterProducePath, p.adapterProduceHandler(pCtx))
 	mux.HandleFunc(hla_settings.CHandleAdapterConsumePath, p.adapterConsumeHandler(pCtx))
-
-	for k, v := range p.fHandlers {
-		mux.HandleFunc(k, v)
-	}
 
 	httpServer := &http.Server{
 		Addr:         address,
@@ -351,12 +346,6 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 			return
 		}
 
-		if ok := p.fLimitManager.Get(sid).Allow(); !ok {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnTooManyRequests))
-			w.WriteHeader(http.StatusTooManyRequests)
-			return
-		}
-
 		msgLen := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
 		msgBytes := make([]byte, msgLen)
 		n, err := io.ReadFull(r.Body, msgBytes)
@@ -392,8 +381,16 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 			return
 		}
 
+		if ok := p.fLimitManager.Get(sid).Allow(); !ok {
+			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnTooManyRequests))
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+
 		if ok := p.pushMessageToChan(msg); !ok {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -402,7 +399,7 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 	buildSettings := build.GetSettings()
 
 	consumersMtx := &sync.Mutex{}
-	consumers := make(map[string]*sync.Mutex, 256)
+	consumers := make(map[string]*sync.Mutex, len(p.fSettings.GetAuthMapper()))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		logBuilder := anon_logger.NewLogBuilder(p.fShortName)
@@ -454,13 +451,7 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 			return
 		}
 
-		msg, ok := v.(layer1.IMessage)
-		if !ok {
-			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroInvalidMessageType))
-			_ = api.Response(w, http.StatusInternalServerError, []byte{})
-			return
-		}
-
+		msg, _ := v.(layer1.IMessage)
 		logBuilder.
 			WithHash(msg.GetHash()).
 			WithProof(msg.GetProof()).

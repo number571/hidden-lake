@@ -84,10 +84,7 @@ func NewApp(
 					FReadTimeout:     cfgSettings.GetReadTimeout(),
 					FHandleTimeout:   cfgSettings.GetHandleTimeout(),
 					FRateLimitParams: cfgSettings.GetRateLimitParams(),
-					FDataBrokerParams: [2]uint64{
-						buildSettings.FNetworkManager.FMessageBuffer,
-						buildSettings.FNetworkManager.FConnNumLimit,
-					},
+					FDataBrokerParam: buildSettings.FNetworkManager.FMessageBuffer,
 				},
 			}),
 			lruCache,

@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -119,7 +120,11 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 				FAuthMapper: map[string]string{
 					"username1": "password1",
 					"username2": "password2",
+					"username3": "password3",
+					"username4": "password4",
 				},
+				FRateLimitParams: [2]float64{.1, 1},
+				FDataBrokerParam: 1,
 			},
 		}),
 		cache.NewLRUCache(1024),
@@ -208,10 +213,43 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		http.MethodGet,
 		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
 		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
-		netMsg.ToString(),
+		netMsg.ToBytes(),
 	)
 	if err == nil {
 		t.Fatal("success request with invalid method")
+	}
+
+	_, err = api.Request(
+		ctx,
+		httpClient,
+		http.MethodPost,
+		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=undefined",
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
+		netMsg.ToBytes(),
+	)
+	if err == nil {
+		t.Fatal("success request with invalid sid")
+	}
+
+	msgBytesX := []byte("hello, world!")
+	msgBytesX = append(msgBytesX, random.NewRandom().GetBytes(uint64(8192-len(msgBytesX)))...) //nolint:gosec
+	netMsgX := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(111, msgBytesX),
+	)
+
+	_, err = api.Request(
+		ctx,
+		httpClient,
+		http.MethodPost,
+		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username4",
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password4"}},
+		netMsgX.ToBytes(),
+	)
+	if err == nil {
+		t.Fatal("success request with invalid proto network")
 	}
 
 	_, err = api.Request(
@@ -239,7 +277,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with invalid body (2)")
 	}
 
-	msgBytes2 := []byte("hello, world!")
+	msgBytes2 := []byte("hello, world (222)!")
 	msgBytes2 = append(msgBytes2, random.NewRandom().GetBytes(uint64(8192-len(msgBytes2)))...) //nolint:gosec
 	netMsg2 := layer1.NewMessage(
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
@@ -248,40 +286,119 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes2),
 	)
 
-	chErr := make(chan error, 1)
+	chErr1 := make(chan error, 1)
+	chErr2 := make(chan error, 1)
+
 	go func() {
 		time.Sleep(time.Second)
+		_, err := api.Request(
+			ctx,
+			httpClient,
+			http.MethodGet,
+			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterConsumePath+"?sid=username2",
+			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
+			nil,
+		)
+		if err == nil {
+			chErr1 <- errors.New("got double consume success") // nolint: err113
+			return
+		}
 		_, err = api.Request(
 			ctx,
 			httpClient,
 			http.MethodPost,
-			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username1",
-			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password1"}},
+			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username2",
+			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
 			netMsg2.ToBytes(),
 		)
-		chErr <- err
+		chErr1 <- err
 	}()
 
-	msgBytes, err = api.Request(
+	go func() {
+		msgBytes, err = api.Request(
+			ctx,
+			httpClient,
+			http.MethodGet,
+			"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterConsumePath+"?sid=username2",
+			http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
+			nil,
+		)
+		gotMsg, err := layer1.LoadMessage(adapterSettings, msgBytes)
+		if err != nil {
+			chErr2 <- err
+			return
+		}
+		if gotMsg.ToString() != netMsg2.ToString() {
+			chErr2 <- errors.New("got invalid message") // nolint: err113
+			return
+		}
+		chErr2 <- nil
+	}()
+
+	if err := <-chErr1; err != nil {
+		t.Fatal(err)
+	}
+	if err := <-chErr2; err != nil {
+		t.Fatal(err)
+	}
+
+	msgBytesY := []byte("hello, world!")
+	msgBytesY = append(msgBytesY, random.NewRandom().GetBytes(uint64(8192-len(msgBytesY)))...) //nolint:gosec
+	netMsgY := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytesY),
+	)
+	_, err = api.Request(
+		ctx,
+		httpClient,
+		http.MethodPost,
+		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username2",
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
+		netMsgY.ToBytes(),
+	)
+	if err == nil {
+		t.Fatal("success request with overflow rate limit")
+	}
+
+	msgBytesZ := []byte("hello, world!")
+	msgBytesZ = append(msgBytesZ, random.NewRandom().GetBytes(uint64(8192-len(msgBytesZ)))...) //nolint:gosec
+	netMsgZ := layer1.NewMessage(
+		layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: layer1.NewSettings(&layer1.SSettings{}),
+		}),
+		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytesZ),
+	)
+	_, err = api.Request(
+		ctx,
+		httpClient,
+		http.MethodPost,
+		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username3",
+		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password3"}},
+		netMsgZ.ToBytes(),
+	)
+	if err == nil {
+		t.Fatal("success request with overflow broker data")
+	}
+
+	_, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodGet,
-		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterConsumePath+"?sid=username2",
+		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterConsumePath+"?sid=undefined",
 		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password2"}},
 		nil,
 	)
-	if err != nil {
-		t.Fatal(err)
+	if err == nil {
+		t.Fatal("success consume with invalid sid")
 	}
-	if err := <-chErr; err != nil {
-		t.Fatal(err)
+
+	if _, err := parseURL("\000"); err == nil || errors.Is(err, ErrNoPassword) {
+		t.Fatal("parse url: success with invalid")
 	}
-	gotMsg, err := layer1.LoadMessage(adapterSettings, msgBytes)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if gotMsg.ToString() != netMsg2.ToString() {
-		t.Fatal("got invalid message")
+	if _, err := parseURL("username@host"); !errors.Is(err, ErrNoPassword) {
+		t.Fatal("parse url: success without password")
 	}
 }
 

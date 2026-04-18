@@ -34,13 +34,14 @@ func (p *sDataBroker) Register(pID string) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
+	if _, ok := p.fSubChans[pID]; ok {
+		return nil
+	}
 	if uint64(len(p.fSubChans)) >= p.fSubLimit {
 		return ErrLimitSubscribers
 	}
-	if _, ok := p.fSubChans[pID]; !ok {
-		p.fSubChans[pID] = make(chan string, p.fChanSize)
-	}
 
+	p.fSubChans[pID] = make(chan string, p.fChanSize)
 	return nil
 }
 
