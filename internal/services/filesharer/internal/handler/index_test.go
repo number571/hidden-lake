@@ -49,6 +49,9 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.GetRemoteFileInfo(ctx, "", "", false); err == nil {
 		t.Fatal("success incorrect getRemoteFileInfo")
 	}
+	if err := client.DelRemoteFile(ctx, "", "", false); err == nil {
+		t.Fatal("success incorrect delRemoteFile")
+	}
 	if _, err := client.GetLocalList(ctx, "", 0); err == nil {
 		t.Fatal("success incorrect getLocalList")
 	}

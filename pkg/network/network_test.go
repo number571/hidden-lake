@@ -9,6 +9,7 @@ import (
 
 	gopeer_adapters "github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -147,6 +148,24 @@ func TestHiddenLakeNode(t *testing.T) {
 	}
 	if rsp.GetCode() != http.StatusAccepted {
 		t.Fatal("got invalid status code")
+	}
+
+	err = node1.SendRequest(
+		ctx,
+		node2PubKey,
+		request.NewRequestBuilder().WithMethod(http.MethodPost).WithBody(random.NewRandom().GetBytes(10<<10)).Build(),
+	)
+	if err == nil {
+		t.Fatal("success send invalid request")
+	}
+
+	_, err = node1.FetchRequest(
+		ctx,
+		node2PubKey,
+		request.NewRequestBuilder().WithMethod(http.MethodPost).WithBody(random.NewRandom().GetBytes(10<<10)).Build(),
+	)
+	if err == nil {
+		t.Fatal("success fetch invalid request")
 	}
 }
 
