@@ -133,4 +133,7 @@ func TestInitApp(t *testing.T) {
 	if _, err := InitApp([]string{"--path", tcTestdataPath}, tgFlags); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := InitApp([]string{"--path", tcTestdataPath + "failed"}, tgFlags); err == nil {
+		t.Fatal("success init app with invalid config")
+	}
 }
