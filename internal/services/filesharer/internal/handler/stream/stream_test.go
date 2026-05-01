@@ -85,6 +85,7 @@ func TestStreamReader(t *testing.T) {
 	}
 
 	_ = os.Remove(inputPath + tempname)
+
 	stream2, err := BuildStreamReader(
 		context.Background(),
 		0,
@@ -176,6 +177,29 @@ func TestStreamReader(t *testing.T) {
 	}
 	if _, err := stream5.Read(b); !errors.Is(err, ErrInvalidResponseCode) {
 		t.Fatal("success read with invalid response code")
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	_ = os.Remove(inputPath + tempname)
+	stream6, err := BuildStreamReader(
+		ctx,
+		0,
+		inputPath+tempname,
+		"alias_name",
+		newTsHLSClient(4, fileBytes, 0),
+		newFileInfoFromBytes(filename, fileBytes),
+		false,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cancel()
+
+	if _, err := stream6.Read(b); !errors.Is(err, io.ErrClosedPipe) {
+		t.Fatal("success read with closed pipe")
 	}
 }
 

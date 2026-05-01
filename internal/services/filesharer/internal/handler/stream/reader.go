@@ -77,7 +77,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 	}
 
 	if len(p.fBuffer) == 0 && !p.fTempEOF {
-		switch chunk, err := p.loadFileChunkFromTemp(); {
+		switch chunk, err := p.loadFileChunkFromTempFile(); {
 		case err == nil:
 			p.fBuffer = chunk
 		case errors.Is(err, io.EOF):
@@ -89,7 +89,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 	}
 
 	if len(p.fBuffer) == 0 {
-		chunk, err := p.loadFileChunk()
+		chunk, err := p.loadFileChunkFromNetwork()
 		if err != nil {
 			return 0, errors.Join(ErrLoadFileChunk, err)
 		}
@@ -145,7 +145,7 @@ func createTempFile(pTempFile string) error {
 	return err
 }
 
-func (p *sStream) loadFileChunk() ([]byte, error) {
+func (p *sStream) loadFileChunkFromNetwork() ([]byte, error) {
 	var lastErr error
 	for i := uint64(0); i <= p.fRetryNum; i++ {
 		req := request.NewLoadRequest(
@@ -171,7 +171,7 @@ func (p *sStream) loadFileChunk() ([]byte, error) {
 	return nil, errors.Join(ErrRetryFailed, lastErr)
 }
 
-func (p *sStream) loadFileChunkFromTemp() ([]byte, error) {
+func (p *sStream) loadFileChunkFromTempFile() ([]byte, error) {
 	f, err := os.Open(p.fTempFile)
 	if err != nil {
 		return nil, err
