@@ -16,11 +16,11 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
-	"github.com/number571/hidden-lake/pkg/network/adapters/tcp"
+	"github.com/number571/hidden-lake/pkg/network/adapters/http"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 
-	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_http_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 )
 
 const (
@@ -49,17 +49,17 @@ func main() {
 			defer wg.Done()
 
 			networkByKey, _ := build.GetNetwork(networkKey)
-			connections := networkByKey.FConnections.GetByScheme(hla_tcp_settings.CAppAdapterName)
+			connections := networkByKey.FConnections.GetByScheme(hla_http_settings.CAppAdapterName)
 			if len(connections) == 0 {
 				return // pass another adapter
 			}
 
 			respTime, err := doTestRequest(nk, retries)
 			if err != nil {
-				log.Printf("%s: network '%s' has error: %s", hla_tcp_settings.CAppAdapterName, nk, err.Error())
+				log.Printf("%s: network '%s' has error: %s", hla_http_settings.CAppAdapterName, nk, err.Error())
 				return
 			}
-			log.Printf("%s: network '%s' is working successfully; response time %s", hla_tcp_settings.CAppAdapterName, nk, respTime)
+			log.Printf("%s: network '%s' is working successfully; response time %s", hla_http_settings.CAppAdapterName, nk, respTime)
 		}(networkKey)
 	}
 
@@ -113,14 +113,15 @@ func newNode(networkKey string, name string) network.IHiddenLakeNode {
 			}
 			return kv
 		}(),
-		tcp.NewTCPAdapter(
-			tcp.NewSettings(&tcp.SSettings{
+		http.NewHTTPAdapter(
+			http.NewSettings(&http.SSettings{
 				FAdapterSettings: adapterSettings,
+				FServeSettings:   &http.SServeSettings{FSubscribeID: name},
 			}),
 			cache.NewLRUCache(build.GetSettings().FStorageManager.FCacheHashesCap),
 			func() []string {
 				networkByKey, _ := build.GetNetwork(networkKey)
-				return networkByKey.FConnections.GetByScheme(hla_tcp_settings.CAppAdapterName)
+				return networkByKey.FConnections.GetByScheme(hla_http_settings.CAppAdapterName)
 			},
 		),
 		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {

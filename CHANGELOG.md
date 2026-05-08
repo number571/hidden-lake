@@ -16,6 +16,10 @@
 - `cmd/hla/*`: add suffix `<` for internal adapter
 - `cmd/hla/*`: log NOCON: WARN -> INFO
 
+### BUG FIXES
+
+- `pkg/config`: fix FWorkSizeBits value in GetConfigSettings
+
 <!-- ... -->
 
 ## v1.10.4

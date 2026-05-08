@@ -4,6 +4,7 @@ package build
 import (
 	_ "embed"
 	"errors"
+	"fmt"
 	"net/url"
 	"sync"
 
@@ -52,7 +53,11 @@ func (p SConnections) GetByScheme(pScheme string) []string {
 		if err != nil || u.Scheme != pScheme {
 			continue
 		}
-		connects = append(connects, u.Host)
+		addr := u.Host
+		if u.User.Username() != "" {
+			addr = fmt.Sprintf("%s@%s", u.User.String(), u.Host)
+		}
+		connects = append(connects, addr)
 	}
 	return connects
 }

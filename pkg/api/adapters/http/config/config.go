@@ -9,7 +9,7 @@ func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
 	return SConfigSettings{
 		SConfigSettings: config.SConfigSettings{
 			FMessageSizeBytes: sett.GetMessageSizeBytes(),
-			FWorkSizeBits:     sett.GetMessageSizeBytes(),
+			FWorkSizeBits:     sett.GetWorkSizeBits(),
 			FNetworkKey:       sett.GetNetworkKey(),
 			FDatabaseEnabled:  sett.GetDatabaseEnabled(),
 			FReadTimeoutMS:    uint64(sett.GetReadTimeout().Milliseconds()),   // nolint: gosec

@@ -3,3 +3,8 @@
 !main.go
 !Makefile
 !tcp 
+!http
+!https
+!*.cert
+!*.key
+!*.certs

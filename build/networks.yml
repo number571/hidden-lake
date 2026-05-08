@@ -3,18 +3,18 @@ default: &default_network
 networks:
   8Jkl93Mdk93md1bz:
     <<: *default_network
-    work_size_bits: 22 # custom
+    work_size_bits: 0 # custom
     connections: 
       # provider=vdsina.ru
       # expired=?(eternal)
-      - tcp://94.103.91.81:9581
+      - https://__username__:__password__@94.103.91.81:9531
   kf92j74Nof92n9F4:
     <<: *default_network
     work_size_bits: 20 # custom
     connections: 
       # provider=ruvds.ru
       # expired=30.07.2027
-      - tcp://195.133.1.126:9581
+      - http://195.133.1.126:9511
   oi4r9NW9Le7fKF9d:
     <<: *default_network
     work_size_bits: 18 # custom
