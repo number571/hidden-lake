@@ -33,11 +33,6 @@ const (
 )
 
 const (
-	CDefaultExternalAddress = "127.0.0.1:9531"
-	CDefaultInternalAddress = "127.0.0.1:9532"
-)
-
-const (
 	CHandleAdapterProducePath = "/adapter/produce"
 	CHandleAdapterConsumePath = "/adapter/consume"
 )

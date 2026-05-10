@@ -27,4 +27,7 @@ var (
 	ErrNetworkNotFound    = &SError{"network not found"}
 	ErrParseURL           = &SError{"parse url"}
 	ErrLoadConfig         = &SError{"load config"}
+	ErrInitDefaultConfig  = &SError{"init default config"}
+	ErrParseConnection    = &SError{"parse connection"}
+	ErrAdapterNotFound    = &SError{"adapter not found"}
 )

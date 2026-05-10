@@ -30,11 +30,6 @@ const (
 )
 
 const (
-	CDefaultExternalAddress = "127.0.0.1:9511"
-	CDefaultInternalAddress = "127.0.0.1:9512"
-)
-
-const (
 	CHandleIndexPath          = "/api/index"
 	CHandleNetworkOnlinePath  = "/api/network/online"
 	CHandleConfigSettingsPath = "/api/config/settings"

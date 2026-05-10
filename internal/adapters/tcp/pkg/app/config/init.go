@@ -6,7 +6,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	hla_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters"
+	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -57,7 +58,7 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
 	cfg.FSettings.FNetworkKey = pUseNetwork
 
-	cfg.FConnections = network.FConnections.GetByScheme(hla_settings.CAppAdapterName)
+	cfg.FConnections = network.FConnections.GetByScheme(hla_tcp_settings.CAppAdapterName)
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)

@@ -28,8 +28,3 @@ const (
 	CPathYML = CAppShortName + ".yml"
 	CPathDB  = CAppShortName + ".db"
 )
-
-const (
-	CDefaultExternalAddress = "127.0.0.1:9521"
-	CDefaultInternalAddress = "127.0.0.1:9522"
-)

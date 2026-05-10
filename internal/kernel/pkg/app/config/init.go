@@ -6,7 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/hidden-lake/build"
-	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
+	hla_settings "github.com/number571/hidden-lake/internal/adapters"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
@@ -72,7 +72,7 @@ func initConfig() *SConfig {
 			hls_filesharer_settings.CAppShortName: hls_filesharer_settings.CDefaultExternalAddress,
 		},
 		FEndpoints: []string{
-			hla_tcp_settings.CDefaultInternalAddress,
+			hla_settings.CDefaultInternalAddress,
 		},
 	}
 }
