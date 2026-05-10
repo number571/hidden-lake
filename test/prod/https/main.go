@@ -134,18 +134,18 @@ func newNode(networkKey string, name string) network.IHiddenLakeNode {
 			func() []string {
 				networkByKey, _ := build.GetNetwork(networkKey)
 				connections := networkByKey.FConnections.GetByScheme(hla_https_settings.CAppAdapterName)
-				if len(connections) != 1 {
-					panic("len conns != 1")
+				if len(connections) == 0 {
+					panic("len conns == 0")
 				}
-				p, err := getPasswordByName("users.json", name)
+				p, err := getPasswordByName("users.json", networkKey, name)
 				if err != nil {
 					panic(err)
 				}
-				conn := strings.NewReplacer(
+				c := strings.NewReplacer(
 					"__username__", name,
 					"__password__", p,
 				).Replace(connections[0])
-				return []string{conn}
+				return []string{c}
 			},
 			func() *tls.Certificate {
 				cert, err := getCertificate(".", "localhost")
@@ -182,8 +182,16 @@ func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey,
 	return pubKey1, pubKey2
 }
 
-func getPasswordByName(pPath, pName string) (string, error) {
-	creds := map[string]string{}
+/*
+	{
+	    "8Jkl93Mdk93md1bz": {
+	        "node1": "<INSERT>",
+	        "node2": "<INSERT>"
+	    }
+	}
+*/
+func getPasswordByName(pPath, pNetworkKey, pName string) (string, error) {
+	creds := map[string]map[string]string{}
 
 	data, err := os.ReadFile(pPath) // nolint: gosec
 	if err != nil {
@@ -194,7 +202,12 @@ func getPasswordByName(pPath, pName string) (string, error) {
 		return "", err
 	}
 
-	p, ok := creds[pName]
+	network, ok := creds[pNetworkKey]
+	if !ok {
+		return "", errors.New("network not found") // nolint: err113
+	}
+
+	p, ok := network[pName]
 	if !ok {
 		return "", errors.New("user not found") // nolint: err113
 	}

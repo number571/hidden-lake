@@ -15,6 +15,8 @@
 - `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetChatSize
 - `cmd/hla/*`: add suffix `<` for internal adapter
 - `cmd/hla/*`: log NOCON: WARN -> INFO
+- `test/prod`: add http, https tests
+- `build`: updated networks 8Jkl93Mdk93md1bz, kf92j74Nof92n9F4
 
 ### BUG FIXES
 

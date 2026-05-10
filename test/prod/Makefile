@@ -1,23 +1,15 @@
-N=1
-
 .PHONY: default test-tcp test-http test-https clean
 default: test-tcp test-http test-https
 
 test-tcp: 
-	for i in {1..$(N)}; \
-		do echo $$i; \
-		make -C tcp; \
-	done;
+	make -C tcp
+	echo & echo
 test-http: 
-	for i in {1..$(N)}; \
-		do echo $$i; \
-		make -C http; \
-	done;
+	make -C http
+	echo & echo
 test-https: 
-	for i in {1..$(N)}; \
-		do echo $$i; \
-		make -C https; \
-	done;
+	make -C https
+	echo & echo
 clean: 
 	make -C tcp clean
 	make -C http clean
