@@ -85,4 +85,14 @@ func TestInit(t *testing.T) {
 	if config3.GetApplications()[0] != hlk_settings.CAppShortName {
 		t.Fatal("got invalid field with exist config (3)")
 	}
+
+	_ = os.Remove(configFile)
+
+	networks := build.GetNetworks()
+	for n := range networks {
+		if _, err := InitConfig(configFile, nil, n); err != nil {
+			t.Fatal(err)
+		}
+		_ = os.Remove(configFile)
+	}
 }
