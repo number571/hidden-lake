@@ -17,6 +17,7 @@
 - `cmd/hla/*`: log NOCON: WARN -> INFO
 - `test/prod`: add http, https tests
 - `build`: updated networks 8Jkl93Mdk93md1bz, kf92j74Nof92n9F4
+- `cmd/hla/*`: default internal/external addresses are now the same
 
 ### BUG FIXES
 
