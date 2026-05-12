@@ -95,4 +95,10 @@ func TestInit(t *testing.T) {
 		}
 		_ = os.Remove(configFile)
 	}
+
+	if _, err := InitConfig(configFile, nil, "not_found_network_key"); err == nil {
+		t.Fatal("success init default config with undefined network key")
+	}
+
+	_ = os.Remove(configFile)
 }

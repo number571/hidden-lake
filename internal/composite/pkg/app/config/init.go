@@ -49,9 +49,13 @@ func initConfig(networkKey string) (*SConfig, error) {
 		},
 	}
 
+	if networkKey == "" {
+		return defaultConfig, nil
+	}
+
 	network, ok := build.GetNetwork(networkKey)
 	if !ok {
-		return defaultConfig, nil
+		return nil, ErrNetworkNotFound
 	}
 
 	mapUsed := make(map[string]struct{}, 16)

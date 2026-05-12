@@ -22,6 +22,7 @@
 ### BUG FIXES
 
 - `pkg/config`: fix FWorkSizeBits value in GetConfigSettings
+- `cmd/hls/hls-filesharer`: deleted fmt.Println
 
 <!-- ... -->
 
