@@ -96,7 +96,9 @@ There are a number of dependencies that represent separate applications for prov
 ## How it works
 
 > [!WARNING]
-> The QB-problem guarantees theoretically provable anonymity of subscribers to communication from third parties (QB-net nodes of the system and external observers, including the global one), but not from the subscribers themselves to each other! If you do not fully trust your friends (communication subscribers), then you should additionally set the `qbp_consumers` parameter in `hlk.yml`, which will be >= the number of friends to exclude the possibility of active observations.
+> The QB-problem does not hide your addresses (IP, PK) from other network participants, it hides the fact of your communication with its participants! If one of the subscribers (who was on the friends list) is compromised, the global observer will have information about your addresses and message history with this subscriber.
+>
+> If a friend is compromised, the global observer will also have the opportunity to carry out active observations, which will be related to measuring the size of your queue and identifying additional connections with other network participants. To avoid this, it is recommended to set the `qbp_consumers` parameter in `hlk.yml`, which will be `>=` the number of friends.
 
 The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
