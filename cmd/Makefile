@@ -12,6 +12,7 @@ build:
 		hlk	\
 		hla/hla-tcp	\
 		hla/hla-http \
+		hla/hla-https \
 		hls/hls-messenger \
 		hls/hls-filesharer \
 		hls/hls-pinger; \
