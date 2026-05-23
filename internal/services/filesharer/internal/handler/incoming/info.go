@@ -51,14 +51,15 @@ func HandleIncomingInfoHTTP(
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
-		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, isPersonal)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
 			return
 		}
 
+		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, isPersonal)
 		fullPath := filepath.Join(stgPath, fileName)
+
 		info, err := fileinfo.NewFileInfo(fullPath)
 		if err != nil {
 			if os.IsNotExist(err) {

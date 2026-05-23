@@ -3,8 +3,8 @@ package config
 import (
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -14,7 +14,7 @@ type IWrapper interface {
 }
 
 type IEditor interface {
-	UpdateFriends(map[string]asymmetric.IPubKey) error
+	UpdateFriends(map[string]layer2.IParticipantKey) error
 }
 
 type IConfigSettings interface {
@@ -31,7 +31,7 @@ type IConfig interface {
 	GetSettings() IConfigSettings
 	GetLogging() logger.ILogging
 	GetAddress() IAddress
-	GetFriends() map[string]asymmetric.IPubKey
+	GetFriends() map[string]layer2.IParticipantKey
 	GetEndpoints() []string
 	GetService(string) (string, bool)
 }

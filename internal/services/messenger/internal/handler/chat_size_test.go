@@ -28,20 +28,12 @@ func TestHandleChatSizeAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 	if err := chatHistorySizeRequestInvalidMethod(handlerX); err != nil {
 		t.Fatal(err)
-	}
-	if err := chatHistorySizeRequestWithoutFriend(handlerX); err != nil {
-		t.Fatal(err)
-	}
-
-	handlerY := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
-	if err := chatHistorySizeRequestOK(handlerY); err == nil {
-		t.Fatal("success request with get pub key error")
 	}
 }
 
@@ -69,21 +61,6 @@ func chatHistorySizeRequestInvalidMethod(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func chatHistorySizeRequestWithoutFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

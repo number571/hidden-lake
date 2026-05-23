@@ -2,5 +2,5 @@ package friend
 
 type SFriend struct {
 	FAliasName string `json:"alias_name"`
-	FPublicKey string `json:"public_key"`
+	FFriendKey string `json:"friend_key"`
 }

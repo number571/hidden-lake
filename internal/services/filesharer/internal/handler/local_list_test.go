@@ -38,9 +38,6 @@ func TestHandleLocalListAPI(t *testing.T) {
 	if err := localListRequestInvalidPage(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := localListRequestNotFoundFriend(handlerX); err != nil {
-		t.Fatal(err)
-	}
 }
 
 func localListRequestOK(handler http.HandlerFunc) error {
@@ -82,21 +79,6 @@ func localListRequestInvalidPage(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusBadRequest {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func localListRequestNotFoundFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?page=0&friend=qwerty", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

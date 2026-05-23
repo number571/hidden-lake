@@ -10,6 +10,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -230,19 +231,15 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) { return nil, nil }
 func (p *tsHLSClient) DelOnline(context.Context, string) error      { return nil }
 
-func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
+func (p *tsHLSClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
 	return nil, nil
 }
 
-func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLSClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLSClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) { return nil, nil }
 func (p *tsHLSClient) AddConnection(context.Context, string) error      { return nil }

@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 )
 
 func TestXxx(t *testing.T) {
 	t.Parallel()
 
 	sortList := []string{"Alice", "Bob", "Carol"}
-	fMap := make(map[string]asymmetric.IPubKey, len(sortList))
+	fMap := make(map[string]layer2.IParticipantKey, len(sortList))
 	for _, v := range sortList {
 		fMap[v] = asymmetric.NewPrivKey().GetPubKey()
 	}

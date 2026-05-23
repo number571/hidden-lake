@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -55,10 +55,6 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		t.Fatal("request success with invalid message")
 	}
 
-	handlerx := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(false, true))
-	if err := incomingPushRequestOK(handlerx); err == nil {
-		t.Fatal("request success with invalid my pubkey")
-	}
 	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true, true))
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Fatal("request success with invalid push message")
@@ -169,26 +165,19 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	if !p.fGetPubKey {
-		return nil, errors.New("some error") // nolint: err113
-	}
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
 }
 func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return map[string]asymmetric.IPubKey{
+func (p *tsHLSClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+	return map[string]layer2.IParticipantKey{
 		"abc": p.fFriendPubKey,
 	}, nil
 }
 
-func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLSClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLSClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
@@ -229,14 +218,14 @@ func newTsDatabase(pPushOK, pLoadOK bool) *tsDatabase {
 
 func (p *tsDatabase) Close() error { return nil }
 
-func (p *tsDatabase) Size(database.IRelation) uint64 {
+func (p *tsDatabase) Size(string) uint64 {
 	if p.fMsg == nil {
 		return 0
 	}
 	return 1
 }
 
-func (p *tsDatabase) Push(_ database.IRelation, pM message_dto.IMessage) error {
+func (p *tsDatabase) Push(_ string, pM message_dto.IMessage) error {
 	if !p.fPushOK {
 		return errors.New("some error") // nolint: err113
 	}
@@ -244,7 +233,7 @@ func (p *tsDatabase) Push(_ database.IRelation, pM message_dto.IMessage) error {
 	return nil
 }
 
-func (p *tsDatabase) Load(database.IRelation, uint64, uint64) ([]message_dto.IMessage, error) {
+func (p *tsDatabase) Load(string, uint64, uint64) ([]message_dto.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("some error") // nolint: err113
 	}

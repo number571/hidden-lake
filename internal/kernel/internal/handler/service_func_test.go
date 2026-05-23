@@ -201,7 +201,7 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 		build.GetSettings().FProtoMask.FService,
 		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
+	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
 	go func() { _ = networkNode.Run(ctx) }()
@@ -218,7 +218,7 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	if node == nil {
 		return nil, cancel, errors.New("node is not running")
 	}
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
+	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
 	if err := networkNode.AddConnection(ctx, testutils.TgAddrs[4]); err != nil {

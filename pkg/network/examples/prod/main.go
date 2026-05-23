@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
@@ -30,20 +32,20 @@ func main() {
 	defer cancel()
 
 	var (
-		node1 = newNode("node1")
-		node2 = newNode("node2")
+		node1, key1 = newNode("node1")
+		node2, key2 = newNode("node2")
 	)
 
 	go func() { _ = node1.Run(ctx) }()
 	go func() { _ = node2.Run(ctx) }()
 
-	_, pubKey := exchangeKeys(node1, node2)
+	_, pKey := exchangeKeys(node1, node2, key1, key2)
 
 	for {
 		timeNow := time.Now()
 		rsp, err := node1.FetchRequest(
 			ctx,
-			pubKey,
+			pKey,
 			request.NewRequestBuilder().WithBody([]byte("hello, world!")).Build(),
 		)
 		if err != nil {
@@ -54,9 +56,10 @@ func main() {
 	}
 }
 
-func newNode(name string) network.IHiddenLakeNode {
+func newNode(name string) (network.IHiddenLakeNode, layer2.IParticipantKey) {
+	privKey := asymmetric.NewPrivKey()
 	adapterSettings := adapters.NewSettingsByNetworkKey(networkKey)
-	return network.NewHiddenLakeNode(
+	node, err := network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapterSettings,
 			FServeSettings: &network.SServeSettings{
@@ -64,7 +67,8 @@ func newNode(name string) network.IHiddenLakeNode {
 				FLogger:      getLogger(),
 			},
 		}),
-		asymmetric.NewPrivKey(),
+		hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes()),
+		layer2.NewKeysContainer(),
 		func() database.IKVDatabase {
 			kv, err := database.NewKVDatabase(name + ".db")
 			if err != nil {
@@ -82,24 +86,25 @@ func newNode(name string) network.IHiddenLakeNode {
 				return networkByKey.FConnections.GetByScheme(hla_tcp_settings.CAppAdapterName)
 			},
 		),
-		func(_ context.Context, _ asymmetric.IPubKey, r request.IRequest) (response.IResponse, error) {
+		func(_ context.Context, _ layer2.IParticipantKey, r request.IRequest) (response.IResponse, error) {
 			rsp := []byte("echo: " + string(r.GetBody()))
 			return response.NewResponseBuilder().WithBody(rsp).Build(), nil
 		},
 	)
+	if err != nil {
+		panic(err)
+	}
+	return node, privKey.GetPubKey()
 }
 
-func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode) (asymmetric.IPubKey, asymmetric.IPubKey) {
+func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode, key1, key2 layer2.IParticipantKey) (layer2.IParticipantKey, layer2.IParticipantKey) {
 	node1 := hlNode1.GetOriginNode()
 	node2 := hlNode2.GetOriginNode()
 
-	pubKey1 := node1.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
-	pubKey2 := node2.GetQBProcessor().GetClient().GetPrivKey().GetPubKey()
+	node1.GetKeysContainer().Add(key2)
+	node2.GetKeysContainer().Add(key1)
 
-	node1.GetMapPubKeys().SetPubKey(pubKey2)
-	node2.GetMapPubKeys().SetPubKey(pubKey1)
-
-	return pubKey1, pubKey2
+	return key1, key2
 }
 
 func getLogger() logger.ILogger {

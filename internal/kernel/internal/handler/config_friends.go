@@ -39,7 +39,7 @@ func HandleConfigFriendsAPI(
 			for name, pubKey := range friends {
 				listFriends = append(listFriends, friend.SFriend{
 					FAliasName: name,
-					FPublicKey: pubKey.ToString(),
+					FFriendKey: pubKey.ToString(),
 				})
 			}
 			sort.Slice(listFriends, func(i, j int) bool {
@@ -74,7 +74,8 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			pubKey := asymmetric.LoadPubKey(vFriend.FPublicKey)
+			// TODO:
+			pubKey := asymmetric.LoadPubKey(vFriend.FFriendKey)
 			if pubKey == nil {
 				pLogger.PushWarn(logBuilder.WithMessage("decode_key"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
@@ -88,7 +89,7 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			pNode.GetMapPubKeys().SetPubKey(pubKey)
+			_ = pNode.GetKeysContainer().Add(pubKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update friends")
@@ -110,7 +111,7 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			pNode.GetMapPubKeys().DelPubKey(pubKey)
+			pNode.GetKeysContainer().Del(pubKey.GetHasher().ToString())
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete friend")

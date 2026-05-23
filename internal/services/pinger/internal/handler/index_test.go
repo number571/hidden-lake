@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -97,23 +98,19 @@ func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLKClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLKClient) GetOnlines(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
 }
 func (p *tsHLKClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLKClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return map[string]asymmetric.IPubKey{
+func (p *tsHLKClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+	return map[string]layer2.IParticipantKey{
 		"abc": asymmetric.NewPrivKey().GetPubKey(),
 	}, nil
 }
 
-func (p *tsHLKClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLKClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLKClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLKClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLKClient) GetConnections(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil

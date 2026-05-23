@@ -32,4 +32,6 @@ var (
 	ErrSetPsdPubKey     = &SError{"set psd pub key"}
 	ErrSetBuild         = &SError{"set build"}
 	ErrMkdirPath        = &SError{"mkdir path"}
+	ErrAddFriendToList  = &SError{"add friend to list"}
+	ErrCreateNode       = &SError{"create node"}
 )

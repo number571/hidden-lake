@@ -244,7 +244,7 @@ func TestHandleRequestAPI(t *testing.T) {
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
 	_ = networkNode.AddConnection(ctx, testutils.TgAddrs[11])
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
+	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	testSend(t, client)
 	testFetch(t, client)
@@ -348,7 +348,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 		build.GetSettings().FProtoMask.FService,
 		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
 	)
-	node.GetMapPubKeys().SetPubKey(tgPrivKey1.GetPubKey())
+	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
 	go func() { _ = networkNode.Run(ctx) }()

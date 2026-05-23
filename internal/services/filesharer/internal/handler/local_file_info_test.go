@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,9 +45,6 @@ func TestHandleLocalFileInfoAPI(t *testing.T) {
 	if err := localFileInfoRequestNotFoundFile(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := localFileInfoRequestNotFoundFriend(handlerX); err != nil {
-		t.Fatal(err)
-	}
 }
 
 func localFileInfoRequestOK(handler http.HandlerFunc) error {
@@ -73,6 +71,7 @@ func localFileInfoRequestPersonalOK(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
+		fmt.Println(res.StatusCode)
 		return errors.New("bad status code") // nolint: err113
 	}
 
@@ -103,21 +102,6 @@ func localFileInfoRequestInvalidName(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusBadRequest {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func localFileInfoRequestNotFoundFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=something.txt&friend=qwerty", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

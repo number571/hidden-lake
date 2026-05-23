@@ -22,14 +22,14 @@ func NewKeyValueDB(pPath string) (IKVDatabase, error) {
 	return &sKeyValueDB{fDB: db}, nil
 }
 
-func (p *sKeyValueDB) Size(pR IRelation) uint64 {
+func (p *sKeyValueDB) Size(pR string) uint64 {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
 	return p.getSize(pR)
 }
 
-func (p *sKeyValueDB) Load(pR IRelation, pStart, pCount uint64) ([]message.IMessage, error) {
+func (p *sKeyValueDB) Load(pR string, pStart, pCount uint64) ([]message.IMessage, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -50,7 +50,7 @@ func (p *sKeyValueDB) Load(pR IRelation, pStart, pCount uint64) ([]message.IMess
 	return res, nil
 }
 
-func (p *sKeyValueDB) Push(pR IRelation, pMsg message.IMessage) error {
+func (p *sKeyValueDB) Push(pR string, pMsg message.IMessage) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -77,7 +77,7 @@ func (p *sKeyValueDB) Close() error {
 	return nil
 }
 
-func (p *sKeyValueDB) getSize(pR IRelation) uint64 {
+func (p *sKeyValueDB) getSize(pR string) uint64 {
 	data, err := p.fDB.Get(getKeySize(pR))
 	if err != nil {
 		return 0

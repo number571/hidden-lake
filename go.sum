@@ -1,5 +1,9 @@
 github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
 github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
+github.com/number571/go-peer v1.7.14-0.20260522051648-5448a0a9a205 h1:duhLrZMtzmoi5aZJ8CExcstJSbAzGGfgYNsWYsPQH04=
+github.com/number571/go-peer v1.7.14-0.20260522051648-5448a0a9a205/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
+github.com/number571/go-peer v1.7.14-0.20260522131402-7ac4858209c6 h1:ZWXkfQWufg2KA4QTLqJ57iEz1iMMJlsbDp0m4Rjek5U=
+github.com/number571/go-peer v1.7.14-0.20260522131402-7ac4858209c6/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 github.com/number571/go-peer v1.7.15 h1:kJcOK4qH2T++xU9JPsgWlCg3qVnkuRYuFp8oQl+g18U=
 github.com/number571/go-peer v1.7.15/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 go.etcd.io/bbolt v1.3.5 h1:XAzx9gjCb0Rxj7EoqcClPD1d5ZBxZJk0jbuoPHenBt0=

@@ -17,4 +17,5 @@ var (
 	ErrFetchRequest = &SError{"fetch request"}
 	ErrLoadResponse = &SError{"load response"}
 	ErrRunning      = &SError{"node running"}
+	ErrPayloadLimit = &SError{"payload limit"}
 )

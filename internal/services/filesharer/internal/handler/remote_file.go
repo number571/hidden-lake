@@ -56,13 +56,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		stgPath, err := utils.GetPrivateStoragePath(pCtx, pPathTo, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
-			return
-		}
-
+		stgPath := utils.GetPrivateStoragePath(pPathTo, aliasName)
 		if err := os.MkdirAll(stgPath, 0700); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: mkdir all")

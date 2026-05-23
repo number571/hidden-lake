@@ -7,10 +7,9 @@ import (
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hybrid/client"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -31,13 +30,17 @@ type sHiddenLakeNode struct {
 
 func NewHiddenLakeNode(
 	pSettings ISettings,
-	pPrivKey asymmetric.IPrivKey,
+	pScheme layer2.IScheme,
+	pKeysContainer layer2.IKeysContainer,
 	pKVDatabase database.IKVDatabase,
 	pRunnerAdapter adapters.IRunnerAdapter,
 	pHandlerF handler.IHandlerF,
-) IHiddenLakeNode {
+) (IHiddenLakeNode, error) {
 	buildSettings := build.GetSettings()
 	adaptersSettings := pSettings.GetAdapterSettings()
+	if pScheme.GetPayloadLimit() <= encoding.CSizeUint64 {
+		return nil, ErrPayloadLimit
+	}
 	return &sHiddenLakeNode{
 		fSettings: pSettings,
 		fOriginNode: anonymity.NewNode(
@@ -48,6 +51,7 @@ func NewHiddenLakeNode(
 			pSettings.GetLogger(),
 			pRunnerAdapter,
 			pKVDatabase,
+			pKeysContainer,
 			queue.NewQBProblemProcessor(
 				queue.NewSettings(&queue.SSettings{
 					FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
@@ -59,19 +63,13 @@ func NewHiddenLakeNode(
 					FConsumersCap: pSettings.GetQBPConsumers(),
 					FQueuePoolCap: buildSettings.FStorageManager.FQueuePoolCap,
 				}),
-				func() client.IClient {
-					client := client.NewClient(pPrivKey, adaptersSettings.GetMessageSizeBytes())
-					if client.GetPayloadLimit() <= encoding.CSizeUint64 {
-						panic(`client.GetPayloadLimit() <= encoding.CSizeUint64`)
-					}
-					return client
-				}(),
+				pScheme,
 			),
 		).HandleFunc(
 			buildSettings.FProtoMask.FService,
 			handler.RequestHandler(pHandlerF),
 		),
-	}
+	}, nil
 }
 
 func (p *sHiddenLakeNode) GetOriginNode() anonymity.INode {
@@ -112,13 +110,13 @@ func (p *sHiddenLakeNode) Run(pCtx context.Context) error {
 
 func (p *sHiddenLakeNode) SendRequest(
 	pCtx context.Context,
-	pPubKey asymmetric.IPubKey,
+	pKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) error {
 	buildSettings := build.GetSettings()
 	err := p.fOriginNode.SendPayload(
 		pCtx,
-		pPubKey,
+		pKey,
 		payload.NewPayload64(
 			uint64(buildSettings.FProtoMask.FService),
 			pRequest.ToBytes(),
@@ -132,13 +130,13 @@ func (p *sHiddenLakeNode) SendRequest(
 
 func (p *sHiddenLakeNode) FetchRequest(
 	pCtx context.Context,
-	pPubKey asymmetric.IPubKey,
+	pKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
 	buildSettings := build.GetSettings()
 	rspBytes, err := p.fOriginNode.FetchPayload(
 		pCtx,
-		pPubKey,
+		pKey,
 		payload.NewPayload32(
 			buildSettings.FProtoMask.FService,
 			pRequest.ToBytes(),

@@ -45,9 +45,6 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 	if err := remoteFileRequestInvalidPersonal(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := remoteFileRequestNotFoundFriend(handlerX); err != nil {
-		t.Fatal(err)
-	}
 
 	handlerY := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(1, true), "./testdata")
 	if err := remoteFileRequestOK(handlerY); err == nil {
@@ -74,7 +71,7 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 		t.Fatal("success request with build stream error")
 	}
 
-	tmpFile := "./testdata/hls-filesharer.stg/private/87cb5fb20c1faea4c881c869e2eea4e1b7a20f12d6449efdf1db6255ee5f6b67907d42d06885cc28343cbf62da2d4da9/something.txt.pfalse"
+	tmpFile := "./testdata/hls-filesharer.stg/private/abc/something.txt.pfalse"
 	if err := os.WriteFile(tmpFile, []byte("aaaBBBccc"), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -145,21 +142,6 @@ func remoteFileRequestDeleteNotFoundFile(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusInternalServerError {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func remoteFileRequestNotFoundFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=qwerty&name=example.txt&personal", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

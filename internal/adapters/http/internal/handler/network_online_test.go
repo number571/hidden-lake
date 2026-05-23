@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	hla_http "github.com/number571/hidden-lake/pkg/network/adapters/http"
 )
 

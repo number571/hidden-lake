@@ -6,7 +6,7 @@ import (
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	internal_anon_logger "github.com/number571/hidden-lake/internal/utils/logger/anon"
 	"github.com/number571/hidden-lake/pkg/network/request"
 )
@@ -15,7 +15,7 @@ func RequestHandler(pHandleF IHandlerF) anonymity.IHandlerF {
 	return func(
 		pCtx context.Context,
 		pNode anonymity.INode,
-		pSender asymmetric.IPubKey,
+		pSender layer2.IParticipantKey,
 		pReqBytes []byte,
 	) ([]byte, error) {
 		logger := pNode.GetLogger()
@@ -23,8 +23,7 @@ func RequestHandler(pHandleF IHandlerF) anonymity.IHandlerF {
 
 		// enrich logger
 		logBuilder.
-			WithSize(len(pReqBytes)).
-			WithPubKey(pSender)
+			WithSize(len(pReqBytes))
 
 		// load request from message's body
 		loadReq, err := request.LoadRequest(pReqBytes)

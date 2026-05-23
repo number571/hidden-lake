@@ -14,9 +14,10 @@ import (
 	"github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hybrid/client"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
@@ -169,7 +170,6 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 	mux.HandleFunc(pkg_settings.CHandleConfigFriendsPath, HandleConfigFriendsAPI(wcfg, logger, node))
 	mux.HandleFunc(pkg_settings.CHandleNetworkOnlinePath, HandleNetworkOnlineAPI(ctx, logger, epClients))
 	mux.HandleFunc(pkg_settings.CHandleNetworkRequestPath, HandleNetworkRequestAPI(ctx, cfg, logger, hlNode))
-	mux.HandleFunc(pkg_settings.CHandleProfilePubKeyPath, HandleServicePubKeyAPI(logger, node))
 
 	srv := &http.Server{
 		Addr:        addr,
@@ -228,6 +228,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 			}
 			return db
 		}(),
+		layer2.NewKeysContainer(),
 		queue.NewQBProblemProcessor(
 			queue.NewSettings(&queue.SSettings{
 				FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
@@ -240,10 +241,7 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 				FConsumersCap: 1,
 				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
 			}),
-			client.NewClient(
-				tgPrivKey1,
-				tcMessageSize,
-			),
+			hybrid.NewScheme(tgPrivKey1, tcMessageSize),
 		),
 	)
 	return node
@@ -272,7 +270,7 @@ func (p *tsEditor) UpdateConnections([]string) error {
 	}
 	return nil
 }
-func (p *tsEditor) UpdateFriends(map[string]asymmetric.IPubKey) error {
+func (p *tsEditor) UpdateFriends(map[string]layer2.IParticipantKey) error {
 	if !p.fEditorOK {
 		return errors.New("some error") // nolint: err113
 	}
@@ -290,8 +288,8 @@ func (p *tsConfig) GetSettings() config.IConfigSettings {
 func (p *tsConfig) GetQueuePoolCap() [2]uint64      { return [2]uint64{} }
 func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }
 func (p *tsConfig) GetAddress() config.IAddress     { return nil }
-func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey {
-	return map[string]asymmetric.IPubKey{
+func (p *tsConfig) GetFriends() map[string]layer2.IParticipantKey {
+	return map[string]layer2.IParticipantKey{
 		"abc": tgPrivKey2.GetPubKey(),
 	}
 }
@@ -321,13 +319,13 @@ func newTsHiddenLakeNode(tsNode *tsNode) *tsHLNode {
 func (p *tsHLNode) Run(context.Context) error      { return nil }
 func (p *tsHLNode) GetOriginNode() anonymity.INode { return p.tsNode }
 
-func (p *tsHLNode) SendRequest(ctx context.Context, k asymmetric.IPubKey, r request.IRequest) error {
+func (p *tsHLNode) SendRequest(ctx context.Context, k layer2.IParticipantKey, r request.IRequest) error {
 	return p.tsNode.SendPayload(ctx, k, payload.NewPayload64(1, r.ToBytes()))
 }
 
 func (p *tsHLNode) FetchRequest(
 	ctx context.Context,
-	k asymmetric.IPubKey,
+	k layer2.IParticipantKey,
 	r request.IRequest,
 ) (response.IResponse, error) {
 	b, err := p.tsNode.FetchPayload(ctx, k, payload.NewPayload32(1, r.ToBytes()))
@@ -416,19 +414,19 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 			FConsumersCap: 1,
 			FQueuePoolCap: [2]uint64{16, 16},
 		}),
-		client.NewClient(asymmetric.NewPrivKey(), 8192),
+		hybrid.NewScheme(asymmetric.NewPrivKey(), 8192),
 	)
 }
 
-func (p *tsNode) GetMapPubKeys() asymmetric.IMapPubKeys { return asymmetric.NewMapPubKeys() }
+func (p *tsNode) GetKeysContainer() layer2.IKeysContainer { return layer2.NewKeysContainer() }
 
-func (p *tsNode) SendPayload(context.Context, asymmetric.IPubKey, payload.IPayload64) error {
+func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, payload.IPayload64) error {
 	if !p.fSendOK {
 		return errors.New("some error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayload32) ([]byte, error) {
+func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, payload.IPayload32) ([]byte, error) {
 	if !p.fFetchOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
@@ -500,7 +498,7 @@ func (p *tsHiddenLakeNode) Run(_ context.Context) error {
 
 func (p *tsHiddenLakeNode) SendRequest(
 	pCtx context.Context,
-	pPubKey asymmetric.IPubKey,
+	pPubKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) error {
 	return p.fAnon.SendPayload(
@@ -515,7 +513,7 @@ func (p *tsHiddenLakeNode) SendRequest(
 
 func (p *tsHiddenLakeNode) FetchRequest(
 	pCtx context.Context,
-	pPubKey asymmetric.IPubKey,
+	pPubKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
 	rspBytes, err := p.fAnon.FetchPayload(

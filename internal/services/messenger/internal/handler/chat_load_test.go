@@ -28,14 +28,11 @@ func TestHandleChatLoadAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(true, true))
 	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 	if err := chatHistoryLoadRequestInvalidMethod(handlerX); err != nil {
-		t.Fatal(err)
-	}
-	if err := chatHistoryLoadRequestWithoutFriend(handlerX); err != nil {
 		t.Fatal(err)
 	}
 	if err := chatHistoryLoadRequestCountParse(handlerX); err != nil {
@@ -45,12 +42,7 @@ func TestHandleChatLoadAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
-	if err := chatHistoryLoadRequestOK(handlerY); err == nil {
-		t.Fatal("success request with get pub key error")
-	}
-
-	handlerZ := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
+	handlerZ := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(false, true))
 	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with load message error")
 	}
@@ -80,21 +72,6 @@ func chatHistoryLoadRequestInvalidMethod(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func chatHistoryLoadRequestWithoutFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

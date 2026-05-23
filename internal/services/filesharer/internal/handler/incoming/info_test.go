@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/logger"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -57,6 +58,7 @@ func TestHandleIncomingInfoHTTP(t *testing.T) {
 func incomingInfoRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&personal=false", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -82,7 +84,7 @@ func incomingInfoRequestInvalidFriend(handler http.HandlerFunc) error {
 	res := w.Result()
 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusForbidden {
+	if res.StatusCode != http.StatusBadGateway {
 		return errors.New("bad status code") // nolint: err113
 	}
 
@@ -153,6 +155,7 @@ func incomingInfoRequestInvalidMethod(handler http.HandlerFunc) error {
 func incomingInfoRequestNotFoundFile(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/?name=file111.txt&personal=false", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()

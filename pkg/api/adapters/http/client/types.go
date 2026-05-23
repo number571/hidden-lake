@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/number571/go-peer/pkg/message/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/config"
 )
 

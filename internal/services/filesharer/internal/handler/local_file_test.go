@@ -52,9 +52,6 @@ func TestHandleLocalFileAPI(t *testing.T) {
 	if err := localFileRequestInvalidFileName(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := localFileRequestPersonalNotFound(handlerX); err != nil {
-		t.Fatal(err)
-	}
 }
 
 func localFileRequestGetOK(handler http.HandlerFunc) error {
@@ -79,21 +76,6 @@ func localFileRequestGetOK(handler http.HandlerFunc) error {
 333
 `)) {
 		return errors.New("error") // nolint: err113
-	}
-
-	return nil
-}
-
-func localFileRequestPersonalNotFound(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&friend=111", nil)
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
-		return errors.New("bad status code") // nolint: err113
 	}
 
 	return nil

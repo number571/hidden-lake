@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 	"github.com/number571/hidden-lake/pkg/network/request"
 )
@@ -17,7 +17,7 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
-func (p *sBuilder) Friend(pAliasName string, pPubKey asymmetric.IPubKey) *friend.SFriend {
+func (p *sBuilder) Friend(pAliasName string, pPubKey layer2.IParticipantKey) *friend.SFriend {
 	if pPubKey == nil {
 		// request: del friend
 		return &friend.SFriend{
@@ -27,7 +27,7 @@ func (p *sBuilder) Friend(pAliasName string, pPubKey asymmetric.IPubKey) *friend
 	// request: add friend
 	return &friend.SFriend{
 		FAliasName: pAliasName,
-		FPublicKey: pPubKey.ToString(),
+		FFriendKey: pPubKey.ToString(),
 	}
 }
 

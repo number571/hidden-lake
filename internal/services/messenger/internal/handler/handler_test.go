@@ -42,7 +42,7 @@ func TestHandler(t *testing.T) {
 		ctx,
 		httpLogger,
 		&tsConfig{},
-		newTsHLKClient(true, true, true),
+		newTsHLKClient(true, true),
 		newTsDatabase(true, true),
 		msgBroker,
 		testutils.TgAddrs[24],

@@ -29,12 +29,12 @@ func TestHandleChatPushAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
+	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(true, true))
 	if err := chatMessageGetRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, true), newTsDatabase(true, true))
+	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true), newTsDatabase(true, true))
 	if err := chatMessageGetRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get settings error")
 	}
@@ -48,19 +48,12 @@ func TestHandleChatPushAPI(t *testing.T) {
 	if err := chatMessageRequestInvalidMessage(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := chatMessageRequestWithoutFriend(handlerX); err != nil {
-		t.Fatal(err)
-	}
 
-	handlerZ := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, true), newTsDatabase(true, true))
-	if err := chatMessagePostRequestOK(handlerZ); err == nil {
-		t.Fatal("success request with get pub key error")
-	}
-	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true))
+	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false), newTsDatabase(true, true))
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, false))
+	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(true, false))
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}
@@ -120,21 +113,6 @@ func chatMessageRequestInvalidMessage(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusBadRequest {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	return nil
-}
-
-func chatMessageRequestWithoutFriend(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("hello, world!")))
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusForbidden {
 		return errors.New("bad status code") // nolint: err113
 	}
 

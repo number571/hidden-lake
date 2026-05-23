@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
@@ -125,19 +126,16 @@ func (p *tsHLKClientWrapper) GetIndex(a context.Context) error {
 func (p *tsHLKClientWrapper) GetSettings(a context.Context) (hlk_config.IConfigSettings, error) {
 	return p.fClient.GetSettings(a)
 }
-func (p *tsHLKClientWrapper) GetPubKey(a context.Context) (asymmetric.IPubKey, error) {
-	return p.fClient.GetPubKey(a)
-}
 func (p *tsHLKClientWrapper) GetOnlines(a context.Context) ([]string, error) {
 	return p.fClient.GetOnlines(a)
 }
 func (p *tsHLKClientWrapper) DelOnline(a context.Context, b string) error {
 	return p.fClient.DelOnline(a, b)
 }
-func (p *tsHLKClientWrapper) GetFriends(a context.Context) (map[string]asymmetric.IPubKey, error) {
+func (p *tsHLKClientWrapper) GetFriends(a context.Context) (map[string]layer2.IParticipantKey, error) {
 	return p.fClient.GetFriends(a)
 }
-func (p *tsHLKClientWrapper) AddFriend(a context.Context, b string, c asymmetric.IPubKey) error {
+func (p *tsHLKClientWrapper) AddFriend(a context.Context, b string, c layer2.IParticipantKey) error {
 	return p.fClient.AddFriend(a, b, c)
 }
 func (p *tsHLKClientWrapper) DelFriend(a context.Context, b string) error {
@@ -183,23 +181,19 @@ func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLKClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLKClient) GetOnlines(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
 }
 func (p *tsHLKClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLKClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return map[string]asymmetric.IPubKey{
+func (p *tsHLKClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+	return map[string]layer2.IParticipantKey{
 		"abc": tsFriendPubKey,
 	}, nil
 }
 
-func (p *tsHLKClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLKClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLKClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLKClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLKClient) GetConnections(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil

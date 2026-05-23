@@ -44,13 +44,7 @@ func HandleLocalListAPI(
 			}
 		}
 
-		stgPath, err := utils.GetSharingStoragePath(pCtx, pPathTo, pHlkClient, aliasName, aliasName != "")
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("get_path_to_file"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: get path to file")
-			return
-		}
-
+		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName != "")
 		list, err := utils.GetFileInfoList(stgPath, page, pConfig.GetSettings().GetPageOffset())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))

@@ -11,7 +11,6 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
@@ -32,20 +31,7 @@ func HandleChatLoadAPI(
 		}
 
 		queryParams := pR.URL.Query()
-
-		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, queryParams.Get("friend"))
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
-			return
-		}
-
-		myPubKey, err := pHlkClient.GetPubKey(pCtx)
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
-			return
-		}
+		aliasName := queryParams.Get("friend")
 
 		index, err := strconv.ParseUint(queryParams.Get("index"), 10, 64)
 		if err != nil {
@@ -54,15 +40,14 @@ func HandleChatLoadAPI(
 			return
 		}
 
-		rel := database.NewRelation(myPubKey, fPubKey)
-		size := pDatabase.Size(rel)
+		size := pDatabase.Size(aliasName)
 		if index >= size {
 			pLogger.PushWarn(logBuilder.WithMessage("index_gte_size"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: index >= size")
 			return
 		}
 
-		dbMsgs, err := pDatabase.Load(rel, index, 1)
+		dbMsgs, err := pDatabase.Load(aliasName, index, 1)
 		if err != nil || len(dbMsgs) != 1 {
 			pLogger.PushWarn(logBuilder.WithMessage("load_messages"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: load messages")

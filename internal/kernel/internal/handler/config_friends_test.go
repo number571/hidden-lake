@@ -101,7 +101,7 @@ func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
 func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
 	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
-		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
 	}
 
 	w := httptest.NewRecorder()
@@ -167,7 +167,7 @@ func friendsAPIRequestOK(handler http.HandlerFunc) error {
 func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
 	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
-		FPublicKey: "abc",
+		FFriendKey: "abc",
 	}
 
 	w := httptest.NewRecorder()
@@ -191,7 +191,7 @@ func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
 func friendsAPIRequestExist(handler http.HandlerFunc) error {
 	newFriend := friend.SFriend{
 		FAliasName: "abc",
-		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
 	}
 
 	w := httptest.NewRecorder()
@@ -215,7 +215,7 @@ func friendsAPIRequestExist(handler http.HandlerFunc) error {
 func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
 	newFriend := friend.SFriend{
 		FAliasName: "",
-		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
 	}
 
 	w := httptest.NewRecorder()
@@ -239,7 +239,7 @@ func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
 func friendsAPIRequestDecode(handler http.HandlerFunc) error {
 	newFriend := friend.SFriend{
 		FAliasName: "new_friend",
-		FPublicKey: tgPrivKey3.GetPubKey().ToString(),
+		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
 	}
 
 	w := httptest.NewRecorder()

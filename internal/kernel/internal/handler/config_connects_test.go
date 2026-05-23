@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/client"
 	"github.com/number571/hidden-lake/pkg/api/adapters/http/config"

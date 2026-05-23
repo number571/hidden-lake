@@ -7,6 +7,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -17,13 +18,13 @@ var (
 
 var (
 	// tgNewConnections = []string{"a", "b", "c", "b"}
-	tgNewFriends = map[string]asymmetric.IPubKey{
+	tgNewFriends = map[string]layer2.IParticipantKey{
 		"a": tgPubKey1,
 		"b": tgPubKey2,
 	}
 
 	// duplicated public keys
-	tgNewIncorrect2Friends = map[string]asymmetric.IPubKey{
+	tgNewIncorrect2Friends = map[string]layer2.IParticipantKey{
 		"a": tgPubKey1,
 		"b": tgPubKey1,
 	}
@@ -35,14 +36,14 @@ var (
 	_ IConfig = &tsConfig{}
 )
 
-func (p *tsConfig) GetSettings() IConfigSettings              { return nil }
-func (p *tsConfig) GetLogging() logger.ILogging               { return nil }
-func (p *tsConfig) GetShare() bool                            { return false }
-func (p *tsConfig) GetAddress() IAddress                      { return nil }
-func (p *tsConfig) GetNetworkKey() string                     { return "" }
-func (p *tsConfig) GetEndpoints() []string                    { return nil }
-func (p *tsConfig) GetFriends() map[string]asymmetric.IPubKey { return nil }
-func (p *tsConfig) GetService(_ string) (string, bool)        { return "", false }
+func (p *tsConfig) GetSettings() IConfigSettings                  { return nil }
+func (p *tsConfig) GetLogging() logger.ILogging                   { return nil }
+func (p *tsConfig) GetShare() bool                                { return false }
+func (p *tsConfig) GetAddress() IAddress                          { return nil }
+func (p *tsConfig) GetNetworkKey() string                         { return "" }
+func (p *tsConfig) GetEndpoints() []string                        { return nil }
+func (p *tsConfig) GetFriends() map[string]layer2.IParticipantKey { return nil }
+func (p *tsConfig) GetService(_ string) (string, bool)            { return "", false }
 
 func TestPanicEditor(t *testing.T) {
 	t.Parallel()

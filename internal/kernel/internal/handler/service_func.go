@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
@@ -23,7 +23,7 @@ import (
 func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHandlerF {
 	return func(
 		pCtx context.Context,
-		pSender asymmetric.IPubKey,
+		pSender layer2.IParticipantKey,
 		pRequest request.IRequest,
 	) (response.IResponse, error) {
 		logBuilder := anon_logger.NewLogBuilder(hlk_settings.GetAppShortNameFMT())
@@ -86,9 +86,9 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 	}
 }
 
-func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender asymmetric.IPubKey) {
-	for aliasName, pubKey := range pCfg.GetFriends() {
-		if pubKey.ToString() == pSender.ToString() {
+func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender layer2.IParticipantKey) {
+	for aliasName, key := range pCfg.GetFriends() {
+		if key.ToString() == pSender.ToString() {
 			pReq.Header.Set(hlk_settings.CHeaderSenderName, aliasName)
 			break
 		}

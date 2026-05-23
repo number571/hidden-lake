@@ -9,7 +9,9 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
@@ -85,7 +87,7 @@ func incomingLoadRequestGetSharingStorage(handler http.HandlerFunc) error {
 	res := w.Result()
 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusForbidden {
+	if res.StatusCode != http.StatusBadGateway {
 		return errors.New("bad status code") // nolint: err113
 	}
 
@@ -175,6 +177,7 @@ func incomingLoadRequestNotFound(handler http.HandlerFunc) error {
 func incomingLoadRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -292,23 +295,19 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLSClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
 }
 func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLSClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return map[string]asymmetric.IPubKey{
+func (p *tsHLSClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+	return map[string]layer2.IParticipantKey{
 		"abc": asymmetric.NewPrivKey().GetPubKey(),
 	}, nil
 }
 
-func (p *tsHLSClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLSClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLSClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLSClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil

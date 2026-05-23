@@ -68,10 +68,6 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success get onlines with unknown host")
 	}
 
-	if _, err := client.GetPubKey(context.Background()); err == nil {
-		t.Fatal("success get pub key with unknown host")
-	}
-
 	if _, err := client.GetSettings(context.Background()); err == nil {
 		t.Fatal("success get settings with unknown host")
 	}

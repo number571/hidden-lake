@@ -62,6 +62,7 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 func incomingListRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/list?page=0", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -106,7 +107,7 @@ func incomingListRequestGetSharingStorage(handler http.HandlerFunc) error {
 	res := w.Result()
 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusForbidden {
+	if res.StatusCode != http.StatusBadGateway {
 		return errors.New("bad status code") // nolint: err113
 	}
 

@@ -13,7 +13,6 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -54,24 +53,16 @@ func HandleIncomingPushHTTP(
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
-		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
-			return
-		}
-
-		myPubKey, err := pHlkClient.GetPubKey(pCtx)
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
 			return
 		}
 
 		msg := message_dto.NewMessage(true, rawMsg, time.Now())
 		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
 
-		if err := pDB.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {
+		if err := pDB.Push(aliasName, msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return

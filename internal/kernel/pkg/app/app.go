@@ -110,7 +110,7 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			hlk_settings.GetAppShortNameFMT(),
 			encoding.SerializeJSON(pkg_config.GetConfigSettings(
 				p.fCfgW.GetConfig(),
-				p.fNode.GetOriginNode().GetQBProcessor().GetClient(),
+				p.fNode.GetOriginNode().GetQBProcessor().GetScheme(),
 			)),
 		))
 		return nil

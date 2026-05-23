@@ -29,7 +29,7 @@ func HandleConfigSettingsAPI(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, pkg_config.GetConfigSettings(
 			pWrapper.GetConfig(),
-			pNode.GetQBProcessor().GetClient(),
+			pNode.GetQBProcessor().GetScheme(),
 		))
 	}
 }

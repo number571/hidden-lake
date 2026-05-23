@@ -13,9 +13,9 @@ import (
 	"time"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"

@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
@@ -31,7 +31,7 @@ func newEditor(pCfg IConfig) IEditor {
 	}
 }
 
-func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
+func (p *sEditor) UpdateFriends(pFriends map[string]layer2.IParticipantKey) error {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -41,13 +41,13 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 		return errors.Join(ErrLoadConfig, err)
 	}
 
-	if hasDuplicatePubKeys(pFriends) {
-		return ErrDuplicatePublicKey
+	if hasDuplicateParticipantKeys(pFriends) {
+		return ErrDuplicateParticipantKey
 	}
 
 	cfg := icfg.(*SConfig)
 	cfg.fFriends = pFriends
-	cfg.FFriends = pubKeysToStrings(pFriends)
+	cfg.FFriends = participantKeysToStrings(pFriends)
 	if err := os.WriteFile(filepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return errors.Join(ErrWriteConfig, err)
 	}
@@ -60,17 +60,17 @@ func (p *sEditor) UpdateFriends(pFriends map[string]asymmetric.IPubKey) error {
 	return nil
 }
 
-func pubKeysToStrings(pPubKeys map[string]asymmetric.IPubKey) map[string]string {
-	result := make(map[string]string, len(pPubKeys))
-	for name, pubKey := range pPubKeys {
+func participantKeysToStrings(pFriends map[string]layer2.IParticipantKey) map[string]string {
+	result := make(map[string]string, len(pFriends))
+	for name, pubKey := range pFriends {
 		result[name] = pubKey.ToString()
 	}
 	return result
 }
 
-func hasDuplicatePubKeys(pPubKeys map[string]asymmetric.IPubKey) bool {
-	mapping := make(map[string]struct{}, len(pPubKeys))
-	for _, pubKey := range pPubKeys {
+func hasDuplicateParticipantKeys(pFriends map[string]layer2.IParticipantKey) bool {
+	mapping := make(map[string]struct{}, len(pFriends))
+	for _, pubKey := range pFriends {
 		pubStr := pubKey.ToString()
 		if _, ok := mapping[pubStr]; ok {
 			return true

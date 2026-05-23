@@ -30,7 +30,7 @@ var (
 			WithDescription("set internal address of the HLK").
 			WithDefinedValue("localhost:9572"),
 		flag.NewFlagBuilder("-d", "--do").
-			WithDescription("set runner [send|fetch|pubkey|get-onlines|del-online|get-connections|add-connection|del-connection|get-friends|add-friend|del-friend]").
+			WithDescription("set runner [send|fetch|get-onlines|del-online|get-connections|add-connection|del-connection|get-friends|add-friend|del-friend]").
 			WithDefinedValue(""),
 		flag.NewFlagBuilder("-a", "--arg").
 			WithDescription("set argument for runner <send|fetch|del-online|add-connection|del-connection|add-friend|del-friend>").
@@ -98,14 +98,6 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 		fmt.Println(rsp.ToString())
 
-	// PROFILE
-	case "pubkey":
-		pubKey, err := hlkClient.GetPubKey(pCtx)
-		if err != nil {
-			return err
-		}
-		fmt.Println(pubKey.ToString())
-
 	// ONLINES
 	case "get-onlines":
 		onlines, err := hlkClient.GetOnlines(pCtx)
@@ -155,6 +147,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println("done!")
 	case "add-friend":
 		friend := gFlags.Get("-a").GetStringValue(pArgs)
+		// TODO:
 		pubKey := asymmetric.LoadPubKey(inputString(reader))
 		if pubKey == nil {
 			return errors.New("load public key") // nolint: err113

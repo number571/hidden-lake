@@ -134,15 +134,6 @@ func TestApp(t *testing.T) {
 		t.Fatal(err1)
 	}
 
-	// Check public key of node
-	pubKey, err := client.GetPubKey(context.Background())
-	if err != nil {
-		t.Fatal(err)
-	}
-	if pubKey.ToString() != privKey.GetPubKey().ToString() {
-		t.Fatalf("public keys are not equals")
-	}
-
 	// try twice running
 	go func() {
 		if err := app.Run(ctx); err == nil {

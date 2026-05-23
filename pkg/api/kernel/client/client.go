@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
@@ -56,7 +56,7 @@ func (p *sClient) FetchRequest(pCtx context.Context, pRecv string, pData request
 	return res, nil
 }
 
-func (p *sClient) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKey, error) {
+func (p *sClient) GetFriends(pCtx context.Context) (map[string]layer2.IParticipantKey, error) {
 	res, err := p.fRequester.GetFriends(pCtx)
 	if err != nil {
 		return nil, fmt.Errorf("get friends (client): %w", err)
@@ -64,7 +64,7 @@ func (p *sClient) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKe
 	return res, nil
 }
 
-func (p *sClient) AddFriend(pCtx context.Context, pAliasName string, pPubKey asymmetric.IPubKey) error {
+func (p *sClient) AddFriend(pCtx context.Context, pAliasName string, pPubKey layer2.IParticipantKey) error {
 	if err := p.fRequester.AddFriend(pCtx, p.fBuilder.Friend(pAliasName, pPubKey)); err != nil {
 		return fmt.Errorf("add friend (client): %w", err)
 	}
@@ -113,12 +113,4 @@ func (p *sClient) DelConnection(pCtx context.Context, pConnect string) error {
 		return fmt.Errorf("del connection (client): %w", err)
 	}
 	return nil
-}
-
-func (p *sClient) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
-	pubKey, err := p.fRequester.GetPubKey(pCtx)
-	if err != nil {
-		return nil, fmt.Errorf("get public key (client): %w", err)
-	}
-	return pubKey, nil
 }

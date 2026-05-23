@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 )
 
@@ -36,22 +35,20 @@ func TestDatabase(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	iam := asymmetric.NewPrivKey().GetPubKey()
-	friend := asymmetric.NewPrivKey().GetPubKey()
+	friend := "friend"
 
 	timeNow := time.Now()
-	rel := NewRelation(iam, friend)
-	err1 := db.Push(rel, message.NewMessage(true, tcBody, timeNow))
+	err1 := db.Push(friend, message.NewMessage(true, tcBody, timeNow))
 	if err1 != nil {
 		t.Fatal(err1)
 	}
 
-	size := db.Size(rel)
+	size := db.Size(friend)
 	if size != 1 {
 		t.Fatal("size != 1")
 	}
 
-	msgs, err := db.Load(rel, 0, size)
+	msgs, err := db.Load(friend, 0, size)
 	if err != nil {
 		t.Fatal(err)
 	}

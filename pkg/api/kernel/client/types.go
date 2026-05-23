@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/kernel/config"
@@ -15,13 +15,11 @@ type IClient interface {
 	GetIndex(context.Context) error
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
-	GetPubKey(context.Context) (asymmetric.IPubKey, error)
-
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error
 
-	GetFriends(context.Context) (map[string]asymmetric.IPubKey, error)
-	AddFriend(context.Context, string, asymmetric.IPubKey) error
+	GetFriends(context.Context) (map[string]layer2.IParticipantKey, error)
+	AddFriend(context.Context, string, layer2.IParticipantKey) error
 	DelFriend(context.Context, string) error
 
 	GetConnections(context.Context) ([]string, error)
@@ -36,12 +34,10 @@ type IRequester interface {
 	GetIndex(context.Context) error
 	GetSettings(context.Context) (config.IConfigSettings, error)
 
-	GetPubKey(context.Context) (asymmetric.IPubKey, error)
-
 	GetOnlines(context.Context) ([]string, error)
 	DelOnline(context.Context, string) error
 
-	GetFriends(context.Context) (map[string]asymmetric.IPubKey, error)
+	GetFriends(context.Context) (map[string]layer2.IParticipantKey, error)
 	AddFriend(context.Context, *friend.SFriend) error
 	DelFriend(context.Context, *friend.SFriend) error
 
@@ -55,5 +51,5 @@ type IRequester interface {
 
 type IBuilder interface {
 	Request(request.IRequest) *request.SRequest
-	Friend(string, asymmetric.IPubKey) *friend.SFriend
+	Friend(string, layer2.IParticipantKey) *friend.SFriend
 }

@@ -11,9 +11,10 @@ import (
 	"github.com/number571/go-peer/pkg/anonymity/qb/adapters"
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/hybrid/client"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/message/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/payload"
@@ -77,7 +78,7 @@ func TestRequestHandler(t *testing.T) {
 func testHandler(pMode int) IHandlerF {
 	return func(
 		_ context.Context,
-		pPubKey asymmetric.IPubKey,
+		pPubKey layer2.IParticipantKey,
 		pRequest request.IRequest,
 	) (response.IResponse, error) {
 		if pMode == 0 {
@@ -127,17 +128,17 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 			FConsumersCap: 1,
 			FQueuePoolCap: [2]uint64{16, 16},
 		}),
-		client.NewClient(asymmetric.NewPrivKey(), 8192),
+		hybrid.NewScheme(asymmetric.NewPrivKey(), 8192),
 	)
 }
 
-func (p *tsNode) GetAdapter() adapters.IAdapter         { return nil }
-func (p *tsNode) GetMapPubKeys() asymmetric.IMapPubKeys { return asymmetric.NewMapPubKeys() }
+func (p *tsNode) GetAdapter() adapters.IAdapter           { return nil }
+func (p *tsNode) GetKeysContainer() layer2.IKeysContainer { return layer2.NewKeysContainer() }
 
-func (p *tsNode) SendPayload(context.Context, asymmetric.IPubKey, payload.IPayload64) error {
+func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, payload.IPayload64) error {
 	return nil
 }
-func (p *tsNode) FetchPayload(context.Context, asymmetric.IPubKey, payload.IPayload32) ([]byte, error) {
+func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, payload.IPayload32) ([]byte, error) {
 	return response.NewResponseBuilder().WithCode(200).Build().ToBytes(), nil
 }
 

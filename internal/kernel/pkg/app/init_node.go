@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/number571/go-peer/pkg/crypto/random"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -35,7 +37,7 @@ func (p *sApp) initAnonNode() error {
 		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
 	})
 
-	node := network.NewHiddenLakeNode(
+	node, err := network.NewHiddenLakeNode(
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapterSettings,
 			FQBPSettings: &network.SQBPSettings{
@@ -49,7 +51,12 @@ func (p *sApp) initAnonNode() error {
 				FLogger:      p.fAnonLogger,
 			},
 		}),
-		p.fPrivKey,
+
+		// TODO:
+		hybrid.NewScheme(p.fPrivKey, adapterSettings.GetMessageSizeBytes()),
+		// symmetric.NewScheme(adapterSettings.GetMessageSizeBytes()),
+
+		layer2.NewKeysContainer(),
 		kvDatabase,
 		http.NewHTTPAdapter(
 			http.NewSettings(&http.SSettings{
@@ -70,10 +77,14 @@ func (p *sApp) initAnonNode() error {
 		),
 		handler.HandleServiceFunc(cfg, p.fAnonLogger),
 	)
+	if err != nil {
+		return errors.Join(ErrCreateNode, err)
+	}
 
-	originNode := node.GetOriginNode()
-	for _, f := range cfg.GetFriends() {
-		originNode.GetMapPubKeys().SetPubKey(f)
+	for _, k := range cfg.GetFriends() {
+		if ok := node.GetOriginNode().GetKeysContainer().Add(k); !ok {
+			return ErrAddFriendToList
+		}
 	}
 
 	p.fNode = node

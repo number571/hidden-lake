@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -31,7 +32,7 @@ type SConfig struct {
 	fFilepath string
 	fMutex    sync.RWMutex
 	fLogging  logger.ILogging
-	fFriends  map[string]asymmetric.IPubKey
+	fFriends  map[string]layer2.IParticipantKey
 
 	FSettings  *SConfigSettings  `yaml:"settings,omitempty"`
 	FLogging   []string          `yaml:"logging,omitempty"`
@@ -140,8 +141,8 @@ func (p *SConfig) initConfig() error {
 		return ErrInvalidConfig
 	}
 
-	if err := p.loadPubKeys(); err != nil {
-		return errors.Join(ErrLoadPublicKey, err)
+	if err := p.loadParticipantKeys(); err != nil {
+		return errors.Join(ErrLoadParticipantKey, err)
 	}
 
 	if err := p.loadLogging(); err != nil {
@@ -160,31 +161,36 @@ func (p *SConfig) loadLogging() error {
 	return nil
 }
 
-func (p *SConfig) loadPubKeys() error {
-	p.fFriends = make(map[string]asymmetric.IPubKey, len(p.FFriends))
+func (p *SConfig) loadParticipantKeys() error {
+	p.fFriends = make(map[string]layer2.IParticipantKey, len(p.FFriends))
 	mapping := make(map[string]struct{}, len(p.FFriends))
 
 	for name, val := range p.FFriends {
 		if _, ok := mapping[val]; ok {
-			return ErrDuplicatePublicKey
+			return ErrDuplicateParticipantKey
 		}
 		mapping[val] = struct{}{}
 
+		// TODO:
 		pubKey := asymmetric.LoadPubKey(val)
 		if pubKey == nil {
-			return ErrInvalidPublicKey
+			return ErrInvalidParticipantKey
 		}
 		p.fFriends[name] = pubKey
+
+		// keyBuilder := keybuilder.NewKeyBuilder(0, []byte("__friend__"))
+		// key := keyBuilder.Build(val, symmetric.CCipherKeySize)
+		// p.fFriends[name] = symmetric.NewCipherGCM(key)
 	}
 
 	return nil
 }
 
-func (p *SConfig) GetFriends() map[string]asymmetric.IPubKey {
+func (p *SConfig) GetFriends() map[string]layer2.IParticipantKey {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	result := make(map[string]asymmetric.IPubKey, len(p.FFriends))
+	result := make(map[string]layer2.IParticipantKey, len(p.FFriends))
 	for k, v := range p.fFriends {
 		result[k] = v
 	}

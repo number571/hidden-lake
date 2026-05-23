@@ -8,6 +8,7 @@ import (
 	"net/url"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -28,7 +29,6 @@ const (
 	cHandleConfigFriendsTemplate  = "http://" + "%s" + hlk_settings.CHandleConfigFriendsPath
 	cHandleNetworkOnlineTemplate  = "http://" + "%s" + hlk_settings.CHandleNetworkOnlinePath
 	cHandleNetworkRequestTemplate = "http://" + "%s" + hlk_settings.CHandleNetworkRequestPath + "?friend=%s"
-	cHandleServicePubKeyTemplate  = "http://" + "%s" + hlk_settings.CHandleProfilePubKeyPath
 )
 
 type sRequester struct {
@@ -117,7 +117,7 @@ func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest 
 	return nil
 }
 
-func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPubKey, error) {
+func (p *sRequester) GetFriends(pCtx context.Context) (map[string]layer2.IParticipantKey, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -135,9 +135,10 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]asymmetric.IPu
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 
-	result := make(map[string]asymmetric.IPubKey, len(vFriends))
+	result := make(map[string]layer2.IParticipantKey, len(vFriends))
 	for _, friend := range vFriends {
-		pubKey := asymmetric.LoadPubKey(friend.FPublicKey)
+		// TODO:
+		pubKey := asymmetric.LoadPubKey(friend.FFriendKey)
 		if pubKey == nil {
 			return nil, ErrInvalidPublicKey
 		}
@@ -262,25 +263,4 @@ func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error 
 		return errors.Join(ErrBadRequest, err)
 	}
 	return nil
-}
-
-func (p *sRequester) GetPubKey(pCtx context.Context) (asymmetric.IPubKey, error) {
-	res, err := api.Request(
-		pCtx,
-		p.fClient,
-		http.MethodGet,
-		fmt.Sprintf(cHandleServicePubKeyTemplate, p.fHost),
-		nil,
-		nil,
-	)
-	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
-	}
-
-	pubKey := asymmetric.LoadPubKey(string(res))
-	if pubKey == nil {
-		return nil, ErrInvalidPublicKey
-	}
-
-	return pubKey, nil
 }

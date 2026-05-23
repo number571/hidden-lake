@@ -15,7 +15,6 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	"github.com/number571/hidden-lake/internal/utils/pubkey"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	message "github.com/number571/hidden-lake/pkg/api/services/messenger/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/messenger/request"
@@ -63,20 +62,8 @@ func HandleChatPushAPI(
 			return
 		}
 
-		aliasName := pR.URL.Query().Get("friend")
-		fPubKey, err := pubkey.GetFriendPubKeyByAliasName(pCtx, pHlkClient, aliasName)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("load_pubkey"))
-			_ = api.Response(pW, http.StatusForbidden, "failed: load public key")
-			return
-		}
-
-		myPubKey, err := pHlkClient.GetPubKey(pCtx)
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("get_public_key"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get public key from service")
-			return
-		}
+		queryParams := pR.URL.Query()
+		aliasName := queryParams.Get("friend")
 
 		req := request.NewPushRequest(strBody)
 		if err := pHlkClient.SendRequest(pCtx, aliasName, req); err != nil {
@@ -86,7 +73,7 @@ func HandleChatPushAPI(
 		}
 
 		msg := message.NewMessage(false, string(body), time.Now())
-		if err := pDatabase.Push(database.NewRelation(myPubKey, fPubKey), msg); err != nil {
+		if err := pDatabase.Push(aliasName, msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return

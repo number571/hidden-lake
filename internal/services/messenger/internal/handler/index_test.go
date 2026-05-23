@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/messenger/internal/database"
 	"github.com/number571/hidden-lake/internal/services/messenger/pkg/app/config"
 	logger_std "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -95,16 +95,14 @@ var (
 )
 
 type tsHLKClient struct {
-	fPubKeyOK   bool
 	fSettingsOK bool
 	fSendOK     bool
 	fPrivKey    asymmetric.IPrivKey
 }
 
-func newTsHLKClient(pPubKeyOK bool, pSettingsOK bool, pSendOK bool) *tsHLKClient {
+func newTsHLKClient(pSettingsOK bool, pSendOK bool) *tsHLKClient {
 	return &tsHLKClient{
 		fSettingsOK: pSettingsOK,
-		fPubKeyOK:   pPubKeyOK,
 		fSendOK:     pSendOK,
 		fPrivKey:    asymmetric.NewPrivKey(),
 	}
@@ -120,26 +118,19 @@ func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, 
 	}, nil
 }
 
-func (p *tsHLKClient) GetPubKey(context.Context) (asymmetric.IPubKey, error) {
-	if !p.fPubKeyOK {
-		return nil, errors.New("error") // nolint: err113
-	}
-	return p.fPrivKey.GetPubKey(), nil
-}
-
 func (p *tsHLKClient) GetOnlines(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
 }
 func (p *tsHLKClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLKClient) GetFriends(context.Context) (map[string]asymmetric.IPubKey, error) {
-	return map[string]asymmetric.IPubKey{
+func (p *tsHLKClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+	return map[string]layer2.IParticipantKey{
 		"abc": asymmetric.NewPrivKey().GetPubKey(),
 	}, nil
 }
 
-func (p *tsHLKClient) AddFriend(context.Context, string, asymmetric.IPubKey) error { return nil }
-func (p *tsHLKClient) DelFriend(context.Context, string) error                     { return nil }
+func (p *tsHLKClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
+func (p *tsHLKClient) DelFriend(context.Context, string) error                         { return nil }
 
 func (p *tsHLKClient) GetConnections(context.Context) ([]string, error) {
 	return []string{"tcp://aaa"}, nil
@@ -190,16 +181,16 @@ func newTsDatabase(pLoadOK, pPushOK bool) *tsDatabase {
 func (p *tsDatabase) Close() error {
 	return nil
 }
-func (p *tsDatabase) Size(database.IRelation) uint64 {
+func (p *tsDatabase) Size(string) uint64 {
 	return 1
 }
-func (p *tsDatabase) Push(database.IRelation, dto.IMessage) error {
+func (p *tsDatabase) Push(string, dto.IMessage) error {
 	if !p.fPushOK {
 		return errors.New("error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsDatabase) Load(_ database.IRelation, x uint64, o uint64) ([]dto.IMessage, error) {
+func (p *tsDatabase) Load(_ string, x uint64, o uint64) ([]dto.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("error") // nolint: err113
 	}

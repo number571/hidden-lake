@@ -92,7 +92,7 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tmpFile := "./testdata/hls-filesharer.stg/private/87cb5fb20c1faea4c881c869e2eea4e1b7a20f12d6449efdf1db6255ee5f6b67907d42d06885cc28343cbf62da2d4da9/example111.txt.pfalse"
+	tmpFile := "./testdata/hls-filesharer.stg/private/abc/example111.txt.pfalse"
 	if err := os.WriteFile(tmpFile, []byte("hello, world!"), 0600); err != nil {
 		t.Fatal(err)
 	}
