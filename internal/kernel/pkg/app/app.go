@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
@@ -32,9 +32,9 @@ type sApp struct {
 	fState  state.IState
 	fPathTo string
 
-	fCfgW    config.IWrapper
-	fNode    network.IHiddenLakeNode
-	fPrivKey asymmetric.IPrivKey
+	fCfgW   config.IWrapper
+	fNode   network.IHiddenLakeNode
+	fScheme layer2.IScheme
 
 	fAnonLogger logger.ILogger
 	fHTTPLogger logger.ILogger
@@ -45,7 +45,7 @@ type sApp struct {
 
 func NewApp(
 	pCfg config.IConfig,
-	pPrivKey asymmetric.IPrivKey,
+	pScheme layer2.IScheme,
 	pPathTo string,
 ) types.IRunner {
 	logging := pCfg.GetLogging()
@@ -60,7 +60,7 @@ func NewApp(
 		fState:      state.NewBoolState(),
 		fPathTo:     pPathTo,
 		fCfgW:       config.NewWrapper(pCfg),
-		fPrivKey:    pPrivKey,
+		fScheme:     pScheme,
 		fAnonLogger: anonLogger,
 		fHTTPLogger: httpLogger,
 		fStdfLogger: stdfLogger,

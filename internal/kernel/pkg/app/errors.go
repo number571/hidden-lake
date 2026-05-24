@@ -18,7 +18,7 @@ var (
 	ErrInitDB           = &SError{"init database"}
 	ErrClose            = &SError{"close"}
 	ErrSizePrivateKey   = &SError{"size private key"}
-	ErrGetPrivateKey    = &SError{"get private key"}
+	ErrGetScheme        = &SError{"get scheme"}
 	ErrInitConfig       = &SError{"init config"}
 	ErrSetParallelNull  = &SError{"set parallel = 0"}
 	ErrGetParallel      = &SError{"get parallel"}

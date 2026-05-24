@@ -7,7 +7,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
-	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -51,11 +50,7 @@ func (p *sApp) initAnonNode() error {
 				FLogger:      p.fAnonLogger,
 			},
 		}),
-
-		// TODO:
-		hybrid.NewScheme(p.fPrivKey, adapterSettings.GetMessageSizeBytes()),
-		// symmetric.NewScheme(adapterSettings.GetMessageSizeBytes()),
-
+		p.fScheme,
 		layer2.NewKeysContainer(),
 		kvDatabase,
 		http.NewHTTPAdapter(

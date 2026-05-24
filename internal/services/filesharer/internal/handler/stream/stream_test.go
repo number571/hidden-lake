@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/hashing"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
@@ -212,14 +211,12 @@ type tsHLSClient struct {
 	fCounter   int
 	fErrType   int
 	fFileBytes []byte
-	fPrivKey   asymmetric.IPrivKey
 }
 
 func newTsHLSClient(pErrType int, pFileBytes []byte, pOffset int) *tsHLSClient {
 	return &tsHLSClient{
 		fFileBytes: pFileBytes,
 		fErrType:   pErrType,
-		fPrivKey:   asymmetric.NewPrivKey(),
 		fCounter:   pOffset,
 	}
 }

@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
 )
 
 func HandleConfigFriendsAPI(
@@ -74,22 +74,21 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			// TODO:
-			pubKey := asymmetric.LoadPubKey(vFriend.FFriendKey)
-			if pubKey == nil {
+			pKey := utils.LoadParticipantKey(vFriend.FFriendKey)
+			if pKey == nil {
 				pLogger.PushWarn(logBuilder.WithMessage("decode_key"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
 				return
 			}
 
-			friends[aliasName] = pubKey
+			friends[aliasName] = pKey
 			if err := pWrapper.GetEditor().UpdateFriends(friends); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("update_friends"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: update friends")
 				return
 			}
 
-			_ = pNode.GetKeysContainer().Add(pubKey)
+			_ = pNode.GetKeysContainer().Add(pKey)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: update friends")

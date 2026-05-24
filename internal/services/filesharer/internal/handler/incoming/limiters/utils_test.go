@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
@@ -44,13 +43,11 @@ var (
 
 type tsHLSClient struct {
 	fMsgSize uint64
-	fPrivKey asymmetric.IPrivKey
 }
 
 func newTsHLSClient(pMsgSize uint64) *tsHLSClient {
 	return &tsHLSClient{
 		fMsgSize: pMsgSize,
-		fPrivKey: asymmetric.NewPrivKey(),
 	}
 }
 

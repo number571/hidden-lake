@@ -10,13 +10,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/proc"
+	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
 	"github.com/number571/hidden-lake/pkg/network/request"
 )
 
@@ -147,8 +147,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println("done!")
 	case "add-friend":
 		friend := gFlags.Get("-a").GetStringValue(pArgs)
-		// TODO:
-		pubKey := asymmetric.LoadPubKey(inputString(reader))
+		pubKey := utils.LoadParticipantKey(inputString(reader))
 		if pubKey == nil {
 			return errors.New("load public key") // nolint: err113
 		}

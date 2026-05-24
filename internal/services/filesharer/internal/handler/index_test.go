@@ -160,14 +160,12 @@ func (p *tsHLKClientWrapper) FetchRequest(a context.Context, b string, c request
 type tsHLKClient struct {
 	fFetchType  int
 	fSettingsOK bool
-	fPrivKey    asymmetric.IPrivKey
 }
 
 func newTsHLKClient(pFetchType int, pSettingsOK bool) *tsHLKClient {
 	return &tsHLKClient{
 		fFetchType:  pFetchType,
 		fSettingsOK: pSettingsOK,
-		fPrivKey:    asymmetric.NewPrivKey(),
 	}
 }
 

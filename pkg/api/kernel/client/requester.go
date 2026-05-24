@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/kernel/config"
+	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -137,12 +137,11 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]layer2.IPartic
 
 	result := make(map[string]layer2.IParticipantKey, len(vFriends))
 	for _, friend := range vFriends {
-		// TODO:
-		pubKey := asymmetric.LoadPubKey(friend.FFriendKey)
-		if pubKey == nil {
+		pKey := utils.LoadParticipantKey(friend.FFriendKey)
+		if pKey == nil {
 			return nil, ErrInvalidPublicKey
 		}
-		result[friend.FAliasName] = pubKey
+		result[friend.FAliasName] = pKey
 	}
 
 	return result, nil

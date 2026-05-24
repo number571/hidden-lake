@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
 )
 
 var (
@@ -171,16 +171,11 @@ func (p *SConfig) loadParticipantKeys() error {
 		}
 		mapping[val] = struct{}{}
 
-		// TODO:
-		pubKey := asymmetric.LoadPubKey(val)
-		if pubKey == nil {
+		pKey := utils.LoadParticipantKey(val)
+		if pKey == nil {
 			return ErrInvalidParticipantKey
 		}
-		p.fFriends[name] = pubKey
-
-		// keyBuilder := keybuilder.NewKeyBuilder(0, []byte("__friend__"))
-		// key := keyBuilder.Build(val, symmetric.CCipherKeySize)
-		// p.fFriends[name] = symmetric.NewCipherGCM(key)
+		p.fFriends[name] = pKey
 	}
 
 	return nil

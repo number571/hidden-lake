@@ -77,7 +77,10 @@ func newNode(name string) (network.IHiddenLakeNode, layer2.IParticipantKey) {
 				FServiceName: name,
 			},
 		}),
-		hybrid.NewScheme(privKey, msgSizeBytes),
+		func() layer2.IScheme {
+			scheme, _ := hybrid.NewScheme(privKey, msgSizeBytes)
+			return scheme
+		}(),
 		layer2.NewKeysContainer(),
 		func() database.IKVDatabase {
 			kv, _ := database.NewKVDatabase(name + ".db")

@@ -142,15 +142,13 @@ var (
 type tsHLSClient struct {
 	fWithOK       bool
 	fGetPubKey    bool
-	fPrivKey      asymmetric.IPrivKey
-	fFriendPubKey asymmetric.IPubKey
+	fFriendPubKey layer2.IParticipantKey
 }
 
 func newTsHLSClient(pGetPubKey, pWithOK bool) *tsHLSClient {
 	return &tsHLSClient{
 		fWithOK:       pWithOK,
 		fGetPubKey:    pGetPubKey,
-		fPrivKey:      asymmetric.NewPrivKey(),
 		fFriendPubKey: asymmetric.NewPrivKey().GetPubKey(),
 	}
 }

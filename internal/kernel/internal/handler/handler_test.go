@@ -241,7 +241,10 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 				FConsumersCap: 1,
 				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
 			}),
-			hybrid.NewScheme(tgPrivKey1, tcMessageSize),
+			func() layer2.IScheme {
+				scheme, _ := hybrid.NewScheme(tgPrivKey1, tcMessageSize)
+				return scheme
+			}(),
 		),
 	)
 	return node
@@ -414,7 +417,10 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 			FConsumersCap: 1,
 			FQueuePoolCap: [2]uint64{16, 16},
 		}),
-		hybrid.NewScheme(asymmetric.NewPrivKey(), 8192),
+		func() layer2.IScheme {
+			scheme, _ := hybrid.NewScheme(asymmetric.NewPrivKey(), 8192)
+			return scheme
+		}(),
 	)
 }
 

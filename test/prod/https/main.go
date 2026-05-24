@@ -121,7 +121,10 @@ func newNode(networkKey string, name string) (network.IHiddenLakeNode, layer2.IP
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapterSettings,
 		}),
-		hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes()),
+		func() layer2.IScheme {
+			scheme, _ := hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes())
+			return scheme
+		}(),
 		layer2.NewKeysContainer(),
 		func() database.IKVDatabase {
 			kv, err := database.NewKVDatabase(name + "_" + networkKey + ".db")

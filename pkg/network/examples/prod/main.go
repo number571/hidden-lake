@@ -67,7 +67,10 @@ func newNode(name string) (network.IHiddenLakeNode, layer2.IParticipantKey) {
 				FLogger:      getLogger(),
 			},
 		}),
-		hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes()),
+		func() layer2.IScheme {
+			scheme, _ := hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes())
+			return scheme
+		}(),
 		layer2.NewKeysContainer(),
 		func() database.IKVDatabase {
 			kv, err := database.NewKVDatabase(name + ".db")

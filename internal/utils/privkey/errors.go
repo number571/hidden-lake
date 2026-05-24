@@ -13,8 +13,12 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrInvalidPrivateKey = &SError{"invalid private key"}
-	ErrReadPrivateKey    = &SError{"read private key"}
-	ErrWritePrivateKey   = &SError{"write private key"}
-	ErrSizePrivateKey    = &SError{"size private key"}
+	ErrInvalidPrivateKey           = &SError{"invalid private key"}
+	ErrInvalidPublicKey            = &SError{"invalid public key"}
+	ErrReadPrivateKey              = &SError{"read private key"}
+	ErrReadPublicKey               = &SError{"read public key"}
+	ErrWritePrivateKey             = &SError{"write private key"}
+	ErrWritePublicKey              = &SError{"write public key"}
+	ErrSizePrivateKey              = &SError{"size private key"}
+	ErrNotLinkedPublicKeyToPrivate = &SError{"not linked public key to private"}
 )

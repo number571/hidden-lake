@@ -81,13 +81,11 @@ var (
 
 type tsHLKClient struct {
 	fFetchType int
-	fPrivKey   asymmetric.IPrivKey
 }
 
 func newTsHLKClient(pFetchType int) *tsHLKClient {
 	return &tsHLKClient{
 		fFetchType: pFetchType,
-		fPrivKey:   asymmetric.NewPrivKey(),
 	}
 }
 

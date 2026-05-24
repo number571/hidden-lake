@@ -128,7 +128,10 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 			FConsumersCap: 1,
 			FQueuePoolCap: [2]uint64{16, 16},
 		}),
-		hybrid.NewScheme(asymmetric.NewPrivKey(), 8192),
+		func() layer2.IScheme {
+			scheme, _ := hybrid.NewScheme(asymmetric.NewPrivKey(), 8192)
+			return scheme
+		}(),
 	)
 }
 

@@ -10,7 +10,7 @@ import (
 	build "github.com/number571/hidden-lake/build/environment"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/internal/utils/privkey"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -37,11 +37,15 @@ func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
 	stdfLogger := std_logger.NewStdLogger(cfg.GetLogging(), std_logger.GetLogFunc())
 	build.LogLoadedBuildFiles(hlk_settings.GetAppShortNameFMT(), stdfLogger, okLoaded)
 
-	keyPath := filepath.Join(inputPath, hlk_settings.CPathKey)
-	privKey, err := privkey.GetPrivKey(keyPath)
+	// init default value for message size bytes (if cfg.GetSettings().GetMessageSizeBytes() == 0)
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{
+		FMessageSizeBytes: cfg.GetSettings().GetMessageSizeBytes(),
+	})
+
+	scheme, err := getScheme(inputPath, adapterSettings.GetMessageSizeBytes())
 	if err != nil {
-		return nil, errors.Join(ErrGetPrivateKey, err)
+		return nil, errors.Join(ErrGetScheme, err)
 	}
 
-	return NewApp(cfg, privKey, inputPath), nil
+	return NewApp(cfg, scheme, inputPath), nil
 }

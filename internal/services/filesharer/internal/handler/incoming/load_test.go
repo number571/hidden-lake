@@ -275,13 +275,11 @@ var (
 
 type tsHLSClient struct {
 	fSettingsOK bool
-	fPrivKey    asymmetric.IPrivKey
 }
 
 func newTsHLSClient(pSettingsOK bool) *tsHLSClient {
 	return &tsHLSClient{
 		fSettingsOK: pSettingsOK,
-		fPrivKey:    asymmetric.NewPrivKey(),
 	}
 }
 

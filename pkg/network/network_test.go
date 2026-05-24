@@ -13,6 +13,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
+	ssymm "github.com/number571/go-peer/pkg/crypto/scheme/layer2/symmetric"
+	"github.com/number571/go-peer/pkg/crypto/symmetric"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
@@ -67,17 +69,17 @@ func TestSettings(t *testing.T) {
 	sett.GetLogger().PushInfo("___")
 }
 
-func TestHiddenLakeNode(t *testing.T) {
+func TestHiddenLakeNodeHybridScheme(t *testing.T) {
 	t.Parallel()
 
 	msgChan1 := make(chan layer1.IMessage)
 	msgChan2 := make(chan layer1.IMessage)
 
-	node1, node1PubKey := testNewHiddenLakeNode("node1.db", msgChan2, msgChan1)
-	defer func() { _ = os.Remove("node1.db") }()
+	node1, node1PubKey := testNewHiddenLakeNodeHybridScheme("node1_hybrid.db", msgChan2, msgChan1)
+	defer func() { _ = os.Remove("node1_hybrid.db") }()
 
-	node2, node2PubKey := testNewHiddenLakeNode("node2.db", msgChan1, msgChan2)
-	defer func() { _ = os.Remove("node2.db") }()
+	node2, node2PubKey := testNewHiddenLakeNodeHybridScheme("node2_hybrid.db", msgChan1, msgChan2)
+	defer func() { _ = os.Remove("node2_hybrid.db") }()
 
 	node1.GetOriginNode().GetKeysContainer().Add(node2PubKey)
 	node2.GetOriginNode().GetKeysContainer().Add(node1PubKey)
@@ -128,11 +130,83 @@ func TestHiddenLakeNode(t *testing.T) {
 	}
 }
 
-func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) (IHiddenLakeNode, asymmetric.IPubKey) {
-	adapterSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: 8 << 10,
-	})
+func TestHiddenLakeNodeSymmetricScheme(t *testing.T) {
+	t.Parallel()
+
+	msgChan1 := make(chan layer1.IMessage)
+	msgChan2 := make(chan layer1.IMessage)
+
+	node1, pKey1 := testNewHiddenLakeNodeSymmetricScheme("node1_symmetric.db", msgChan2, msgChan1)
+	defer func() { _ = os.Remove("node1_symmetric.db") }()
+
+	node2, pKey2 := testNewHiddenLakeNodeSymmetricScheme("node2_symmetric.db", msgChan1, msgChan2)
+	defer func() { _ = os.Remove("node2_symmetric.db") }()
+
+	node1.GetOriginNode().GetKeysContainer().Add(pKey1)
+	node2.GetOriginNode().GetKeysContainer().Add(pKey2)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() { _ = node1.Run(ctx) }()
+	go func() { _ = node2.Run(ctx) }()
+
+	err := node1.SendRequest(
+		ctx,
+		pKey2,
+		request.NewRequestBuilder().WithMethod(http.MethodPost).Build(),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rsp, err := node1.FetchRequest(
+		ctx,
+		pKey2,
+		request.NewRequestBuilder().WithMethod(http.MethodPut).Build(),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rsp.GetCode() != http.StatusAccepted {
+		t.Fatal("got invalid status code")
+	}
+
+	err = node1.SendRequest(
+		ctx,
+		pKey2,
+		request.NewRequestBuilder().WithMethod(http.MethodPost).WithBody(random.NewRandom().GetBytes(10<<10)).Build(),
+	)
+	if err == nil {
+		t.Fatal("success send invalid request")
+	}
+
+	_, err = node1.FetchRequest(
+		ctx,
+		pKey2,
+		request.NewRequestBuilder().WithMethod(http.MethodPost).WithBody(random.NewRandom().GetBytes(10<<10)).Build(),
+	)
+	if err == nil {
+		t.Fatal("success fetch invalid request")
+	}
+}
+
+func testNewHiddenLakeNodeSymmetricScheme(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) (IHiddenLakeNode, layer2.IParticipantKey) {
+	key := []byte("secure_shared_secret_for_friends")
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 128})
+	scheme, _ := ssymm.NewScheme(adapterSettings.GetMessageSizeBytes())
+	return testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme), symmetric.NewCipherGCM(key)
+}
+
+func testNewHiddenLakeNodeHybridScheme(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) (IHiddenLakeNode, layer2.IParticipantKey) {
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8 << 10})
 	privKey := asymmetric.NewPrivKey()
+	scheme, _ := hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes())
+	return testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme), privKey.GetPubKey()
+}
+
+func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage, scheme layer2.IScheme) IHiddenLakeNode {
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8 << 10})
 	node, err := NewHiddenLakeNode(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
@@ -141,7 +215,7 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 				FFetchTimeout: time.Minute,
 			},
 		}),
-		hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes()),
+		scheme,
 		layer2.NewKeysContainer(),
 		func() database.IKVDatabase {
 			db, err := database.NewKVDatabase(dbPath)
@@ -182,7 +256,7 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 	if err != nil {
 		panic(err)
 	}
-	return node, privKey.GetPubKey()
+	return node
 }
 
 type sRunnerAdapter struct {

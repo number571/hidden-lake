@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2/hybrid"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	pkg_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -43,6 +44,7 @@ func testDeleteFiles(prefixPath string) {
 	_ = os.RemoveAll(prefixPath + tcPathDB)
 	_ = os.RemoveAll(prefixPath + tcPathConfig)
 	_ = os.RemoveAll(prefixPath + tcPathKey)
+	_ = os.RemoveAll(prefixPath + tcPathKey + ".pub")
 }
 
 func TestError(t *testing.T) {
@@ -102,8 +104,8 @@ func TestApp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	privKey := asymmetric.NewPrivKey()
-	app := NewApp(cfg, privKey, ".")
+	scheme, _ := hybrid.NewScheme(asymmetric.NewPrivKey(), cfg.GetSettings().GetMessageSizeBytes())
+	app := NewApp(cfg, scheme, ".")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
