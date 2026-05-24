@@ -1,0 +1,18 @@
+settings:
+  message_size_bytes: 256
+  work_size_bits: 22
+  fetch_timeout_ms: 60000
+  queue_period_ms: 5000
+  network_key: oMj49BD8he1n8bfq
+logging:
+  - info
+  - warn
+  - erro
+address:
+  external: 127.0.0.1:8571
+services:
+  hidden-echo-service: recv_hls_service:8080
+endpoints:
+  - 127.0.0.1:8522
+friends:
+  Alice: aabbccddeeff11223344556677889900aabbccddeeff11223344556677889900

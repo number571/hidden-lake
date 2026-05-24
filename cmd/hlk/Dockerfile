@@ -5,8 +5,8 @@ RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \
     tar -C /opt -xzf go1.23.0.linux-amd64.tar.gz
 
 WORKDIR /hidden-lake
+ARG BUILD_TAGS=""
 ENV PATH="${PATH}:/opt/go/bin"
-ENV BUILD_TAGS=""
 
 COPY ./ ./
 RUN go build -tags="${BUILD_TAGS}" -o hlk ./cmd/hlk

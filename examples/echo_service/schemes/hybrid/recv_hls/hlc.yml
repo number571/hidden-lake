@@ -1,0 +1,7 @@
+logging:
+  - info
+  - warn
+  - erro
+applications:
+  - hlk
+  - hla-tcp

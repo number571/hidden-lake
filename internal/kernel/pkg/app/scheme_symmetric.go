@@ -8,5 +8,5 @@ import (
 )
 
 func getScheme(_ string, msgSizeBytes uint64) (layer2.IScheme, error) {
-	return symmetric.NewScheme(msgSizeBytes), nil
+	return symmetric.NewScheme(msgSizeBytes)
 }
