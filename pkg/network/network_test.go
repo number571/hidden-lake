@@ -75,6 +75,11 @@ func TestHiddenLakeNodeHybridScheme(t *testing.T) {
 	msgChan1 := make(chan layer1.IMessage)
 	msgChan2 := make(chan layer1.IMessage)
 
+	if err := testNewHiddenLakeNodeHybridSchemeInvalidPayloadSize("node1_hybrid_x.db", msgChan2, msgChan1); err == nil {
+		t.Fatal("success create node with invalid payload size")
+	}
+	defer func() { _ = os.Remove("node1_hybrid_x.db") }()
+
 	node1, node1PubKey := testNewHiddenLakeNodeHybridScheme("node1_hybrid.db", msgChan2, msgChan1)
 	defer func() { _ = os.Remove("node1_hybrid.db") }()
 
@@ -136,6 +141,11 @@ func TestHiddenLakeNodeSymmetricScheme(t *testing.T) {
 	msgChan1 := make(chan layer1.IMessage)
 	msgChan2 := make(chan layer1.IMessage)
 
+	if err := testNewHiddenLakeNodeSymmetricSchemeInvalidPayloadSize("node1_symmetric_x.db", msgChan2, msgChan1); err == nil {
+		t.Fatal("success create node with invalid payload size")
+	}
+	defer func() { _ = os.Remove("node1_symmetric_x.db") }()
+
 	node1, pKey1 := testNewHiddenLakeNodeSymmetricScheme("node1_symmetric.db", msgChan2, msgChan1)
 	defer func() { _ = os.Remove("node1_symmetric.db") }()
 
@@ -191,22 +201,38 @@ func TestHiddenLakeNodeSymmetricScheme(t *testing.T) {
 	}
 }
 
+func testNewHiddenLakeNodeSymmetricSchemeInvalidPayloadSize(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) error {
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: ssymm.CMessageHeadSize + 3})
+	scheme, _ := ssymm.NewScheme(adapterSettings.GetMessageSizeBytes())
+	_, err := testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme, adapterSettings)
+	return err
+}
+
 func testNewHiddenLakeNodeSymmetricScheme(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) (IHiddenLakeNode, layer2.IParticipantKey) {
 	key := []byte("secure_shared_secret_for_friends")
 	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 128})
 	scheme, _ := ssymm.NewScheme(adapterSettings.GetMessageSizeBytes())
-	return testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme), symmetric.NewCipherGCM(key)
+	node, _ := testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme, adapterSettings)
+	return node, symmetric.NewCipherGCM(key)
+}
+
+func testNewHiddenLakeNodeHybridSchemeInvalidPayloadSize(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) error {
+	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: hybrid.CMessageHeadSize + 3})
+	privKey := asymmetric.NewPrivKey()
+	scheme, _ := hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes())
+	_, err := testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme, adapterSettings)
+	return err
 }
 
 func testNewHiddenLakeNodeHybridScheme(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage) (IHiddenLakeNode, layer2.IParticipantKey) {
 	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8 << 10})
 	privKey := asymmetric.NewPrivKey()
 	scheme, _ := hybrid.NewScheme(privKey, adapterSettings.GetMessageSizeBytes())
-	return testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme), privKey.GetPubKey()
+	node, _ := testNewHiddenLakeNode(dbPath, outMsgChan, inMsgChan, scheme, adapterSettings)
+	return node, privKey.GetPubKey()
 }
 
-func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage, scheme layer2.IScheme) IHiddenLakeNode {
-	adapterSettings := adapters.NewSettings(&adapters.SSettings{FMessageSizeBytes: 8 << 10})
+func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMessage, scheme layer2.IScheme, adapterSettings adapters.ISettings) (IHiddenLakeNode, error) {
 	node, err := NewHiddenLakeNode(
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
@@ -254,9 +280,9 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 		},
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return node
+	return node, nil
 }
 
 type sRunnerAdapter struct {
