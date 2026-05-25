@@ -64,8 +64,8 @@ func (p *sClient) GetFriends(pCtx context.Context) (map[string]layer2.IParticipa
 	return res, nil
 }
 
-func (p *sClient) AddFriend(pCtx context.Context, pAliasName string, pPubKey layer2.IParticipantKey) error {
-	if err := p.fRequester.AddFriend(pCtx, p.fBuilder.Friend(pAliasName, pPubKey)); err != nil {
+func (p *sClient) AddFriend(pCtx context.Context, pAliasName string, pKey layer2.IParticipantKey) error {
+	if err := p.fRequester.AddFriend(pCtx, p.fBuilder.Friend(pAliasName, pKey)); err != nil {
 		return fmt.Errorf("add friend (client): %w", err)
 	}
 	return nil

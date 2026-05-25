@@ -36,10 +36,10 @@ func HandleConfigFriendsAPI(
 			friends := pWrapper.GetConfig().GetFriends()
 
 			listFriends := make([]friend.SFriend, 0, len(friends))
-			for name, pubKey := range friends {
+			for name, pKey := range friends {
 				listFriends = append(listFriends, friend.SFriend{
 					FAliasName: name,
-					FFriendKey: pubKey.ToString(),
+					FFriendKey: pKey.ToString(),
 				})
 			}
 			sort.Slice(listFriends, func(i, j int) bool {
@@ -95,7 +95,7 @@ func HandleConfigFriendsAPI(
 			return
 
 		case http.MethodDelete:
-			pubKey, ok := friends[aliasName]
+			pKey, ok := friends[aliasName]
 			if !ok {
 				pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
 				_ = api.Response(pW, http.StatusNotFound, "failed: friend does not exist")
@@ -110,7 +110,7 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			pNode.GetKeysContainer().Del(pubKey.GetHasher().ToString())
+			_ = pNode.GetKeysContainer().Del(pKey.GetHasher().ToString())
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: delete friend")

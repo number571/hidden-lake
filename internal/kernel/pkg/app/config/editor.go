@@ -62,20 +62,20 @@ func (p *sEditor) UpdateFriends(pFriends map[string]layer2.IParticipantKey) erro
 
 func participantKeysToStrings(pFriends map[string]layer2.IParticipantKey) map[string]string {
 	result := make(map[string]string, len(pFriends))
-	for name, pubKey := range pFriends {
-		result[name] = pubKey.ToString()
+	for name, pKey := range pFriends {
+		result[name] = pKey.ToString()
 	}
 	return result
 }
 
 func hasDuplicateParticipantKeys(pFriends map[string]layer2.IParticipantKey) bool {
 	mapping := make(map[string]struct{}, len(pFriends))
-	for _, pubKey := range pFriends {
-		pubStr := pubKey.ToString()
-		if _, ok := mapping[pubStr]; ok {
+	for _, pKey := range pFriends {
+		pStr := pKey.ToString()
+		if _, ok := mapping[pStr]; ok {
 			return true
 		}
-		mapping[pubStr] = struct{}{}
+		mapping[pStr] = struct{}{}
 	}
 	return false
 }

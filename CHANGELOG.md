@@ -2,9 +2,25 @@
 
 <!-- ... -->
 
-## v1.10.6~
+## v1.11.1~
 
 *??? ??, ????*
+
+<!-- ... -->
+
+## v1.11.0
+
+*May 26, 2026*
+
+### IMPROVEMENTS
+
+- `cmd/hlk`: add tag=symmetric (symmetric encryption scheme)
+
+### CHANGES
+
+- `cmd/hlk`: deleted GetPubKey() interface function
+- `cmd/hlk`: API change field: "public_key" -> "friend_key"
+- `cmd/hls/*`: change all identities to alias names (deleted relations with public key)
 
 <!-- ... -->
 

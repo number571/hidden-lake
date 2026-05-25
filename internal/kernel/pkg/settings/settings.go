@@ -20,7 +20,12 @@ const (
 )
 
 const (
-	CPathKey = CAppShortName + ".key"
+	// used only if tag=!symmetric
+	CPathKey    = CAppShortName + ".key"
+	CPathPubKey = CPathKey + ".pub"
+)
+
+const (
 	CPathYML = CAppShortName + ".yml"
 	CPathDB  = CAppShortName + ".db"
 )

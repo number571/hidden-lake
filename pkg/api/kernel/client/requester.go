@@ -139,7 +139,7 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]layer2.IPartic
 	for _, friend := range vFriends {
 		pKey := utils.LoadParticipantKey(friend.FFriendKey)
 		if pKey == nil {
-			return nil, ErrInvalidPublicKey
+			return nil, ErrInvalidParticipantKey
 		}
 		result[friend.FAliasName] = pKey
 	}

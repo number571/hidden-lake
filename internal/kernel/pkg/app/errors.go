@@ -27,9 +27,6 @@ var (
 	ErrOpenKVDatabase   = &SError{"open kv database"}
 	ErrReadKVDatabase   = &SError{"read kv database"}
 	ErrMessageSizeLimit = &SError{"message size limit"}
-	ErrInvalidPsdPubKey = &SError{"invalid psd public key"}
-	ErrGetPsdPubKey     = &SError{"get psd pub key"}
-	ErrSetPsdPubKey     = &SError{"set psd pub key"}
 	ErrSetBuild         = &SError{"set build"}
 	ErrMkdirPath        = &SError{"mkdir path"}
 	ErrAddFriendToList  = &SError{"add friend to list"}

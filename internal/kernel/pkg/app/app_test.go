@@ -38,13 +38,14 @@ const (
 	tcPathDB       = pkg_settings.CPathDB
 	tcPathConfig   = pkg_settings.CPathYML
 	tcPathKey      = pkg_settings.CPathKey
+	tcPathPubKey   = pkg_settings.CPathPubKey
 )
 
 func testDeleteFiles(prefixPath string) {
 	_ = os.RemoveAll(prefixPath + tcPathDB)
 	_ = os.RemoveAll(prefixPath + tcPathConfig)
 	_ = os.RemoveAll(prefixPath + tcPathKey)
-	_ = os.RemoveAll(prefixPath + tcPathKey + ".pub")
+	_ = os.RemoveAll(prefixPath + tcPathPubKey)
 }
 
 func TestError(t *testing.T) {

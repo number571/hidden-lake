@@ -13,7 +13,8 @@ import (
 
 func getScheme(inputPath string, msgSizeBytes uint64) (layer2.IScheme, error) {
 	keyPath := filepath.Join(inputPath, hlk_settings.CPathKey)
-	privKey, err := privkey.GetPrivKey(keyPath)
+	pubPath := filepath.Join(inputPath, hlk_settings.CPathPubKey)
+	privKey, err := privkey.GetPrivKey(keyPath, pubPath)
 	if err != nil {
 		return nil, err
 	}

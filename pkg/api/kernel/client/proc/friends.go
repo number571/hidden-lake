@@ -9,10 +9,10 @@ import (
 
 func FriendsMapToList(pFriendsMap map[string]layer2.IParticipantKey) []friend.SFriend {
 	listFriends := make([]friend.SFriend, 0, len(pFriendsMap))
-	for name, pubKey := range pFriendsMap {
+	for name, pKey := range pFriendsMap {
 		listFriends = append(listFriends, friend.SFriend{
 			FAliasName: name,
-			FFriendKey: pubKey.ToString(),
+			FFriendKey: pKey.ToString(),
 		})
 	}
 	sort.Slice(listFriends, func(i, j int) bool {

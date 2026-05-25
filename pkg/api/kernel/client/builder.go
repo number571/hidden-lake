@@ -17,8 +17,8 @@ func NewBuilder() IBuilder {
 	return &sBuilder{}
 }
 
-func (p *sBuilder) Friend(pAliasName string, pPubKey layer2.IParticipantKey) *friend.SFriend {
-	if pPubKey == nil {
+func (p *sBuilder) Friend(pAliasName string, pKey layer2.IParticipantKey) *friend.SFriend {
+	if pKey == nil {
 		// request: del friend
 		return &friend.SFriend{
 			FAliasName: pAliasName,
@@ -27,7 +27,7 @@ func (p *sBuilder) Friend(pAliasName string, pPubKey layer2.IParticipantKey) *fr
 	// request: add friend
 	return &friend.SFriend{
 		FAliasName: pAliasName,
-		FFriendKey: pPubKey.ToString(),
+		FFriendKey: pKey.ToString(),
 	}
 }
 

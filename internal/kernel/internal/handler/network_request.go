@@ -38,7 +38,7 @@ func HandleNetworkRequestAPI(
 		}
 
 		friends := pConfig.GetFriends()
-		pubKey, ok := friends[pR.URL.Query().Get("friend")]
+		pKey, ok := friends[pR.URL.Query().Get("friend")]
 		if !ok {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
@@ -47,7 +47,7 @@ func HandleNetworkRequestAPI(
 
 		switch pR.Method {
 		case http.MethodPut:
-			if err := pNode.SendRequest(pCtx, pubKey, vRequest); err != nil {
+			if err := pNode.SendRequest(pCtx, pKey, vRequest); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("send_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: send payload")
 				return
@@ -58,7 +58,7 @@ func HandleNetworkRequestAPI(
 			return
 
 		case http.MethodPost:
-			resp, err := pNode.FetchRequest(pCtx, pubKey, vRequest)
+			resp, err := pNode.FetchRequest(pCtx, pKey, vRequest)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("fetch_payload"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: fetch payload")

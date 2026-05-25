@@ -3,8 +3,8 @@ GC=go build
 ROOPATH=..
 BINPATH=$(ROOPATH)/bin
 
-.PHONY: default build build-cli move_apps remove-std clean 
-default: build build-cli move_apps remove-std
+.PHONY: default build build-symm build-cli build-symm-cli move-apps remove-std clean 
+default: build build-symm build-cli build-symm-cli move-apps remove-std
 
 build: 
 	for app in \
@@ -56,7 +56,48 @@ build-cli:
 		done; \
 	done;
 
-move_apps:
+build-symm:
+	for app in \
+		hlc \
+		hlk;	\
+	do \
+		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
+		for arch in amd64 arm64; \
+		do \
+			for platform in linux windows darwin; \
+			do \
+				echo "build $${app}_$${arch}_$${platform}"; \
+				if [[ $$platform == "windows" ]] \
+				then \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -tags=symmetric -o $(BINPATH)/$${app}-symm_$${arch}_$${platform}.exe ./$${app}; \
+				else \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -tags=symmetric -o $(BINPATH)/$${app}-symm_$${arch}_$${platform} ./$${app}; \
+				fi; \
+			done; \
+		done; \
+	done;
+
+build-cli-symm:
+	for app in \
+		hlk/client/hlk-cli; \
+	do \
+		$(GC) -o $(BINPATH)/cli/$$(basename "$${app}") ./$${app}; \
+		for arch in amd64 arm64; \
+		do \
+			for platform in linux windows darwin; \
+			do \
+				echo "build $${app}_$${arch}_$${platform}"; \
+				if [[ $$platform == "windows" ]] \
+				then \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -tags=symmetric -o $(BINPATH)/cli/$$(basename "$${app}")-symm_$${arch}_$${platform}.exe ./$${app}; \
+				else \
+					CGO_ENABLED=0 GOOS=$${platform} GOARCH=$${arch} go build -tags=symmetric -o $(BINPATH)/cli/$$(basename "$${app}")-symm_$${arch}_$${platform} ./$${app}; \
+				fi; \
+			done; \
+		done; \
+	done;
+
+move-apps:
 	mv $(BINPATH)/hla/* $(BINPATH)/
 	mv $(BINPATH)/hls/* $(BINPATH)/
 	mv $(BINPATH)/cli/* $(BINPATH)/

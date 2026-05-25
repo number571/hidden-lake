@@ -31,14 +31,7 @@ $ echo '{"method":"POST","host":"hls-messenger","path":"/push","body":"aGVsbG8sI
 $ echo '{"method":"GET","host":"hls-pinger","path":"/ping"}' | hlk-cli -d fetch -a {{friend-name}}
 ```
 
-2. Profile
-
-```bash
-### Get own public key ###
-$ hlk-cli -d pubkey
-```
-
-3. Onlines
+2. Onlines
 
 ```bash
 ### Get alive connections ###
@@ -50,7 +43,7 @@ $ hlk-cli -d get-onlines
 $ hlk-cli -d del-online -a tcp://localhost:9999
 ```
 
-4. Connections
+3. Connections
 
 ```bash
 ### Get all connections ###
@@ -67,7 +60,7 @@ $ hlk-cli -d add-connection -a tcp://localhost:9999
 $ hlk-cli -d del-connection -a tcp://localhost:9999
 ```
 
-5. Friends
+4. Friends
 
 ```bash
 ### Get all friends ###

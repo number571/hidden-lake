@@ -147,11 +147,11 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println("done!")
 	case "add-friend":
 		friend := gFlags.Get("-a").GetStringValue(pArgs)
-		pubKey := utils.LoadParticipantKey(inputString(reader))
-		if pubKey == nil {
-			return errors.New("load public key") // nolint: err113
+		pKey := utils.LoadParticipantKey(inputString(reader))
+		if pKey == nil {
+			return errors.New("load participant key") // nolint: err113
 		}
-		if err := hlkClient.AddFriend(pCtx, friend, pubKey); err != nil {
+		if err := hlkClient.AddFriend(pCtx, friend, pKey); err != nil {
 			return err
 		}
 		fmt.Println("done!")
