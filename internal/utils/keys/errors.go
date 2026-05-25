@@ -1,7 +1,7 @@
-package privkey
+package keys
 
 const (
-	errPrefix = "internal/utils/privkey = "
+	errPrefix = "internal/utils/keys = "
 )
 
 type SError struct {

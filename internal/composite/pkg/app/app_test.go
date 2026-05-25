@@ -40,6 +40,7 @@ const (
 	tcPathConfigHLP    = hls_pinger_settings.CPathYML
 	tcPathConfigHLAtcp = hla_tcp_settings.CPathYML
 	tcPathKeyHLS       = hlk_settings.CPathKey
+	tcPathPubKeyHLS    = hlk_settings.CPathPubKey
 )
 
 func TestError(t *testing.T) {
@@ -59,6 +60,7 @@ func testDeleteFiles(prefixPath string) {
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLM)
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLAtcp)
 	_ = os.RemoveAll(prefixPath + tcPathKeyHLS)
+	_ = os.RemoveAll(prefixPath + tcPathPubKeyHLS)
 }
 
 type tsRunner struct{}
