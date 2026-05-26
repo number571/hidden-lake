@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%04dB"
+	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%dB"
 	cLogAddrTemplate = " addr=%s...%s"
 	cLogConnTemplate = " conn=%s"
 )
