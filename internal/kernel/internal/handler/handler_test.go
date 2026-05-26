@@ -30,6 +30,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hla_http_client "github.com/number571/hidden-lake/pkg/api/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	hl_adapters "github.com/number571/hidden-lake/pkg/network/adapters"
 	"github.com/number571/hidden-lake/pkg/network/adapters/tcp"
@@ -284,9 +285,21 @@ type tsConfig struct {
 	fServiceAddr string
 }
 
-func (p *tsConfig) GetSettings() config.IConfigSettings {
-	return &config.SConfigSettings{}
+type tsConfigSettings struct {
 }
+
+func (p *tsConfig) GetSettings() config.IConfigSettings {
+	return &tsConfigSettings{}
+}
+
+func (p *tsConfigSettings) GetWorkSizeBits() uint64                 { return 0 }
+func (p *tsConfigSettings) GetNetworkKey() string                   { return "" }
+func (p *tsConfigSettings) GetCryptoSchemeType() scheme.ISchemeType { return scheme.CHybridScheme }
+func (p *tsConfigSettings) GetMessageSizeBytes() uint64             { return 0 }
+func (p *tsConfigSettings) GetFetchTimeout() time.Duration          { return 0 }
+func (p *tsConfigSettings) GetQueuePeriod() time.Duration           { return 0 }
+func (p *tsConfigSettings) GetPowParallel() uint64                  { return 0 }
+func (p *tsConfigSettings) GetQBPConsumers() uint64                 { return 0 }
 
 func (p *tsConfig) GetQueuePoolCap() [2]uint64      { return [2]uint64{} }
 func (p *tsConfig) GetLogging() std_logger.ILogging { return nil }

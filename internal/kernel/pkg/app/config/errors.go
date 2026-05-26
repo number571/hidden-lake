@@ -19,6 +19,7 @@ var (
 	ErrLoadLogging             = &SError{"load logging"}
 	ErrInvalidLogging          = &SError{"invalid logging"}
 	ErrLoadParticipantKey      = &SError{"load participant key"}
+	ErrLoadCryptoSchemeType    = &SError{"load crypto scheme type"}
 	ErrInvalidConfig           = &SError{"invalid config"}
 	ErrLoadConfig              = &SError{"load config"}
 	ErrInitConfig              = &SError{"init config"}

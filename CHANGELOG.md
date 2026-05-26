@@ -14,11 +14,13 @@
 
 ### IMPROVEMENTS
 
-- `cmd/hlk`: add tag=symmetric (symmetric encryption scheme)
+- `cmd/hlk`: add crypto_scheme_type into settings field
+- `cmd/hlk`: add symmetric scheme
 
 ### CHANGES
 
 - `cmd/hlk`: deleted GetPubKey() interface function
+- `cmd/hlk`: change GetFriends() interface function
 - `cmd/hlk`: API change field: "public_key" -> "friend_key"
 - `cmd/hls/*`: change all identities to alias names (deleted relations with public key)
 

@@ -13,6 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -60,7 +61,7 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success get connections with unknown host")
 	}
 
-	if _, err := client.GetFriends(context.Background()); err == nil {
+	if _, err := client.GetFriends(context.Background(), scheme.CHybridScheme); err == nil {
 		t.Fatal("success get friends with unknown host")
 	}
 

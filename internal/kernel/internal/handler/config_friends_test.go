@@ -17,6 +17,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -309,7 +310,7 @@ func TestHandleFriendsAPI(t *testing.T) {
 }
 
 func testGetFriends(t *testing.T, client hlk_client.IClient, cfg config.IConfig) {
-	friends, err := client.GetFriends(context.Background())
+	friends, err := client.GetFriends(context.Background(), scheme.CHybridScheme)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -339,7 +340,7 @@ func testAddFriend(t *testing.T, client hlk_client.IClient, aliasName string) {
 		t.Fatal(err)
 	}
 
-	friends, err := client.GetFriends(context.Background())
+	friends, err := client.GetFriends(context.Background(), scheme.CHybridScheme)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -355,7 +356,7 @@ func testDelFriend(t *testing.T, client hlk_client.IClient, aliasName string) {
 		t.Fatal(err)
 	}
 
-	friends, err := client.GetFriends(context.Background())
+	friends, err := client.GetFriends(context.Background(), scheme.CHybridScheme)
 	if err != nil {
 		t.Fatal(err)
 	}

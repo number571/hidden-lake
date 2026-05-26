@@ -16,6 +16,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	hlk_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/filesharer/client"
 	"github.com/number571/hidden-lake/pkg/network/request"
@@ -132,8 +133,8 @@ func (p *tsHLKClientWrapper) GetOnlines(a context.Context) ([]string, error) {
 func (p *tsHLKClientWrapper) DelOnline(a context.Context, b string) error {
 	return p.fClient.DelOnline(a, b)
 }
-func (p *tsHLKClientWrapper) GetFriends(a context.Context) (map[string]layer2.IParticipantKey, error) {
-	return p.fClient.GetFriends(a)
+func (p *tsHLKClientWrapper) GetFriends(a context.Context, b scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
+	return p.fClient.GetFriends(a, b)
 }
 func (p *tsHLKClientWrapper) AddFriend(a context.Context, b string, c layer2.IParticipantKey) error {
 	return p.fClient.AddFriend(a, b, c)
@@ -184,7 +185,7 @@ func (p *tsHLKClient) GetOnlines(context.Context) ([]string, error) {
 }
 func (p *tsHLKClient) DelOnline(context.Context, string) error { return nil }
 
-func (p *tsHLKClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+func (p *tsHLKClient) GetFriends(context.Context, scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
 	return map[string]layer2.IParticipantKey{
 		"abc": tsFriendPubKey,
 	}, nil

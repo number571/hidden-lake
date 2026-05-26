@@ -16,7 +16,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/help"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/proc"
-	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	"github.com/number571/hidden-lake/pkg/network/request"
 )
 
@@ -70,6 +70,11 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 		),
 	)
+
+	settings, err := hlkClient.GetSettings(pCtx)
+	if err != nil {
+		return err
+	}
 
 	reader := bufio.NewReader(os.Stdin)
 	do := gFlags.Get("-d").GetStringValue(pArgs)
@@ -134,7 +139,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 
 	// FRIENDS
 	case "get-friends":
-		friends, err := hlkClient.GetFriends(pCtx)
+		friends, err := hlkClient.GetFriends(pCtx, settings.GetCryptoSchemeType())
 		if err != nil {
 			return err
 		}
@@ -147,7 +152,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		fmt.Println("done!")
 	case "add-friend":
 		friend := gFlags.Get("-a").GetStringValue(pArgs)
-		pKey := utils.LoadParticipantKey(inputString(reader))
+		pKey := scheme.LoadParticipantKey(settings.GetCryptoSchemeType(), inputString(reader))
 		if pKey == nil {
 			return errors.New("load participant key") // nolint: err113
 		}

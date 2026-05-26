@@ -10,8 +10,6 @@ services:
     build:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
-      args:
-        - BUILD_TAGS=symmetric
     environment:
       - SERVICE_PATH=examples/echo_service/schemes/symmetric/recv_hls
     networks:
@@ -21,8 +19,6 @@ services:
     build:
       context: ./../../../../
       dockerfile: cmd/hlc/Dockerfile
-      args:
-        - BUILD_TAGS=symmetric
     environment:
       - SERVICE_PATH=examples/echo_service/schemes/symmetric/send_hls
     ports:

@@ -20,7 +20,7 @@ const (
 )
 
 const (
-	// used only if tag=!symmetric
+	// not used if crypto_scheme_type="symmetric"
 	CPathKey    = CAppShortName + ".key"
 	CPathPubKey = CPathKey + ".pub"
 )

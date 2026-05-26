@@ -12,8 +12,8 @@ import (
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	"github.com/number571/hidden-lake/pkg/api/kernel/config"
-	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -117,7 +117,7 @@ func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest 
 	return nil
 }
 
-func (p *sRequester) GetFriends(pCtx context.Context) (map[string]layer2.IParticipantKey, error) {
+func (p *sRequester) GetFriends(pCtx context.Context, pSchemeType scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -137,7 +137,7 @@ func (p *sRequester) GetFriends(pCtx context.Context) (map[string]layer2.IPartic
 
 	result := make(map[string]layer2.IParticipantKey, len(vFriends))
 	for _, friend := range vFriends {
-		pKey := utils.LoadParticipantKey(friend.FFriendKey)
+		pKey := scheme.LoadParticipantKey(pSchemeType, friend.FFriendKey)
 		if pKey == nil {
 			return nil, ErrInvalidParticipantKey
 		}

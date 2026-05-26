@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	"github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
@@ -56,8 +57,8 @@ func (p *sClient) FetchRequest(pCtx context.Context, pRecv string, pData request
 	return res, nil
 }
 
-func (p *sClient) GetFriends(pCtx context.Context) (map[string]layer2.IParticipantKey, error) {
-	res, err := p.fRequester.GetFriends(pCtx)
+func (p *sClient) GetFriends(pCtx context.Context, pSchemeType scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
+	res, err := p.fRequester.GetFriends(pCtx, pSchemeType)
 	if err != nil {
 		return nil, fmt.Errorf("get friends (client): %w", err)
 	}

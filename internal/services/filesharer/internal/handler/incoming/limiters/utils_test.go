@@ -6,6 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
@@ -61,7 +62,7 @@ func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, 
 func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) { return nil, nil }
 func (p *tsHLSClient) DelOnline(context.Context, string) error      { return nil }
 
-func (p *tsHLSClient) GetFriends(context.Context) (map[string]layer2.IParticipantKey, error) {
+func (p *tsHLSClient) GetFriends(context.Context, scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
 	return nil, nil
 }
 

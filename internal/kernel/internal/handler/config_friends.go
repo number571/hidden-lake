@@ -13,7 +13,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
-	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 )
 
 func HandleConfigFriendsAPI(
@@ -23,6 +23,7 @@ func HandleConfigFriendsAPI(
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppShortNameFMT(), pR)
+		cfg := pWrapper.GetConfig()
 
 		var vFriend friend.SFriend
 
@@ -33,7 +34,7 @@ func HandleConfigFriendsAPI(
 		}
 
 		if pR.Method == http.MethodGet {
-			friends := pWrapper.GetConfig().GetFriends()
+			friends := cfg.GetFriends()
 
 			listFriends := make([]friend.SFriend, 0, len(friends))
 			for name, pKey := range friends {
@@ -64,7 +65,7 @@ func HandleConfigFriendsAPI(
 			return
 		}
 
-		friends := pWrapper.GetConfig().GetFriends()
+		friends := cfg.GetFriends()
 
 		switch pR.Method {
 		case http.MethodPost:
@@ -74,7 +75,7 @@ func HandleConfigFriendsAPI(
 				return
 			}
 
-			pKey := utils.LoadParticipantKey(vFriend.FFriendKey)
+			pKey := scheme.LoadParticipantKey(cfg.GetSettings().GetCryptoSchemeType(), vFriend.FFriendKey)
 			if pKey == nil {
 				pLogger.PushWarn(logBuilder.WithMessage("decode_key"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")

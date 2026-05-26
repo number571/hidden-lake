@@ -12,6 +12,7 @@ func GetConfigSettings(pCfg config.IConfig, pScheme layer2.IScheme) SConfigSetti
 	sett := pCfg.GetSettings()
 	return SConfigSettings{
 		SConfigSettings: config.SConfigSettings{
+			FCryptoSchemeType: sett.GetCryptoSchemeType().String(),
 			FNetworkKey:       sett.GetNetworkKey(),
 			FMessageSizeBytes: sett.GetMessageSizeBytes(),
 			FWorkSizeBits:     sett.GetWorkSizeBits(),

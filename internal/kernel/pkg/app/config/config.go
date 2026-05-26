@@ -9,7 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/api/kernel/utils"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 )
 
 var (
@@ -19,6 +19,9 @@ var (
 )
 
 type SConfigSettings struct {
+	fCryptoSchemeType scheme.ISchemeType
+
+	FCryptoSchemeType string `json:"crypto_scheme_type,omitempty" yaml:"crypto_scheme_type,omitempty"`
 	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
 	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
 	FQueuePeriodMS    uint64 `json:"queue_period_ms,omitempty" yaml:"queue_period_ms,omitempty"`
@@ -87,6 +90,10 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 	return cfg, nil
 }
 
+func (p *SConfigSettings) GetCryptoSchemeType() scheme.ISchemeType {
+	return p.fCryptoSchemeType
+}
+
 func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
 	return p.FMessageSizeBytes
 }
@@ -141,6 +148,10 @@ func (p *SConfig) initConfig() error {
 		return ErrInvalidConfig
 	}
 
+	if err := p.loadCryptoSchemeType(); err != nil {
+		return errors.Join(ErrLoadCryptoSchemeType, err)
+	}
+
 	if err := p.loadParticipantKeys(); err != nil {
 		return errors.Join(ErrLoadParticipantKey, err)
 	}
@@ -149,6 +160,18 @@ func (p *SConfig) initConfig() error {
 		return errors.Join(ErrLoadLogging, err)
 	}
 
+	return nil
+}
+
+func (p *SConfig) loadCryptoSchemeType() error {
+	switch p.FSettings.FCryptoSchemeType {
+	case "", "hybrid":
+		p.FSettings.fCryptoSchemeType = scheme.CHybridScheme
+	case "symmetric":
+		p.FSettings.fCryptoSchemeType = scheme.CSymmetricScheme
+	default:
+		return ErrLoadCryptoSchemeType
+	}
 	return nil
 }
 
@@ -171,7 +194,7 @@ func (p *SConfig) loadParticipantKeys() error {
 		}
 		mapping[val] = struct{}{}
 
-		pKey := utils.LoadParticipantKey(val)
+		pKey := scheme.LoadParticipantKey(p.FSettings.fCryptoSchemeType, val)
 		if pKey == nil {
 			return ErrInvalidParticipantKey
 		}
