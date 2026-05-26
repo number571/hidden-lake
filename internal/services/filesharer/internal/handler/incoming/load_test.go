@@ -40,7 +40,9 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 	if err := incomingLoadRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
-
+	if err := incomingLoadRequestFileNotFound(handler); err != nil {
+		t.Fatal(err)
+	}
 	if err := incomingLoadRequestMethod(handler); err == nil {
 		t.Fatal("request success with invalid method")
 	}
@@ -184,6 +186,26 @@ func incomingLoadRequestOK(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	if _, err := io.ReadAll(res.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func incomingLoadRequestFileNotFound(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/load?name=file_not_found.txt&chunk=0", nil)
+	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusNotFound {
 		return errors.New("bad status code") // nolint: err113
 	}
 

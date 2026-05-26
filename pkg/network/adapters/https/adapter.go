@@ -451,7 +451,13 @@ func (p *sHTTPSAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.
 			return
 		}
 
-		msg, _ := v.(layer1.IMessage)
+		msg, ok := v.(layer1.IMessage)
+		if !ok {
+			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroInvalidMessageType))
+			_ = api.Response(w, http.StatusInternalServerError, []byte{})
+			return
+		}
+
 		logBuilder.
 			WithHash(msg.GetHash()).
 			WithProof(msg.GetProof()).

@@ -11,6 +11,7 @@ import (
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/network/adapters"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
@@ -71,19 +72,32 @@ func NewTCPAdapter(
 	}
 	p.fConnKeeper.GetNetworkNode().HandleFunc(
 		build.GetSettings().FProtoMask.FNetwork,
-		func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
-			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
-			p.fLogger.PushInfo(logBuilder.
-				WithType(internal_anon_logger.CLogBaseRecvNetworkMessage).
-				WithHash(msg.GetHash()).
-				WithProof(msg.GetProof()).
-				WithSize(len(msg.ToBytes())).
-				WithConn(conn.GetSocket().RemoteAddr().String()))
-			p.fNetMsgChan <- msg
-			return nil
-		},
+		p.handlerFunc(adapterSettings),
 	)
 	return p
+}
+
+func (p *sTCPAdapter) handlerFunc(adapterSettings adapters.ISettings) network.IHandlerF {
+	return func(_ context.Context, _ network.INode, conn conn.IConn, msg layer1.IMessage) error {
+		msgLen := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
+		msgGotLen := len(msg.ToBytes())
+
+		logBuilder := anon_logger.NewLogBuilder(p.fShortName).
+			WithType(internal_anon_logger.CLogBaseRecvNetworkMessage).
+			WithHash(msg.GetHash()).
+			WithProof(msg.GetProof()).
+			WithSize(msgGotLen).
+			WithConn(conn.GetSocket().RemoteAddr().String())
+
+		if uint64(msgGotLen) != msgLen {
+			p.fLogger.PushWarn(logBuilder)
+			return ErrReceiveMessage
+		}
+
+		p.fLogger.PushInfo(logBuilder)
+		p.fNetMsgChan <- msg
+		return nil
+	}
 }
 
 func (p *sTCPAdapter) WithLogger(pName string, pLogger logger.ILogger) ITCPAdapter {

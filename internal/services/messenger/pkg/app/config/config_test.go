@@ -90,6 +90,8 @@ func TestConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	_ = cfg.GetSettings()
+
 	if cfg.GetLogging().HasInfo() != tcLogging {
 		t.Fatal("logging.info is invalid")
 	}

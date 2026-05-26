@@ -95,14 +95,16 @@ var (
 )
 
 type tsHLKClient struct {
-	fSettingsOK bool
-	fSendOK     bool
+	fSettingsOK       bool
+	fSendOK           bool
+	fSmallPayloadSize bool
 }
 
-func newTsHLKClient(pSettingsOK bool, pSendOK bool) *tsHLKClient {
+func newTsHLKClient(pSettingsOK bool, pSendOK bool, pSmallPayloadSize bool) *tsHLKClient {
 	return &tsHLKClient{
-		fSettingsOK: pSettingsOK,
-		fSendOK:     pSendOK,
+		fSettingsOK:       pSettingsOK,
+		fSendOK:           pSendOK,
+		fSmallPayloadSize: pSmallPayloadSize,
 	}
 }
 
@@ -111,8 +113,12 @@ func (p *tsHLKClient) GetSettings(context.Context) (hlk_config.IConfigSettings, 
 	if !p.fSettingsOK {
 		return nil, errors.New("error") // nolint: err113
 	}
+	payloadSize := uint64(1024)
+	if p.fSmallPayloadSize {
+		payloadSize = 6
+	}
 	return &hlk_config.SConfigSettings{
-		FPayloadSizeBytes: 1024,
+		FPayloadSizeBytes: payloadSize,
 	}, nil
 }
 

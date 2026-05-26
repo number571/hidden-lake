@@ -13,6 +13,7 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrRunning   = &SError{"adapter running"}
-	ErrBroadcast = &SError{"broadcast message"}
+	ErrRunning        = &SError{"adapter running"}
+	ErrBroadcast      = &SError{"broadcast message"}
+	ErrReceiveMessage = &SError{"receive message"}
 )

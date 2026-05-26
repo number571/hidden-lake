@@ -28,7 +28,7 @@ func TestHandleChatSizeAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true), newTsDatabase(true, true))
+	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}

@@ -40,13 +40,6 @@ func HandleChatLoadAPI(
 			return
 		}
 
-		size := pDatabase.Size(aliasName)
-		if index >= size {
-			pLogger.PushWarn(logBuilder.WithMessage("index_gte_size"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: index >= size")
-			return
-		}
-
 		dbMsgs, err := pDatabase.Load(aliasName, index, 1)
 		if err != nil || len(dbMsgs) != 1 {
 			pLogger.PushWarn(logBuilder.WithMessage("load_messages"))

@@ -62,6 +62,9 @@ func TestKeys(t *testing.T) {
 	if _, err := GetPubKey(privKey, "./random/not_exist/path/57199u140291724y121291d1/pub.key"); err == nil {
 		t.Fatal("success get public key with not exist directory")
 	}
+	if _, err := GetPubKey(privKey, tcTestdataDirPath); err == nil {
+		t.Fatal("success get public key as directory")
+	}
 
 	if _, err := GetPrivKey(tcInvalidPrivKeyPath); err == nil {
 		t.Fatal("success get invalid private key")
