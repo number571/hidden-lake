@@ -22,6 +22,10 @@
 - `cmd/hlk`: API change field: "public_key" -> "friend_key"
 - `cmd/hls/*`: change all identities to alias names (deleted relations with public key)
 
+### BUG FIXES
+
+- `cmd/hla/hla-tcp`: fix check message size
+
 <!-- ... -->
 
 ## v1.10.5
