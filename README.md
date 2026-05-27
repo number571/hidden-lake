@@ -185,7 +185,7 @@ You can also create your own networks by copying the contents of the networks.ym
 To communicate with other network nodes, you must first obtain your public key, which was generated when you first ran HLK and is located in the `hlk.key.pub` file. After receiving the public key, it must be transferred to the future interlocutor, as well as receive his own public key from him. Thus, an `F2F handshake` will occur, where each party will explicitly establish the public key of the interlocutor. To install the key of the interlocutor, you can also use the `HLK API` or just edit `hlk.yml` file with restart HLK application.
 
 > [!IMPORTANT]
-> The Hidden Lake network can also operate using a symmetric encryption scheme. To do this, compile the project with the `symmetric` tag. This can significantly reduce the size of transmitted messages, but requires a secure communication channel for key exchange.
+> The Hidden Lake network can also operate using a symmetric encryption scheme. To do this, set `crypto_scheme_type: symmetric` in the settings field of the `hlk.yml` file. This can significantly reduce the size of transmitted messages, but requires a secure communication channel for key exchange.
 
 ```bash
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"friend", "friend_key":"PubKey{...}"}'
