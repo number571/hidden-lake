@@ -1,4 +1,5 @@
 settings:
+  crypto_scheme_type: hybrid
   message_size_bytes: 8192
   work_size_bits: 22
   fetch_timeout_ms: 60000
