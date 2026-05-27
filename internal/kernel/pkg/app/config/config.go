@@ -19,8 +19,6 @@ var (
 )
 
 type SConfigSettings struct {
-	fCryptoSchemeType scheme.ISchemeType
-
 	FCryptoSchemeType string `json:"crypto_scheme_type,omitempty" yaml:"crypto_scheme_type,omitempty"`
 	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
 	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
@@ -91,7 +89,13 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 }
 
 func (p *SConfigSettings) GetCryptoSchemeType() scheme.ISchemeType {
-	return p.fCryptoSchemeType
+	switch p.FCryptoSchemeType {
+	case "", "hybrid":
+		return scheme.CHybridScheme
+	case "symmetric":
+		return scheme.CSymmetricScheme
+	}
+	return 0
 }
 
 func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
@@ -132,6 +136,11 @@ func (p *SConfig) isValid() bool {
 			return false
 		}
 	}
+	switch p.FSettings.FCryptoSchemeType {
+	case "", "hybrid", "symmetric":
+	default:
+		return false
+	}
 	return true
 }
 
@@ -148,11 +157,8 @@ func (p *SConfig) initConfig() error {
 		return ErrInvalidConfig
 	}
 
-	if err := p.loadCryptoSchemeType(); err != nil {
-		return errors.Join(ErrLoadCryptoSchemeType, err)
-	}
-
-	if err := p.loadParticipantKeys(); err != nil {
+	schemeType := p.FSettings.GetCryptoSchemeType()
+	if err := p.loadParticipantKeys(schemeType); err != nil {
 		return errors.Join(ErrLoadParticipantKey, err)
 	}
 
@@ -160,18 +166,6 @@ func (p *SConfig) initConfig() error {
 		return errors.Join(ErrLoadLogging, err)
 	}
 
-	return nil
-}
-
-func (p *SConfig) loadCryptoSchemeType() error {
-	switch p.FSettings.FCryptoSchemeType {
-	case "", "hybrid":
-		p.FSettings.fCryptoSchemeType = scheme.CHybridScheme
-	case "symmetric":
-		p.FSettings.fCryptoSchemeType = scheme.CSymmetricScheme
-	default:
-		return ErrLoadCryptoSchemeType
-	}
 	return nil
 }
 
@@ -184,7 +178,7 @@ func (p *SConfig) loadLogging() error {
 	return nil
 }
 
-func (p *SConfig) loadParticipantKeys() error {
+func (p *SConfig) loadParticipantKeys(pSchemeType scheme.ISchemeType) error {
 	p.fFriends = make(map[string]layer2.IParticipantKey, len(p.FFriends))
 	mapping := make(map[string]struct{}, len(p.FFriends))
 
@@ -194,7 +188,7 @@ func (p *SConfig) loadParticipantKeys() error {
 		}
 		mapping[val] = struct{}{}
 
-		pKey := scheme.LoadParticipantKey(p.FSettings.fCryptoSchemeType, val)
+		pKey := scheme.LoadParticipantKey(pSchemeType, val)
 		if pKey == nil {
 			return ErrInvalidParticipantKey
 		}

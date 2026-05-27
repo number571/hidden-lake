@@ -1,6 +1,8 @@
 package config
 
-import "github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
+import (
+	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
+)
 
 type IConfigSettings interface {
 	config.IConfigSettings
