@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p ~/.config/systemd/user
+
 echo "
 [Unit]
 Description=HiddenLakeKernel
