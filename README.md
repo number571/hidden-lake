@@ -132,14 +132,15 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 1. Basic:
    * [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
    * [HLC](cmd/hlc) - runs many HL applications as one application
-2. Adapters:
-   * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
-   * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
-   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS ptotocol
-3. Services:
+2. Services:
    * [HLS=messenger](cmd/hls/hls-messenger) - send and recv text messages
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
+3. Adapters:
+   * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
+   * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
+   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS ptotocol
+   * [HLA=meshtastic](cmd/hla/hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa ptotocol
 
 ### External applications
 

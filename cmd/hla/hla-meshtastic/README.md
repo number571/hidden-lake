@@ -1,6 +1,6 @@
 # HLA=meshtastic
 
-> Hidden Lake Adapter (TCP)
+> Hidden Lake Adapter (Meshtastic)
 
 <img src="images/hla_meshtastic_logo.png" alt="hla_meshtastic_logo.png"/>
 
@@ -12,9 +12,14 @@ The `Hidden Lake Adapter (Meshtastic)` allows adapt HL traffic based on the Mesh
 $ go install github.com/number571/hidden-lake/cmd/hla/hla-meshtastic@latest
 ```
 
+## Requirements
+
+1. Python version `== 3.14.5`
+2. Connected Meshtastic/LoRa device via USB
+
 ## How it works
 
-HLA=meshtastic uses python [script](../../../pkg/network/adapters/meshtastic/service/script.py).
+HLA=meshtastic uses Python [script.py](../../../pkg/network/adapters/meshtastic/service/script.py) for send/recv messages. Before launching, dependencies for Python are automatically loaded from file [requirements.txt](../../../pkg/network/adapters/meshtastic/service/requirements.txt).
 
 ## Supported platforms
 
