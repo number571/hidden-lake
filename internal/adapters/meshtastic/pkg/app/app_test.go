@@ -19,6 +19,10 @@ import (
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
+const (
+	tcMessageSize = 200
+)
+
 var (
 	tgFlags = flag.NewFlagsBuilder(
 		flag.NewFlagBuilder("-v", "--version").
@@ -47,7 +51,7 @@ func TestError(t *testing.T) {
 const tcPathConfig = "./testdata/"
 
 const tcDataConfig = `settings:
-  message_size_bytes: 8192
+  message_size_bytes: 200
 `
 
 func TestInitApp(t *testing.T) {
@@ -99,7 +103,7 @@ func TestApp(t *testing.T) {
 	// Run application
 	cfg, err := config.BuildConfig(settings.CPathYML, &config.SConfig{
 		FSettings: &config.SConfigSettings{
-			FMessageSizeBytes: 8192,
+			FMessageSizeBytes: tcMessageSize,
 			FDatabaseEnabled:  true,
 		},
 		FAddress: &config.SAddress{
@@ -129,7 +133,7 @@ func TestApp(t *testing.T) {
 			testutils.TgAddrs[30],
 			&http.Client{Timeout: time.Minute},
 			adapters.NewSettings(&adapters.SSettings{
-				FMessageSizeBytes: 8192,
+				FMessageSizeBytes: tcMessageSize,
 			}),
 		),
 	)
@@ -147,7 +151,7 @@ func TestApp(t *testing.T) {
 	}
 
 	msgBytes := []byte("hello, world!")
-	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(8192-len(msgBytes)))...) //nolint:gosec
+	msgBytes = append(msgBytes, random.NewRandom().GetBytes(uint64(tcMessageSize-len(msgBytes)))...) //nolint:gosec
 	netMsg := layer1.NewMessage(
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),

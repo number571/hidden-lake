@@ -21,10 +21,9 @@ func TestRebuild(t *testing.T) {
 		t.Fatal("success init config with rebuild for unknown network")
 	}
 
-	network := ""
-	for k := range build.GetNetworks() {
-		network = k
-		break
+	network := "std-tcp"
+	if _, ok := build.GetNetwork(network); !ok {
+		t.Fatal("not found network")
 	}
 
 	if _, err := InitConfig(configFile, nil, network); err != nil {

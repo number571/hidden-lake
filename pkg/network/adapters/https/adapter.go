@@ -104,11 +104,14 @@ func (p *sHTTPSAdapter) Run(pCtx context.Context) error {
 	mux.HandleFunc(hla_settings.CHandleAdapterProducePath, p.adapterProduceHandler(pCtx))
 	mux.HandleFunc(hla_settings.CHandleAdapterConsumePath, p.adapterConsumeHandler(pCtx))
 
+	readTimeout := (p.fSettings.GetReadTimeout() << 1)
+	handleTimeout := (p.fSettings.GetHandleTimeout() << 1)
+
 	httpServer := &http.Server{
 		Addr:         address,
-		Handler:      http.TimeoutHandler(mux, p.fSettings.GetHandleTimeout(), "handle timeout"),
-		ReadTimeout:  p.fSettings.GetReadTimeout(),
-		WriteTimeout: p.fSettings.GetHandleTimeout(),
+		Handler:      http.TimeoutHandler(mux, handleTimeout, "handle timeout"),
+		ReadTimeout:  readTimeout,
+		WriteTimeout: handleTimeout,
 		TLSConfig: &tls.Config{
 			MinVersion:   tls.VersionTLS13,
 			Certificates: []tls.Certificate{*p.fCertificate},

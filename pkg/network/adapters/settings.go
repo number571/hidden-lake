@@ -43,9 +43,6 @@ func (p *sSettings) initDefault() *sSettings {
 	if p.FMessageSizeBytes == 0 {
 		p.FMessageSizeBytes = defaultNetwork.FMessageSizeBytes
 	}
-	if p.FWorkSizeBits == 0 {
-		p.FWorkSizeBits = defaultNetwork.FWorkSizeBits
-	}
 	return p
 }
 

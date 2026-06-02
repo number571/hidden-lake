@@ -58,10 +58,15 @@ func NewApp(
 	)
 
 	lruCache := cache.NewLRUCache(buildSettings.FStorageManager.FCacheHashesCap)
+
+	messageSizeBytes := cfgSettings.GetMessageSizeBytes()
+	if messageSizeBytes == 0 {
+		messageSizeBytes = hla_meshtastic.CLimitMessageSizeBytes
+	}
 	adaptersSettings := adapters.NewSettings(&adapters.SSettings{
-		FMessageSizeBytes: cfgSettings.GetMessageSizeBytes(),
-		FWorkSizeBits:     0,
-		FNetworkKey:       "",
+		FMessageSizeBytes: messageSizeBytes,
+		FWorkSizeBits:     0, // constant
+		FNetworkKey:       cfgSettings.GetNetworkKey(),
 	})
 
 	return &sApp{
@@ -82,6 +87,7 @@ func NewApp(
 					FWatchPeriod:  cfgSettings.GetWatchPeriod(),
 					FReadTimeout:  cfgSettings.GetReadTimeout(),
 					FWriteTimeout: cfgSettings.GetWriteTimeout(),
+					FMaxDelayTime: 0,
 				},
 			}),
 			lruCache,
@@ -218,7 +224,7 @@ func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 			pChErr <- pCtx.Err()
 			return
 		default:
-			// HTTPS (connections) -> HTTP (endpoints), HTTPS (connections)
+			// HTTPS (connections) -> HTTP (endpoints)
 			msg, err := p.fExtAdapter.Consume(pCtx)
 			if err != nil {
 				continue
@@ -226,12 +232,7 @@ func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 			if err := p.setIntoDB(msg); err != nil {
 				continue
 			}
-			if err := p.fIntAdapter.Produce(pCtx, msg); err != nil {
-				if !errors.Is(err, hla_http.ErrNoConnections) {
-					continue
-				}
-			}
-			_ = p.fExtAdapter.Produce(pCtx, msg)
+			_ = p.fIntAdapter.Produce(pCtx, msg)
 		}
 	}
 }

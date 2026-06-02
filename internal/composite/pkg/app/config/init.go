@@ -8,6 +8,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	hla_http_settings "github.com/number571/hidden-lake/internal/adapters/http/pkg/settings"
 	hla_https_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
+	hla_meshtastic_settings "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/settings"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
@@ -15,6 +16,13 @@ import (
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
+
+var mapInitConfig = map[string]string{
+	hla_tcp_settings.CAppAdapterName:        hla_tcp_settings.CAppShortName,
+	hla_http_settings.CAppAdapterName:       hla_http_settings.CAppShortName,
+	hla_https_settings.CAppAdapterName:      hla_https_settings.CAppShortName,
+	hla_meshtastic_settings.CAppAdapterName: hla_meshtastic_settings.CAppShortName,
+}
 
 func InitConfig(cfgPath string, initCfg *SConfig, networkKey string) (IConfig, error) {
 	if _, err := os.Stat(cfgPath); !os.IsNotExist(err) {
@@ -71,19 +79,11 @@ func initConfig(networkKey string) (*SConfig, error) {
 		}
 		mapUsed[scheme] = struct{}{}
 
-		adapterName := ""
-		switch scheme {
-		case hla_tcp_settings.CAppAdapterName:
-			adapterName = hla_tcp_settings.CAppShortName
-		case hla_http_settings.CAppAdapterName:
-			adapterName = hla_http_settings.CAppShortName
-		case hla_https_settings.CAppAdapterName:
-			adapterName = hla_https_settings.CAppShortName
-		}
-
-		if adapterName == "" {
+		adapterName, ok := mapInitConfig[scheme]
+		if !ok {
 			return nil, ErrAdapterNotFound
 		}
+
 		defaultConfig.FApplications = append(defaultConfig.FApplications, adapterName)
 	}
 

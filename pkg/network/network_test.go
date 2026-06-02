@@ -42,8 +42,8 @@ func TestSettings(t *testing.T) {
 		t.Fatal("got invalid message size by default settings")
 	}
 
-	if sett.GetAdapterSettings().GetWorkSizeBits() != defaultNetwork.FWorkSizeBits {
-		t.Fatal("got invalid message size by default settings")
+	if sett.GetAdapterSettings().GetWorkSizeBits() != 0 {
+		t.Fatal("got invalid work size bits by default value")
 	}
 
 	if sett.GetFetchTimeout() != CDefaultFetchTimeout {

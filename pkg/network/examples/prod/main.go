@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	networkKey = "oi4r9NW9Le7fKF9d"
+	networkKey = "std-tcp"
 )
 
 func main() {

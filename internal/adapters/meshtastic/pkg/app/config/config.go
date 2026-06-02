@@ -16,8 +16,11 @@ var (
 
 type SConfigSettings struct {
 	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
+	FWorkSizeBits     uint64 `json:"work_size_bits,omitempty" yaml:"work_size_bits,omitempty"`
+	FNetworkKey       string `json:"network_key,omitempty" yaml:"network_key,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
 	FWatchPeriodMS    uint64 `json:"watch_period_ms,omitempty" yaml:"watch_period_ms,omitempty"`
+	FMaxDelayTimeMS   uint64 `json:"max_delay_time_ms,omitempty" yaml:"max_delay_time_ms,omitempty"`
 	FReadTimeoutMS    uint64 `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
 	FWriteTimeoutMS   uint64 `json:"write_timeout_ms,omitempty" yaml:"write_timeout_ms,omitempty"`
 }
@@ -84,7 +87,8 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 }
 
 func (p *SConfig) isValid() bool {
-	return true
+	return true &&
+		p.FSettings.GetWorkSizeBits() == 0
 }
 
 func (p *SConfig) initConfig() error {
@@ -148,6 +152,14 @@ func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
 	return p.FMessageSizeBytes
 }
 
+func (p *SConfigSettings) GetNetworkKey() string {
+	return p.FNetworkKey
+}
+
+func (p *SConfigSettings) GetWorkSizeBits() uint64 {
+	return p.FWorkSizeBits
+}
+
 func (p *SConfigSettings) GetDatabaseEnabled() bool {
 	return p.FDatabaseEnabled
 }
@@ -162,6 +174,10 @@ func (p *SConfigSettings) GetReadTimeout() time.Duration {
 
 func (p *SConfigSettings) GetWriteTimeout() time.Duration {
 	return time.Duration(p.FWriteTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetMaxDelayTime() time.Duration {
+	return time.Duration(p.FMaxDelayTimeMS) * time.Millisecond // nolint: gosec
 }
 
 func (p *SConfig) GetAddress() IAddress {

@@ -192,7 +192,7 @@ func exchangeKeys(hlNode1, hlNode2 network.IHiddenLakeNode, key1, key2 layer2.IP
 
 /*
 	{
-	    "8Jkl93Mdk93md1bz": {
+	    "std-https": {
 	        "node1": "<INSERT>",
 	        "node2": "<INSERT>"
 	    }

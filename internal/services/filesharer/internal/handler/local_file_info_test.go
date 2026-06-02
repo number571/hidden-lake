@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -71,7 +70,6 @@ func localFileInfoRequestPersonalOK(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusOK {
-		fmt.Println(res.StatusCode)
 		return errors.New("bad status code") // nolint: err113
 	}
 

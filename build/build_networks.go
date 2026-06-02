@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/number571/go-peer/pkg/encoding"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 )
 
 const (
@@ -39,8 +40,11 @@ type SNetworksYAML struct {
 }
 
 type SNetwork struct {
+	FCryptoSchemeType string       `yaml:"crypto_scheme_type"`
 	FMessageSizeBytes uint64       `yaml:"message_size_bytes"`
 	FWorkSizeBits     uint64       `yaml:"work_size_bits"`
+	FFetchTimeoutMS   uint64       `yaml:"fetch_timeout_ms"`
+	FQueuePeriodMS    uint64       `yaml:"queue_period_ms"`
 	FConnections      SConnections `yaml:"connections"`
 }
 
@@ -97,8 +101,14 @@ func SetNetworks(networksMap map[string]SNetwork) error {
 
 func (p SNetwork) validate() error {
 	switch { // nolint: gocritic, staticcheck
+	case scheme.GetCryptoSchemeType(p.FCryptoSchemeType) == 0:
+		return errors.New("crypto_scheme_type unknown")
 	case p.FMessageSizeBytes == 0:
 		return errors.New("message_size_bytes = 0")
+	case p.FFetchTimeoutMS == 0:
+		return errors.New("fetch_timeout_ms = 0")
+	case p.FQueuePeriodMS == 0:
+		return errors.New("queue_period_ms = 0")
 	}
 	for _, c := range p.FConnections {
 		u, err := url.Parse(c)

@@ -11,9 +11,11 @@ var (
 )
 
 const (
-	CDefaultWatchDuration = time.Second
-	CDefaultReadTimeout   = 5 * time.Second
-	CDefaultWriteTimeout  = 5 * time.Second
+	CLimitMessageSizeBytes = 200
+	CDefaultWatchDuration  = time.Second
+	CDefaultReadTimeout    = 5 * time.Second
+	CDefaultWriteTimeout   = 5 * time.Second
+	CDefaultMaxDelayTime   = 2 * time.Minute
 )
 
 type SSettings sSettings
@@ -30,13 +32,17 @@ type SServeSettings struct {
 	FWatchPeriod  time.Duration
 	FReadTimeout  time.Duration
 	FWriteTimeout time.Duration
+	FMaxDelayTime time.Duration
 }
 
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
-		pSett = &SSettings{
-			FAdapterSettings: adapters.NewSettings(nil),
-		}
+		adapterSettings := adapters.NewSettings(&adapters.SSettings{
+			FMessageSizeBytes: CLimitMessageSizeBytes,
+			FWorkSizeBits:     0,
+			FNetworkKey:       "",
+		})
+		pSett = &SSettings{FAdapterSettings: adapterSettings}
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
@@ -59,6 +65,9 @@ func (p *sSettings) initDefault() *sSettings {
 	}
 	if p.FServeSettings.FWriteTimeout == 0 {
 		p.FServeSettings.FWriteTimeout = CDefaultWriteTimeout
+	}
+	if p.FServeSettings.FMaxDelayTime == 0 {
+		p.FServeSettings.FMaxDelayTime = CDefaultMaxDelayTime
 	}
 	return p
 }
@@ -92,5 +101,9 @@ func (p *sSettings) GetReadTimeout() time.Duration {
 }
 
 func (p *sSettings) GetWriteTimeout() time.Duration {
+	return p.FServeSettings.FWriteTimeout
+}
+
+func (p *sSettings) GetMaxDelayTime() time.Duration {
 	return p.FServeSettings.FWriteTimeout
 }

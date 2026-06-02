@@ -167,10 +167,13 @@ func (p *tsAddress) GetInternal() string { return "internal" }
 type tsConfigSettings struct{}
 
 func (p *tsConfigSettings) GetMessageSizeBytes() uint64    { return 8192 }
+func (p *tsConfigSettings) GetWorkSizeBits() uint64        { return 0 }
+func (p *tsConfigSettings) GetNetworkKey() string          { return "" }
 func (p *tsConfigSettings) GetDatabaseEnabled() bool       { return false }
 func (p *tsConfigSettings) GetReadTimeout() time.Duration  { return 5 * time.Second }
 func (p *tsConfigSettings) GetWriteTimeout() time.Duration { return 5 * time.Second }
 func (p *tsConfigSettings) GetWatchPeriod() time.Duration  { return 5 * time.Second }
+func (p *tsConfigSettings) GetMaxDelayTime() time.Duration { return 5 * time.Second }
 
 type tsNetworkNode struct {
 	fWithFail bool

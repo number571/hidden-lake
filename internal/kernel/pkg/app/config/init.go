@@ -43,9 +43,12 @@ func rebuildConfig(pCfg IConfig, pUseNetwork string) (IConfig, error) {
 		return nil, errors.Join(ErrRebuildConfig, ErrNetworkNotFound)
 	}
 
+	cfg.FSettings.FNetworkKey = pUseNetwork
+	cfg.FSettings.FCryptoSchemeType = network.FCryptoSchemeType
 	cfg.FSettings.FMessageSizeBytes = network.FMessageSizeBytes
 	cfg.FSettings.FWorkSizeBits = network.FWorkSizeBits
-	cfg.FSettings.FNetworkKey = pUseNetwork
+	cfg.FSettings.FFetchTimeoutMS = network.FFetchTimeoutMS
+	cfg.FSettings.FQueuePeriodMS = network.FQueuePeriodMS
 
 	if err := os.WriteFile(cfg.fFilepath, encoding.SerializeYAML(cfg), 0600); err != nil {
 		return nil, errors.Join(ErrRebuildConfig, ErrWriteConfig, err)

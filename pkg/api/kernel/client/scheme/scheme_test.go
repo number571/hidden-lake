@@ -36,10 +36,10 @@ func TestScheme(t *testing.T) {
 		t.Fatal("load participant key is not nil (hybrid)")
 	}
 
-	if CHybridScheme.String() != "hybrid" {
+	if CHybridScheme.String() != "hybrid" { // nolint:goconst
 		t.Fatal("incorrect string value (hybrid)")
 	}
-	if CSymmetricScheme.String() != "symmetric" {
+	if CSymmetricScheme.String() != "symmetric" { // nolint:goconst
 		t.Fatal("incorrect string value (symmetric)")
 	}
 }

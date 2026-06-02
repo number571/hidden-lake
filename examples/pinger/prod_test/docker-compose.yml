@@ -5,14 +5,14 @@ services:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
+      - SERVICE_NETWORK=std-tcp
       - SERVICE_PATH=examples/pinger/prod_test/recv_hlc
   send_hls:
     build:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=oi4r9NW9Le7fKF9d
+      - SERVICE_NETWORK=std-tcp
       - SERVICE_PATH=examples/pinger/prod_test/send_hls
     ports:
       - 7572:7572

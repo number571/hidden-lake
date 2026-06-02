@@ -21,10 +21,9 @@ func TestRebuild(t *testing.T) {
 
 	testConfigDefaultInit(configFile)
 
-	network := ""
-	for k := range build.GetNetworks() {
-		network = k
-		break
+	network := build.CDefaultNetwork
+	if _, ok := build.GetNetwork(network); !ok {
+		t.Fatal("not found network")
 	}
 
 	if _, err := InitConfig(configFile, nil, network); err != nil {

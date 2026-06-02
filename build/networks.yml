@@ -1,24 +1,38 @@
 default: &default_network
-  message_size_bytes: 8192
+  crypto_scheme_type: hybrid  # asymmetric+symmetric
+  message_size_bytes: 8192    # 8KiB
+  work_size_bits:     22      # PoW(22b)
+  fetch_timeout_ms:   60000   # 60s for response
+  queue_period_ms:    5000    # 5s per message
 networks:
-  8Jkl93Mdk93md1bz:
+  std-https:
     <<: *default_network
-    work_size_bits: 0 # custom
+    work_size_bits: 0
     connections: 
       # provider=vdsina.ru
       # expired=?(eternal)
       - https://__username__:__password__@94.103.91.81:9531
-  kf92j74Nof92n9F4:
+  std-http:
     <<: *default_network
-    work_size_bits: 20 # custom
+    work_size_bits: 20
     connections: 
       # provider=ruvds.ru
       # expired=30.07.2027
       - http://195.133.1.126:9511
-  oi4r9NW9Le7fKF9d:
+  std-tcp:
     <<: *default_network
-    work_size_bits: 18 # custom
+    work_size_bits: 18
     connections: 
       # provider=4vps.su
       # expired=10.08.2027
       - tcp://193.233.18.245:9581
+  std-meshtastic:
+    <<: *default_network
+    crypto_scheme_type: symmetric # only this scheme can transport small messages
+    message_size_bytes: 200       # limit of bytes in the meshtastic network
+    work_size_bits:     0         # layer1 is removed by adapter
+    fetch_timeout_ms:   720000    # 12m for response
+    queue_period_ms:    180000    # 3m per message
+    connections: 
+      # provider=localhost
+      - meshtastic://_

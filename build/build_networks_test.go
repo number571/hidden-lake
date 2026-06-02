@@ -10,6 +10,21 @@ func TestHiddenLakeNetworks(t *testing.T) {
 
 	network := SNetwork{}
 	if err := network.validate(); err == nil {
+		t.Fatal("success validate with invalid crypto_scheme_type")
+	}
+
+	network.FCryptoSchemeType = "symmetric"
+	if err := network.validate(); err == nil {
+		t.Fatal("success validate with invalid fetch_timeout_ms")
+	}
+
+	network.FFetchTimeoutMS = 60_000
+	if err := network.validate(); err == nil {
+		t.Fatal("success validate with invalid queue_period_ms")
+	}
+
+	network.FQueuePeriodMS = 5_000
+	if err := network.validate(); err == nil {
 		t.Fatal("success validate with invalid message_size_bytes")
 	}
 
@@ -47,10 +62,6 @@ func TestHiddenLakeNetworks(t *testing.T) {
 
 	if network.FMessageSizeBytes != 8192 {
 		t.Fatal("network.FMessageSizeBytes != 8192")
-	}
-
-	if network.FWorkSizeBits != 0 {
-		t.Fatal("network.FWorkSizeBits != 0")
 	}
 
 	networks := GetNetworks()

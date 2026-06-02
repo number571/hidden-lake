@@ -1,6 +1,7 @@
-# settings:
-#   message_size_bytes: 0 # -> 8192
-#   work_size_bits: 0
+settings:
+  message_size_bytes: 200
+  work_size_bits: 0
+  network_key: oMj49BD8he1n8bfq
 #   network_key: ""
 #   database_enabled: false
 #   watch_period: 0 # -> 1_000
@@ -12,10 +13,8 @@ logging:
 - warn
 - erro
 address:
-  external: 127.0.0.1:9501
-  internal: 127.0.0.1:9502
-endpoints: 
-- 127.0.0.1:9571
-# connection:
-#   devpath: ""
-#   channel: 0
+  external: 127.0.0.1:7501
+  internal: 127.0.0.1:7502
+connection:
+  devpath: "/dev/ttyUSB0"
+  channel: 0

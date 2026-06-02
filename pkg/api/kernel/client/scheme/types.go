@@ -17,3 +17,13 @@ func (p ISchemeType) String() string {
 		return "<nil>"
 	}
 }
+
+func GetCryptoSchemeType(v string) ISchemeType {
+	switch v {
+	case "", "hybrid":
+		return CHybridScheme
+	case "symmetric":
+		return CSymmetricScheme
+	}
+	return 0
+}

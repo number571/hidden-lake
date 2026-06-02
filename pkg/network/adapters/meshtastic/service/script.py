@@ -96,12 +96,11 @@ async def recv_binary_messages():
     with mutex:
         return_messages = received_binary_messages.copy()
         received_binary_messages = []
-    return {"messages": return_messages}
+    return return_messages
 
 @app.post("/", summary="Send binary data to the mesh network")
-async def send_binary_message(json_data: str = Body(...)):
+async def send_binary_message(payload: dict = Body(...)):
     """Takes Base64, decodes it into bytes and sends it to Mesh."""
-    payload = json.loads(json_data)
     
     global interface
     global is_connected

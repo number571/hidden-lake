@@ -21,6 +21,7 @@ import (
 	_ "embed"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
+	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	hla_settings "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -64,8 +65,8 @@ func NewMeshtasticAdapter(
 ) IMeshtasticAdapter {
 	adapterSettings := pSettings.GetAdapterSettings()
 	switch {
-	case adapterSettings.GetNetworkKey() != "":
-		panic("network_key != ''")
+	case adapterSettings.GetMessageSizeBytes() > CLimitMessageSizeBytes:
+		panic("message_size_bytes > 200")
 	case adapterSettings.GetWorkSizeBits() != 0:
 		panic("work_size_bits != 0")
 	}
@@ -87,21 +88,22 @@ func (p *sMeshtasticAdapter) WithLogger(pName string, pLogger logger.ILogger) IM
 }
 
 func (p *sMeshtasticAdapter) Run(pCtx context.Context) error {
-	defer func() { _ = p.closePythonScript() }()
-	go func() {
-		_ = p.runSubscriber(pCtx)
-		// internal logger
-	}()
-	if err := p.createPythonVenv(pCtx); err != nil {
+	ctx, cancel := context.WithCancel(pCtx)
+	defer cancel()
+
+	if err := p.createPythonVenv(ctx); err != nil {
 		return errors.Join(ErrCreatePythonVenv, err)
 	}
-	if err := p.installPythonRequirements(pCtx); err != nil {
+	if err := p.installPythonRequirements(ctx); err != nil {
 		return errors.Join(ErrInstallRequirements, err)
 	}
-	if err := p.runPythonScript(pCtx); err != nil {
+
+	go func() { _ = p.runSubscriber(ctx) }()
+	if err := p.runPythonScript(ctx); err != nil {
 		return errors.Join(ErrRunning, err)
 	}
-	return nil
+
+	return p.closePythonScript()
 }
 
 func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) error {
@@ -124,6 +126,21 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 	hash := encoding.HexEncode(pNetMsg.GetHash())
 	_ = p.fCache.Set(hash, []byte{})
 
+	delay := time.Duration(0)
+	if maxDelay := p.fSettings.GetMaxDelayTime(); maxDelay != 0 {
+		v := random.NewRandom().GetUint64() % uint64(maxDelay.Milliseconds()) // nolint:gosec
+		delay = time.Duration(v) * time.Millisecond                           // nolint:gosec
+	}
+
+	timer := time.NewTimer(delay)
+	defer timer.Stop()
+
+	select {
+	case <-pCtx.Done():
+		return pCtx.Err()
+	case <-timer.C:
+	}
+
 	httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
 	_, err := api.Request(
 		pCtx,
@@ -132,7 +149,7 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 		p.fServiceAddr,
 		nil,
 		&sBinaryMessagePayload{
-			FChannel: 0,
+			FChannel: p.fSettings.GetChannel(),
 			FMessage: pNetMsg.GetBody(),
 		},
 	)
@@ -177,22 +194,21 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 				nil,
 			)
 			if err != nil {
-				// TODO:
 				p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 				continue
 			}
 
 			var msgs []*sBinaryMessagePayload
 			if err := json.Unmarshal(rsp, &msgs); err != nil {
-				// TODO:
 				p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 				continue
 			}
 
 			for _, v := range msgs {
-				if uint64(len(v.FMessage)) != msgSize { // ok
-					// TODO:
-					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
+				if v.FChannel != p.fSettings.GetChannel() {
+					continue
+				}
+				if uint64(len(v.FMessage)) != msgSize {
 					continue
 				}
 

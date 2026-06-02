@@ -14,8 +14,8 @@ const (
 
 const (
 	tcLogging         = true
-	tcMessageSize     = 8192
-	tcWorkSize        = 10
+	tcMessageSize     = 200
+	tcWorkSize        = 0
 	tcNetwork         = "_"
 	tcDatabaseEnabled = true
 	tcAddressExternal = "external_address"

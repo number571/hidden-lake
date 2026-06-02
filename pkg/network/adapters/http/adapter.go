@@ -97,11 +97,14 @@ func (p *sHTTPAdapter) Run(pCtx context.Context) error {
 		mux.HandleFunc(k, v)
 	}
 
+	readTimeout := (p.fSettings.GetReadTimeout() << 1)
+	handleTimeout := (p.fSettings.GetHandleTimeout() << 1)
+
 	httpServer := &http.Server{
 		Addr:         address,
-		Handler:      http.TimeoutHandler(mux, p.fSettings.GetHandleTimeout(), "handle timeout"),
-		ReadTimeout:  p.fSettings.GetReadTimeout(),
-		WriteTimeout: p.fSettings.GetHandleTimeout(),
+		Handler:      http.TimeoutHandler(mux, handleTimeout, "handle timeout"),
+		ReadTimeout:  readTimeout,
+		WriteTimeout: handleTimeout,
 	}
 	go func() {
 		<-pCtx.Done()
@@ -365,7 +368,7 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 
 		if r.Method != http.MethodGet {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = api.Response(w, http.StatusMethodNotAllowed, []byte{})
 			return
 		}
 
@@ -373,7 +376,7 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 
 		if err := p.fDataBroker.Register(sid); err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnLimitOfSubscribers))
-			w.WriteHeader(http.StatusNotAcceptable)
+			_ = api.Response(w, http.StatusNotAcceptable, []byte{})
 			return
 		}
 

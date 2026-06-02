@@ -89,13 +89,7 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 }
 
 func (p *SConfigSettings) GetCryptoSchemeType() scheme.ISchemeType {
-	switch p.FCryptoSchemeType {
-	case "", "hybrid":
-		return scheme.CHybridScheme
-	case "symmetric":
-		return scheme.CSymmetricScheme
-	}
-	return 0
+	return scheme.GetCryptoSchemeType(p.FCryptoSchemeType)
 }
 
 func (p *SConfigSettings) GetMessageSizeBytes() uint64 {

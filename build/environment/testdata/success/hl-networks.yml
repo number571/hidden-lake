@@ -1,5 +1,8 @@
 default: &default_network
+  crypto_scheme_type: hybrid
   message_size_bytes: 4097
+  fetch_timeout_ms:   60000
+  queue_period_ms:    5000
 networks:
   __testdata__:
     <<: *default_network

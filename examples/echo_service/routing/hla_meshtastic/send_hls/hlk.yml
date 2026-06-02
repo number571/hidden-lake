@@ -1,0 +1,18 @@
+settings:
+  crypto_scheme_type: symmetric
+  message_size_bytes: 200
+  work_size_bits: 0
+  network_key: oMj49BD8he1n8bfq
+  fetch_timeout_ms: 600000
+  queue_period_ms: 180000
+logging:
+  - info
+  - warn
+  - erro
+address:
+  external: 127.0.0.1:7571
+  internal: :7572
+endpoints:
+  - 127.0.0.1:7502
+friends:
+  Bob: aabbccddeeff11223344556677889900aabbccddeeff11223344556677889900

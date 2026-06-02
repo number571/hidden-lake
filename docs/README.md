@@ -4,7 +4,7 @@ __Step 1__. Run HLC (composite of HL services).
 
 ```bash
 $ go install github.com/number571/hidden-lake/cmd/hlc@latest
-$ hlc --network oi4r9NW9Le7fKF9d
+$ hlc --network std-tcp
 ### Run HLK, HLA=tcp, HLS=pinger, HLS=messenger ###
 ```
 

@@ -25,6 +25,7 @@ type ISrvSettings interface {
 	GetChannel() uint8
 	GetDevPath() string
 	GetWatchPeriod() time.Duration
+	GetMaxDelayTime() time.Duration
 	GetReadTimeout() time.Duration
 	GetWriteTimeout() time.Duration
 }
