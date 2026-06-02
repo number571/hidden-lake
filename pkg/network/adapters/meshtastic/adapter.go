@@ -119,7 +119,7 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 		WithConn("meshtastic")
 
 	if uint64(msgGotLen) != msgLen {
-		p.fLogger.PushWarn(logBuilder)
+		p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnIncorrectLayer1))
 		return ErrInvalidMessageSize
 	}
 
@@ -200,15 +200,15 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 
 			var msgs []*sBinaryMessagePayload
 			if err := json.Unmarshal(rsp, &msgs); err != nil {
-				p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
+				p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
 				continue
 			}
 
 			for _, v := range msgs {
-				if v.FChannel != p.fSettings.GetChannel() {
+				switch {
+				case v.FChannel != p.fSettings.GetChannel():
 					continue
-				}
-				if uint64(len(v.FMessage)) != msgSize {
+				case uint64(len(v.FMessage)) != msgSize:
 					continue
 				}
 
@@ -224,10 +224,9 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 					WithProof(msg.GetProof()).
 					WithSize(len(msg.ToBytes()))
 
-				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
-
 				hash := encoding.HexEncode(msg.GetHash())
 				if ok := p.fCache.Set(hash, []byte{}); !ok {
+					p.fLogger.PushInfo(logBuilder.WithType(anon_logger.CLogInfoExist))
 					continue
 				}
 
@@ -235,6 +234,8 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 					p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
 					continue
 				}
+
+				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 			}
 		}
 	}
