@@ -127,9 +127,9 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 	_ = p.fCache.Set(hash, []byte{})
 
 	delay := time.Duration(0)
-	if maxDelay := p.fSettings.GetMaxDelayTime(); maxDelay != 0 {
-		v := random.NewRandom().GetUint64() % uint64(maxDelay.Milliseconds()) // nolint:gosec
-		delay = time.Duration(v) * time.Millisecond                           // nolint:gosec
+	if maxDelay := p.fSettings.GetMaxDelayTime().Milliseconds(); maxDelay != 0 {
+		v := random.NewRandom().GetUint64() % uint64(maxDelay) // nolint:gosec
+		delay = time.Duration(v) * time.Millisecond            // nolint:gosec
 	}
 
 	timer := time.NewTimer(delay)

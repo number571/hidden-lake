@@ -1,5 +1,9 @@
 default: &default_network
-  message_size_bytes: 4096
+  crypto_scheme_type: hybrid  # asymmetric+symmetric
+  message_size_bytes: 8192    # 8KiB
+  work_size_bits:     22      # PoW(22b)
+  fetch_timeout_ms:   60000   # 60s for response
+  queue_period_ms:    5000    # 5s per message
 networks:
   __testdata__:
     <<: *default_network

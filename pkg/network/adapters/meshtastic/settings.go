@@ -37,12 +37,11 @@ type SServeSettings struct {
 
 func NewSettings(pSett *SSettings) ISettings {
 	if pSett == nil {
-		adapterSettings := adapters.NewSettings(&adapters.SSettings{
-			FMessageSizeBytes: CLimitMessageSizeBytes,
-			FWorkSizeBits:     0,
-			FNetworkKey:       "",
-		})
-		pSett = &SSettings{FAdapterSettings: adapterSettings}
+		pSett = &SSettings{
+			FAdapterSettings: adapters.NewSettings(&adapters.SSettings{
+				FMessageSizeBytes: CLimitMessageSizeBytes,
+			}),
+		}
 	}
 	return (&sSettings{
 		FAdapterSettings: pSett.FAdapterSettings,
@@ -105,5 +104,5 @@ func (p *sSettings) GetWriteTimeout() time.Duration {
 }
 
 func (p *sSettings) GetMaxDelayTime() time.Duration {
-	return p.FServeSettings.FWriteTimeout
+	return p.FServeSettings.FMaxDelayTime
 }

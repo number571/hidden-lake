@@ -1,6 +1,3 @@
-proto_mask:
-  network: 0x1
-  service: 0x2
 storage_manager:
   queue_pool_cap: [1, 2]
   cache_hashes_cap: 2

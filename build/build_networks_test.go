@@ -8,12 +8,17 @@ import (
 func TestHiddenLakeNetworks(t *testing.T) {
 	t.Parallel()
 
-	network := SNetwork{}
+	network := SNetwork{FCryptoSchemeType: "_"}
 	if err := network.validate(); err == nil {
 		t.Fatal("success validate with invalid crypto_scheme_type")
 	}
 
 	network.FCryptoSchemeType = "symmetric"
+	if err := network.validate(); err == nil {
+		t.Fatal("success validate with invalid message_size_bytes")
+	}
+
+	network.FMessageSizeBytes = 8192
 	if err := network.validate(); err == nil {
 		t.Fatal("success validate with invalid fetch_timeout_ms")
 	}
@@ -24,13 +29,8 @@ func TestHiddenLakeNetworks(t *testing.T) {
 	}
 
 	network.FQueuePeriodMS = 5_000
-	if err := network.validate(); err == nil {
-		t.Fatal("success validate with invalid message_size_bytes")
-	}
-
-	network.FMessageSizeBytes = 8192
 	if err := network.validate(); err != nil {
-		t.Fatal("error validate with exist message_size_bytes")
+		t.Fatal(err)
 	}
 
 	network.FConnections = []string{"127.0.0.1:8080"}
