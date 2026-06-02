@@ -45,10 +45,6 @@ func SetSettings(settings SSettings) error {
 }
 
 type SSettings struct {
-	FProtoMask struct {
-		FNetwork uint32 `yaml:"network"`
-		FService uint32 `yaml:"service"`
-	} `yaml:"proto_mask"`
 	FStorageManager struct {
 		FQueuePoolCap   [2]uint64 `yaml:"queue_pool_cap"`
 		FCacheHashesCap uint64    `yaml:"cache_hashes_cap"`

@@ -10,7 +10,6 @@ import (
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
@@ -27,7 +26,9 @@ var (
 )
 
 type sTCPAdapter struct {
+	fSettings   ISettings
 	fNetMsgChan chan layer1.IMessage
+
 	fConnKeeper connkeeper.IConnKeeper
 
 	fShortName string
@@ -41,38 +42,36 @@ func NewTCPAdapter(
 ) ITCPAdapter {
 	adapterSettings := pSettings.GetAdapterSettings()
 	p := &sTCPAdapter{
+		fSettings:   pSettings,
 		fNetMsgChan: make(chan layer1.IMessage, netMessageChanSize),
-		fConnKeeper: connkeeper.NewConnKeeper(
-			connkeeper.NewSettings(&connkeeper.SSettings{
-				FDuration:    pSettings.GetConnKeepPeriod(),
-				FConnections: pConnsGetter,
-			}),
-			network.NewNode(
-				network.NewSettings(&network.SSettings{
-					FAddress:      pSettings.GetAddress(),
-					FMaxConnects:  pSettings.GetConnNumLimit(),
-					FReadTimeout:  pSettings.GetRecvTimeout(),
-					FWriteTimeout: pSettings.GetSendTimeout(),
-					FConnSettings: conn.NewSettings(&conn.SSettings{
-						FMessageSettings:       adapterSettings,
-						FLimitMessageSizeBytes: adapterSettings.GetMessageSizeBytes(),
-						FWaitReadTimeout:       pSettings.GetWaitTimeout(),
-						FDialTimeout:           pSettings.GetDialTimeout(),
-						FReadTimeout:           pSettings.GetRecvTimeout(),
-						FWriteTimeout:          pSettings.GetSendTimeout(),
-					}),
-				}),
-				pCache,
-			),
-		),
 		fLogger: logger.NewLogger(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
 		),
 	}
-	p.fConnKeeper.GetNetworkNode().HandleFunc(
-		build.GetSettings().FProtoMask.FNetwork,
-		p.handlerFunc(adapterSettings),
+	p.fConnKeeper = connkeeper.NewConnKeeper(
+		connkeeper.NewSettings(&connkeeper.SSettings{
+			FDuration:    pSettings.GetConnKeepPeriod(),
+			FConnections: pConnsGetter,
+		}),
+		network.NewNode(
+			network.NewSettings(&network.SSettings{
+				FAddress:      pSettings.GetAddress(),
+				FMaxConnects:  pSettings.GetConnNumLimit(),
+				FReadTimeout:  pSettings.GetRecvTimeout(),
+				FWriteTimeout: pSettings.GetSendTimeout(),
+				FConnSettings: conn.NewSettings(&conn.SSettings{
+					FMessageSettings:       adapterSettings,
+					FLimitMessageSizeBytes: adapterSettings.GetMessageSizeBytes(),
+					FWaitReadTimeout:       pSettings.GetWaitTimeout(),
+					FDialTimeout:           pSettings.GetDialTimeout(),
+					FReadTimeout:           pSettings.GetRecvTimeout(),
+					FWriteTimeout:          pSettings.GetSendTimeout(),
+				}),
+			}),
+			p.handlerFunc(adapterSettings),
+			pCache,
+		),
 	)
 	return p
 }
@@ -142,13 +141,21 @@ func (p *sTCPAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sTCPAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) error {
+	msgLen := p.fSettings.GetAdapterSettings().GetMessageSizeBytes() + layer1.CMessageHeadSize
+	msgGotLen := len(pNetMsg.ToBytes())
+
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
 		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
 		WithHash(pNetMsg.GetHash()).
 		WithProof(pNetMsg.GetProof()).
-		WithSize(len(pNetMsg.ToBytes())).
+		WithSize(msgGotLen).
 		WithConn("tcp")
+
+	if uint64(msgGotLen) != msgLen {
+		p.fLogger.PushWarn(logBuilder)
+		return ErrInvalidMessageSize
+	}
 
 	networkNode := p.fConnKeeper.GetNetworkNode()
 	if err := networkNode.BroadcastMessage(pCtx, pNetMsg); err != nil {

@@ -28,12 +28,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if gSettings.FProtoMask.FNetwork != 0x5f67705f {
-		t.Fatal(`gSettings.ProtoMask.Network != 0x5f67705f`)
-	}
-	if gSettings.FProtoMask.FService != 0x5f686c5f {
-		t.Fatal(`gSettings.ProtoMask.Service != 0x5f686c5f`)
-	}
 	if gSettings.FStorageManager.FCacheHashesCap != 2048 {
 		t.Fatal(`gSettings.FStorageManager.CacheHashesCap != 2048`)
 	}
@@ -51,22 +45,6 @@ func TestHiddenLakeSettings(t *testing.T) {
 	}
 	if gSettings.FStorageManager.FQueuePoolCap[1] != 32 {
 		t.Fatal(`gSettings.FStorageManager.FQueuePoolCap[1] != 32`)
-	}
-
-	newSettings := GetSettings()
-
-	newProtoMaskNetwork := uint32(0x1)
-	if newSettings.FProtoMask.FNetwork == newProtoMaskNetwork {
-		t.Fatal("new set value already equal")
-	}
-
-	newSettings.FProtoMask.FNetwork = newProtoMaskNetwork
-	if err := SetSettings(newSettings); err != nil {
-		t.Fatal(err)
-	}
-
-	if newSettings.FProtoMask.FNetwork != newProtoMaskNetwork {
-		t.Fatal("new set value not saved")
 	}
 
 	if err := SetSettings(SSettings{}); err == nil {

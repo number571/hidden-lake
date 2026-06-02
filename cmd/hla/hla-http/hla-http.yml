@@ -10,8 +10,8 @@ logging:
 - warn
 - erro
 address:
-  external: 127.0.0.1:9511
-  internal: 127.0.0.1:9512
+  external: 127.0.0.1:9501
+  internal: 127.0.0.1:9502
 endpoints: 
 - 127.0.0.1:9571
 # connections:

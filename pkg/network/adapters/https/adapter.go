@@ -126,6 +126,9 @@ func (p *sHTTPSAdapter) Run(pCtx context.Context) error {
 }
 
 func (p *sHTTPSAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) error {
+	msgLen := p.fSettings.GetAdapterSettings().GetMessageSizeBytes() + layer1.CMessageHeadSize
+	msgGotLen := len(pNetMsg.ToBytes())
+
 	logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 	logBuilder.
 		WithType(internal_anon_logger.CLogBaseSendNetworkMessage).
@@ -133,6 +136,11 @@ func (p *sHTTPSAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessage) e
 		WithProof(pNetMsg.GetProof()).
 		WithSize(len(pNetMsg.ToBytes())).
 		WithConn("https")
+
+	if uint64(msgGotLen) != msgLen {
+		p.fLogger.PushWarn(logBuilder)
+		return ErrInvalidMessageSize
+	}
 
 	// adapter can redirect received message
 	hash := encoding.HexEncode(pNetMsg.GetHash())
@@ -366,12 +374,6 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 			WithHash(msg.GetHash()).
 			WithProof(msg.GetProof()).
 			WithSize(len(msg.ToBytes()))
-
-		if msg.GetPayload().GetHead() != build.GetSettings().FProtoMask.FNetwork {
-			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnPayloadNull))
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
 
 		p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogBaseRecvNetworkMessage))
 

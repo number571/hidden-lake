@@ -12,10 +12,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
@@ -162,7 +160,7 @@ func TestApp(t *testing.T) {
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1Settings,
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
+		msgBytes,
 	)
 
 	if err := client.ProduceMessage(ctx, netMsg); err != nil {
@@ -184,6 +182,9 @@ func TestApp(t *testing.T) {
 			FReadTimeout:  time.Second,
 			FWriteTimeout: time.Second,
 		}),
+		func(ctx context.Context, i1 network.INode, i2 conn.IConn, i3 layer1.IMessage) error {
+			return nil
+		},
 		cache.NewLRUCache(128),
 	)
 

@@ -9,8 +9,6 @@ import (
 	"github.com/number571/go-peer/pkg/anonymity/qb/queue"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
-	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
@@ -38,7 +36,7 @@ func NewHiddenLakeNode(
 ) (IHiddenLakeNode, error) {
 	buildSettings := build.GetSettings()
 	adaptersSettings := pSettings.GetAdapterSettings()
-	if pScheme.GetPayloadLimit() <= encoding.CSizeUint64 {
+	if pScheme.GetPayloadLimit() <= anonymity.CMessageHeadSize {
 		return nil, ErrPayloadLimit
 	}
 	return &sHiddenLakeNode{
@@ -48,6 +46,7 @@ func NewHiddenLakeNode(
 				FServiceName:  pSettings.GetFmtAppName(),
 				FFetchTimeout: pSettings.GetFetchTimeout(),
 			}),
+			handler.RequestHandler(pHandlerF),
 			pSettings.GetLogger(),
 			pRunnerAdapter,
 			pKVDatabase,
@@ -58,16 +57,12 @@ func NewHiddenLakeNode(
 						FSettings: adaptersSettings,
 						FParallel: pSettings.GetPowParallel(),
 					}),
-					FNetworkMask:  buildSettings.FProtoMask.FNetwork,
 					FQueuePeriod:  pSettings.GetQueuePeriod(),
 					FConsumersCap: pSettings.GetQBPConsumers(),
 					FQueuePoolCap: buildSettings.FStorageManager.FQueuePoolCap,
 				}),
 				pScheme,
 			),
-		).HandleFunc(
-			buildSettings.FProtoMask.FService,
-			handler.RequestHandler(pHandlerF),
 		),
 	}, nil
 }
@@ -113,14 +108,10 @@ func (p *sHiddenLakeNode) SendRequest(
 	pKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) error {
-	buildSettings := build.GetSettings()
 	err := p.fOriginNode.SendPayload(
 		pCtx,
 		pKey,
-		payload.NewPayload64(
-			uint64(buildSettings.FProtoMask.FService),
-			pRequest.ToBytes(),
-		),
+		pRequest.ToBytes(),
 	)
 	if err != nil {
 		return errors.Join(ErrSendRequest, err)
@@ -133,14 +124,10 @@ func (p *sHiddenLakeNode) FetchRequest(
 	pKey layer2.IParticipantKey,
 	pRequest request.IRequest,
 ) (response.IResponse, error) {
-	buildSettings := build.GetSettings()
 	rspBytes, err := p.fOriginNode.FetchPayload(
 		pCtx,
 		pKey,
-		payload.NewPayload32(
-			buildSettings.FProtoMask.FService,
-			pRequest.ToBytes(),
-		),
+		pRequest.ToBytes(),
 	)
 	if err != nil {
 		return nil, errors.Join(ErrFetchRequest, err)

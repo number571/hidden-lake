@@ -12,7 +12,6 @@ import (
 
 const (
 	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%dB"
-	cLogAddrTemplate = " addr=%s...%s"
 	cLogConnTemplate = " conn=%s"
 )
 
@@ -57,10 +56,6 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 
 	if x := pLogGetter.GetConn(); x != "" {
 		log.WriteString(fmt.Sprintf(cLogConnTemplate, x))
-	}
-	if x := pLogGetter.GetPubKey(); x != nil {
-		addr := strings.ToUpper(x.GetHasher().ToString())
-		log.WriteString(fmt.Sprintf(cLogAddrTemplate, addr[:8], addr[len(addr)-8:]))
 	}
 
 	return log.String()

@@ -1,7 +1,7 @@
 package app
 
 const (
-	errPrefix = "internal/adapters/http/pkg/app = "
+	errPrefix = "internal/adapters/https/pkg/app = "
 )
 
 type SError struct {

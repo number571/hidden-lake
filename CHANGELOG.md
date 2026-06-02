@@ -6,6 +6,15 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `cmd/hla/hla-meshtastic`: add new adapter - Meshtastic/LoRa
+
+### CHANGES
+
+- `build`: deleted NetworkMask, ServiceMask
+- `go-peer`: update version
+
 <!-- ... -->
 
 ## v1.11.1

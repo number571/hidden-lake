@@ -13,10 +13,8 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
@@ -146,7 +144,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
+		msgBytes,
 	)
 
 	errCh := make(chan error, 1)
@@ -284,22 +282,10 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(0x01, []byte{1}),
+		[]byte{1},
 	)
 	if err := client.ProduceMessage(ctx, netMsg2); err == nil {
 		t.Fatal("success produce invalid size message")
-	}
-
-	msgBytesX := []byte("hello, world!")
-	msgBytesX = append(msgBytesX, random.NewRandom().GetBytes(uint64(8192-len(msgBytesX)))...) //nolint:gosec
-	netMsgX := layer1.NewMessage(
-		layer1.NewConstructSettings(&layer1.SConstructSettings{
-			FSettings: layer1.NewSettings(&layer1.SSettings{}),
-		}),
-		payload.NewPayload32(999, msgBytesX),
-	)
-	if err := client.ProduceMessage(ctx, netMsgX); err == nil {
-		t.Fatal("success produce invalid proto mask")
 	}
 
 	if err := testCustomProduceMessage(ctx, http.MethodGet, testutils.TgAddrs[18], netMsg.ToString()); err == nil {

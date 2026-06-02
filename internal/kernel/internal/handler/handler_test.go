@@ -21,7 +21,6 @@ import (
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
 	"github.com/number571/go-peer/pkg/network/connkeeper"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
@@ -131,7 +130,9 @@ func testEchoPage(w http.ResponseWriter, r *http.Request) {
 
 func testAllCreate(cfgPath, dbPath, srvAddr string) (config.IWrapper, anonymity.INode, context.Context, context.CancelFunc, *http.Server) {
 	wcfg := testNewWrapper(cfgPath)
-	node, ctx, cancel := testRunNewNode(dbPath, "")
+	node, ctx, cancel := testRunNewNode(dbPath, "", func(ctx context.Context, i anonymity.INode, ik layer2.IParticipantKey, b []byte) ([]byte, error) {
+		return nil, nil
+	})
 	srvc := testRunService(ctx, wcfg, node, srvAddr)
 	time.Sleep(200 * time.Millisecond)
 	return wcfg, node, ctx, cancel, srvc
@@ -191,20 +192,21 @@ func testNewWrapper(cfgPath string) config.IWrapper {
 	return config.NewWrapper(cfg)
 }
 
-func testRunNewNode(dbPath, addr string) (anonymity.INode, context.Context, context.CancelFunc) {
+func testRunNewNode(dbPath, addr string, handlerF anonymity.IHandlerF) (anonymity.INode, context.Context, context.CancelFunc) {
 	_ = os.RemoveAll(dbPath)
-	node := testNewNode(dbPath, addr).HandleFunc(build.GetSettings().FProtoMask.FService, nil)
+	node := testNewNode(dbPath, addr, handlerF)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() { _ = node.Run(ctx) }()
 	return node, ctx, cancel
 }
 
-func testNewNode(dbPath, addr string) anonymity.INode {
+func testNewNode(dbPath, addr string, handlerF anonymity.IHandlerF) anonymity.INode {
 	node := anonymity.NewNode(
 		anonymity.NewSettings(&anonymity.SSettings{
 			FServiceName:  "TEST",
 			FFetchTimeout: time.Minute,
 		}),
+		handlerF,
 		logger.NewLogger(
 			logger.NewSettings(&logger.SSettings{}),
 			func(_ logger.ILogArg) string { return "" },
@@ -237,7 +239,6 @@ func testNewNode(dbPath, addr string) anonymity.INode {
 						FWorkSizeBits: tcWorkSize,
 					}),
 				}),
-				FNetworkMask:  build.GetSettings().FProtoMask.FNetwork,
 				FQueuePeriod:  500 * time.Millisecond,
 				FConsumersCap: 1,
 				FQueuePoolCap: [2]uint64{tcQueueCapacity, tcQueueCapacity},
@@ -336,7 +337,7 @@ func (p *tsHLNode) Run(context.Context) error      { return nil }
 func (p *tsHLNode) GetOriginNode() anonymity.INode { return p.tsNode }
 
 func (p *tsHLNode) SendRequest(ctx context.Context, k layer2.IParticipantKey, r request.IRequest) error {
-	return p.tsNode.SendPayload(ctx, k, payload.NewPayload64(1, r.ToBytes()))
+	return p.tsNode.SendPayload(ctx, k, r.ToBytes())
 }
 
 func (p *tsHLNode) FetchRequest(
@@ -344,7 +345,7 @@ func (p *tsHLNode) FetchRequest(
 	k layer2.IParticipantKey,
 	r request.IRequest,
 ) (response.IResponse, error) {
-	b, err := p.tsNode.FetchPayload(ctx, k, payload.NewPayload32(1, r.ToBytes()))
+	b, err := p.tsNode.FetchPayload(ctx, k, r.ToBytes())
 	if err != nil {
 		return nil, err
 	}
@@ -439,13 +440,13 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 
 func (p *tsNode) GetKeysContainer() layer2.IKeysContainer { return layer2.NewKeysContainer() }
 
-func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, payload.IPayload64) error {
+func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, []byte) error {
 	if !p.fSendOK {
 		return errors.New("some error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, payload.IPayload32) ([]byte, error) {
+func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, []byte) ([]byte, error) {
 	if !p.fFetchOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
@@ -523,10 +524,7 @@ func (p *tsHiddenLakeNode) SendRequest(
 	return p.fAnon.SendPayload(
 		pCtx,
 		pPubKey,
-		payload.NewPayload64(
-			uint64(build.GetSettings().FProtoMask.FService),
-			pRequest.ToBytes(),
-		),
+		pRequest.ToBytes(),
 	)
 }
 
@@ -538,10 +536,7 @@ func (p *tsHiddenLakeNode) FetchRequest(
 	rspBytes, err := p.fAnon.FetchPayload(
 		pCtx,
 		pPubKey,
-		payload.NewPayload32(
-			build.GetSettings().FProtoMask.FService,
-			pRequest.ToBytes(),
-		),
+		pRequest.ToBytes(),
 	)
 	if err != nil {
 		return nil, err

@@ -188,7 +188,7 @@ To communicate with other network nodes, you must first obtain your public key, 
 > The Hidden Lake network can also operate using a symmetric encryption scheme. To do this, set `crypto_scheme_type: symmetric` in the settings field of the `hlk.yml` file. This can significantly reduce the size of transmitted messages, but requires a secure communication channel for key exchange.
 
 ```bash
-$ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"friend", "friend_key":"PubKey{...}"}'
+$ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"<name>", "friend_key":"<key>"}'
 ```
 
 __Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-messenger-cli](cmd/hls/hls-messenger/client/hls-messenger-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 

@@ -13,9 +13,10 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrRunning        = &SError{"adapter running"}
-	ErrNoConnections  = &SError{"no connections"}
-	ErrBadRequest     = &SError{"bad request"}
-	ErrDecodeResponse = &SError{"decode response"}
-	ErrMessageExist   = &SError{"message exist"}
+	ErrRunning            = &SError{"adapter running"}
+	ErrNoConnections      = &SError{"no connections"}
+	ErrBadRequest         = &SError{"bad request"}
+	ErrDecodeResponse     = &SError{"decode response"}
+	ErrMessageExist       = &SError{"message exist"}
+	ErrInvalidMessageSize = &SError{"invalid message size"}
 )

@@ -14,9 +14,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
-	"github.com/number571/go-peer/pkg/payload"
 	testutils_gopeer "github.com/number571/go-peer/test/utils"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/adapters/https/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
@@ -64,7 +62,7 @@ func TestInitApp(t *testing.T) {
 	testDeleteFiles(tcPathConfig)
 	defer testDeleteFiles(tcPathConfig)
 
-	if err := os.WriteFile(tcPathConfig+"hla-http.yml", []byte(tcDataConfig), 0600); err != nil {
+	if err := os.WriteFile(tcPathConfig+"hla-https.yml", []byte(tcDataConfig), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -203,7 +201,7 @@ func TestApp(t *testing.T) {
 				FNetworkKey:   "_",
 			}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
+		msgBytes,
 	)
 
 	if err := intClient.ProduceMessage(ctx, netMsg); err != nil {
@@ -237,7 +235,7 @@ func TestApp(t *testing.T) {
 				FNetworkKey:   "_",
 			}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msg2Bytes),
+		msg2Bytes,
 	)
 
 	_, err = api.Request(

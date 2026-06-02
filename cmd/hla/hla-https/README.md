@@ -33,7 +33,7 @@ $ go run ./cmd/hla/hla-https
 > ...
 ```
 
-Open port `9531` (HTTPS, external), `9532` (HTTPS, internal).
+Open port `9501` (HTTPS, external), `9502` (HTTPS, internal).
 Creates [`./hla-https.yml`](./hla-https.yml) file.
 
 ## Running options

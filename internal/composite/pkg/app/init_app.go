@@ -13,6 +13,9 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 
+	hlk_app "github.com/number571/hidden-lake/internal/kernel/pkg/app"
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+
 	hla_tcp_app "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/app"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 
@@ -22,6 +25,9 @@ import (
 	hla_https_app "github.com/number571/hidden-lake/internal/adapters/https/pkg/app"
 	hla_https_settings "github.com/number571/hidden-lake/internal/adapters/https/pkg/settings"
 
+	hla_meshtastic_app "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/app"
+	hla_meshtastic_settings "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/settings"
+
 	hls_messenger_app "github.com/number571/hidden-lake/internal/services/messenger/pkg/app"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 
@@ -30,9 +36,19 @@ import (
 
 	hls_pinger_app "github.com/number571/hidden-lake/internal/services/pinger/pkg/app"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
+)
 
-	hlk_app "github.com/number571/hidden-lake/internal/kernel/pkg/app"
-	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+var (
+	mapInitApp = map[string]func([]string, flag.IFlags) (types.IRunner, error){
+		hlk_settings.CAppShortName:            hlk_app.InitApp,
+		hla_tcp_settings.CAppShortName:        hla_tcp_app.InitApp,
+		hla_http_settings.CAppShortName:       hla_http_app.InitApp,
+		hla_https_settings.CAppShortName:      hla_https_app.InitApp,
+		hla_meshtastic_settings.CAppShortName: hla_meshtastic_app.InitApp,
+		hls_messenger_settings.CAppShortName:  hls_messenger_app.InitApp,
+		hls_filesharer_settings.CAppShortName: hls_filesharer_app.InitApp,
+		hls_pinger_settings.CAppShortName:     hls_pinger_app.InitApp,
+	}
 )
 
 func InitApp(pArgs []string, pFlags flag.IFlags) (types.IRunner, error) {
@@ -70,35 +86,18 @@ func getRunners(pCfg config.IConfig, pArgs []string, pFlags flag.IFlags) ([]type
 		mapsdupl     = make(map[string]struct{}, len(applications))
 	)
 
-	var (
-		runner types.IRunner
-		err    error
-	)
-
 	for _, app := range applications {
 		if _, ok := mapsdupl[app]; ok {
 			return nil, ErrHasDuplicates
 		}
 		mapsdupl[app] = struct{}{}
 
-		switch app {
-		case hlk_settings.CAppShortName:
-			runner, err = hlk_app.InitApp(pArgs, pFlags)
-		case hls_messenger_settings.CAppShortName:
-			runner, err = hls_messenger_app.InitApp(pArgs, pFlags)
-		case hls_filesharer_settings.CAppShortName:
-			runner, err = hls_filesharer_app.InitApp(pArgs, pFlags)
-		case hls_pinger_settings.CAppShortName:
-			runner, err = hls_pinger_app.InitApp(pArgs, pFlags)
-		case hla_tcp_settings.CAppShortName:
-			runner, err = hla_tcp_app.InitApp(pArgs, pFlags)
-		case hla_http_settings.CAppShortName:
-			runner, err = hla_http_app.InitApp(pArgs, pFlags)
-		case hla_https_settings.CAppShortName:
-			runner, err = hla_https_app.InitApp(pArgs, pFlags)
-		default:
+		initApp, ok := mapInitApp[app]
+		if !ok {
 			return nil, ErrUnknownService
 		}
+
+		runner, err := initApp(pArgs, pFlags)
 		if err != nil {
 			return nil, errors.Join(ErrInitApp, err)
 		}

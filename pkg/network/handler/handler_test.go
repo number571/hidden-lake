@@ -17,7 +17,6 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/network"
 	"github.com/number571/go-peer/pkg/network/conn"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/pkg/network/request"
@@ -138,10 +137,10 @@ func (p *tsNode) GetQBProcessor() queue.IQBProblemProcessor {
 func (p *tsNode) GetAdapter() adapters.IAdapter           { return nil }
 func (p *tsNode) GetKeysContainer() layer2.IKeysContainer { return layer2.NewKeysContainer() }
 
-func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, payload.IPayload64) error {
+func (p *tsNode) SendPayload(context.Context, layer2.IParticipantKey, []byte) error {
 	return nil
 }
-func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, payload.IPayload32) ([]byte, error) {
+func (p *tsNode) FetchPayload(context.Context, layer2.IParticipantKey, []byte) ([]byte, error) {
 	return response.NewResponseBuilder().WithCode(200).Build().ToBytes(), nil
 }
 

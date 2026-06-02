@@ -56,7 +56,7 @@ func HandleNetworkOnlineAPI(
 			}
 			if u.Scheme != pkg_settings.CAppAdapterName {
 				pLogger.PushWarn(logBuilder.WithMessage("scheme_rejected"))
-				_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != tcp")
+				_ = api.Response(pW, http.StatusAccepted, "rejected: scheme != http")
 				return
 			}
 

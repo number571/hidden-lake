@@ -15,7 +15,6 @@ import (
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
 	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -321,7 +320,6 @@ func testAllPushFree(node anonymity.INode, cancel context.CancelFunc, srv *http.
 }
 
 func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFunc) {
-	node, ctx, cancel := testRunNewNode(dbPath, testutils.TgAddrs[11])
 	rawCFG := &config.SConfig{
 		FSettings: &config.SConfigSettings{
 			FMessageSizeBytes: tcMessageSize,
@@ -336,7 +334,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 
 	cfg, err := config.BuildConfig(cfgPath, rawCFG)
 	if err != nil {
-		return nil, cancel
+		return nil, func() {}
 	}
 
 	logger := logger.NewLogger(
@@ -344,10 +342,7 @@ func testNewPushNode(cfgPath, dbPath string) (anonymity.INode, context.CancelFun
 		func(_ logger.ILogArg) string { return "" },
 	)
 
-	node.HandleFunc(
-		build.GetSettings().FProtoMask.FService,
-		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
-	)
+	node, ctx, cancel := testRunNewNode(dbPath, testutils.TgAddrs[11], handler.RequestHandler(HandleServiceFunc(cfg, logger)))
 	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()

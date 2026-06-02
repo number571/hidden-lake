@@ -1,0 +1,15 @@
+# settings:
+#   message_size_bytes: 0 # -> 8192
+#   database_enabled: false
+logging:
+- info
+- warn
+- erro
+address:
+  external: 127.0.0.1:9501
+  internal: 127.0.0.1:9502
+endpoints: 
+- 127.0.0.1:9571
+# connection:
+#   devpath: ""
+#   channel: ""

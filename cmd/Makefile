@@ -13,6 +13,7 @@ build:
 		hla/hla-tcp	\
 		hla/hla-http \
 		hla/hla-https \
+		hla/hla-meshtastic \
 		hls/hls-messenger \
 		hls/hls-filesharer \
 		hls/hls-pinger; \

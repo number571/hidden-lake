@@ -33,7 +33,7 @@ $ go run ./cmd/hla/hla-http
 > ...
 ```
 
-Open port `9511` (HTTP, external), `9512` (HTTP, internal).
+Open port `9501` (HTTP, external), `9502` (HTTP, internal).
 Creates [`./hla-http.yml`](./hla-http.yml) file.
 
 ## Running options

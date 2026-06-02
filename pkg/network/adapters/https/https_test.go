@@ -14,9 +14,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/random"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/go-peer/pkg/payload"
 	"github.com/number571/go-peer/pkg/storage/cache"
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
 	testutils "github.com/number571/hidden-lake/test/utils"
 
@@ -165,7 +163,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes),
+		msgBytes,
 	)
 
 	time.Sleep(time.Second)
@@ -231,27 +229,6 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with invalid sid")
 	}
 
-	msgBytesX := []byte("hello, world!")
-	msgBytesX = append(msgBytesX, random.NewRandom().GetBytes(uint64(8192-len(msgBytesX)))...) //nolint:gosec
-	netMsgX := layer1.NewMessage(
-		layer1.NewConstructSettings(&layer1.SConstructSettings{
-			FSettings: layer1.NewSettings(&layer1.SSettings{}),
-		}),
-		payload.NewPayload32(111, msgBytesX),
-	)
-
-	_, err = api.Request(
-		ctx,
-		httpClient,
-		http.MethodPost,
-		"https://"+testutils.TgAddrs[19]+settings.CHandleAdapterProducePath+"?sid=username4",
-		http.Header{hla_https_settings.CAuthTokenHeader: []string{"password4"}},
-		netMsgX.ToBytes(),
-	)
-	if err == nil {
-		t.Fatal("success request with invalid proto network")
-	}
-
 	_, err = api.Request(
 		ctx,
 		httpClient,
@@ -283,7 +260,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytes2),
+		msgBytes2,
 	)
 
 	chErr1 := make(chan error, 1)
@@ -348,7 +325,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytesY),
+		msgBytesY,
 	)
 	_, err = api.Request(
 		ctx,
@@ -368,7 +345,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		layer1.NewConstructSettings(&layer1.SConstructSettings{
 			FSettings: layer1.NewSettings(&layer1.SSettings{}),
 		}),
-		payload.NewPayload32(build.GetSettings().FProtoMask.FNetwork, msgBytesZ),
+		msgBytesZ,
 	)
 	_, err = api.Request(
 		ctx,

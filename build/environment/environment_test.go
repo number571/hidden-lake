@@ -31,11 +31,6 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	settings := build.GetSettings()
-	if settings.FProtoMask.FNetwork != 0x01 {
-		t.Fatal("settings are not saved")
-	}
-
 	networks := build.GetNetworks()
 	testNetwork, ok := networks["__testdata__"]
 	if !ok || testNetwork.FMessageSizeBytes != 4097 {
@@ -44,11 +39,6 @@ func TestSuccessSetBuildByPath(t *testing.T) {
 
 	if oks, err := SetBuildByPath("__not_found_path"); err != nil || oks[0] || oks[1] {
 		t.Fatal("success build not found path")
-	}
-
-	settings = build.GetSettings()
-	if settings.FProtoMask.FNetwork != 0x01 {
-		t.Fatal("settings are rewrites success with not found path")
 	}
 
 	networks = build.GetNetworks()

@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/closer"
@@ -21,8 +20,8 @@ import (
 	testutils "github.com/number571/hidden-lake/test/utils"
 
 	anonymity "github.com/number571/go-peer/pkg/anonymity/qb"
+	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/go-peer/pkg/payload"
 )
 
 func TestHandleServiceFunc(t *testing.T) {
@@ -187,20 +186,16 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 		return nil, nil, err
 	}
 
-	node, ctx, cancel := testRunNewNode(fmt.Sprintf(tcPathDBTemplate, 9), testutils.TgAddrs[4])
-	if node == nil {
-		return nil, nil, errors.New("node is not running")
-	}
-
 	logger := logger.NewLogger(
 		logger.NewSettings(&logger.SSettings{}),
 		func(_ logger.ILogArg) string { return "" },
 	)
 
-	node.HandleFunc(
-		build.GetSettings().FProtoMask.FService,
-		handler.RequestHandler(HandleServiceFunc(cfg, logger)),
-	)
+	node, ctx, cancel := testRunNewNode(fmt.Sprintf(tcPathDBTemplate, 9), testutils.TgAddrs[4], handler.RequestHandler(HandleServiceFunc(cfg, logger)))
+	if node == nil {
+		return nil, nil, errors.New("node is not running")
+	}
+
 	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
@@ -214,7 +209,9 @@ func testStartNodeHLS() (anonymity.INode, context.CancelFunc, error) {
 func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	time.Sleep(time.Second)
 
-	node, ctx, cancel := testRunNewNode(fmt.Sprintf(tcPathDBTemplate, 10), "")
+	node, ctx, cancel := testRunNewNode(fmt.Sprintf(tcPathDBTemplate, 10), "", func(ctx context.Context, i anonymity.INode, ik layer2.IParticipantKey, b []byte) ([]byte, error) {
+		return nil, nil
+	})
 	if node == nil {
 		return nil, cancel, errors.New("node is not running")
 	}
@@ -225,19 +222,16 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 		return nil, cancel, err
 	}
 
-	pld := payload.NewPayload32(
-		build.GetSettings().FProtoMask.FService,
-		request.NewRequestBuilder().
-			WithMethod(http.MethodGet).
-			WithHost(tcServiceAddressInHLS).
-			WithPath("/echo").
-			WithHead(map[string]string{
-				"Content-Type": "application/json",
-			}).
-			WithBody([]byte(`{"message": "hello, world!"}`)).
-			Build().
-			ToBytes(),
-	)
+	pld := request.NewRequestBuilder().
+		WithMethod(http.MethodGet).
+		WithHost(tcServiceAddressInHLS).
+		WithPath("/echo").
+		WithHead(map[string]string{
+			"Content-Type": "application/json",
+		}).
+		WithBody([]byte(`{"message": "hello, world!"}`)).
+		Build().
+		ToBytes()
 
 	respBytes, err := node.FetchPayload(ctx, tgPrivKey1.GetPubKey(), pld)
 	if err != nil {

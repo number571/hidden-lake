@@ -13,11 +13,12 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrRunning        = &SError{"adapter running"}
-	ErrNoConnections  = &SError{"no connections"}
-	ErrBuildRequest   = &SError{"build request"}
-	ErrBadRequest     = &SError{"bad request"}
-	ErrDecodeResponse = &SError{"decode response"}
-	ErrMessageExist   = &SError{"message exist"}
-	ErrNoPassword     = &SError{"no password"}
+	ErrRunning            = &SError{"adapter running"}
+	ErrNoConnections      = &SError{"no connections"}
+	ErrBuildRequest       = &SError{"build request"}
+	ErrBadRequest         = &SError{"bad request"}
+	ErrDecodeResponse     = &SError{"decode response"}
+	ErrMessageExist       = &SError{"message exist"}
+	ErrNoPassword         = &SError{"no password"}
+	ErrInvalidMessageSize = &SError{"invalid message size"}
 )
