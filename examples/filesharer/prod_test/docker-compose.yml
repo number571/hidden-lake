@@ -5,7 +5,7 @@ services:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=std-tcp
+      - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/filesharer/prod_test/node1_hlf
     ports:
       - 8541:8541
@@ -15,7 +15,7 @@ services:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=std-tcp
+      - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/filesharer/prod_test/node2_hlf
     ports:
       - 7541:7541

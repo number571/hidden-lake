@@ -21,7 +21,7 @@ func TestRebuild(t *testing.T) {
 		t.Fatal("success init config with rebuild for unknown network")
 	}
 
-	network := "std-http"
+	network := build.CDefaultNetwork
 	if _, ok := build.GetNetwork(network); !ok {
 		t.Fatal("not found network")
 	}

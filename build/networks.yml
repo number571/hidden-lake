@@ -5,28 +5,28 @@ default: &default_network
   fetch_timeout_ms:   60000   # 60s for response
   queue_period_ms:    5000    # 5s per message
 networks:
-  std-https:
+  std-external-https:
     <<: *default_network
     work_size_bits: 0
     connections: 
       # provider=vdsina.ru
       # expired=?(eternal)
       - https://__username__:__password__@94.103.91.81:9531
-  std-http:
+  std-external-http:
     <<: *default_network
     work_size_bits: 20
     connections: 
       # provider=ruvds.ru
       # expired=30.07.2027
       - http://195.133.1.126:9511
-  std-tcp:
+  std-external-tcp:
     <<: *default_network
     work_size_bits: 18
     connections: 
       # provider=4vps.su
       # expired=10.08.2027
       - tcp://193.233.18.245:9581
-  std-meshtastic:
+  std-internal-meshtastic:
     <<: *default_network
     crypto_scheme_type: symmetric # only this scheme can transport small messages
     message_size_bytes: 200       # limit of bytes in the meshtastic network

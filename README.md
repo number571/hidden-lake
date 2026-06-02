@@ -174,7 +174,7 @@ $ ./hlc_amd64_linux
 The HLK node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. 
 
 ```bash
-$ hlc --network std-tcp
+$ hlc --network std-external-tcp
 ```
 
 You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl-networks.yml`. Further, the contents of this file can be overwritten or supplemented.

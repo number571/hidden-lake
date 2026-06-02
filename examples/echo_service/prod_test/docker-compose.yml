@@ -11,7 +11,7 @@ services:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=std-tcp
+      - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/echo_service/prod_test/recv_hls
     networks:
       - local-network
@@ -20,7 +20,7 @@ services:
       context: ./../../../
       dockerfile: cmd/hlc/Dockerfile
     environment:
-      - SERVICE_NETWORK=std-tcp
+      - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/echo_service/prod_test/send_hls
     ports:
       - 7572:7572
@@ -31,7 +31,7 @@ services:
     deploy:
         replicas: 3
     environment:
-      - SERVICE_NETWORK=std-tcp
+      - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/echo_service/prod_test/other_hls
 networks:
   local-network:

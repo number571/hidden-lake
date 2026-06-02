@@ -4,8 +4,8 @@ __Step 1__. Run HLC (composite of HL services).
 
 ```bash
 $ go install github.com/number571/hidden-lake/cmd/hlc@latest
-$ hlc --network std-tcp
-### Run HLK, HLA=tcp, HLS=pinger, HLS=messenger ###
+$ hlc --network std-external-tcp
+### Run HLK, HLA=tcp, HLS=pinger, HLS=messenger, HLS=filesharer ###
 ```
 
 > The list of networks can be found here: [hidden-lake/build/networks.yml](https://github.com/number571/hidden-lake/blob/master/build/networks.yml).
