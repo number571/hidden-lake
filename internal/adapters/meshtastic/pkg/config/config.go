@@ -10,6 +10,9 @@ func GetConfigSettings(pCfg config.IConfig) SConfigSettings {
 		SConfigSettings: config.SConfigSettings{
 			FMessageSizeBytes: sett.GetMessageSizeBytes(),
 			FDatabaseEnabled:  sett.GetDatabaseEnabled(),
+			FWatchPeriodMS:    uint64(sett.GetWatchPeriod().Milliseconds()),  // nolint:gosec
+			FReadTimeoutMS:    uint64(sett.GetReadTimeout().Milliseconds()),  // nolint:gosec
+			FWriteTimeoutMS:   uint64(sett.GetWriteTimeout().Milliseconds()), // nolint:gosec
 		},
 	}
 }

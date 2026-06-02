@@ -1,6 +1,8 @@
 package meshtastic
 
 import (
+	"time"
+
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
 )
@@ -22,4 +24,7 @@ type ISrvSettings interface {
 	GetAddress() string
 	GetChannel() uint8
 	GetDevPath() string
+	GetWatchPeriod() time.Duration
+	GetReadTimeout() time.Duration
+	GetWriteTimeout() time.Duration
 }

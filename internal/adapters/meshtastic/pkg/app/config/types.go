@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -16,6 +18,10 @@ type IConfig interface {
 type IConfigSettings interface {
 	GetMessageSizeBytes() uint64
 	GetDatabaseEnabled() bool
+
+	GetWatchPeriod() time.Duration
+	GetReadTimeout() time.Duration
+	GetWriteTimeout() time.Duration
 }
 
 type IConnection interface {

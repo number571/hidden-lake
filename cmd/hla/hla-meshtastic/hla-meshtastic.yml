@@ -1,6 +1,9 @@
 # settings:
 #   message_size_bytes: 0 # -> 8192
 #   database_enabled: false
+#   watch_period: 0 # -> 1_000
+#   read_timeout: 0 # -> 5_000
+#   write_timeout: 0 # -> 5_000
 logging:
 - info
 - warn

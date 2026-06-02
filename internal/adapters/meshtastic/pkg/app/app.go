@@ -74,8 +74,14 @@ func NewApp(
 		fExtAdapter: hla_meshtastic.NewMeshtasticAdapter(
 			hla_meshtastic.NewSettings(&hla_meshtastic.SSettings{
 				FAdapterSettings: adaptersSettings,
-				FServeSettings:   &hla_meshtastic.SServeSettings{
-					// TODO:
+				FServeSettings: &hla_meshtastic.SServeSettings{
+					FPath:         pPathTo,
+					FAddress:      pCfg.GetAddress().GetExternal(),
+					FDevPath:      pCfg.GetConnection().GetDevPath(),
+					FChannel:      pCfg.GetConnection().GetChannel(),
+					FWatchPeriod:  cfgSettings.GetWatchPeriod(),
+					FReadTimeout:  cfgSettings.GetReadTimeout(),
+					FWriteTimeout: cfgSettings.GetWriteTimeout(),
 				},
 			}),
 			lruCache,

@@ -11,12 +11,9 @@ var (
 )
 
 const (
-	CDefaultConnNumLimit   = 256
-	CDefaultConnKeepPeriod = 10 * time.Second
-	CDefaultSendTimeout    = 5 * time.Second
-	CDefaultRecvTimeout    = 5 * time.Second
-	CDefaultDialTimeout    = 5 * time.Second
-	CDefaultWaitTimeout    = time.Hour
+	CDefaultWatchDuration = time.Second
+	CDefaultReadTimeout   = 5 * time.Second
+	CDefaultWriteTimeout  = 5 * time.Second
 )
 
 type SSettings sSettings
@@ -26,10 +23,13 @@ type sSettings struct {
 }
 
 type SServeSettings struct {
-	FPath    string
-	FAddress string
-	FDevPath string
-	FChannel uint8
+	FPath         string
+	FAddress      string
+	FDevPath      string
+	FChannel      uint8
+	FWatchPeriod  time.Duration
+	FReadTimeout  time.Duration
+	FWriteTimeout time.Duration
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -50,6 +50,15 @@ func (p *sSettings) initDefault() *sSettings {
 	}
 	if p.FServeSettings.FPath == "" {
 		p.FServeSettings.FPath = "."
+	}
+	if p.FServeSettings.FWatchPeriod == 0 {
+		p.FServeSettings.FWatchPeriod = CDefaultWatchDuration
+	}
+	if p.FServeSettings.FReadTimeout == 0 {
+		p.FServeSettings.FReadTimeout = CDefaultReadTimeout
+	}
+	if p.FServeSettings.FWriteTimeout == 0 {
+		p.FServeSettings.FWriteTimeout = CDefaultWriteTimeout
 	}
 	return p
 }
@@ -72,4 +81,16 @@ func (p *sSettings) GetDevPath() string {
 
 func (p *sSettings) GetChannel() uint8 {
 	return p.FServeSettings.FChannel
+}
+
+func (p *sSettings) GetWatchPeriod() time.Duration {
+	return p.FServeSettings.FWatchPeriod
+}
+
+func (p *sSettings) GetReadTimeout() time.Duration {
+	return p.FServeSettings.FReadTimeout
+}
+
+func (p *sSettings) GetWriteTimeout() time.Duration {
+	return p.FServeSettings.FWriteTimeout
 }

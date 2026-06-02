@@ -124,7 +124,7 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 	hash := encoding.HexEncode(pNetMsg.GetHash())
 	_ = p.fCache.Set(hash, []byte{})
 
-	httpClient := &http.Client{Timeout: 5 * time.Second}
+	httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
 	_, err := api.Request(
 		pCtx,
 		httpClient,
@@ -157,7 +157,7 @@ func (p *sMeshtasticAdapter) Consume(pCtx context.Context) (layer1.IMessage, err
 func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 	msgSize := p.fSettings.GetAdapterSettings().GetMessageSizeBytes()
 
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(p.fSettings.GetWatchPeriod())
 	defer ticker.Stop()
 
 	for {
@@ -170,7 +170,7 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 
 			rsp, err := api.Request(
 				pCtx,
-				&http.Client{Timeout: 5 * time.Second},
+				&http.Client{Timeout: p.fSettings.GetReadTimeout()},
 				http.MethodGet,
 				p.fServiceAddr,
 				nil,
@@ -198,11 +198,7 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 
 				msg := layer1.NewMessage(
 					layer1.NewConstructSettings(&layer1.SConstructSettings{
-						FSettings: layer1.NewSettings(&layer1.SSettings{
-							FNetworkKey:   p.fSettings.GetAdapterSettings().GetNetworkKey(),
-							FWorkSizeBits: 0,
-						}),
-						FParallel: 0,
+						FSettings: p.fSettings.GetAdapterSettings(),
 					}),
 					v.FMessage,
 				)
@@ -283,7 +279,7 @@ func (p *sMeshtasticAdapter) runPythonScript(pCtx context.Context) error {
 
 	scriptBody := strings.NewReplacer(
 		"{{devPath}}", fmt.Sprintf(`"%s"`, p.fSettings.GetDevPath()),
-		"{{srvPort}}", fmt.Sprintf(`"%s"`, serviceAddr),
+		"{{srvAddr}}", fmt.Sprintf(`"%s"`, serviceAddr),
 	).Replace(gScriptTemplate)
 
 	if err := os.WriteFile(scriptPath, []byte(scriptBody), 0600); err != nil {
@@ -307,7 +303,7 @@ func (p *sMeshtasticAdapter) runPythonScript(pCtx context.Context) error {
 }
 
 func (p *sMeshtasticAdapter) closePythonScript() error {
-	httpClient := &http.Client{Timeout: 5 * time.Second}
+	httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
 	_, err := api.Request(
 		context.Background(),
 		httpClient,

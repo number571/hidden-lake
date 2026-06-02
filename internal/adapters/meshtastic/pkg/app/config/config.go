@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -16,6 +17,9 @@ var (
 type SConfigSettings struct {
 	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
 	FDatabaseEnabled  bool   `json:"database_enabled,omitempty" yaml:"database_enabled,omitempty"`
+	FWatchPeriodMS    uint64 `json:"watch_period_ms,omitempty" yaml:"watch_period_ms,omitempty"`
+	FReadTimeoutMS    uint64 `json:"read_timeout_ms,omitempty" yaml:"read_timeout_ms,omitempty"`
+	FWriteTimeoutMS   uint64 `json:"write_timeout_ms,omitempty" yaml:"write_timeout_ms,omitempty"`
 }
 
 type SConnection struct {
@@ -146,6 +150,18 @@ func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
 
 func (p *SConfigSettings) GetDatabaseEnabled() bool {
 	return p.FDatabaseEnabled
+}
+
+func (p *SConfigSettings) GetWatchPeriod() time.Duration {
+	return time.Duration(p.FWatchPeriodMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetReadTimeout() time.Duration {
+	return time.Duration(p.FReadTimeoutMS) * time.Millisecond // nolint: gosec
+}
+
+func (p *SConfigSettings) GetWriteTimeout() time.Duration {
+	return time.Duration(p.FWriteTimeoutMS) * time.Millisecond // nolint: gosec
 }
 
 func (p *SConfig) GetAddress() IAddress {

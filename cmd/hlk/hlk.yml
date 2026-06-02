@@ -19,6 +19,6 @@ services:
   hls-messenger: 127.0.0.1:9592
   hls-filesharer: 127.0.0.1:9542
 endpoints:
-- 127.0.0.1:9501
+- 127.0.0.1:9502
 # friends:
 #   <friend-name>: <participant-key>
