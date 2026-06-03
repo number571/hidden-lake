@@ -13,6 +13,7 @@
 ### CHANGES
 
 - `build`: deleted NetworkMask, ServiceMask
+- `build`: change networks names, add std-internal-meshtastic
 - `go-peer`: update version
 
 <!-- ... -->

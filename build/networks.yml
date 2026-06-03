@@ -31,8 +31,8 @@ networks:
     crypto_scheme_type: symmetric # only this scheme can transport small messages
     message_size_bytes: 200       # limit of bytes in the meshtastic network
     work_size_bits:     0         # layer1 is removed by adapter
-    fetch_timeout_ms:   720000    # 12m for response
-    queue_period_ms:    180000    # 3m per message (~MediumFast ok)
+    fetch_timeout_ms:   900000    # 15m for response
+    queue_period_ms:    240000    # 4m per message (~MediumFast ok)
     connections: 
       # provider=localhost
       # HLC need register this by scheme

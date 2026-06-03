@@ -1,15 +1,7 @@
 github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
 github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
-github.com/number571/go-peer v1.7.14-0.20260601143646-537f2ffd63c9 h1:XlWwnXWiRGRMgpkk5b9+nzEEVSwxSVpKyig7iaBIqeI=
-github.com/number571/go-peer v1.7.14-0.20260601143646-537f2ffd63c9/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
-github.com/number571/go-peer v1.7.14-0.20260601154206-aec4252865e2 h1:EhA4drxWM1nYtyc7PGtRgjnhQPS5lMabkbu5Wg4iH+o=
-github.com/number571/go-peer v1.7.14-0.20260601154206-aec4252865e2/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
-github.com/number571/go-peer v1.7.14-0.20260601162220-feef44f0cd67 h1:Ji93EO5BNisXhpnGoUPS/5PhheorWNuOyG+rB5UhSDM=
-github.com/number571/go-peer v1.7.14-0.20260601162220-feef44f0cd67/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
-github.com/number571/go-peer v1.7.14-0.20260601173104-5d4905740f93 h1:XMnd++fMkBqfpmY1vofLrtr62s9Gj65y9kmtu89aW+0=
-github.com/number571/go-peer v1.7.14-0.20260601173104-5d4905740f93/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
-github.com/number571/go-peer v1.7.16 h1:D/nPSR1AsovTH23yI0I8zsHJW5Zsp50k5tHEuegURV0=
-github.com/number571/go-peer v1.7.16/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
+github.com/number571/go-peer v1.7.17 h1:QzaS+1ez8pnCNyryQ2PjtMQW/OAVtfkWmZ6hIImeVCI=
+github.com/number571/go-peer v1.7.17/go.mod h1:gs7Q7gHQvZgN/q5SS8VdFjW3Bj8S1I1+ya66CMG9OOI=
 go.etcd.io/bbolt v1.3.5 h1:XAzx9gjCb0Rxj7EoqcClPD1d5ZBxZJk0jbuoPHenBt0=
 go.etcd.io/bbolt v1.3.5/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
 golang.org/x/crypto v0.45.0 h1:jMBrvKuj23MTlT0bQEOBcAE0mjg8mK9RXFhRH6nyF3Q=
