@@ -19,8 +19,13 @@
 ### CHANGES
 
 - `build`: deleted NetworkMask, ServiceMask
+- `build`: add FCryptoSchemeType, FFetchTimeoutMS, FQueuePeriodMS
 - `build`: change networks names, add std-internal-meshtastic
 - `go-peer`: update version
+
+### BUG FIXES
+
+- `cmd/*/daemon/install_*.sh`: add create ~/.config/systemd/user path
 
 <!-- ... -->
 
