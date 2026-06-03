@@ -1,4 +1,3 @@
-import json
 import asyncio
 import base64
 import threading
@@ -7,7 +6,6 @@ import signal
 import warnings
 import meshtastic.serial_interface
 
-from ipaddress import ip_address
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Body
 from meshtastic import portnums_pb2
 from pubsub import pub
