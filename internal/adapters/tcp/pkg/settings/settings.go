@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppAdapterName = "tcp"
-	CAppDescription = "adapts HL traffic to a custom TCP connection"
+	CAppDescription = "adapts HL traffic over TCP protocol"
 )
 
 const (

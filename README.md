@@ -138,9 +138,9 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
 3. Adapters:
    * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
-   * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP ptotocol
-   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS ptotocol
-   * [HLA=meshtastic](cmd/hla/hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa ptotocol
+   * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP protocol
+   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS protocol
+   * [HLA=meshtastic](cmd/hla/hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa protocol
 
 ### External applications
 

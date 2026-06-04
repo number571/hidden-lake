@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppAdapterName = "meshtastic"
-	CAppDescription = "adapts HL traffic to a Meshtastic/LoRa connection"
+	CAppDescription = "adapts HL traffic over Meshtastic/LoRa protocol"
 )
 
 const (

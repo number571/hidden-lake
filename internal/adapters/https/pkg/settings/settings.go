@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppAdapterName = "https"
-	CAppDescription = "adapts HL traffic to a custom HTTPS connection"
+	CAppDescription = "adapts HL traffic over HTTPS protocol"
 )
 
 const (
