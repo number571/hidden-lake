@@ -11,7 +11,7 @@
 1. [HLA=tcp](hla-tcp) - adapts HL traffic over TCP protocol
 2. [HLA=http](hla-http) - adapts HL traffic over HTTP protocol
 2. [HLA=https](hla-https) - adapts HL traffic over HTTPS protocol
-2. [HLA=http](hla-http) - adapts HL traffic over Meshtastic/LoRa protocol
+2. [HLA=meshtastic](hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa protocol
 
 ## Installation
 
