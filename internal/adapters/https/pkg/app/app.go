@@ -232,11 +232,7 @@ func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 			if err := p.setIntoDB(msg); err != nil {
 				continue
 			}
-			if err := p.fIntAdapter.Produce(pCtx, msg); err != nil {
-				if !errors.Is(err, hla_http.ErrNoConnections) {
-					continue
-				}
-			}
+			_ = p.fIntAdapter.Produce(pCtx, msg)
 			_ = p.fExtAdapter.Produce(pCtx, msg)
 		}
 	}

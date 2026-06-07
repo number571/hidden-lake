@@ -202,7 +202,7 @@ func (p *sApp) runIntRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 			pChErr <- pCtx.Err()
 			return
 		default:
-			// HTTP (endpoints) -> HTTPS (connections)
+			// HTTP (endpoints) -> Meshtastic/LoRa (connections)
 			msg, err := p.fIntAdapter.Consume(pCtx)
 			if err != nil {
 				continue
@@ -224,7 +224,7 @@ func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 			pChErr <- pCtx.Err()
 			return
 		default:
-			// HTTPS (connections) -> HTTP (endpoints)
+			// Meshtastic/LoRa (connections) -> HTTP (endpoints)
 			msg, err := p.fExtAdapter.Consume(pCtx)
 			if err != nil {
 				continue
@@ -233,6 +233,7 @@ func (p *sApp) runExtRelayer(pCtx context.Context, wg *sync.WaitGroup, pChErr ch
 				continue
 			}
 			_ = p.fIntAdapter.Produce(pCtx, msg)
+			// not used: p.fExtAdapter.Produce(pCtx, msg)
 		}
 	}
 }

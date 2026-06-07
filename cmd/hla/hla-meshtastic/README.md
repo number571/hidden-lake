@@ -44,7 +44,7 @@ Creates [`./hla-meshtastic.yml`](./hla-meshtastic.yml) file.
 ## Running options
 
 ```bash
-$ hla-tmeshtasticcp --path /root --network xxx
+$ hla-meshtastic --path /root --network xxx
 # path    = path to config
 # network = use network configuration from networks.yml
 ```
