@@ -11,8 +11,11 @@ import (
 )
 
 const (
-	cLogTemplate     = "service=%s type=%s hash=%08X...%08X proof=%010d size=%dB"
-	cLogConnTemplate = " conn=%s"
+	cLogTemplate      = "service=%s type=%s"
+	cLogHashTemplate  = " hash=%08X...%08X"
+	cLogProofTemplate = " proof=%d"
+	cLogSizeTemplate  = " size=%dB"
+	cLogConnTemplate  = " conn=%s"
 )
 
 func GetLogFunc() logger.ILogFunc {
@@ -37,11 +40,6 @@ func GetLogFunc() logger.ILogFunc {
 }
 
 func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
-	hash := make([]byte, hashing.CHasherSize)
-	if x := pLogGetter.GetHash(); x != nil {
-		copy(hash, x)
-	}
-
 	log := strings.Builder{}
 	log.Grow(1 << 10)
 
@@ -49,11 +47,19 @@ func getLog(logStrType string, pLogGetter anon_logger.ILogGetter) string {
 		cLogTemplate,
 		pLogGetter.GetService(),
 		logStrType,
-		hash[:4], hash[len(hash)-4:],
-		pLogGetter.GetProof(),
-		pLogGetter.GetSize(),
 	))
 
+	if x := pLogGetter.GetHash(); x != nil {
+		hash := make([]byte, hashing.CHasherSize)
+		copy(hash, x)
+		log.WriteString(fmt.Sprintf(cLogHashTemplate, x[:4], hash[len(hash)-4:]))
+	}
+	if x := pLogGetter.GetProof(); x != 0 {
+		log.WriteString(fmt.Sprintf(cLogProofTemplate, x))
+	}
+	if x := pLogGetter.GetSize(); x != 0 {
+		log.WriteString(fmt.Sprintf(cLogSizeTemplate, x))
+	}
 	if x := pLogGetter.GetConn(); x != "" {
 		log.WriteString(fmt.Sprintf(cLogConnTemplate, x))
 	}
