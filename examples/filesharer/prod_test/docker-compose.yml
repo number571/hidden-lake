@@ -3,7 +3,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/filesharer/prod_test/node1_hlf
@@ -13,7 +13,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/filesharer/prod_test/node2_hlf

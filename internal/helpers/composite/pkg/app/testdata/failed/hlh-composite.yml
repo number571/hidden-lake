@@ -1,0 +1,9 @@
+logging:
+- info
+- warn
+- erro
+applications:
+- hlk
+- hls-pinger
+- hls-messenger
+- hls-filesharer

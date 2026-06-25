@@ -35,5 +35,5 @@ networks:
     queue_period_ms:    240000    # 4m per message (~MediumFast ok)
     connections: 
       # provider=localhost
-      # HLC need register this by scheme
+      # HLH=composite need register this by scheme
       - meshtastic://_

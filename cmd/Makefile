@@ -8,7 +8,6 @@ default: build build-cli move-apps remove-std
 
 build: 
 	for app in \
-		hlc \
 		hlk	\
 		hla/hla-tcp	\
 		hla/hla-http \
@@ -16,7 +15,8 @@ build:
 		hla/hla-meshtastic \
 		hls/hls-messenger \
 		hls/hls-filesharer \
-		hls/hls-pinger; \
+		hls/hls-pinger \
+		hlh/hlh-composite; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

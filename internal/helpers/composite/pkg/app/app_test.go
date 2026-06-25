@@ -9,8 +9,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/types"
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
-	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
-	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
+	"github.com/number571/hidden-lake/internal/helpers/composite/pkg/app/config"
+	hlc_settings "github.com/number571/hidden-lake/internal/helpers/composite/pkg/settings"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"

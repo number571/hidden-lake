@@ -10,12 +10,12 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
-	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
+	"github.com/number571/hidden-lake/internal/helpers/composite/pkg/app/config"
 
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	internal_types "github.com/number571/hidden-lake/internal/utils/types"
 
-	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
+	hlc_settings "github.com/number571/hidden-lake/internal/helpers/composite/pkg/settings"
 )
 
 var (

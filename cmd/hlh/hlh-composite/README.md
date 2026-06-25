@@ -1,0 +1,44 @@
+# HLH=composite
+
+> Hidden Lake Helper (Composite)
+
+<img src="images/hlh_composite_logo.png" alt="hlh_composite_logo.png"/>
+
+The `Hidden Lake Helper (Composite)` combines several HL type's services into one application using startup config.
+
+## Installation
+
+```bash
+$ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
+```
+
+## How it works
+
+The application HLH=composite includes the download of all Hidden Lake services, and runs only the configurations selected by names in the file. The exact names of the services can be found in their `pkg/settings/settings.go` configuration files by `CAppFullName` constant.
+
+## Supported platforms
+
+- Windows (x86_64, arm64)
+- Linux (x86_64, arm64)
+- MacOS (x86_64, arm64)
+
+## Build and run
+
+Default build and run
+
+```bash 
+$ go run ./cmd/hlh-composite
+
+> [INFO] 2023/12/03 02:12:51 HLC-COMPOSITE is running...
+> ...
+```
+
+Creates [`./hlh-composite.yml`](./hlh-composite.yml) file.
+
+## Running options
+
+```bash
+$ hlh-composite --path /root --network xxx
+# path    = path to config, database, key files
+# network = use network configuration from networks.yml
+```

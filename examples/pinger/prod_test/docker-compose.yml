@@ -3,14 +3,14 @@ services:
   recv_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/pinger/prod_test/recv_hlc
   send_hls:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_NETWORK=std-external-tcp
       - SERVICE_PATH=examples/pinger/prod_test/send_hls

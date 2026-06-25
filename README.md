@@ -129,14 +129,15 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 
 ## List of applications
 
-1. Basic:
+1. Main:
    * [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
-   * [HLC](cmd/hlc) - runs many HL applications as one application
-2. Services:
+2. Helpers:
+   * [HLH=composite](cmd/hlh/hlh-composite) - runs many HL applications as one application
+3. Services:
    * [HLS=messenger](cmd/hls/hls-messenger) - send and recv text messages
    * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
    * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
-3. Adapters:
+4. Adapters:
    * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
    * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP protocol
    * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS protocol
@@ -152,21 +153,21 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 > [!IMPORTANT]
 > As an additional level of security, it is recommended to run the Hidden Lake anonymous network in a virtual machine. This will make it possible to secure the main execution environment if vulnerabilities are found in HL, and it will also hide the operation/interaction of HL services from the main execution environment.
 
-Launching an anonymous network is primarily the launch of an anonymizing `HLK` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLC` application. You can edit the list of running services using the `hlc.yml` file. There are two ways to run HLC: through `source code`, and through the `release version`. 
+Launching an anonymous network is primarily the launch of an anonymizing `HLK` and `HLA=tcp` services. Simultaneous launch of these services can be performed using the `HLH=composite` application. You can edit the list of running services using the `hlh-composite.yml` file. There are two ways to run HLH=composite: through `source code`, and through the `release version`. 
 
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hlc@latest
-$ hlc
+$ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
+$ hlh-composite
 ```
 
 ### 2. Running from release version
 
 ```bash
-$ wget https://github.com/number571/hidden-lake/releases/latest/download/hlc_amd64_linux
-$ chmod +x hlc_amd64_linux
-$ ./hlc_amd64_linux
+$ wget https://github.com/number571/hidden-lake/releases/latest/download/hlh-composite_amd64_linux
+$ chmod +x hlh-composite_amd64_linux
+$ ./hlh-composite_amd64_linux
 ```
 
 ## Production
@@ -174,7 +175,7 @@ $ ./hlc_amd64_linux
 The HLK node is easily connected to the production environment throw HLA=tcp. To do this, you just need to specify the `network` at startup. You can find them in the [networks.yml](build/networks.yml) file. 
 
 ```bash
-$ hlc --network std-external-tcp
+$ hlh-composite --network std-external-tcp
 ```
 
 You can also create your own networks by copying the contents of the networks.yml file to the execution directory with the renamed name `hl-networks.yml`. Further, the contents of this file can be overwritten or supplemented.

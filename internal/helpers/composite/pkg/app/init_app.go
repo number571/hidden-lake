@@ -8,8 +8,8 @@ import (
 
 	"github.com/number571/go-peer/pkg/types"
 	build "github.com/number571/hidden-lake/build/environment"
-	"github.com/number571/hidden-lake/internal/composite/pkg/app/config"
-	hlc_settings "github.com/number571/hidden-lake/internal/composite/pkg/settings"
+	"github.com/number571/hidden-lake/internal/helpers/composite/pkg/app/config"
+	hlc_settings "github.com/number571/hidden-lake/internal/helpers/composite/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 

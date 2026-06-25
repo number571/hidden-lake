@@ -11,7 +11,7 @@ services:
   node1_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_PATH=examples/messenger/group/node1_hlm
     ports:
@@ -22,7 +22,7 @@ services:
   node2_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_PATH=examples/messenger/group/node2_hlm
     ports:
@@ -33,7 +33,7 @@ services:
   node3_hlc:
     build:
       context: ./../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_PATH=examples/messenger/group/node3_hlm
     ports:

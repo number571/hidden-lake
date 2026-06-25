@@ -9,7 +9,7 @@ services:
   recv_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_PATH=examples/echo_service/routing/hla_https/recv_hls
     networks:
@@ -18,7 +18,7 @@ services:
   send_hls:
     build:
       context: ./../../../../
-      dockerfile: cmd/hlc/Dockerfile
+      dockerfile: cmd/hlh/hlh-composite/Dockerfile
     environment:
       - SERVICE_PATH=examples/echo_service/routing/hla_https/send_hls
     ports:
