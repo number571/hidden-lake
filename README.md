@@ -84,7 +84,7 @@ All cmd programs are compiled for {`amd64`, `arm64`} ARCH and {`windows`, `linux
 
 ## Dependencies
 
-1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer") (used by `cmd/hlk`)
+1. Go library [github.com/number571/go-peer](https://github.com/number571/go-peer "go-peer")
 
 ### Makefile
 

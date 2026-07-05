@@ -185,6 +185,11 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 			logBuilder := anon_logger.NewLogBuilder(p.fShortName)
 			logBuilder.WithConn(p.fServiceAddr)
 
+			if p.fServiceAddr == "" {
+				p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoConnections))
+				continue
+			}
+
 			rsp, err := api.Request(
 				pCtx,
 				&http.Client{Timeout: p.fSettings.GetReadTimeout()},

@@ -1,6 +1,6 @@
-1. HLH=composite -> update daemon
-2. Динамические конфиги
-3. Создать модули для HLK, HLS
-4. Создать HLH=register
-5. Тесты для HLA=meshtastic
+1. Динамические конфиги
+2. Создать модули для HLK, HLS
+3. Создать HLH=register
+4. Тесты для HLA=meshtastic
+5. Гарантированная доставка сообщений (HLA=messenger)
 6. 
