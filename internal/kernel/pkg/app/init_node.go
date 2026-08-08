@@ -10,6 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/storage/cache"
 	"github.com/number571/go-peer/pkg/storage/database"
 	"github.com/number571/hidden-lake/build"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/alg"
 	"github.com/number571/hidden-lake/pkg/network"
 	"github.com/number571/hidden-lake/pkg/network/adapters"
 	"github.com/number571/hidden-lake/pkg/network/adapters/http"
@@ -40,14 +41,15 @@ func (p *sApp) initAnonNode() error {
 		network.NewSettings(&network.SSettings{
 			FAdapterSettings: adapterSettings,
 			FQBPSettings: &network.SQBPSettings{
-				FQueuePeriod:  cfgSettings.GetQueuePeriod(),
-				FFetchTimeout: cfgSettings.GetFetchTimeout(),
-				FPowParallel:  cfgSettings.GetPowParallel(),
-				FQBPConsumers: cfgSettings.GetQBPConsumers(),
+				FIsDisabled:        cfgSettings.GetAnonymityAlgType() != alg.CQBPAlg,
+				FGeneratePeriod:    cfgSettings.GetQueuePeriod(),
+				FNumberOfConsumers: cfgSettings.GetQBPConsumers(),
 			},
 			FServeSettings: &network.SServeSettings{
-				FServiceName: hlk_settings.GetAppShortNameFMT(),
-				FLogger:      p.fAnonLogger,
+				FServiceName:  hlk_settings.GetAppShortNameFMT(),
+				FLogger:       p.fAnonLogger,
+				FFetchTimeout: cfgSettings.GetFetchTimeout(),
+				FPowParallel:  cfgSettings.GetPowParallel(),
 			},
 		}),
 		p.fScheme,

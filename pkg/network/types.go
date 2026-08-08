@@ -23,16 +23,18 @@ type IHiddenLakeNode interface {
 
 type ISettings interface {
 	ISrvSettings
-	IQBPSettings
 
+	GetPowParallel() uint64
+	GetFetchTimeout() time.Duration
+
+	GetQBPSettings() IQBPSettings
 	GetAdapterSettings() adapters.ISettings
 }
 
 type IQBPSettings interface {
-	GetPowParallel() uint64
-	GetQBPConsumers() uint64
-	GetFetchTimeout() time.Duration
-	GetQueuePeriod() time.Duration
+	GetIsDisabled() bool
+	GetGeneratePeriod() time.Duration
+	GetNumberOfConsumers() uint64
 }
 
 type ISrvSettings interface {

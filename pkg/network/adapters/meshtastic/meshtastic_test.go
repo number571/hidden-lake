@@ -95,7 +95,7 @@ func TestMeshtasticAdapterConfiguration(t *testing.T) {
 			FWatchPeriod:  300 * time.Millisecond,
 			FReadTimeout:  2,
 			FWriteTimeout: 3,
-			FMaxDelayTime: 4,
+			FMaxDelayTime: 100 * time.Millisecond,
 		},
 	})
 
@@ -125,7 +125,7 @@ func TestMeshtasticAdapterConfiguration(t *testing.T) {
 	if settings.GetWriteTimeout() != 3 {
 		t.Fatal("got invalid write_timeout")
 	}
-	if settings.GetMaxDelayTime() != 4 {
+	if settings.GetMaxDelayTime() != 100*time.Millisecond {
 		fmt.Println(settings.GetMaxDelayTime())
 		t.Fatal("got invalid max_delay_time")
 	}
@@ -201,7 +201,7 @@ func TestMeshtasticAdapterConfiguration(t *testing.T) {
 			FWatchPeriod:  300 * time.Millisecond,
 			FReadTimeout:  2,
 			FWriteTimeout: 3,
-			FMaxDelayTime: 4,
+			FMaxDelayTime: 100 * time.Millisecond,
 		},
 	})
 
@@ -218,11 +218,15 @@ func TestMeshtasticAdapterConfiguration(t *testing.T) {
 		t.Fatal("success run subscriber with canceled context")
 	}
 
-	// ctx2, cancel := context.WithCancel(ctx)
-	// go func() {
-	// 	_ = _meshtasticAdapter.runSubscriber(ctx2)
-	// }()
+	canceled := make(chan struct{})
 
-	// <-time.After(time.Second)
-	// cancel()
+	ctx2, cancel2 := context.WithCancel(ctx)
+	go func() {
+		_ = _meshtasticAdapter.runSubscriber(ctx2)
+		canceled <- struct{}{}
+	}()
+
+	time.Sleep(time.Second)
+	cancel2()
+	<-canceled
 }

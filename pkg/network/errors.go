@@ -13,9 +13,10 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrSendRequest  = &SError{"send request"}
-	ErrFetchRequest = &SError{"fetch request"}
-	ErrLoadResponse = &SError{"load response"}
-	ErrRunning      = &SError{"node running"}
-	ErrPayloadLimit = &SError{"payload limit"}
+	ErrSendRequest    = &SError{"send request"}
+	ErrFetchRequest   = &SError{"fetch request"}
+	ErrLoadResponse   = &SError{"load response"}
+	ErrRunning        = &SError{"node running"}
+	ErrPayloadLimit   = &SError{"payload limit"}
+	ErrEncryptMessage = &SError{"encrypt message"}
 )

@@ -69,12 +69,12 @@ func newNode(name string) (network.IHiddenLakeNode, layer2.IParticipantKey) {
 				FMessageSizeBytes: msgSizeBytes,
 			}),
 			FQBPSettings: &network.SQBPSettings{
-				FQueuePeriod:  time.Second,
-				FFetchTimeout: time.Minute,
+				FGeneratePeriod: time.Second,
 			},
 			FServeSettings: &network.SServeSettings{
-				FLogger:      getLogger(),
-				FServiceName: name,
+				FLogger:       getLogger(),
+				FServiceName:  name,
+				FFetchTimeout: time.Minute,
 			},
 		}),
 		func() layer2.IScheme {

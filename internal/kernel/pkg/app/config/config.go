@@ -9,6 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/encoding"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/alg"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 )
 
@@ -20,6 +21,7 @@ var (
 
 type SConfigSettings struct {
 	FCryptoSchemeType string `json:"crypto_scheme_type,omitempty" yaml:"crypto_scheme_type,omitempty"`
+	FAnonymityAlgType string `json:"anonymity_alg_type,omitempty" yaml:"anonymity_alg_type,omitempty"`
 	FMessageSizeBytes uint64 `json:"message_size_bytes,omitempty" yaml:"message_size_bytes,omitempty"`
 	FFetchTimeoutMS   uint64 `json:"fetch_timeout_ms,omitempty" yaml:"fetch_timeout_ms,omitempty"`
 	FQueuePeriodMS    uint64 `json:"queue_period_ms,omitempty" yaml:"queue_period_ms,omitempty"`
@@ -92,6 +94,10 @@ func (p *SConfigSettings) GetCryptoSchemeType() scheme.ISchemeType {
 	return scheme.GetCryptoSchemeType(p.FCryptoSchemeType)
 }
 
+func (p *SConfigSettings) GetAnonymityAlgType() alg.IAlgType {
+	return alg.GetAnonymityType(p.FAnonymityAlgType)
+}
+
 func (p *SConfigSettings) GetMessageSizeBytes() uint64 {
 	return p.FMessageSizeBytes
 }
@@ -130,9 +136,10 @@ func (p *SConfig) isValid() bool {
 			return false
 		}
 	}
-	switch p.FSettings.FCryptoSchemeType {
-	case "", "hybrid", "symmetric":
-	default:
+	switch {
+	case alg.GetAnonymityType(p.FSettings.FAnonymityAlgType) == alg.CUnknownAlg:
+		return false
+	case scheme.GetCryptoSchemeType(p.FSettings.FCryptoSchemeType) == scheme.CUnknownScheme:
 		return false
 	}
 	return true

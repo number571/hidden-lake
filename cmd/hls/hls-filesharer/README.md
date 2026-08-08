@@ -77,13 +77,13 @@ Got response
 2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"personal":?bool]
                                                 |> description = get list of files from storage
 3. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
-                                                |> description = download file content by name
+                                                |> description = download / delete file content by name
 4. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":?bool]
                                                 |> description = get info of the file by name
 5. GET                  /api/local/list         | params = ["friend":?string,"page":uint64]
                                                 |> description = get list of files from storage
 6. GET, POST, DELETE    /api/local/file         | params = ["friend":?string,"name":string]
-                                                |> description = upload / delete file content by name
+                                                |> description = download / upload / delete file content by name
 7. GET                  /api/local/file/info    | params = ["friend":?string,"name":string]
                                                 |> description = get info of the file by name
 ```

@@ -6,6 +6,7 @@ import (
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer1"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/alg"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 )
 
@@ -21,7 +22,9 @@ type IEditor interface {
 type IConfigSettings interface {
 	layer1.ISettings
 
+	GetAnonymityAlgType() alg.IAlgType
 	GetCryptoSchemeType() scheme.ISchemeType
+
 	GetMessageSizeBytes() uint64
 	GetFetchTimeout() time.Duration
 	GetQueuePeriod() time.Duration

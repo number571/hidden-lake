@@ -50,11 +50,11 @@ func TestSettings(t *testing.T) {
 		t.Fatal("got invalid fetch timeout by default settings")
 	}
 
-	if sett.GetQueuePeriod() != CDefaultQueuePeriod {
+	if sett.GetQBPSettings().GetGeneratePeriod() != CDefaultQueuePeriod {
 		t.Fatal("got invalid queue period by default settings")
 	}
 
-	if sett.GetQBPConsumers() != 1 {
+	if sett.GetQBPSettings().GetNumberOfConsumers() != 1 {
 		t.Fatal("got invalid qbp_consumers by default")
 	}
 
@@ -237,7 +237,9 @@ func testNewHiddenLakeNode(dbPath string, outMsgChan, inMsgChan chan layer1.IMes
 		NewSettings(&SSettings{
 			FAdapterSettings: adapterSettings,
 			FQBPSettings: &SQBPSettings{
-				FQueuePeriod:  time.Second,
+				FGeneratePeriod: time.Second,
+			},
+			FServeSettings: &SServeSettings{
 				FFetchTimeout: time.Minute,
 			},
 		}),

@@ -72,8 +72,8 @@ $ make request-node2
                                 |> description = get name of service
 2. GET/POST /api/chat/push      | params = ["friend":string]
                                 |> description = get limit message size / send message to chat
-3. GET      /api/chat/load      | params = ["friend":string,"start":uint64,"count":uint64,"select":string]
-                                |> description = get list of messages from chat
+3. GET      /api/chat/load      | params = ["friend":string,"index":uint64]
+                                |> description = get message from chat by index
 4. GET      /api/chat/size      | params = ["friend":string]
                                 |> description = get count of messages in the chat
 5. GET      /api/chat/listen    | params = ["friend":string]

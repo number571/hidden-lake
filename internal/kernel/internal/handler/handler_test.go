@@ -29,6 +29,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/closer"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hla_http_client "github.com/number571/hidden-lake/pkg/api/adapters/http/client"
+	"github.com/number571/hidden-lake/pkg/api/kernel/client/alg"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	hiddenlake_network "github.com/number571/hidden-lake/pkg/network"
 	hl_adapters "github.com/number571/hidden-lake/pkg/network/adapters"
@@ -296,6 +297,7 @@ func (p *tsConfig) GetSettings() config.IConfigSettings {
 func (p *tsConfigSettings) GetWorkSizeBits() uint64                 { return 0 }
 func (p *tsConfigSettings) GetNetworkKey() string                   { return "" }
 func (p *tsConfigSettings) GetCryptoSchemeType() scheme.ISchemeType { return scheme.CHybridScheme }
+func (p *tsConfigSettings) GetAnonymityAlgType() alg.IAlgType       { return alg.CQBPAlg }
 func (p *tsConfigSettings) GetMessageSizeBytes() uint64             { return 0 }
 func (p *tsConfigSettings) GetFetchTimeout() time.Duration          { return 0 }
 func (p *tsConfigSettings) GetQueuePeriod() time.Duration           { return 0 }

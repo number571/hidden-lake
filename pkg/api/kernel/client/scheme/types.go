@@ -4,7 +4,8 @@ package scheme
 type ISchemeType int
 
 const (
-	CHybridScheme ISchemeType = 1 + iota
+	CUnknownScheme ISchemeType = iota
+	CHybridScheme
 	CSymmetricScheme
 )
 
@@ -26,5 +27,5 @@ func GetCryptoSchemeType(v string) ISchemeType {
 	case "symmetric":
 		return CSymmetricScheme
 	}
-	return 0
+	return CUnknownScheme
 }

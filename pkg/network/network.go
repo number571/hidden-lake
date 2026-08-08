@@ -34,8 +34,6 @@ func NewHiddenLakeNode(
 	pRunnerAdapter adapters.IRunnerAdapter,
 	pHandlerF handler.IHandlerF,
 ) (IHiddenLakeNode, error) {
-	buildSettings := build.GetSettings()
-	adaptersSettings := pSettings.GetAdapterSettings()
 	if pScheme.GetPayloadLimit() <= anonymity.CMessageHeadSize {
 		return nil, ErrPayloadLimit
 	}
@@ -51,18 +49,7 @@ func NewHiddenLakeNode(
 			pRunnerAdapter,
 			pKVDatabase,
 			pKeysContainer,
-			queue.NewQBProblemProcessor(
-				queue.NewSettings(&queue.SSettings{
-					FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
-						FSettings: adaptersSettings,
-						FParallel: pSettings.GetPowParallel(),
-					}),
-					FQueuePeriod:  pSettings.GetQueuePeriod(),
-					FConsumersCap: pSettings.GetQBPConsumers(),
-					FQueuePoolCap: buildSettings.FStorageManager.FQueuePoolCap,
-				}),
-				pScheme,
-			),
+			getQueueProcessor(pSettings, pScheme),
 		),
 	}, nil
 }
@@ -137,4 +124,29 @@ func (p *sHiddenLakeNode) FetchRequest(
 		return nil, errors.Join(ErrLoadResponse, err)
 	}
 	return rsp, nil
+}
+
+func getQueueProcessor(
+	pSettings ISettings,
+	pScheme layer2.IScheme,
+) queue.IQBProblemProcessor {
+	buildSettings := build.GetSettings()
+	qbpSettings := pSettings.GetQBPSettings()
+
+	qSettings := queue.NewSettings(&queue.SSettings{
+		FMessageConstructSettings: layer1.NewConstructSettings(&layer1.SConstructSettings{
+			FSettings: pSettings.GetAdapterSettings(),
+			FParallel: pSettings.GetPowParallel(),
+		}),
+		FQueuePeriod:  qbpSettings.GetGeneratePeriod(),
+		FConsumersCap: qbpSettings.GetNumberOfConsumers(),
+		FQueuePoolCap: buildSettings.FStorageManager.FQueuePoolCap,
+	})
+
+	processor := queue.NewQBProblemProcessor
+	if qbpSettings.GetIsDisabled() {
+		processor = newSilentQueueProcessor
+	}
+
+	return processor(qSettings, pScheme)
 }

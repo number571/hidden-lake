@@ -27,15 +27,16 @@ type sSettings struct {
 }
 
 type SQBPSettings struct {
-	FQueuePeriod  time.Duration
-	FFetchTimeout time.Duration
-	FPowParallel  uint64
-	FQBPConsumers uint64
+	FIsDisabled        bool
+	FGeneratePeriod    time.Duration
+	FNumberOfConsumers uint64
 }
 
 type SServeSettings struct {
-	FLogger      gopeer_logger.ILogger
-	FServiceName string
+	FLogger       gopeer_logger.ILogger
+	FServiceName  string
+	FFetchTimeout time.Duration
+	FPowParallel  uint64
 }
 
 func NewSettings(pSett *SSettings) ISettings {
@@ -58,20 +59,12 @@ func (p *sSettings) initDefault() *sSettings {
 		p.FQBPSettings = &SQBPSettings{}
 	}
 
-	if p.FQBPSettings.FQueuePeriod == 0 {
-		p.FQBPSettings.FQueuePeriod = CDefaultQueuePeriod
+	if p.FQBPSettings.FGeneratePeriod == 0 {
+		p.FQBPSettings.FGeneratePeriod = CDefaultQueuePeriod
 	}
 
-	if p.FQBPSettings.FFetchTimeout == 0 {
-		p.FQBPSettings.FFetchTimeout = CDefaultFetchTimeout
-	}
-
-	if p.FQBPSettings.FPowParallel == 0 {
-		p.FQBPSettings.FPowParallel = CDefaultPowParallel
-	}
-
-	if p.FQBPSettings.FQBPConsumers == 0 {
-		p.FQBPSettings.FQBPConsumers = CDefaultQBPConsumers
+	if p.FQBPSettings.FNumberOfConsumers == 0 {
+		p.FQBPSettings.FNumberOfConsumers = CDefaultQBPConsumers
 	}
 
 	if p.FServeSettings == nil {
@@ -89,6 +82,14 @@ func (p *sSettings) initDefault() *sSettings {
 		)
 	}
 
+	if p.FServeSettings.FFetchTimeout == 0 {
+		p.FServeSettings.FFetchTimeout = CDefaultFetchTimeout
+	}
+
+	if p.FServeSettings.FPowParallel == 0 {
+		p.FServeSettings.FPowParallel = CDefaultPowParallel
+	}
+
 	return p
 }
 
@@ -96,20 +97,16 @@ func (p *sSettings) GetAdapterSettings() adapters.ISettings {
 	return p.FAdapterSettings
 }
 
-func (p *sSettings) GetQueuePeriod() time.Duration {
-	return p.FQBPSettings.FQueuePeriod
+func (p *sSettings) GetQBPSettings() IQBPSettings {
+	return p.FQBPSettings
 }
 
 func (p *sSettings) GetFetchTimeout() time.Duration {
-	return p.FQBPSettings.FFetchTimeout
+	return p.FServeSettings.FFetchTimeout
 }
 
 func (p *sSettings) GetPowParallel() uint64 {
-	return p.FQBPSettings.FPowParallel
-}
-
-func (p *sSettings) GetQBPConsumers() uint64 {
-	return p.FQBPSettings.FQBPConsumers
+	return p.FServeSettings.FPowParallel
 }
 
 func (p *sSettings) GetFmtAppName() string {
@@ -118,4 +115,16 @@ func (p *sSettings) GetFmtAppName() string {
 
 func (p *sSettings) GetLogger() gopeer_logger.ILogger {
 	return p.FServeSettings.FLogger
+}
+
+func (p *SQBPSettings) GetIsDisabled() bool {
+	return p.FIsDisabled
+}
+
+func (p *SQBPSettings) GetGeneratePeriod() time.Duration {
+	return p.FGeneratePeriod
+}
+
+func (p *SQBPSettings) GetNumberOfConsumers() uint64 {
+	return p.FNumberOfConsumers
 }
