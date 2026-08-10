@@ -16,7 +16,7 @@ address:
   internal: 127.0.0.1:9572
 services:
   hls-pinger: 127.0.0.1:9552
-  hls-messenger: 127.0.0.1:9592
+  hls-notifier: 127.0.0.1:9592
   hls-filesharer: 127.0.0.1:9542
 endpoints:
 - 127.0.0.1:9502

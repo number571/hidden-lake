@@ -1,6 +1,6 @@
 # Default ports
 
-1. HLS=messenger  = 959x
+1. HLS=notifier  = 959x
 2. `reserved`     = 958x
 3. HLK            = 957x
 4. `reserved`     = 956x

@@ -22,8 +22,8 @@ $ hlk-cli --kernel {{HLK-address}} --do {{function-name}} --arg {{arguments}}
 1. Network
 
 ```bash
-### Send message without response (example from hls-messenger) ###
-$ echo '{"method":"POST","host":"hls-messenger","path":"/push","body":"aGVsbG8sIHdvcmxkIQ=="}' | hlk-cli -d send -a {{friend-name}}
+### Send message without response (example from hls-notifier) ###
+$ echo '{"method":"POST","host":"hls-notifier","path":"/push","body":"aGVsbG8sIHdvcmxkIQ=="}' | hlk-cli -d send -a {{friend-name}}
 ```
 
 ```bash

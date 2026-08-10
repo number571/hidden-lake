@@ -16,7 +16,7 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls-filesharer@latest
 
 ## How it works
 
-Most of the code is a call to API functions from the HLK kernel. Thanks to this approach, implicit authorization of users is formed from the state of the anonymizing service. Unlike applications such as HLK and HLS=messenger, the HLS=filesharer application does not have a database. Instead, the storage is used, represented by the usual `hls-filesharer.stg` directory.
+Most of the code is a call to API functions from the HLK kernel. Thanks to this approach, implicit authorization of users is formed from the state of the anonymizing service. Unlike applications such as HLK and HLS=notifier, the HLS=filesharer application does not have a database. Instead, the storage is used, represented by the usual `hls-filesharer.stg` directory.
 
 File transfer is limited by the bandwidth of HLK itself. If we take into account that the packet generation period is `5 seconds`, then it will take about 10 seconds to complete the request-response cycle. HLK also limits the size of transmitted packets. If we assume that the limit is `8KiB`, taking into account the existing ~4KiB headers, then the transfer rate is defined as `4KiB/10s` or `410B/1s`.
 
@@ -60,7 +60,7 @@ $ make
 
 Than run command
 ```bash
-$ cd examples/messenger
+$ cd examples/notifier
 $ ./_request/raw/request.sh
 ```
 

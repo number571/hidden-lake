@@ -28,8 +28,8 @@ import (
 	hla_meshtastic_app "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/app"
 	hla_meshtastic_settings "github.com/number571/hidden-lake/internal/adapters/meshtastic/pkg/settings"
 
-	hls_messenger_app "github.com/number571/hidden-lake/internal/services/messenger/pkg/app"
-	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hls_notifier_app "github.com/number571/hidden-lake/internal/services/notifier/pkg/app"
+	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 
 	hls_filesharer_app "github.com/number571/hidden-lake/internal/services/filesharer/pkg/app"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
@@ -45,7 +45,7 @@ var (
 		hla_http_settings.CAppShortName:       hla_http_app.InitApp,
 		hla_https_settings.CAppShortName:      hla_https_app.InitApp,
 		hla_meshtastic_settings.CAppShortName: hla_meshtastic_app.InitApp,
-		hls_messenger_settings.CAppShortName:  hls_messenger_app.InitApp,
+		hls_notifier_settings.CAppShortName:   hls_notifier_app.InitApp,
 		hls_filesharer_settings.CAppShortName: hls_filesharer_app.InitApp,
 		hls_pinger_settings.CAppShortName:     hls_pinger_app.InitApp,
 	}

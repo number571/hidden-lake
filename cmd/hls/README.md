@@ -8,7 +8,7 @@
 
 ## List of services
 
-1. [HLS=messenger](hls-messenger) - send and recv text messages
+1. [HLS=notifier](hls-notifier) - send and recv text messages
 2. [HLS=filesharer](hls-filesharer) - view storage and download files 
 3. [HLS=pinger](hls-pinger) - ping the node to check online status
 
@@ -41,7 +41,7 @@ $ go run ./cmd/hls/hls-<application>
 > ...
 ```
 
-Creates [`./hls-<application>.yml`](./hls-messenger/hls-messenger.yml) file (as example `messenger`). Also can create another files / directories (as example `hls-filesharer.stg` in `filesharer`)
+Creates [`./hls-<application>.yml`](./hls-notifier/hls-notifier.yml) file (as example `notifier`). Also can create another files / directories (as example `hls-filesharer.stg` in `filesharer`)
 
 ## Running options
 

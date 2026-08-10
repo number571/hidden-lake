@@ -13,7 +13,7 @@ build:
 		hla/hla-http \
 		hla/hla-https \
 		hla/hla-meshtastic \
-		hls/hls-messenger \
+		hls/hls-notifier \
 		hls/hls-filesharer \
 		hls/hls-pinger \
 		hlh/hlh-composite; \
@@ -37,7 +37,7 @@ build:
 build-cli: 
 	for app in \
 		hlk/client/hlk-cli \
-		hls/hls-messenger/client/hls-messenger-cli \
+		hls/hls-notifier/client/hls-notifier-cli \
 		hls/hls-filesharer/client/hls-filesharer-cli \
 		hls/hls-pinger/client/hls-pinger-cli; \
 	do \

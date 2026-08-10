@@ -12,7 +12,7 @@ import (
 	hla_tcp_settings "github.com/number571/hidden-lake/internal/adapters/tcp/pkg/settings"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-	hls_messenger_settings "github.com/number571/hidden-lake/internal/services/messenger/pkg/settings"
+	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -52,7 +52,7 @@ func initConfig(networkKey string) (*SConfig, error) {
 		FApplications: []string{
 			hlk_settings.CAppShortName,
 			hls_pinger_settings.CAppShortName,
-			hls_messenger_settings.CAppShortName,
+			hls_notifier_settings.CAppShortName,
 			hls_filesharer_settings.CAppShortName,
 		},
 	}

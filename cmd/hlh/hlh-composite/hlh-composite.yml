@@ -6,6 +6,6 @@ applications:
 - hlk
 - hla-tcp
 - hls-pinger
-- hls-messenger
+- hls-notifier
 # - hla-http
 # - hls-filesharer

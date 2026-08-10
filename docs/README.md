@@ -5,7 +5,7 @@ __Step 1__. Run HLH=composite (composite of HL services).
 ```bash
 $ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
 $ hlh-composite --network std-external-tcp
-### Run HLK, HLA=tcp, HLS=pinger, HLS=messenger, HLS=filesharer ###
+### Run HLK, HLA=tcp, HLS=pinger, HLS=notifier, HLS=filesharer ###
 ```
 
 > The list of networks can be found here: [hidden-lake/build/networks.yml](https://github.com/number571/hidden-lake/blob/master/build/networks.yml).
@@ -24,11 +24,11 @@ $ go install github.com/number571/hidden-lake/cmd/hlk/client/hlk-cli@latest
 $ echo "PubKey{...}" | hlk-cli -d add-friend -a {{friend-name}}
 ```
 
-__Step 3__. After exchange, you need to use the applied application. The Hidden Lake project provides a number of simple console applications for each service. One of these applications can be considered [hls-messenger-cli](../cmd/hls/hls-messenger/client/hls-messenger-cli/).
+__Step 3__. After exchange, you need to use the applied application. The Hidden Lake project provides a number of simple console applications for each service. One of these applications can be considered [hls-notifier-cli](../cmd/hls/hls-notifier/client/hls-notifier-cli/).
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hls/hls-messenger/client/hls-messenger-cli@latest
-$ hls-messenger-cli -f {{friend-name}}
+$ go install github.com/number571/hidden-lake/cmd/hls/hls-notifier/client/hls-notifier-cli@latest
+$ hls-notifier-cli -f {{friend-name}}
 ### Start chatting... ###
 ```
 

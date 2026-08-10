@@ -1,0 +1,71 @@
+package database
+
+import (
+	"os"
+	"testing"
+	"time"
+
+	message "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
+)
+
+const (
+	tcBody = "hello, world!"
+	tcPath = "database.db"
+)
+
+func TestError(t *testing.T) {
+	t.Parallel()
+
+	str := "value"
+	err := &SError{str}
+	if err.Error() != errPrefix+str {
+		t.Fatal("incorrect err.Error()")
+	}
+}
+
+func TestDatabase(t *testing.T) {
+	t.Parallel()
+
+	_ = os.RemoveAll(tcPath)
+	defer func() { _ = os.RemoveAll(tcPath) }()
+
+	db, err := NewKeyValueDB(tcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = db.Close() }()
+
+	friend := "friend"
+
+	timeNow := time.Now()
+	err1 := db.Push(friend, message.NewMessage(true, tcBody, timeNow))
+	if err1 != nil {
+		t.Fatal(err1)
+	}
+
+	size := db.Size(friend)
+	if size != 1 {
+		t.Fatal("size != 1")
+	}
+
+	msgs, err := db.Load(friend, 0, size)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(msgs) != 1 {
+		t.Fatal("len(msgs) != 1")
+	}
+
+	if !msgs[0].IsIncoming() {
+		t.Fatal("!msgs[0].IsIncoming()")
+	}
+
+	if msgs[0].GetMessage() != tcBody {
+		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
+	}
+
+	if msgs[0].GetTimestamp() != timeNow.Format(time.DateTime) {
+		t.Fatal("msgs[0].GetTimestamp() != timeNow.Format(time.DateTime)")
+	}
+}

@@ -1,0 +1,74 @@
+package incoming
+
+import (
+	"context"
+	"io"
+	"net/http"
+	"time"
+
+	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/message"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/broker"
+	"github.com/number571/hidden-lake/internal/utils/chars"
+	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
+
+	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
+	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+)
+
+func HandleIncomingPushHTTP(
+	pCtx context.Context,
+	pLogger logger.ILogger,
+	pDB database.IKVDatabase,
+	pBroker broker.IDataBroker,
+	pHlkClient hlk_client.IClient,
+) http.HandlerFunc {
+	return func(pW http.ResponseWriter, pR *http.Request) {
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeOFF)
+
+		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
+
+		if pR.Method != http.MethodPost {
+			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
+			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+			return
+		}
+
+		msgBytes, err := io.ReadAll(pR.Body)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
+			_ = api.Response(pW, http.StatusConflict, "failed: response message")
+			return
+		}
+
+		rawMsg := string(msgBytes)
+		if len(rawMsg) == 0 || chars.HasNotGraphicCharacters(rawMsg) {
+			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
+			return
+		}
+
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
+			return
+		}
+
+		msg := message_dto.NewMessage(true, rawMsg, time.Now())
+		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
+
+		if err := pDB.Push(aliasName, msg); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("push_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
+			return
+		}
+
+		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
+	}
+}

@@ -5,5 +5,5 @@ logging:
 applications:
 - hlk
 - hls-pinger
-- hls-messenger
+- hls-notifier
 - hls-filesharer
