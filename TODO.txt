@@ -3,5 +3,7 @@
 3. Создать HLH=register
 4. Тесты для HLA=meshtastic
 5. Гарантированная доставка сообщений (HLA=messenger)
-6. HLK: silence mode
-7. HLS=messenger -> HLS=notifier
+6. + HLK: silence mode
+7. + HLS=messenger -> HLS=notifier
+8. + HLS=filesharer: отмена скачивания
+9. Тесты для HLS=filesharer

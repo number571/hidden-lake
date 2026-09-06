@@ -36,6 +36,7 @@ type sStream struct {
 	fHasher       hash.Hash
 	fChunkSize    uint64
 	fPersonal     bool
+	fCallback     func(uint64)
 }
 
 func BuildStreamReader(
@@ -46,6 +47,7 @@ func BuildStreamReader(
 	pHlkClient hlk_client.IClient,
 	pFileInfo fileinfo.IFileInfo,
 	pPersonal bool,
+	pCallback func(uint64),
 ) (io.Reader, error) {
 	chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 	if err != nil {
@@ -66,6 +68,7 @@ func BuildStreamReader(
 		fChunkSize: chunkSize,
 		fFileInfo:  pFileInfo,
 		fPersonal:  pPersonal,
+		fCallback:  pCallback,
 	}, nil
 }
 
@@ -103,6 +106,10 @@ func (p *sStream) Read(b []byte) (int, error) {
 	n := copy(b, p.fBuffer)
 	p.fBuffer = p.fBuffer[n:]
 	p.fPosition += uint64(n) //nolint:gosec
+
+	if p.fCallback != nil {
+		p.fCallback(p.fPosition)
+	}
 
 	if _, err := p.fHasher.Write(b[:n]); err != nil {
 		return 0, errors.Join(ErrHashWriteChunk, err)

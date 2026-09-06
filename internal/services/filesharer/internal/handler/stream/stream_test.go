@@ -59,6 +59,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(0, fileBytes, offset),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -95,6 +96,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(1, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -125,6 +127,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(2, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -155,6 +158,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(3, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -172,6 +176,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(4, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -192,6 +197,7 @@ func TestStreamReader(t *testing.T) {
 		newTsHLSClient(4, fileBytes, 0),
 		newFileInfoFromBytes(filename, fileBytes),
 		false,
+		func(u uint64) {},
 	)
 	if err != nil {
 		t.Fatal(err)

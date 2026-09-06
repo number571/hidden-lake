@@ -4,7 +4,7 @@
 
 <img src="images/hls_notifier_logo.png" alt="hls_notifier_logo.png"/>
 
-The `Hidden Lake Service (Notifier)` is a notifier based on the core of an anonymous network with theoretically provable anonymity of HLK. A feature of this notifier is the provision of anonymity of the fact of transactions (sending, receiving).
+The `Hidden Lake Service (Notifier)` is a notifier based on the core of an anonymous network with theoretically provable anonymity of HLK. A feature of this notifier is the provision of anonymity of the fact of transactions (sending, receiving) text messages.
 
 > More information about HLS=notifier in the [habr.com/ru/post/701488](https://habr.com/ru/post/701488/ "Habr HLS=notifier")
 

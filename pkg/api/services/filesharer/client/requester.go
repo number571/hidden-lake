@@ -12,7 +12,7 @@ import (
 
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 var (
@@ -24,6 +24,8 @@ const (
 	cHandleRemoteListTemplate     = "http://" + "%s" + hls_settings.CHandleRemoteListPath + "?friend=%s&page=%d&personal=%t"
 	cHandleRemoteFileTemplate     = "http://" + "%s" + hls_settings.CHandleRemoteFilePath + "?friend=%s&name=%s&personal=%t"
 	cHandleRemoteFileInfoTemplate = "http://" + "%s" + hls_settings.CHandleRemoteFileInfoPath + "?friend=%s&name=%s&personal=%t"
+	cHandleRemoteFileProcTemplate = "http://" + "%s" + hls_settings.CHandleRemoteFileProcPath + "?friend=%s&name=%s&personal=%t"
+	cHandleRemoteListProcTemplate = "http://" + "%s" + hls_settings.CHandleRemoteListProcPath
 	cHandleLocalListTemplate      = "http://" + "%s" + hls_settings.CHandleLocalListPath + "?friend=%s&page=%d"
 	cHandleLocalFileTemplate      = "http://" + "%s" + hls_settings.CHandleLocalFilePath + "?friend=%s&name=%s"
 	cHandleLocalFileInfoTemplate  = "http://" + "%s" + hls_settings.CHandleLocalFileInfoPath + "?friend=%s&name=%s"
@@ -78,7 +80,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 	return nil
 }
 
-func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) (fileinfo.IFileInfoList, error) {
+func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) ([]dto.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -90,7 +92,7 @@ func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPag
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	infos, err := fileinfo.LoadFileInfoList(res)
+	infos, err := dto.LoadFileInfoList(res)
 	if err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
@@ -130,7 +132,7 @@ func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFil
 	return nil
 }
 
-func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (fileinfo.IFileInfo, error) {
+func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (dto.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -142,14 +144,14 @@ func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, 
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	info, err := fileinfo.LoadFileInfo(res)
+	info, err := dto.LoadFileInfo(res)
 	if err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 	return info, nil
 }
 
-func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) (fileinfo.IFileInfoList, error) {
+func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) ([]dto.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -161,7 +163,7 @@ func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	infos, err := fileinfo.LoadFileInfoList(res)
+	infos, err := dto.LoadFileInfoList(res)
 	if err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
@@ -214,7 +216,7 @@ func (p *sRequester) DelLocalFile(pCtx context.Context, pAliasName string, pFile
 	return nil
 }
 
-func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, pFileName string) (fileinfo.IFileInfo, error) {
+func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, pFileName string) (dto.IFileInfo, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -226,9 +228,62 @@ func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, p
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	info, err := fileinfo.LoadFileInfo(res)
+	info, err := dto.LoadFileInfo(res)
 	if err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 	return info, nil
+}
+
+func (p *sRequester) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (dto.IDownloadProcess, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	dp, err := dto.LoadDownloadProcess(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return dp, nil
+}
+
+func (p *sRequester) DelRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) error {
+	_, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPersonal),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
+}
+
+func (p *sRequester) GetRemoteListProc(pCtx context.Context) ([]dto.IDownloadProcess, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteListProcTemplate, p.fHost),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	dpl, err := dto.LoadDownloadProcessList(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return dpl, nil
 }

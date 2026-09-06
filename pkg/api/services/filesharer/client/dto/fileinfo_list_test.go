@@ -21,23 +21,15 @@ func TestFileInfoList(t *testing.T) {
 	}
 
 	origFileInfoList := []IFileInfo{f1, f2, f3}
-	fileInfoList, err := LoadFileInfoList(origFileInfoList)
+	fileInfoList, err := LoadFileInfoList(FileInfoListToString(origFileInfoList))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	gotFileInfoList := fileInfoList.GetList()
-	for i := range gotFileInfoList {
-		if gotFileInfoList[i].GetHash() != origFileInfoList[i].GetHash() {
+	for i := range fileInfoList {
+		if fileInfoList[i].GetHash() != origFileInfoList[i].GetHash() {
 			t.Fatal("gotFileInfoList[i].GetHash() != origFileInfoList[i].GetHash()")
 		}
-	}
-
-	if _, err := LoadFileInfoList(fileInfoList.ToBytes()); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := LoadFileInfoList(fileInfoList.ToString()); err != nil {
-		t.Fatal(err)
 	}
 
 	if _, err := LoadFileInfoList(111); err == nil {

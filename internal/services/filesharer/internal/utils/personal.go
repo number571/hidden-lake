@@ -12,7 +12,7 @@ func GetBoolValueFromQuery(qp url.Values, key string) (bool, error) {
 		return false, nil
 	}
 	if len(v) == 0 || v[0] == "" {
-		// personal exists only as key (without value)
+		// exists only as key (without value)
 		return true, nil
 	}
 	switch v[0] {
@@ -21,6 +21,6 @@ func GetBoolValueFromQuery(qp url.Values, key string) (bool, error) {
 	case "1", "true":
 		return true, nil
 	default:
-		return false, errors.New("personal not found") // nolint: err113
+		return false, errors.New("undefined") // nolint: err113
 	}
 }

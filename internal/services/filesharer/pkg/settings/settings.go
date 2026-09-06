@@ -55,7 +55,9 @@ const (
 const (
 	CHandleIndexPath          = "/api/index"
 	CHandleRemoteListPath     = "/api/remote/list"
+	CHandleRemoteListProcPath = "/api/remote/list/proc"
 	CHandleRemoteFilePath     = "/api/remote/file"
+	CHandleRemoteFileProcPath = "/api/remote/file/proc"
 	CHandleRemoteFileInfoPath = "/api/remote/file/info"
 	CHandleLocalListPath      = "/api/local/list"
 	CHandleLocalFilePath      = "/api/local/file"

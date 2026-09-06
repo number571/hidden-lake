@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
 var (
@@ -25,7 +25,7 @@ func (p *sClient) GetIndex(pCtx context.Context) error {
 	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) (fileinfo.IFileInfoList, error) {
+func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) ([]dto.IFileInfo, error) {
 	return p.fRequester.GetRemoteList(pCtx, pFriend, pPage, pPersonal)
 }
 
@@ -37,11 +37,11 @@ func (p *sClient) DelRemoteFile(pCtx context.Context, pFriend string, pFilename 
 	return p.fRequester.DelRemoteFile(pCtx, pFriend, pFilename, pPersonal)
 }
 
-func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (fileinfo.IFileInfo, error) {
+func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (dto.IFileInfo, error) {
 	return p.fRequester.GetRemoteFileInfo(pCtx, pFriend, pFilename, pPersonal)
 }
 
-func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) (fileinfo.IFileInfoList, error) {
+func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) ([]dto.IFileInfo, error) {
 	return p.fRequester.GetLocalList(pCtx, pFriend, pPage)
 }
 
@@ -57,6 +57,18 @@ func (p *sClient) DelLocalFile(pCtx context.Context, pFriend string, pFilename s
 	return p.fRequester.DelLocalFile(pCtx, pFriend, pFilename)
 }
 
-func (p *sClient) GetLocalFileInfo(pCtx context.Context, pFriend string, pFilename string) (fileinfo.IFileInfo, error) {
+func (p *sClient) GetLocalFileInfo(pCtx context.Context, pFriend string, pFilename string) (dto.IFileInfo, error) {
 	return p.fRequester.GetLocalFileInfo(pCtx, pFriend, pFilename)
+}
+
+func (p *sClient) GetRemoteFileProc(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (dto.IDownloadProcess, error) {
+	return p.fRequester.GetRemoteFileProc(pCtx, pFriend, pFilename, pPersonal)
+}
+
+func (p *sClient) DelRemoteFileProc(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) error {
+	return p.fRequester.DelRemoteFileProc(pCtx, pFriend, pFilename, pPersonal)
+}
+
+func (p *sClient) GetRemoteListProc(pCtx context.Context) ([]dto.IDownloadProcess, error) {
+	return p.fRequester.GetRemoteListProc(pCtx)
 }

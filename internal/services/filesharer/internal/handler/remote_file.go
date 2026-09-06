@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/stream"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
@@ -17,7 +17,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
@@ -26,10 +26,9 @@ func HandleRemoteFileAPI(
 	pConfig config.IConfig,
 	pLogger logger.ILogger,
 	pHlkClient hlk_client.IClient,
+	pProcessManager process.IDownloadProcessManager,
 	pPathTo string,
 ) http.HandlerFunc {
-	downloadProcessesMap := newDownloadProcessesMap()
-
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
@@ -56,6 +55,19 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		ctx, cancel := context.WithCancel(pCtx)
+		defer cancel()
+
+		dpKey := dto.NewDownloadProcessKey(aliasName, fileName, isPersonal)
+
+		if ok := pProcessManager.TryLock(dpKey, cancel); !ok {
+			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusAccepted, "process: download")
+			return
+		}
+		defer func() { _ = pProcessManager.Unlock(dpKey) }()
+
 		stgPath := utils.GetPrivateStoragePath(pPathTo, aliasName)
 		if err := os.MkdirAll(stgPath, 0700); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("mkdir_all"))
@@ -76,16 +88,8 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		if ok := downloadProcessesMap.TryLock(fullPath); !ok {
-			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusAccepted, "process: download")
-			return
-		}
-		defer downloadProcessesMap.Unlock(fullPath)
-
 		req := request.NewInfoRequest(fileName, isPersonal)
-		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
+		resp, err := pHlkClient.FetchRequest(ctx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
@@ -98,7 +102,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		fileInfo, err := fileinfo.LoadFileInfo(resp.GetBody())
+		fileInfo, err := dto.LoadFileInfo(resp.GetBody())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
@@ -111,14 +115,18 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		_ = pProcessManager.Update(dpKey, [2]uint64{0, fileInfo.GetSize()})
 		streamReader, err := stream.BuildStreamReader(
-			pCtx,
+			ctx,
 			pConfig.GetSettings().GetRetryNum(),
 			fullPath,
 			aliasName,
 			pHlkClient,
 			fileInfo,
 			isPersonal,
+			func(u uint64) {
+				_ = pProcessManager.Update(dpKey, [2]uint64{u, fileInfo.GetSize()})
+			},
 		)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("build_stream"))
@@ -150,45 +158,4 @@ func HandleRemoteFileAPI(
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 	}
-}
-
-type downloadProcessesMap struct {
-	fMutex *sync.RWMutex
-	fMap   map[string]*sync.Mutex
-}
-
-func newDownloadProcessesMap() *downloadProcessesMap {
-	return &downloadProcessesMap{
-		fMutex: &sync.RWMutex{},
-		fMap:   make(map[string]*sync.Mutex, 256),
-	}
-}
-
-func (p *downloadProcessesMap) Unlock(k string) {
-	p.fMutex.Lock()
-	defer p.fMutex.Unlock()
-
-	mtx, ok := p.fMap[k]
-	if !ok {
-		panic("unlock mutex without lock")
-	}
-
-	mtx.Unlock()
-	delete(p.fMap, k)
-}
-
-func (p *downloadProcessesMap) TryLock(k string) bool {
-	p.fMutex.Lock()
-	defer p.fMutex.Unlock()
-
-	_, ok := p.fMap[k]
-	if ok {
-		return false
-	}
-
-	mtx := &sync.Mutex{}
-	p.fMap[k] = mtx
-	mtx.Lock()
-
-	return true
 }

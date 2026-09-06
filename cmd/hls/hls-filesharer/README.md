@@ -76,15 +76,19 @@ Got response
                                                 |> description = get name of service
 2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"personal":?bool]
                                                 |> description = get list of files from storage
-3. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
+3. GET                  /api/remote/list/proc   | params = []
+                                                |> description = get list of file download processes
+4. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
                                                 |> description = download / delete file content by name
-4. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":?bool]
+5. GET, DELETE          /api/remote/file/proc   | params = ["friend":string,"name":string,"personal":?bool]
+                                                |> description = view / cancel file download process
+6. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":?bool]
                                                 |> description = get info of the file by name
-5. GET                  /api/local/list         | params = ["friend":?string,"page":uint64]
+7. GET                  /api/local/list         | params = ["friend":?string,"page":uint64]
                                                 |> description = get list of files from storage
-6. GET, POST, DELETE    /api/local/file         | params = ["friend":?string,"name":string]
+8. GET, POST, DELETE    /api/local/file         | params = ["friend":?string,"name":string]
                                                 |> description = download / upload / delete file content by name
-7. GET                  /api/local/file/info    | params = ["friend":?string,"name":string]
+9. GET                  /api/local/file/info    | params = ["friend":?string,"name":string]
                                                 |> description = get info of the file by name
 ```
 
@@ -126,7 +130,7 @@ Content-Length: 280
 [{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"},{"name":"image.jpg","size":17792,"hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977"}]
 ```
 
-### 3. /api/remote/file
+### 3. /api/remote/list/proc
 
 #### 3.1. GET Request
 
@@ -146,13 +150,34 @@ Content-Type: text/plain; charset=utf-8
 hello, world!
 ```
 
-#### 3.2. DELETE Request
+
+### 4. /api/remote/file
+
+#### 4.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
+```
+
+#### 4.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Hls-Filesharer-File-Hash: 7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43
+Date: Mon, 19 Jan 2026 08:05:06 GMT
+Content-Length: 14
+Content-Type: text/plain; charset=utf-8
+
+hello, world!
+```
+
+#### 4.2. DELETE Request
 
 ```bash
 curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
 ```
 
-#### 3.2. DELETE Response
+#### 4.2. DELETE Response
 
 ```
 HTTP/1.1 200 OK
@@ -163,53 +188,15 @@ Content-Type: text/plain; charset=utf-8
 success: delete file
 ```
 
-### 4. /api/remote/file/info
-
-#### 4.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=example.txt&personal=false"
-```
-
-#### 4.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Date: Fri, 16 Jan 2026 21:25:55 GMT
-Content-Length: 138
-
-{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}
-```
-
-### 5. /api/local/list
+### 5. /api/remote/file/proc
 
 #### 5.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9541/api/local/list?friend=&page=0"
-```
-
-#### 5.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Sun, 01 Feb 2026 16:09:56 GMT
-Content-Length: 280
-
-[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"},{"name":"image.jpg","size":17792,"hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977"}]
-```
-
-### 6. /api/local/file
-
-#### 6.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9541/api/local/file?friend=&name=example.txt"
 ```
 
-#### 6.1. GET Response
+#### 5.1. GET Response
 
 ```
 HTTP/1.1 200 OK
@@ -220,30 +207,13 @@ Content-Type: text/plain; charset=utf-8
 hello, world!
 ```
 
-#### 6.2. POST Request
-
-```bash
-curl -i -X POST "http://localhost:9541/api/local/file?friend=Alice&name=example.txt" --data 'hello, world!'
-```
-
-#### 6.2. POST Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Sun, 01 Feb 2026 16:12:18 GMT
-Content-Length: 20
-
-success: upload file
-```
-
-#### 6.3. DELETE Request
+#### 5.2. DELETE Request
 
 ```bash
 curl -i -X DELETE "http://localhost:9541/api/local/file?friend=Alice&name=example.txt"
 ```
 
-#### 6.3. DELETE Response
+#### 5.2. DELETE Response
 
 ```
 HTTP/1.1 200 OK
@@ -254,15 +224,106 @@ Content-Length: 0
 success: delete file
 ```
 
-### 7. /api/local/file/info
+### 6. /api/remote/file/info
+
+#### 6.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=example.txt&personal=false"
+```
+
+#### 6.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 16 Jan 2026 21:25:55 GMT
+Content-Length: 138
+
+{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}
+```
+
+### 7. /api/local/list
 
 #### 7.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9541/api/local/list?friend=&page=0"
+```
+
+#### 7.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 01 Feb 2026 16:09:56 GMT
+Content-Length: 280
+
+[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"},{"name":"image.jpg","size":17792,"hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977"}]
+```
+
+### 8. /api/local/file
+
+#### 8.1. GET Request
+
+```bash
+curl -i -X GET "http://localhost:9541/api/local/file?friend=&name=example.txt"
+```
+
+#### 8.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Date: Sun, 01 Feb 2026 16:11:23 GMT
+Content-Length: 14
+Content-Type: text/plain; charset=utf-8
+
+hello, world!
+```
+
+#### 8.2. POST Request
+
+```bash
+curl -i -X POST "http://localhost:9541/api/local/file?friend=Alice&name=example.txt" --data 'hello, world!'
+```
+
+#### 8.2. POST Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 01 Feb 2026 16:12:18 GMT
+Content-Length: 20
+
+success: upload file
+```
+
+#### 8.3. DELETE Request
+
+```bash
+curl -i -X DELETE "http://localhost:9541/api/local/file?friend=Alice&name=example.txt"
+```
+
+#### 8.3. DELETE Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 01 Feb 2026 16:15:34 GMT
+Content-Length: 0
+
+success: delete file
+```
+
+### 9. /api/local/file/info
+
+#### 9.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9541/api/local/file/info?friend=&name=example.txt"
 ```
 
-#### 7.1. GET Response
+#### 9.1. GET Response
 
 ```
 HTTP/1.1 200 OK

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -29,7 +30,9 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(0, true), "./testdata")
+	processMap := process.NewDownloadProcessesMap()
+
+	handlerX := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(0, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -46,27 +49,27 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(1, true), "./testdata")
+	handlerY := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(1, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerY); err == nil {
 		t.Fatal("success request with invalid fetch")
 	}
 
-	handlerZ := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-1, true), "./testdata")
+	handlerZ := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-1, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with invalid status code")
 	}
 
-	handlerA := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-2, true), "./testdata")
+	handlerA := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-2, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerA); err == nil {
 		t.Fatal("success request with invalid response body")
 	}
 
-	handlerB := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-3, true), "./testdata")
+	handlerB := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(-3, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerB); err == nil {
 		t.Fatal("success request with invalid file name")
 	}
 
-	handlerC := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(0, false), "./testdata")
+	handlerC := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(0, false), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerC); err == nil {
 		t.Fatal("success request with build stream error")
 	}

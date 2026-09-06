@@ -4,11 +4,33 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
-func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (dto.IFileInfoList, error) {
+func FileInfoListToString(list []dto.IFileInfo) string {
+	result := strings.Builder{}
+	result.Grow(4096)
+
+	result.WriteByte('[')
+
+	if len(list) == 0 {
+		result.WriteByte(']')
+		return result.String()
+	}
+
+	for i := 0; i < len(list)-1; i++ {
+		result.WriteString(list[i].ToString())
+		result.WriteByte(',')
+	}
+	result.WriteString(list[len(list)-1].ToString())
+
+	result.WriteByte(']')
+	return result.String()
+}
+
+func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) ([]dto.IFileInfo, error) {
 	stat, err := os.Stat(pStgPath)
 	if os.IsNotExist(err) || !stat.IsDir() {
 		list, err := dto.LoadFileInfoList("[]")
@@ -51,5 +73,5 @@ func GetFileInfoList(pStgPath string, pPage uint64, pOffset uint64) (dto.IFileIn
 		result = append(result, info)
 	}
 
-	return dto.LoadFileInfoList(result)
+	return result, nil
 }

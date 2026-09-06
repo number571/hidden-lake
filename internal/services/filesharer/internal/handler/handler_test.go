@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
@@ -112,6 +113,7 @@ func testInitInternalServiceHTTP(
 	pAddress string,
 ) *http.Server {
 	mux := http.NewServeMux()
+	processMap := process.NewDownloadProcessesMap()
 
 	mux.HandleFunc(
 		hls_settings.CHandleIndexPath,
@@ -124,9 +126,19 @@ func testInitInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleRemoteFilePath,
-		HandleRemoteFileAPI(pCtx, pConfig, pLogger, pHlkClient, pPathTo),
+		hls_settings.CHandleRemoteListProcPath,
+		HandleRemoteListProcAPI(pCtx, pLogger, processMap),
 	) // GET
+
+	mux.HandleFunc(
+		hls_settings.CHandleRemoteFileProcPath,
+		HandleRemoteFileProcAPI(pCtx, pLogger, processMap),
+	) // GET, DELETE
+
+	mux.HandleFunc(
+		hls_settings.CHandleRemoteFilePath,
+		HandleRemoteFileAPI(pCtx, pConfig, pLogger, pHlkClient, processMap, pPathTo),
+	) // GET, DELETE
 
 	mux.HandleFunc(
 		hls_settings.CHandleRemoteListPath,

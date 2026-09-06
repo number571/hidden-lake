@@ -2,17 +2,33 @@ package dto
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
-var (
-	_ IFileInfoList = sFileInfoList{}
-)
+func FileInfoListToString(list []IFileInfo) string {
+	result := strings.Builder{}
+	result.Grow(4096)
 
-type sFileInfoList []*sFileInfo
+	result.WriteByte('[')
 
-func LoadFileInfoList(pData interface{}) (IFileInfoList, error) {
+	if len(list) == 0 {
+		result.WriteByte(']')
+		return result.String()
+	}
+
+	for i := 0; i < len(list)-1; i++ {
+		result.WriteString(list[i].ToString())
+		result.WriteByte(',')
+	}
+	result.WriteString(list[len(list)-1].ToString())
+
+	result.WriteByte(']')
+	return result.String()
+}
+
+func LoadFileInfoList(pData interface{}) ([]IFileInfo, error) {
 	var fileInfoListBytes []byte
 
 	switch x := pData.(type) {
@@ -20,18 +36,11 @@ func LoadFileInfoList(pData interface{}) (IFileInfoList, error) {
 		fileInfoListBytes = x
 	case string:
 		fileInfoListBytes = []byte(x)
-	case []IFileInfo:
-		list := make(sFileInfoList, 0, len(x))
-		for _, f := range x {
-			info := &sFileInfo{FName: f.GetName(), FHash: f.GetHash(), FSize: f.GetSize()}
-			list = append(list, info)
-		}
-		return list, nil
 	default:
 		return nil, ErrUnknownType
 	}
 
-	list := sFileInfoList{}
+	list := []*sFileInfo{}
 	if err := encoding.DeserializeJSON(fileInfoListBytes, &list); err != nil {
 		return nil, errors.Join(ErrDecodeInfo, err)
 	}
@@ -42,21 +51,13 @@ func LoadFileInfoList(pData interface{}) (IFileInfoList, error) {
 		}
 	}
 
-	return list, nil
+	return fileInfoListToInterface(list), nil
 }
 
-func (p sFileInfoList) ToString() string {
-	return string(p.ToBytes())
-}
-
-func (p sFileInfoList) ToBytes() []byte {
-	return encoding.SerializeJSON(p)
-}
-
-func (p sFileInfoList) GetList() []IFileInfo {
-	result := make([]IFileInfo, 0, len(p))
-	for _, info := range p {
-		result = append(result, info)
+func fileInfoListToInterface(list []*sFileInfo) []IFileInfo {
+	result := make([]IFileInfo, 0, len(list))
+	for _, v := range list {
+		result = append(result, IFileInfo(v))
 	}
 	return result
 }

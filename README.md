@@ -53,6 +53,9 @@
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
 		</a>
+		<a href="https://github.com/gdamdam/awesome-decentralized-web">
+        	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized-Web" />
+		</a>
         <a href="https://github.com/redecentralize/alternative-internet">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Alternative-Internet" />
 		</a>

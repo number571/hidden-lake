@@ -69,7 +69,7 @@ func main() {
 	}
 }
 
-func runFunction(pCtx context.Context, pArgs []string) error {
+func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 	inputPath := strings.TrimSuffix(gFlags.Get("-p").GetStringValue(pArgs), "/")
 	if err := os.MkdirAll(inputPath, 0700); err != nil {
 		return errors.Join(ErrMkdirPath, err)
@@ -102,9 +102,31 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 	}
 
 	switch do {
+	case "cancel":
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		err := hlfClient.DelRemoteFileProc(pCtx, friend, fileName, isPersonal) // nolint:gosec
+		if err != nil {
+			return err
+		}
+		fmt.Println("\ncanceled!")
+	case "proc":
+		fileName := gFlags.Get("-a").GetStringValue(pArgs)
+		if fileName == "" {
+			procList, err := hlfClient.GetRemoteListProc(pCtx)
+			if err != nil {
+				return err
+			}
+			printDownloadProcessList(procList)
+			return nil
+		}
+		downloadProcess, err := hlfClient.GetRemoteFileProc(pCtx, friend, fileName, isPersonal) // nolint:gosec
+		if err != nil {
+			return err
+		}
+		printDownloadProcess(downloadProcess)
 	case "list":
 		var (
-			fileInfoList dto.IFileInfoList
+			fileInfoList []dto.IFileInfo
 			err          error
 		)
 		page := gFlags.Get("-a").GetInt64Value(pArgs)
@@ -193,6 +215,8 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 				return err
 			}
 		}
+
+		fmt.Println("\ndeleted!")
 	case "upload":
 		if !isLocal {
 			return ErrAvailableOnlyForTypeLocal
@@ -209,6 +233,8 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		if err := hlfClient.PutLocalFile(pCtx, friend, fileName, file); err != nil {
 			return err
 		}
+
+		fmt.Println("\nuploaded!")
 	default:
 		return errors.Join(ErrUnknownAction, errors.New(do)) // nolint:err113
 	}
@@ -228,9 +254,24 @@ func (p *processWriter) Write(b []byte) (n int, err error) {
 	return n, err
 }
 
-func printFileInfoList(pFileInfoList dto.IFileInfoList) {
-	list := pFileInfoList.GetList()
-	for _, info := range list {
+func printDownloadProcessList(pDownloadProcessList []dto.IDownloadProcess) {
+	for _, dp := range pDownloadProcessList {
+		printDownloadProcess(dp)
+	}
+}
+
+func printDownloadProcess(pDP dto.IDownloadProcess) {
+	fmt.Printf(
+		"Friend: %s\nFileName: %s\nFileSize: %d\nDownload: %d\n\n",
+		pDP.GetFriend(),
+		pDP.GetFileName(),
+		pDP.GetFileSize(),
+		pDP.GetDownload(),
+	)
+}
+
+func printFileInfoList(pFileInfoList []dto.IFileInfo) {
+	for _, info := range pFileInfoList {
 		printFileInfo(info)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
@@ -40,11 +41,22 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
 	mux := http.NewServeMux()
+	processMap := process.NewDownloadProcessesMap()
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleIndexPath,
 		handler.HandleIndexAPI(p.fHTTPLogger),
 	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleRemoteListProcPath,
+		handler.HandleRemoteListProcAPI(pCtx, p.fHTTPLogger, processMap),
+	) // GET
+
+	mux.HandleFunc(
+		hls_filesharer_settings.CHandleRemoteFileProcPath,
+		handler.HandleRemoteFileProcAPI(pCtx, p.fHTTPLogger, processMap),
+	) // GET, DELETE
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleRemoteFileInfoPath,
@@ -53,8 +65,8 @@ func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleRemoteFilePath,
-		handler.HandleRemoteFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, p.fPathTo),
-	) // GET
+		handler.HandleRemoteFileAPI(pCtx, p.fConfig, p.fHTTPLogger, pHlkClient, processMap, p.fPathTo),
+	) // GET, DELETE
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleRemoteListPath,
