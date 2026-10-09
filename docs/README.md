@@ -3,7 +3,7 @@
 __Step 1__. Run HLH=composite (composite of HL services). 
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
+$ go install github.com/number571/hidden-lake/cmd/hlh/hlh-composite@latest
 $ hlh-composite --network std-external-tcp
 ### Run HLK, HLA=tcp, HLS=pinger, HLS=notifier, HLS=filesharer ###
 ```

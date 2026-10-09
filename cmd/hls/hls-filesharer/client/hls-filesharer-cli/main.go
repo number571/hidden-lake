@@ -48,7 +48,7 @@ var (
 func main() {
 	args := os.Args[1:]
 	if ok := gFlags.Validate(args); !ok {
-		fmt.Println("args invalid")
+		fmt.Fprintln(os.Stderr, "args invalid")
 		os.Exit(1)
 	}
 
@@ -64,7 +64,7 @@ func main() {
 
 	ctx := context.Background()
 	if err := runFunction(ctx, args); err != nil {
-		fmt.Println("\n", err)
+		fmt.Fprintln(os.Stderr, "\n", err)
 		os.Exit(1)
 	}
 }
@@ -255,6 +255,10 @@ func (p *processWriter) Write(b []byte) (n int, err error) {
 }
 
 func printDownloadProcessList(pDownloadProcessList []dto.IDownloadProcess) {
+	if len(pDownloadProcessList) == 0 {
+		fmt.Println("None")
+		return
+	}
 	for _, dp := range pDownloadProcessList {
 		printDownloadProcess(dp)
 	}
@@ -271,6 +275,9 @@ func printDownloadProcess(pDP dto.IDownloadProcess) {
 }
 
 func printFileInfoList(pFileInfoList []dto.IFileInfo) {
+	if len(pFileInfoList) == 0 {
+		fmt.Println("None")
+	}
 	for _, info := range pFileInfoList {
 		printFileInfo(info)
 	}

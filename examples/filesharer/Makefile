@@ -1,50 +1,106 @@
-.PHONY: default clean 
-	request-remote-public-list request-remote-public-info request-remote-public-download request-remote-public-delete
-	request-remote-personal-list request-remote-personal-info request-remote-personal-download request-remote-personal-delete
-	request-local-public-list request-local-public-info request-local-public-download request-local-public-upload request-local-public-delete
-	request-local-personal-list request-local-personal-info request-local-personal-download request-local-personal-upload request-local-personal-delete
+PERSONAL ?= false
+
+.PHONY: default clean _clean_files
+	request-test-download-public-file request-test-info-public-file request-test-list-public
+	request-test-download-personal-file request-test-info-personal-file request-test-list-personal
 default: clean 
 clean:
 	make -C ./prod_test clean
 	make -C ./routing clean
 	make -C ./simple clean
 
-request-remote-public-list:
-	./_request/remote_public_list.sh
-request-remote-public-info:
-	./_request/remote_public_info.sh
-request-remote-public-download:
-	./_request/remote_public_download.sh
-request-remote-public-delete:
-	./_request/remote_public_delete.sh
+request-test-download-file: clean-files
+# Bob upload file to (PUBLIC || PERSONAL/Alice) dir
+# Alice download file from Bob (PUBLIC || PERSONAL/Alice) dir
+	@if [ "$(PERSONAL)" = "false" ]; then 		\
+		echo "download public..." && echo;		\
+		./_request/local_public_upload.sh; 		\
+		./_request/remote_public_download.sh; 	\
+	else 										\
+		echo "download personal..." && echo;	\
+		./_request/local_personal_upload.sh; 	\
+		./_request/remote_personal_download.sh; \
+	fi
 
-request-remote-personal-list:
-	./_request/remote_personal_list.sh
-request-remote-personal-info:
-	./_request/remote_personal_info.sh
-request-remote-personal-download:
-	./_request/remote_personal_download.sh
-request-remote-personal-delete:
-	./_request/remote_personal_delete.sh
+request-test-download-proc: clean-files
+# Bob upload file to (PUBLIC || PERSONAL/Alice) dir
+# Alice download file from Bob (PUBLIC || PERSONAL/Alice) dir
+# Bob delete file from (PUBLIC || PERSONAL/Alice) dir
+# Alice delete file from local (PUBLIC/Bob || PERSONAL/Alice) dir
+	@if [ "$(PERSONAL)" = "false" ]; then 							\
+		echo "download/proc public..." && echo;						\
+		./_request/local_public_upload.sh; 							\
+		./_request/remote_public_download.sh & 						\
+		for i in {1..100}; do 										\
+			sleep 1 && echo $$i;									\
+			./_request/remote_public_proc.sh || exit 1;				\
+		done;														\
+	else 															\
+		echo "download/proc personal..." && echo;					\
+		./_request/local_personal_upload.sh; 						\
+		./_request/remote_personal_download.sh & 					\
+		for i in {1..100}; do 										\
+			sleep 1 && echo $$i;									\
+			./_request/remote_personal_proc.sh || exit 1;			\
+		done;														\
+	fi
 
-request-local-public-list:
-	./_request/local_public_list.sh
-request-local-public-info:
-	./_request/local_public_info.sh
-request-local-public-download:
-	./_request/local_public_download.sh
-request-local-public-upload:
-	./_request/local_public_upload.sh
-request-local-public-delete:
-	./_request/local_public_delete.sh
+request-test-download-proc-cancel: clean-files
+# Bob upload file to (PUBLIC || PERSONAL/Alice) dir
+# Alice download file from Bob (PUBLIC || PERSONAL/Alice) dir
+# Bob delete file from (PUBLIC || PERSONAL/Alice) dir
+# Alice delete file from local (PUBLIC/Bob || PERSONAL/Alice) dir
+	@if [ "$(PERSONAL)" = "false" ]; then 							\
+		echo "download/proc public..." && echo;						\
+		./_request/local_public_upload.sh; 							\
+		./_request/remote_public_download.sh & 						\
+		for i in {1..25}; do 										\
+			sleep 1 && echo $$i;									\
+			./_request/remote_public_proc.sh || exit 1;				\
+		done;														\
+		./_request/remote_public_proc_cancel.sh;					\
+	else 															\
+		echo "download/proc personal..." && echo;					\
+		./_request/local_personal_upload.sh; 						\
+		./_request/remote_personal_download.sh & 					\
+		for i in {1..25}; do 										\
+			sleep 1 && echo $$i;									\
+			./_request/remote_personal_proc.sh || exit 1;			\
+		done;														\
+		./_request/remote_personal_proc_cancel.sh;					\
+	fi
 
-request-local-personal-list:
-	./_request/local_personal_list.sh
-request-local-personal-info:
-	./_request/local_personal_info.sh
-request-local-personal-download:
-	./_request/local_personal_download.sh
-request-local-personal-upload:
-	./_request/local_personal_upload.sh
-request-local-personal-delete:
-	./_request/local_personal_delete.sh
+request-test-info-public-file: clean-files
+# Bob upload file to (PUBLIC || PERSONAL/Alice) dir
+# Alice get file info from Bob (PUBLIC || PERSONAL/Alice) dir
+	@if [ "$(PERSONAL)" = "false" ]; then 		\
+		echo "get info public..." && echo;		\
+		./_request/local_public_upload.sh; 		\
+		./_request/remote_public_info.sh; 		\
+	else 										\
+		echo "get info personal..." && echo;	\
+		./_request/local_personal_upload.sh; 	\
+		./_request/remote_personal_info.sh; 	\
+	fi
+
+request-test-list-public: clean-files
+# Bob upload files to (PUBLIC || PERSONAL/Alice) dir
+# Alice get list of files from Bob (PUBLIC || PERSONAL/Alice) dir
+# Bob delete files from (PUBLIC || PERSONAL/Alice) dir
+	@if [ "$(PERSONAL)" = "false" ]; then 		\
+		echo "get list public..." && echo;		\
+		./_request/local_public_upload.sh;		\
+		./_request/remote_public_list.sh;		\
+	else 										\
+		echo "get list personal..." && echo;	\
+		./_request/local_personal_upload.sh;	\
+		./_request/remote_personal_list.sh;		\
+	fi
+
+clean-files:
+	./_request/remote_public_proc_cancel.sh		2>/dev/null || true
+	./_request/remote_personal_proc_cancel.sh 	2>/dev/null || true
+	./_request/local_public_delete.sh			2>/dev/null || true
+	./_request/local_personal_delete.sh			2>/dev/null || true
+	./_request/remote_public_delete.sh			2>/dev/null || true
+	./_request/remote_personal_delete.sh		2>/dev/null || true

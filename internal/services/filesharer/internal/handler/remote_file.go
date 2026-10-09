@@ -134,7 +134,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		// temp file used as buffer
+		// temp file used as a buffer
 		if _, err := io.Copy(io.Discard, streamReader); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("read_stream"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: read stream")

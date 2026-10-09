@@ -161,7 +161,7 @@ Launching an anonymous network is primarily the launch of an anonymizing `HLK` a
 ### 1. Running from source code
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
+$ go install github.com/number571/hidden-lake/cmd/hlh/hlh-composite@latest
 $ hlh-composite
 ```
 

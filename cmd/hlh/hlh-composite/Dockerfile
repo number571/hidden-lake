@@ -33,7 +33,7 @@ WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
 
 COPY ./ ./
-RUN go build -o hlh-composite ./cmd/hlh-composite
+RUN go build -o hlh-composite ./cmd/hlh/hlh-composite
 
 ENV SERVICE_NETWORK=""
 ENV SERVICE_PATH="."

@@ -7,8 +7,8 @@ import (
 )
 
 type sDownloadProcess struct {
-	*sDownloadProcessKey   `json:"key"`
-	*sDownloadProcessValue `json:"value"`
+	sDownloadProcessKey   `json:"key"`
+	sDownloadProcessValue `json:"value"`
 }
 
 type sDownloadProcessKey struct {
@@ -45,13 +45,13 @@ func LoadDownloadProcess(pData interface{}) (IDownloadProcess, error) {
 
 func NewDownloadProcess(k IDownloadProcessKey, v IDownloadProcessValue) IDownloadProcess {
 	return &sDownloadProcess{
-		k.(*sDownloadProcessKey),
-		v.(*sDownloadProcessValue),
+		k.(sDownloadProcessKey),
+		v.(sDownloadProcessValue),
 	}
 }
 
 func NewDownloadProcessValue(incIndex, download, fileSize uint64) IDownloadProcessValue {
-	return &sDownloadProcessValue{
+	return sDownloadProcessValue{
 		FIncIndex: incIndex,
 		FDownload: download,
 		FFileSize: fileSize,
@@ -59,7 +59,7 @@ func NewDownloadProcessValue(incIndex, download, fileSize uint64) IDownloadProce
 }
 
 func NewDownloadProcessKey(friend, filename string, isPersonal bool) IDownloadProcessKey {
-	return &sDownloadProcessKey{
+	return sDownloadProcessKey{
 		FFriend:   friend,
 		FName:     filename,
 		FPersonal: isPersonal,
@@ -74,26 +74,26 @@ func (p *sDownloadProcess) ToString() string {
 	return string(p.ToBytes())
 }
 
-func (p *sDownloadProcessValue) GetIncIndex() uint64 {
+func (p sDownloadProcessValue) GetIncIndex() uint64 {
 	return p.FIncIndex
 }
 
-func (p *sDownloadProcessValue) GetDownload() uint64 {
+func (p sDownloadProcessValue) GetDownload() uint64 {
 	return p.FDownload
 }
 
-func (p *sDownloadProcessValue) GetFileSize() uint64 {
+func (p sDownloadProcessValue) GetFileSize() uint64 {
 	return p.FFileSize
 }
 
-func (p *sDownloadProcessKey) GetFriend() string {
+func (p sDownloadProcessKey) GetFriend() string {
 	return p.FFriend
 }
 
-func (p *sDownloadProcessKey) GetFileName() string {
+func (p sDownloadProcessKey) GetFileName() string {
 	return p.FName
 }
 
-func (p *sDownloadProcessKey) GetIsPersonal() bool {
+func (p sDownloadProcessKey) GetIsPersonal() bool {
 	return p.FPersonal
 }

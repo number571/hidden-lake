@@ -9,7 +9,7 @@ The `Hidden Lake Helper (Composite)` combines several HL type's services into on
 ## Installation
 
 ```bash
-$ go install github.com/number571/hidden-lake/cmd/hlh-composite@latest
+$ go install github.com/number571/hidden-lake/cmd/hlh/hlh-composite@latest
 ```
 
 ## How it works
@@ -27,7 +27,7 @@ The application HLH=composite includes the download of all Hidden Lake services,
 Default build and run
 
 ```bash 
-$ go run ./cmd/hlh-composite
+$ go run ./cmd/hlh/hlh-composite
 
 > [INFO] 2023/12/03 02:12:51 HLC-COMPOSITE is running...
 > ...

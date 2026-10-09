@@ -7,3 +7,7 @@
 7. + HLS=messenger -> HLS=notifier
 8. + HLS=filesharer: отмена скачивания
 9. Тесты для HLS=filesharer
+10. Переименовать сущность Chat в HLS=notifier
+11. HLS=notifier: добавить Recv, Load, List функции
+12. Добавить правило для всех HLS: минимально возможный размер Payload / Payload+Headers
+13. 
