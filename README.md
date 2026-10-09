@@ -50,6 +50,9 @@
 		</a>
     </p>
     <p align="center">
+		<a href="https://github.com/danoctavian/awesome-anti-censorship">
+        	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Anti-Censorship" />
+		</a>
         <a href="https://github.com/croqaz/awesome-decentralized">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Decentralized" />
 		</a>
@@ -62,13 +65,15 @@
 		<a href="https://github.com/number571/awesome-anonymity">
         	<img src="https://awesome.re/mentioned-badge.svg" alt="Awesome-Anonymity" />
 		</a>
+    </p>
+	<p align="center">
 		<a href="https://habr.com/ru/users/Number571/articles/">
         	<img src="https://img.shields.io/badge/habr-629FBC.svg?&style=for-the-badge&logo=habr&logoColor=white" alt="Habr" />
 		</a>
 		<a href="https://t.me/+9Kcxr8NyeU8zZDZi">
         	<img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
 		</a>
-    </p>
+	</p>
 	About project
 </h2>
 
