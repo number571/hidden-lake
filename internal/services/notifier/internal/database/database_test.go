@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	message "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
+	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 const (
@@ -38,7 +38,12 @@ func TestDatabase(t *testing.T) {
 	friend := "friend"
 
 	timeNow := time.Now()
-	err1 := db.Push(friend, message.NewMessage(true, tcBody, timeNow))
+	msg, err := message_dto.NewMessageWithParams(message_dto.CIncomingState, tcBody, message_dto.NewMessageUID(), timeNow)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err1 := db.Push(friend, msg)
 	if err1 != nil {
 		t.Fatal(err1)
 	}
@@ -48,24 +53,20 @@ func TestDatabase(t *testing.T) {
 		t.Fatal("size != 1")
 	}
 
-	msgs, err := db.Load(friend, 0, size)
+	loadMsg, err := db.LoadByEnum(friend, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(msgs) != 1 {
-		t.Fatal("len(msgs) != 1")
-	}
-
-	if !msgs[0].IsIncoming() {
+	if loadMsg.GetState() != message_dto.CIncomingState {
 		t.Fatal("!msgs[0].IsIncoming()")
 	}
 
-	if msgs[0].GetMessage() != tcBody {
+	if loadMsg.GetBody() != tcBody {
 		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 	}
 
-	if msgs[0].GetTimestamp() != timeNow.Format(time.DateTime) {
+	if loadMsg.GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("msgs[0].GetTimestamp() != timeNow.Format(time.DateTime)")
 	}
 }

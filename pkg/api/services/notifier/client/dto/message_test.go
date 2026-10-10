@@ -18,19 +18,20 @@ func TestError(t *testing.T) {
 func TestMessage(t *testing.T) {
 	t.Parallel()
 
-	isIncoming := true
 	timeNow := time.Now()
 	msgBody := "hello, world!"
-	msg := NewMessage(isIncoming, msgBody, timeNow)
-
+	msg, err := NewMessageWithParams(CIncomingState, msgBody, NewMessageUID(), timeNow)
+	if err != nil {
+		t.Fatal(err)
+	}
 	loadMsg, err := LoadMessage(msg.ToBytes())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loadMsg.IsIncoming() != isIncoming {
+	if loadMsg.GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg.GetMessage() != msgBody {
+	if loadMsg.GetBody() != msgBody {
 		t.Fatal("message is invalid")
 	}
 	if loadMsg.GetTimestamp() != timeNow.Format(time.DateTime) {
@@ -49,10 +50,10 @@ func TestMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loadMsg2.IsIncoming() != isIncoming {
+	if loadMsg2.GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg2.GetMessage() != msgBody {
+	if loadMsg2.GetBody() != msgBody {
 		t.Fatal("message is invalid")
 	}
 	if loadMsg2.GetTimestamp() != timeNow.Format(time.DateTime) {

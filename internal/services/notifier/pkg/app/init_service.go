@@ -7,6 +7,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/incoming"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -14,14 +15,13 @@ import (
 
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
-	pHlkClient hlk_client.IClient,
 	pMsgBroker broker.IDataBroker,
 ) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc(
 		hls_notifier_settings.CPushPath,
-		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker, pHlkClient),
+		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -37,6 +37,7 @@ func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
 	pMsgBroker broker.IDataBroker,
+	pProcessManager process.INotifyProcessManager,
 ) {
 	mux := http.NewServeMux()
 
@@ -47,17 +48,17 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChatPushPath,
-		handler.HandleChatPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		handler.HandleChatPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
 	) // POST
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChatLoadPath,
-		handler.HandleChatLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		handler.HandleChatLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChatSizePath,
-		handler.HandleChatSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		handler.HandleChatSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(

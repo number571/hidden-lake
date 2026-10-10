@@ -15,7 +15,7 @@ type IClient interface {
 
 	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string) (time.Time, error)
+	PushMessage(context.Context, string, string, string) (time.Time, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 }
 
@@ -27,6 +27,6 @@ type IRequester interface {
 
 	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string) (time.Time, error)
+	PushMessage(context.Context, string, string, string) (time.Time, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 }

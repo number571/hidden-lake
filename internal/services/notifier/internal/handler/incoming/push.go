@@ -2,6 +2,7 @@ package incoming
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"time"
@@ -17,7 +18,6 @@ import (
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
-	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func HandleIncomingPushHTTP(
@@ -25,10 +25,9 @@ func HandleIncomingPushHTTP(
 	pLogger logger.ILogger,
 	pDB database.IKVDatabase,
 	pBroker broker.IDataBroker,
-	pHlkClient hlk_client.IClient,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeOFF)
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
 
 		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
 
@@ -45,8 +44,8 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		rawMsg := string(msgBytes)
-		if len(rawMsg) == 0 || chars.HasNotGraphicCharacters(rawMsg) {
+		msgBody := string(msgBytes)
+		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
 			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
 			return
@@ -59,14 +58,45 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		msg := message_dto.NewMessage(true, rawMsg, time.Now())
-		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
+		queryParams := pR.URL.Query()
+		msgUID := queryParams.Get("uid")
 
-		if err := pDB.Push(aliasName, msg); err != nil {
+		if !message_dto.MessageUIDIsValid(msgUID) {
+			pLogger.PushErro(logBuilder.WithMessage("msg_uid"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: message uid")
+			return
+		}
+
+		_, err = pDB.LoadByUID(aliasName, msgUID)
+		if err == nil {
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusAccepted, http_logger.CLogSuccess)
+			return
+		}
+		if !errors.Is(err, database.ErrNotFoundMessage) {
+			pLogger.PushErro(logBuilder.WithMessage("load_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: load message from database")
+			return
+		}
+
+		msg, err := message_dto.NewMessageWithParams(
+			message_dto.CIncomingState,
+			msgBody,
+			msgUID,
+			time.Now(),
+		)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("create_message"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: create message")
+			return
+		}
+		if _, err := pDB.Push(aliasName, msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return
 		}
+
+		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)

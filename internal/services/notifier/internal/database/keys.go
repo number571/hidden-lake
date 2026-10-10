@@ -7,6 +7,7 @@ import (
 const (
 	cKeySizeTemplate          = "database.friends[%s].size"
 	cKeyMessageByEnumTemplate = "database.friends[%s].messages[enum=%d]"
+	cKeyMessageByUidTemplate  = "database.friends[%s].messages[uid=%s]"
 )
 
 func getKeySize(pR string) []byte {
@@ -16,10 +17,18 @@ func getKeySize(pR string) []byte {
 	))
 }
 
-func getKeyMessageByEnum(pR string, pI uint64) []byte {
+func getKeyMessageByEnum(pR string, pE uint64) []byte {
 	return []byte(fmt.Sprintf(
 		cKeyMessageByEnumTemplate,
 		pR,
-		pI,
+		pE,
+	))
+}
+
+func getKeyMessageByUID(pR string, pU string) []byte {
+	return []byte(fmt.Sprintf(
+		cKeyMessageByUidTemplate,
+		pR,
+		pU,
 	))
 }

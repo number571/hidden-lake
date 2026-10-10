@@ -13,10 +13,14 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrLoadMessage    = &SError{"load message"}
-	ErrGetMessage     = &SError{"get message"}
-	ErrSetMessage     = &SError{"set message"}
-	ErrSetSizeMessage = &SError{"set size message"}
-	ErrCloseDB        = &SError{"close db"}
-	ErrCreateDB       = &SError{"create db"}
+	ErrLoadMessage     = &SError{"load message"}
+	ErrExistMessage    = &SError{"exist message"}
+	ErrGetMessage      = &SError{"get message"}
+	ErrGetIndexMessage = &SError{"get index message"}
+	ErrSetMessage      = &SError{"set message"}
+	ErrInvalidState    = &SError{"invalid state"}
+	ErrSetSizeMessage  = &SError{"set size message"}
+	ErrCloseDB         = &SError{"close db"}
+	ErrCreateDB        = &SError{"create db"}
+	ErrNotFoundMessage = &SError{"not found message"}
 )

@@ -9,7 +9,10 @@ import (
 	"testing"
 
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
+	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 func TestHandleChatPushAPI(t *testing.T) {
@@ -33,12 +36,14 @@ func TestHandleChatPushAPI(t *testing.T) {
 		t.Fatal("success get limit payload with incorrect size")
 	}
 
-	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true))
+	processManager := process.NewNotifyProcessManager()
+
+	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true))
+	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get settings error")
 	}
@@ -53,11 +58,11 @@ func TestHandleChatPushAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true))
+	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true), processManager)
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false))
+	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false), processManager)
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}
@@ -80,7 +85,9 @@ func chatMessageGetRequestOK(handler http.HandlerFunc) error {
 
 func chatMessagePostRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
+
 	req := httptest.NewRequest(http.MethodPost, "/?friend=abc", bytes.NewBuffer([]byte("hello, world!")))
+	req.Header.Set(hls_notifier_settings.CHeaderMessageUid, dto.NewMessageUID())
 
 	handler(w, req)
 	res := w.Result()

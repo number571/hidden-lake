@@ -11,6 +11,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
@@ -43,7 +44,7 @@ func HandleRemoteListAPI(
 			}
 		}
 
-		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")

@@ -30,7 +30,7 @@ func TestHandleRemoteProcAPI(t *testing.T) {
 		},
 	)
 
-	processMap := process.NewDownloadProcessesMap()
+	processMap := process.NewDownloadProcessesManager()
 	processMap.TryLock(dto.NewDownloadProcessKey("abc", "example.txt", false), func() {})
 
 	handlerX := HandleRemoteFileProcAPI(ctx, httpLogger, processMap)

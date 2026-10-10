@@ -12,17 +12,27 @@ var (
 )
 
 type SMessage struct {
-	FIncoming  bool   `json:"incoming"`
-	FMessage   string `json:"message"`
-	FTimestamp uint64 `json:"timestamp"`
+	FState     IMessageState `json:"s"`
+	FUID       string        `json:"u"`
+	FBody      string        `json:"b"`
+	FTimestamp uint64        `json:"t"`
 }
 
-func NewMessage(pIsIncoming bool, pMessage string, pTime time.Time) IMessage {
-	return &SMessage{
-		FIncoming:  pIsIncoming,
-		FMessage:   pMessage,
-		FTimestamp: uint64(pTime.Unix()), //nolint:gosec
+func NewMessage(pState IMessageState, pBody string) IMessage {
+	msg, _ := NewMessageWithParams(pState, pBody, NewMessageUID(), time.Now())
+	return msg
+}
+
+func NewMessageWithParams(pState IMessageState, pBody string, pUID string, pTime time.Time) (IMessage, error) {
+	if !MessageUIDIsValid(pUID) {
+		return nil, ErrUIDSize
 	}
+	return &SMessage{
+		FUID:       pUID,
+		FState:     pState,
+		FBody:      pBody,
+		FTimestamp: uint64(pTime.Unix()), //nolint:gosec
+	}, nil
 }
 
 func LoadMessage(pData interface{}) (IMessage, error) {
@@ -41,15 +51,33 @@ func LoadMessage(pData interface{}) (IMessage, error) {
 	if err := json.Unmarshal(msgBytes, msg); err != nil {
 		return nil, err
 	}
+
+	if !MessageUIDIsValid(msg.GetUID()) {
+		return nil, ErrUIDSize
+	}
+
+	state := msg.GetState()
+	if state == cBeginFlagState || state >= cEndFlagState {
+		return nil, ErrUnknownState
+	}
+
 	return msg, nil
 }
 
-func (p *SMessage) IsIncoming() bool {
-	return p.FIncoming
+func (p *SMessage) SetState(pState IMessageState) {
+	p.FState = pState
 }
 
-func (p *SMessage) GetMessage() string {
-	return p.FMessage
+func (p *SMessage) GetState() IMessageState {
+	return p.FState
+}
+
+func (p *SMessage) GetUID() string {
+	return p.FUID
+}
+
+func (p *SMessage) GetBody() string {
+	return p.FBody
 }
 
 func (p *SMessage) GetTimestamp() string {

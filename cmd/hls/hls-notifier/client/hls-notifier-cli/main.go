@@ -13,6 +13,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/notifier/client"
+	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 var (
@@ -91,11 +92,19 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			fmt.Printf("error: %s\n", err.Error())
 			return
 		}
+		state := ""
 		sender := iam
-		if msg.IsIncoming() {
+		switch msg.GetState() {
+		case dto.CIncomingState:
 			sender = friend
+			state = "<"
+		case dto.CReceivedState:
+			state = "v"
+		case dto.CSendingState:
+			go hlsClient.PushMessage(pCtx, friend, msg.GetUID(), msg.GetBody()) // nolint:errcheck
+			state = ">"
 		}
-		fmt.Printf("%s: %s [%s]\n", sender, msg.GetMessage(), msg.GetTimestamp())
+		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody(), state, msg.GetTimestamp())
 	}
 
 	go func() {
@@ -105,17 +114,15 @@ func runFunction(pCtx context.Context, pArgs []string) {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
 			}
-			fmt.Printf("%s: %s [%s]\n", friend, m.GetMessage(), m.GetTimestamp())
+			fmt.Printf("%s: %s [%s]\n", friend, m.GetBody(), m.GetTimestamp())
 		}
 	}()
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		_, err := hlsClient.PushMessage(pCtx, friend, inputString(reader, ""))
-		if err != nil {
-			fmt.Printf("error: %s\n", err.Error())
-			continue
-		}
+		uid := dto.NewMessageUID()
+		msg := inputString(reader, "")
+		go hlsClient.PushMessage(pCtx, friend, uid, msg) // nolint:errcheck
 	}
 }
 

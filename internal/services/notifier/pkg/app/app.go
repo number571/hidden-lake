@@ -13,6 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/services/notifier/pkg/config"
@@ -100,6 +101,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		}
 
 		msgBroker := broker.NewDataBroker(256, 256)
+		processManager := process.NewNotifyProcessManager()
+
 		hlkClient := hlk_client.NewClient(
 			hlk_client.NewBuilder(),
 			hlk_client.NewRequester(
@@ -108,8 +111,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			),
 		)
 
-		p.initExternalServiceHTTP(pCtx, hlkClient, msgBroker)
-		p.initInternalServiceHTTP(pCtx, hlkClient, msgBroker)
+		p.initExternalServiceHTTP(pCtx, msgBroker)
+		p.initInternalServiceHTTP(pCtx, hlkClient, msgBroker, processManager)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",

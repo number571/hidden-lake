@@ -33,7 +33,7 @@ func TestHandleChatListenAPI(t *testing.T) {
 		},
 	)
 
-	msg := dto.NewMessage(true, "hello, world!", time.Now())
+	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
 	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)

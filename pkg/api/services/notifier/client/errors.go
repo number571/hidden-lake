@@ -18,4 +18,5 @@ var (
 	ErrPingMessage    = &SError{"ping message"}
 	ErrPushMessage    = &SError{"push message"}
 	ErrInvalidTitle   = &SError{"invalid title"}
+	ErrSizeMessageUID = &SError{"size message uid"}
 )

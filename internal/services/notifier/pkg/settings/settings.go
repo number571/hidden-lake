@@ -49,3 +49,7 @@ const (
 	CHandleChatSizePath   = "/api/chat/size"
 	CHandleChatListenPath = "/api/chat/listen"
 )
+
+const (
+	CHeaderMessageUid = "Hls-Notifier-Uid"
+)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
@@ -23,7 +22,7 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	friendName := "Alice"
-	msg := dto.NewMessage(true, "hello, world", time.Now())
+	msg := dto.NewMessage(dto.CIncomingState, "hello, world")
 	msgBroker.Produce(NewMessageContainer(friendName, msg))
 
 	if msgBroker.CountSubscribers() != 1 {
@@ -48,7 +47,7 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	// check auto close channel after overflow
-	newMsg := dto.NewMessage(false, "new_message", time.Now())
+	newMsg := dto.NewMessage(dto.CIncomingState, "new_message")
 	for range chanSize + 1 {
 		msgBroker.Produce(NewMessageContainer(friendName, newMsg))
 	}

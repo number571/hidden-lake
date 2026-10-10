@@ -41,7 +41,7 @@ func (p *sApp) initExternalServiceHTTP(pCtx context.Context, pHlkClient hlk_clie
 
 func (p *sApp) initInternalServiceHTTP(pCtx context.Context, pHlkClient hlk_client.IClient) {
 	mux := http.NewServeMux()
-	processMap := process.NewDownloadProcessesMap()
+	processMap := process.NewDownloadProcessesManager()
 
 	mux.HandleFunc(
 		hls_filesharer_settings.CHandleIndexPath,

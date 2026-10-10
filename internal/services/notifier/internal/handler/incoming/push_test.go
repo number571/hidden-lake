@@ -4,23 +4,18 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/number571/go-peer/pkg/crypto/asymmetric"
-	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
-	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
-	"github.com/number571/hidden-lake/pkg/network/request"
-	"github.com/number571/hidden-lake/pkg/network/response"
 )
 
 func TestHandleIncomingPushHTTP(t *testing.T) {
@@ -40,7 +35,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	msgBroker := broker.NewDataBroker(256, 256)
-	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker, newTsHLSClient(true, true))
+	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker)
 
 	if err := incomingPushRequestOK(handler); err != nil {
 		t.Fatal(err)
@@ -56,7 +51,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		t.Fatal("request success with invalid message")
 	}
 
-	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker, newTsHLSClient(true, true))
+	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker)
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Fatal("request success with invalid push message")
 	}
@@ -64,7 +59,10 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 func incomingPushRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer([]byte("hello, world!")))
+
+	path := fmt.Sprintf("/push?uid=%s", message_dto.NewMessageUID()) // nolint:perfsprint
+	req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte("hello, world!")))
+
 	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
@@ -136,72 +134,6 @@ func incomingPushRequestMethod(handler http.HandlerFunc) error {
 	return nil
 }
 
-var (
-	_ hlk_client.IClient = &tsHLSClient{}
-)
-
-type tsHLSClient struct {
-	fWithOK       bool
-	fGetPubKey    bool
-	fFriendPubKey layer2.IParticipantKey
-}
-
-func newTsHLSClient(pGetPubKey, pWithOK bool) *tsHLSClient {
-	return &tsHLSClient{
-		fWithOK:       pWithOK,
-		fGetPubKey:    pGetPubKey,
-		fFriendPubKey: asymmetric.NewPrivKey().GetPubKey(),
-	}
-}
-
-func (p *tsHLSClient) GetIndex(context.Context) error { return nil }
-func (p *tsHLSClient) GetSettings(context.Context) (hls_config.IConfigSettings, error) {
-	if !p.fWithOK {
-		return nil, errors.New("some error") // nolint: err113
-	}
-	return &hls_config.SConfigSettings{
-		FPayloadSizeBytes: 256,
-	}, nil
-}
-
-func (p *tsHLSClient) GetOnlines(context.Context) ([]string, error) {
-	return []string{"tcp://aaa"}, nil
-}
-func (p *tsHLSClient) DelOnline(context.Context, string) error { return nil }
-
-func (p *tsHLSClient) GetFriends(context.Context, scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
-	return map[string]layer2.IParticipantKey{
-		"abc": p.fFriendPubKey,
-	}, nil
-}
-
-func (p *tsHLSClient) AddFriend(context.Context, string, layer2.IParticipantKey) error { return nil }
-func (p *tsHLSClient) DelFriend(context.Context, string) error                         { return nil }
-
-func (p *tsHLSClient) GetConnections(context.Context) ([]string, error) {
-	return []string{"tcp://aaa"}, nil
-}
-func (p *tsHLSClient) AddConnection(context.Context, string) error {
-	if !p.fWithOK {
-		return errors.New("some error") // nolint: err113
-	}
-	return nil
-}
-func (p *tsHLSClient) DelConnection(context.Context, string) error {
-	if !p.fWithOK {
-		return errors.New("some error") // nolint: err113
-	}
-	return nil
-}
-
-func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) error {
-	return nil
-}
-
-func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	return response.NewResponseBuilder().WithCode(200).Build(), nil
-}
-
 type tsDatabase struct {
 	fPushOK bool
 	fLoadOK bool
@@ -224,20 +156,34 @@ func (p *tsDatabase) Size(string) uint64 {
 	return 1
 }
 
-func (p *tsDatabase) Push(_ string, pM message_dto.IMessage) error {
+func (p *tsDatabase) Push(_ string, pM message_dto.IMessage) (uint64, error) {
 	if !p.fPushOK {
-		return errors.New("some error") // nolint: err113
+		return 0, errors.New("some error") // nolint: err113
 	}
 	p.fMsg = pM
+	return 0, nil
+}
+
+func (p *tsDatabase) Recv(string, string) error {
 	return nil
 }
 
-func (p *tsDatabase) Load(string, uint64, uint64) ([]message_dto.IMessage, error) {
+func (p *tsDatabase) LoadByUID(string, string) (message_dto.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	if p.fMsg == nil {
-		return nil, nil
+		return nil, database.ErrNotFoundMessage
 	}
-	return []message_dto.IMessage{p.fMsg}, nil
+	return p.fMsg, nil
+}
+
+func (p *tsDatabase) LoadByEnum(string, uint64) (message_dto.IMessage, error) {
+	if !p.fLoadOK {
+		return nil, errors.New("some error") // nolint: err113
+	}
+	if p.fMsg == nil {
+		return nil, database.ErrNotFoundMessage
+	}
+	return p.fMsg, nil
 }

@@ -76,13 +76,16 @@ func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return limit, nil
 }
 
-func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
+func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+	if !dto.MessageUIDIsValid(pUID) {
+		return time.Time{}, ErrSizeMessageUID
+	}
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
 		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
-		nil,
+		http.Header{hls_settings.CHeaderMessageUid: []string{pUID}},
 		pBody,
 	)
 	if err != nil {

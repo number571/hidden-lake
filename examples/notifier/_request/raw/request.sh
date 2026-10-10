@@ -5,9 +5,9 @@
 PUSH_FORMAT='{
     "method":"POST",
     "host":"hls-notifier",
-    "path":"/push",
+    "path":"/push?uid=0000000000000000000000",
     "body":"aGVsbG8sIHdvcmxkIQ=="
 }';
 
-curl -i -X PUT "http://localhost:8572/api/network/request?friend=Bob" --data "${PUSH_FORMAT}";
+curl -i -X POST "http://localhost:8572/api/network/request?friend=Bob" --data "${PUSH_FORMAT}";
 echo 

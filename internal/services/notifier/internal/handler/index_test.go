@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
 	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	logger_std "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -39,7 +39,7 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.ListenChat(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushMessage(context.Background(), "", ""); err == nil {
+	if _, err := client.PushMessage(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
 	if _, err := client.LoadMessage(context.Background(), "", 0); err == nil {
@@ -144,13 +144,13 @@ func (p *tsHLKClient) AddConnection(context.Context, string) error { return nil 
 func (p *tsHLKClient) DelConnection(context.Context, string) error { return nil }
 
 func (p *tsHLKClient) SendRequest(context.Context, string, request.IRequest) error {
-	if !p.fSendOK {
-		return errors.New("error") // nolint: err113
-	}
 	return nil
 }
 
 func (p *tsHLKClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
+	if !p.fSendOK {
+		return nil, errors.New("error") // nolint: err113
+	}
 	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{1})
 	return resp.Build(), nil
 }
@@ -183,26 +183,34 @@ func newTsDatabase(pLoadOK, pPushOK bool) *tsDatabase {
 	}
 }
 
-func (p *tsDatabase) Close() error {
-	return nil
-}
+func (p *tsDatabase) Close() error { return nil }
+
 func (p *tsDatabase) Size(string) uint64 {
 	return 1
 }
-func (p *tsDatabase) Push(string, dto.IMessage) error {
+
+func (p *tsDatabase) Push(_ string, pM dto.IMessage) (uint64, error) {
 	if !p.fPushOK {
-		return errors.New("error") // nolint: err113
+		return 0, errors.New("some error") // nolint: err113
 	}
+	return 0, nil
+}
+
+func (p *tsDatabase) Recv(string, string) error {
 	return nil
 }
-func (p *tsDatabase) Load(_ string, x uint64, o uint64) ([]dto.IMessage, error) {
+
+func (p *tsDatabase) LoadByUID(string, string) (dto.IMessage, error) {
 	if !p.fLoadOK {
-		return nil, errors.New("error") // nolint: err113
+		return nil, errors.New("some error") // nolint: err113
 	}
-	if x != 0 || o == 0 {
-		return nil, nil
+	return nil, database.ErrNotFoundMessage
+}
+
+func (p *tsDatabase) LoadByEnum(string, uint64) (dto.IMessage, error) {
+	if !p.fLoadOK {
+		return nil, errors.New("some error") // nolint: err113
 	}
-	return []dto.IMessage{
-		dto.NewMessage(true, "hello, world!", time.Now()),
-	}, nil
+	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
+	return msg, nil
 }

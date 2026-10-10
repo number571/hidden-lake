@@ -10,6 +10,10 @@ type IKVDatabase interface {
 	io.Closer
 
 	Size(string) uint64
-	Push(string, message.IMessage) error
-	Load(string, uint64, uint64) ([]message.IMessage, error)
+	Push(string, message.IMessage) (uint64, error)
+
+	Recv(string, string) error
+
+	LoadByUID(string, string) (message.IMessage, error)
+	LoadByEnum(string, uint64) (message.IMessage, error)
 }

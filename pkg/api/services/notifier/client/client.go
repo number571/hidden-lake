@@ -29,8 +29,8 @@ func (p *sClient) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return p.fRequester.GetMessageLimit(pCtx)
 }
 
-func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pBody string) (time.Time, error) {
-	return p.fRequester.PushMessage(pCtx, pAliasName, pBody)
+func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
+	return p.fRequester.PushMessage(pCtx, pAliasName, pUID, pBody)
 }
 
 func (p *sClient) LoadMessage(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {

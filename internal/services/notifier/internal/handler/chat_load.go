@@ -11,14 +11,12 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 )
 
 func HandleChatLoadAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
-	pHlkClient hlk_client.IClient,
 	pDatabase database.IKVDatabase,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
@@ -40,14 +38,14 @@ func HandleChatLoadAPI(
 			return
 		}
 
-		dbMsgs, err := pDatabase.Load(aliasName, index, 1)
-		if err != nil || len(dbMsgs) != 1 {
+		dbMsg, err := pDatabase.LoadByEnum(aliasName, index)
+		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("load_messages"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: load messages")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, dbMsgs[0])
+		_ = api.Response(pW, http.StatusOK, dbMsg.ToString())
 	}
 }

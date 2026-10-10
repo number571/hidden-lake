@@ -22,7 +22,7 @@ func GetConfigSettings(pCfg config.IConfig, pScheme layer2.IScheme) SConfigSetti
 			FFetchTimeoutMS:   uint64(sett.GetFetchTimeout() / time.Millisecond), //nolint:gosec
 			FQueuePeriodMS:    uint64(sett.GetQueuePeriod() / time.Millisecond),  //nolint:gosec
 		},
-		// encoding.CSizeUint64 = payload64.Head()
+		// encoding.CSizeUint64 = payload64.Head() [go-peer/pkg/anonymity/qb/anonymity.go]
 		FPayloadSizeBytes: pScheme.GetPayloadLimit() - qb.CMessageHeadSize,
 	}
 }

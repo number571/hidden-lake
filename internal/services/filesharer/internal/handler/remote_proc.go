@@ -6,10 +6,10 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
-	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
@@ -32,7 +32,7 @@ func HandleRemoteFileProcAPI(
 		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
-		isPersonal, err := utils.GetBoolValueFromQuery(queryParams, "personal")
+		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")

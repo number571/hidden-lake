@@ -23,7 +23,7 @@ type sDownloadProcessStatic struct {
 	fProcess *dto.IDownloadProcess
 }
 
-func NewDownloadProcessesMap() IDownloadProcessManager {
+func NewDownloadProcessesManager() IDownloadProcessManager {
 	return &sDownloadProcessManager{
 		fMutex: &sync.RWMutex{},
 		fMap:   make(map[string]*sDownloadProcessStatic, 256),

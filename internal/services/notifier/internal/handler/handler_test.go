@@ -9,6 +9,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
+	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/message"
 	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
@@ -65,7 +66,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.GetMessageLimit(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushMessage(context.Background(), "abc", "hello, world!"); err != nil {
+	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {
@@ -75,7 +76,8 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	msg := dto.NewMessage(true, "hello, world!", time.Now())
+	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
+
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", msg))
@@ -99,6 +101,7 @@ func testInitInternalServiceHTTP(
 	pAddress string,
 ) *http.Server {
 	mux := http.NewServeMux()
+	processManager := process.NewNotifyProcessManager()
 
 	mux.HandleFunc(
 		hls_settings.CHandleIndexPath,
@@ -107,17 +110,17 @@ func testInitInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_settings.CHandleChatPushPath,
-		HandleChatPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		HandleChatPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
 	) // POST
 
 	mux.HandleFunc(
 		hls_settings.CHandleChatLoadPath,
-		HandleChatLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		HandleChatLoadAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_settings.CHandleChatSizePath,
-		HandleChatSizeAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		HandleChatSizeAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(

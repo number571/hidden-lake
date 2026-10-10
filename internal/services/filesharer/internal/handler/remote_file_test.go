@@ -30,7 +30,7 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 		},
 	)
 
-	processMap := process.NewDownloadProcessesMap()
+	processMap := process.NewDownloadProcessesManager()
 
 	handlerX := HandleRemoteFileAPI(ctx, &tsConfig{}, httpLogger, newTsHLKClient(0, true), processMap, "./testdata")
 	if err := remoteFileRequestOK(handlerX); err != nil {

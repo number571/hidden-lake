@@ -113,7 +113,7 @@ func testInitInternalServiceHTTP(
 	pAddress string,
 ) *http.Server {
 	mux := http.NewServeMux()
-	processMap := process.NewDownloadProcessesMap()
+	processMap := process.NewDownloadProcessesManager()
 
 	mux.HandleFunc(
 		hls_settings.CHandleIndexPath,
