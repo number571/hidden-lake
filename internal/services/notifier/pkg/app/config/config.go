@@ -15,6 +15,7 @@ var (
 )
 
 type SConfigSettings struct {
+	FResponseEnabled bool `json:"response_enabled,omitempty"`
 }
 
 type SConfig struct {
@@ -128,4 +129,8 @@ func (p *SAddress) GetExternal() string {
 
 func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
+}
+
+func (p *SConfigSettings) GetResponseEnabled() bool {
+	return p.FResponseEnabled
 }

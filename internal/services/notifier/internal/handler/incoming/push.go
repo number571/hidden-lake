@@ -17,17 +17,19 @@ import (
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 )
 
 func HandleIncomingPushHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
+	pConfig config.IConfig,
 	pDB database.IKVDatabase,
 	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseMode(pConfig))
 
 		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
 
@@ -101,4 +103,11 @@ func HandleIncomingPushHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, http_logger.CLogSuccess)
 	}
+}
+
+func getResponseMode(pConfig config.IConfig) string {
+	if pConfig.GetSettings().GetResponseEnabled() {
+		return hlk_settings.CHeaderResponseModeON
+	}
+	return hlk_settings.CHeaderResponseModeOFF
 }

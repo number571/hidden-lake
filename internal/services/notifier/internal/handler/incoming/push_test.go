@@ -13,6 +13,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
+	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
@@ -33,9 +34,13 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		},
 	)
 
+	cfg := &config.SConfig{
+		FSettings: &config.SConfigSettings{},
+	}
+
 	ctx := context.Background()
 	msgBroker := broker.NewDataBroker(256, 256)
-	handler := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(true, true), msgBroker)
+	handler := HandleIncomingPushHTTP(ctx, httpLogger, cfg, newTsDatabase(true, true), msgBroker)
 
 	if err := incomingPushRequestOK(handler); err != nil {
 		t.Fatal(err)
@@ -51,7 +56,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		t.Fatal("request success with invalid message")
 	}
 
-	handlery := HandleIncomingPushHTTP(ctx, httpLogger, newTsDatabase(false, true), msgBroker)
+	handlery := HandleIncomingPushHTTP(ctx, httpLogger, cfg, newTsDatabase(false, true), msgBroker)
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Fatal("request success with invalid push message")
 	}

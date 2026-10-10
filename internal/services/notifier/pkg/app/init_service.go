@@ -21,7 +21,7 @@ func (p *sApp) initExternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_notifier_settings.CPushPath,
-		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fDatabase, pMsgBroker),
+		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
 	) // POST
 
 	buildSettings := build.GetSettings()
