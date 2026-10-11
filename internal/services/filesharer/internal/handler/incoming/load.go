@@ -122,11 +122,11 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		fileHash := info.GetHash()
-		pW.Header().Set(hls_settings.CHeaderFileHash, fileHash)
+		fileHash := info.GetHash()[:hls_settings.CTrimHashSizeOnLoad]
+		pW.Header().Set(hls_settings.CHeaderFileHashOnLoad, fileHash)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, buf[:nR])
+		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationOctetStream, buf[:nR])
 	}
 }
 

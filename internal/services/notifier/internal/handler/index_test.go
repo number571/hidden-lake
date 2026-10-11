@@ -39,7 +39,10 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.ListenChat(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushMessage(context.Background(), "", "", ""); err == nil {
+	if _, err := client.PushMessage(context.Background(), "", ""); err == nil {
+		t.Fatal("success incorrect pushMessage")
+	}
+	if _, err := client.PushMessageWithUID(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
 	if _, err := client.LoadMessage(context.Background(), "", 0); err == nil {

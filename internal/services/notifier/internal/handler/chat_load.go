@@ -46,6 +46,6 @@ func HandleChatLoadAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, dbMsg.ToString())
+		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, dbMsg.ToString())
 	}
 }

@@ -15,7 +15,7 @@ var (
 )
 
 type SConfigSettings struct {
-	FResponseEnabled bool `json:"response_enabled,omitempty"`
+	FResponseEnabled bool `yaml:"response_enabled,omitempty"`
 }
 
 type SConfig struct {

@@ -32,7 +32,7 @@ func HandleChatPushAPI(
 	return func(pW http.ResponseWriter, pR *http.Request) {
 		logBuilder := http_logger.NewLogBuilder(hls_settings.GetAppShortNameFMT(), pR)
 
-		if pR.Method != http.MethodGet && pR.Method != http.MethodPost {
+		if pR.Method != http.MethodGet && pR.Method != http.MethodPost && pR.Method != http.MethodPut {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
 			return
@@ -65,9 +65,14 @@ func HandleChatPushAPI(
 		}
 
 		queryParams := pR.URL.Query()
-		aliasName := queryParams.Get("friend")
 
-		msgUID := pR.Header.Get(hls_settings.CHeaderMessageUid)
+		aliasName := queryParams.Get("friend")
+		msgUID := queryParams.Get("uid")
+
+		if pR.Method == http.MethodPut {
+			msgUID = dto.NewMessageUID()
+		}
+
 		if !dto.MessageUIDIsValid(msgUID) {
 			pLogger.PushErro(logBuilder.WithMessage("msg_uid"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: message uid")
@@ -75,7 +80,7 @@ func HandleChatPushAPI(
 		}
 
 		msg, err := pDatabase.LoadByUID(aliasName, msgUID)
-		if err != nil {
+		if err != nil { // nolint:nestif
 			if !errors.Is(err, database.ErrNotFoundMessage) {
 				pLogger.PushErro(logBuilder.WithMessage("load_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: load message from database")
@@ -93,10 +98,12 @@ func HandleChatPushAPI(
 				_ = api.Response(pW, http.StatusBadGateway, "failed: create message")
 				return
 			}
-			if _, err := pDatabase.Push(aliasName, msg); err != nil {
-				pLogger.PushErro(logBuilder.WithMessage("push_message"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
-				return
+			if pR.Method == http.MethodPost {
+				if _, err := pDatabase.Push(aliasName, msg); err != nil {
+					pLogger.PushErro(logBuilder.WithMessage("push_message"))
+					_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
+					return
+				}
 			}
 		}
 
@@ -115,8 +122,21 @@ func HandleChatPushAPI(
 		}
 		defer func() { _ = pProcessManager.Unlock(msgUID) }()
 
+		if pR.Method == http.MethodPut {
+			req := request.NewPushRequest(msg)
+			err := pHlkClient.SendRequest(pCtx, aliasName, req)
+			if err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("send_request"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: send request")
+				return
+			}
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusOK, msg.GetTimestamp())
+			return
+		}
+
 		// try get response from node (delivery check)
-		req := request.NewPushRequest(msg)
+		req := request.NewPushRequestWithUID(msg)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))

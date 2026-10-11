@@ -47,14 +47,14 @@ func HandleChatListenAPI(
 			v, err := pBroker.Consume(ctx, sid)
 			if err != nil {
 				pLogger.PushInfo(logBuilder.WithMessage("no_content"))
-				_ = api.Response(pW, http.StatusNoContent, []byte{})
+				_ = api.Response(pW, http.StatusNoContent, "")
 				return
 			}
 
 			mc, ok := v.(message.IMessageContainer)
 			if !ok {
 				pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
-				_ = api.Response(pW, http.StatusInternalServerError, []byte{})
+				_ = api.Response(pW, http.StatusInternalServerError, "invalid type")
 				return
 			}
 
@@ -64,7 +64,7 @@ func HandleChatListenAPI(
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, mc.GetMessage().ToString())
+			_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, mc.GetMessage().ToString())
 			return
 		}
 	}

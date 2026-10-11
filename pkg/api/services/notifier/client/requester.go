@@ -20,11 +20,12 @@ var (
 )
 
 const (
-	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChatMessageTemplate     = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s"
-	cHandleChatHistorySizeTemplate = "http://" + "%s" + hls_settings.CHandleChatSizePath + "?friend=%s"
-	cHandleChatHistoryLoadTemplate = "http://" + "%s" + hls_settings.CHandleChatLoadPath + "?friend=%s&index=%d"
-	cHandleChatSubscribeTemplate   = "http://" + "%s" + hls_settings.CHandleChatListenPath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate              = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleChatMessageTemplate        = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s"
+	cHandleChatMessageWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s&uid=%s"
+	cHandleChatHistorySizeTemplate    = "http://" + "%s" + hls_settings.CHandleChatSizePath + "?friend=%s"
+	cHandleChatHistoryLoadTemplate    = "http://" + "%s" + hls_settings.CHandleChatLoadPath + "?friend=%s&index=%d"
+	cHandleChatSubscribeTemplate      = "http://" + "%s" + hls_settings.CHandleChatListenPath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -76,7 +77,26 @@ func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return limit, nil
 }
 
-func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
+	rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodPut,
+		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
+		nil,
+		pBody,
+	)
+	if err != nil {
+		return time.Time{}, errors.Join(ErrBadRequest, err)
+	}
+	t, err := dto.ParseTimestamp(string(rsp))
+	if err != nil {
+		return time.Time{}, errors.Join(ErrDecodeResponse, err)
+	}
+	return t, nil
+}
+
+func (p *sRequester) PushMessageWithUID(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
 	}
@@ -84,8 +104,8 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID stri
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
-		http.Header{hls_settings.CHeaderMessageUid: []string{pUID}},
+		fmt.Sprintf(cHandleChatMessageWithUIDTemplate, p.fHost, pFriend, pUID),
+		nil,
 		pBody,
 	)
 	if err != nil {

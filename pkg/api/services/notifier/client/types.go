@@ -13,10 +13,11 @@ type IClient interface {
 	GetMessageLimit(context.Context) (uint64, error)
 	GetChatSize(context.Context, string) (uint64, error)
 
+	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string, string) (time.Time, error)
-	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
+	PushMessage(context.Context, string, string) (time.Time, error)
+	PushMessageWithUID(context.Context, string, string, string) (time.Time, error)
 }
 
 type IRequester interface {
@@ -25,8 +26,9 @@ type IRequester interface {
 	GetMessageLimit(context.Context) (uint64, error)
 	GetChatSize(context.Context, string) (uint64, error)
 
+	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string, string) (time.Time, error)
-	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
+	PushMessage(context.Context, string, string) (time.Time, error)
+	PushMessageWithUID(context.Context, string, string, string) (time.Time, error)
 }

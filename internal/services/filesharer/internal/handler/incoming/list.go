@@ -70,6 +70,6 @@ func HandleIncomingListHTTP(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list))
+		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, utils.FileInfoListToString(list))
 	}
 }

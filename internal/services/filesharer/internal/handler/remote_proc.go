@@ -59,6 +59,6 @@ func HandleRemoteFileProcAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, val.ToString())
+		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, val.ToString())
 	}
 }

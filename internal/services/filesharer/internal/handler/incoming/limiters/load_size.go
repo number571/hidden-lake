@@ -16,8 +16,8 @@ var (
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
 			WithHead(map[string]string{
-				"Content-Type":               api.CApplicationOctetStream,
-				hls_settings.CHeaderFileHash: hashing.NewHasher([]byte{}).ToString(),
+				"Content-Type":                     api.CApplicationOctetStream,
+				hls_settings.CHeaderFileHashOnLoad: hashing.NewHasher([]byte{}).ToString()[:hls_settings.CTrimHashSizeOnLoad],
 			}).
 			WithBody([]byte{}).
 			Build().

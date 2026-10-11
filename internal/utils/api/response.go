@@ -30,22 +30,40 @@ func Response(
 ) error {
 	var (
 		contentType string
-		respBytes   []byte
+	)
+
+	switch pRes.(type) {
+	case []byte:
+		contentType = CApplicationOctetStream
+	case string:
+		contentType = CTextPlain
+	default:
+		contentType = CApplicationJSON
+	}
+
+	return ResponseWithContentType(pW, pRet, contentType, pRes)
+}
+
+func ResponseWithContentType(
+	pW http.ResponseWriter,
+	pRet int,
+	pContentType string,
+	pRes interface{},
+) error {
+	var (
+		respBytes []byte
 	)
 
 	switch x := pRes.(type) {
 	case []byte:
-		contentType = CApplicationOctetStream
 		respBytes = x
 	case string:
-		contentType = CTextPlain
 		respBytes = []byte(x)
 	default:
-		contentType = CApplicationJSON
 		respBytes = encoding.SerializeJSON(x)
 	}
 
-	pW.Header().Set("Content-Type", contentType)
+	pW.Header().Set("Content-Type", pContentType)
 	pW.WriteHeader(pRet)
 
 	if _, err := io.Copy(pW, bytes.NewBuffer(respBytes)); err != nil {

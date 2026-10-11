@@ -65,8 +65,12 @@ const (
 )
 
 const (
+	CHeaderFileHashOnLoad = "F-H"
+	CTrimHashSizeOnLoad   = 16 // hex encode
+)
+
+const (
 	CHeaderInProcess = "Hls-Filesharer-In-Process"
-	CHeaderFileHash  = "Hls-Filesharer-File-Hash"
 )
 
 const (

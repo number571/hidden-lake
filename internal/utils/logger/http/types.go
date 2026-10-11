@@ -14,7 +14,7 @@ type ILogGetter interface {
 }
 
 const (
-	CLogSuccess    = "_"
+	CLogSuccess    = "ok"
 	CLogMethod     = "method"
 	CLogDecodeBody = "decode_body"
 	CLogRedirect   = "redirect"

@@ -169,8 +169,9 @@ func (p *sStream) loadFileChunkFromNetwork() ([]byte, error) {
 			lastErr = ErrInvalidResponseCode
 			continue
 		}
-		hash, ok := resp.GetHead()[hls_filesharer_settings.CHeaderFileHash]
-		if !ok || p.fFileInfo.GetHash() != hash {
+		th := p.fFileInfo.GetHash()[:hls_filesharer_settings.CTrimHashSizeOnLoad]
+		hash, ok := resp.GetHead()[hls_filesharer_settings.CHeaderFileHashOnLoad]
+		if !ok || th != hash {
 			return nil, ErrGotAnotherHash
 		}
 		return resp.GetBody(), nil

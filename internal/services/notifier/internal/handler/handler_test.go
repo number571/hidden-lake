@@ -66,7 +66,10 @@ func TestHandler(t *testing.T) {
 	if _, err := client.GetMessageLimit(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
+	if _, err := client.PushMessage(context.Background(), "abc", "hello, world!"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.PushMessageWithUID(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {

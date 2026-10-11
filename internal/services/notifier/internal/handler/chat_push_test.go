@@ -10,7 +10,6 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
-	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
@@ -85,9 +84,7 @@ func chatMessageGetRequestOK(handler http.HandlerFunc) error {
 
 func chatMessagePostRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-
-	req := httptest.NewRequest(http.MethodPost, "/?friend=abc", bytes.NewBuffer([]byte("hello, world!")))
-	req.Header.Set(hls_notifier_settings.CHeaderMessageUid, dto.NewMessageUID())
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc&uid="+dto.NewMessageUID(), bytes.NewBuffer([]byte("hello, world!")))
 
 	handler(w, req)
 	res := w.Result()
@@ -102,7 +99,7 @@ func chatMessagePostRequestOK(handler http.HandlerFunc) error {
 
 func chatMessageRequestInvalidMethod(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPut, "/", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/", nil)
 
 	handler(w, req)
 	res := w.Result()

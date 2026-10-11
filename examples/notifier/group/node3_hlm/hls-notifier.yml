@@ -1,5 +1,5 @@
 settings:
-  messages_capacity: 2048
+  response_enabled: true
 logging:
 - info
 - warn

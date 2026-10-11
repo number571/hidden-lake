@@ -12,6 +12,16 @@
 2. [HLS=filesharer](hls-filesharer) - view storage and download files 
 3. [HLS=pinger](hls-pinger) - ping the node to check online status
 
+## Borders and Limits
+
+- Each service must be exposed through simple API calls
+- Each service must have a clearly defined request/response size
+- Each service should be a function, not ready-made business logic
+- Each service must successfully work with a payload size of 144 bytes*
+
+> [!NOTE]
+> The minimum possible ciphertext size in HL is 200 bytes. Of these 200 bytes, 56 bytes are allocated to header data in a symmetric encryption scheme. This leaves 144 bytes available for applications.
+
 ## Installation
 
 It is necessary to replace `<application>` with an existing service in the list.

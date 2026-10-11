@@ -60,13 +60,48 @@ $ make
 
 Than run command
 ```bash
-$ cd examples/notifier
+$ cd examples/filesharer
 $ ./_request/raw/request.sh
 ```
 
 Got response
 ```json
 {"code":200,"head":{"Content-Type":"application/json"},"body":"W3sibmFtZSI6ImV4YW1wbGUudHh0IiwiaGFzaCI6IjdkMGM2NGUwNTBhMmMzMWNkMmQ1MjY2YjI5MjNjYTUxYjk1ZTk3ZTJkZWRmYzM5ZTRjZTIyMGI0Nzc2ODM5NzViYTAzMmM2YzMxNDFiYWQ4NDQyYWY0OTQzZjkxYWM0MyIsInNpemUiOjE0fSx7Im5hbWUiOiJpbWFnZS5qcGciLCJoYXNoIjoiN2JmZDg4ZDU0NmI0N2I2MGRiYTJjZDVmNWZmOGYyY2NjMTlkYWYzNDg2NDBkNWY1ZDMzODFiYzNmNTQzMDZmMWM3OTg0Njc5YzIzNWI0YzQ0ODViNTZlZWMyYWQ0OTc3Iiwic2l6ZSI6MTc3OTJ9XQ=="}
+```
+
+## HLS/HLK API
+
+```json
+// header request size = (4 + 76) = 80B
+// payload head size = (144 - 80) = 64B
+// body request size = 0B (null)
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/info?name=&personal=false"}[body]
+
+// header response size = (4 + 55) = 59B
+// body response size can be = (144 - 59) = 85B
+[uint32]{"code":200,"head":{"Content-Type":"application/json"}}[body]
+```
+
+```json
+// header request size = (4 + 76) = 80B
+// payload head size = (144 - 80) = 64B
+// body request size = 0B (null)
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&personal=false"}[body]
+
+// header response size = (4 + 55) = 59B
+// body response size can be = (144 - 59) = 85B
+[uint32]{"code":200,"head":{"Content-Type":"application/json"}}[body]
+```
+
+```json
+// header request size = (4 + 83) = 87B
+// payload head size = (144 - 87) = 57B
+// body request size = 0B (null)
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/load?name=&chunk=&personal=false"}[body]
+
+// header response size = (4 + 88) = 92B
+// body response size can be = (144 - 92) = 52B
+[uint32]{"code":200,"head":{"Content-Type":"application/octet-stream","F-H":"0000000000000000"}}[body]
 ```
 
 ## HLS API
@@ -135,19 +170,19 @@ Content-Length: 280
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
+curl -i -X GET "http://localhost:9541/api/remote/list/proc"
 ```
 
 #### 3.1. GET Response
 
 ```
 HTTP/1.1 200 OK
-Hls-Filesharer-File-Hash: 7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43
+F-H: 7d0c64e050a2c31c
 Date: Mon, 19 Jan 2026 08:05:06 GMT
-Content-Length: 14
-Content-Type: text/plain; charset=utf-8
+Content-Length: 101
+Content-Type: application/json; charset=utf-8
 
-hello, world!
+[{{"friend":"Bob","name":"example.txt","personal":"false"},{"incindex":0,"download":0,"filesize":0}}]
 ```
 
 
@@ -163,7 +198,7 @@ curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.tx
 
 ```
 HTTP/1.1 200 OK
-Hls-Filesharer-File-Hash: 7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43
+Hls-Filesharer-In-Process: -
 Date: Mon, 19 Jan 2026 08:05:06 GMT
 Content-Length: 14
 Content-Type: text/plain; charset=utf-8
@@ -193,7 +228,7 @@ success: delete file
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/local/file?friend=&name=example.txt"
+curl -i -X GET "http://localhost:9541/api/remote/file/proc?friend=&name=example.txt&personal=false"
 ```
 
 #### 5.1. GET Response
@@ -201,16 +236,16 @@ curl -i -X GET "http://localhost:9541/api/local/file?friend=&name=example.txt"
 ```
 HTTP/1.1 200 OK
 Date: Sun, 01 Feb 2026 16:11:23 GMT
-Content-Length: 14
-Content-Type: text/plain; charset=utf-8
+Content-Length: 99
+Content-Type: application/json; charset=utf-8
 
-hello, world!
+{{"friend":"Bob","name":"example.txt","personal":"false"},{"incindex":0,"download":0,"filesize":0}}
 ```
 
 #### 5.2. DELETE Request
 
 ```bash
-curl -i -X DELETE "http://localhost:9541/api/local/file?friend=Alice&name=example.txt"
+curl -i -X DELETE "http://localhost:9541/api/remote/file/proc?friend=Alice&name=example.txt&personal=false"
 ```
 
 #### 5.2. DELETE Response
@@ -221,7 +256,7 @@ Content-Type: text/plain
 Date: Sun, 01 Feb 2026 16:15:34 GMT
 Content-Length: 0
 
-success: delete file
+success: cancel download
 ```
 
 ### 6. /api/remote/file/info
@@ -255,7 +290,7 @@ curl -i -X GET "http://localhost:9541/api/local/list?friend=&page=0"
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
+Content-Type: application/json
 Date: Sun, 01 Feb 2026 16:09:56 GMT
 Content-Length: 280
 
@@ -327,7 +362,7 @@ curl -i -X GET "http://localhost:9541/api/local/file/info?friend=&name=example.t
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
+Content-Type: application/json
 Date: Sun, 01 Feb 2026 16:17:12 GMT
 Content-Length: 138
 

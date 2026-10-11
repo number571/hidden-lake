@@ -74,6 +74,18 @@ Got response
 {"code":200,"head":{"Content-Type":"text/plain"}}
 ```
 
+## HLS/HLK API
+
+```json
+// header request size = (4 + 51) = 55B
+// body request size = 0B (null)
+[uint32]{"method":"GET","host":"hls-pinger","path":"/ping"}[body]
+
+// header response size = (4 + 49) = 53B
+// body response size can be = (144 - 53) = 91B
+[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+```
+
 ## HLS API
 
 ```

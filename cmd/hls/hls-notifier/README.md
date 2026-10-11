@@ -65,19 +65,41 @@ $ cd examples/notifier
 $ make request-node2
 ```
 
+## HLS/HLK API
+
+```json
+// header request size = (4 + 53) = 57B
+// body request size can be = (144 - 85) = 87B
+[uint32]{"method":"PUT","host":"hls-notifier","path":"/push"}[body]
+
+// header response size = (4 + 49) = 53B
+// body response size can be = (144 - 53) = 91B
+[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+```
+
+```json
+// header request size = (4 + 81) = 85B
+// body request size can be = (144 - 85) = 59B
+[uint32]{"method":"POST","host":"hls-notifier","path":"/push?uid=0000000000000000000000"}[body]
+
+// header response size = (4 + 49) = 53B
+// body response size can be = (144 - 53) = 91B
+[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+```
+
 ## HLS API
 
 ```
-1. GET      /api/index          | params = [] 
-                                |> description = get name of service
-2. GET/POST /api/chat/push      | params = ["friend":string]
-                                |> description = get limit message size / send message to chat
-3. GET      /api/chat/load      | params = ["friend":string,"index":uint64]
-                                |> description = get message from chat by index
-4. GET      /api/chat/size      | params = ["friend":string]
-                                |> description = get count of messages in the chat
-5. GET      /api/chat/listen    | params = ["friend":string]
-                                |> description = try get message from chat with longpoll method 
+1. GET          /api/index          | params = [] 
+                                    |> description = get name of service
+2. GET/POST/PUT /api/chat/push      | params = ["friend":string]
+                                    |> description = get limit message size / send message to chat
+3. GET          /api/chat/load      | params = ["friend":string,"index":uint64]
+                                    |> description = get message from chat by index
+4. GET          /api/chat/size      | params = ["friend":string]
+                                    |> description = get count of messages in the chat
+5. GET          /api/chat/listen    | params = ["friend":string]
+                                    |> description = try get message from chat with longpoll method 
 ```
 
 ### 1. /api/index
@@ -121,10 +143,27 @@ Content-Length: 4
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chat/push?friend=Bob" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chat/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Fri, 16 Jan 2026 18:55:12 GMT
+Content-Length: 19
+
+2026-01-16T18:55:12
+```
+
+#### 2.3. PUT Request
+
+```bash
+curl -i -X PUT "http://localhost:9591/api/chat/push?friend=Bob" --data 'hello, world!'
+```
+
+#### 2.3. PUT Response
 
 ```
 HTTP/1.1 200 OK
@@ -149,9 +188,9 @@ curl -i -X GET "http://localhost:9591/api/chat/load?friend=Bob&index=0"
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 18:56:08 GMT
-Content-Length: 69
+Content-Length: 71
 
-{"incoming":false,"message":"hello, world!","timestamp":1768589712}
+{"s":2,"u":"0000000000000000000000","b":"hello, world!","t":1768589712}
 ```
 
 ### 4. /api/chat/size
@@ -166,7 +205,7 @@ curl -i -X GET "http://localhost:9591/api/chat/size?friend=Bob"
 
 ```
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: text/plain
 Date: Fri, 16 Jan 2026 18:56:08 GMT
 Content-Length: 1
 
@@ -185,9 +224,9 @@ curl -i -X GET "http://localhost:9591/api/chat/listen?friend=Bob"
 
 ```
 HTTP/1.1 200 OK
-Content-Type: text/plain
+Content-Type: application/json
 Date: Fri, 16 Jan 2026 18:57:22 GMT
-Content-Length: 58
+Content-Length: 63
 
-{"incoming":true,"message":"hello","timestamp":1768589838}
+{"s":1,"u":"0000000000000000000001","b":"hello","t":1768589838}
 ```

@@ -1,6 +1,5 @@
 settings:
-  messages_capacity: 2048
-  work_size_bits: 20
+  response_enabled: true
 logging:
 - info
 - warn

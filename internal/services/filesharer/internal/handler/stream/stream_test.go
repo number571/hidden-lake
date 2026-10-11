@@ -278,7 +278,7 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 			respBytes = p.fFileBytes[p.fCounter:len(p.fFileBytes)]
 			p.fCounter += len(p.fFileBytes) - p.fCounter
 		}
-		hash := "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9"
+		hash := "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9"[:hls_filesharer_settings.CTrimHashSizeOnLoad]
 		switch p.fErrType {
 		case 0:
 			// ok
@@ -290,8 +290,8 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 		resp = response.NewResponseBuilder().
 			WithCode(200).
 			WithHead(map[string]string{
-				"Content-Type":                          api.CApplicationOctetStream,
-				hls_filesharer_settings.CHeaderFileHash: hash,
+				"Content-Type": api.CApplicationOctetStream,
+				hls_filesharer_settings.CHeaderFileHashOnLoad: hash,
 			}).
 			WithBody(respBytes)
 	default:
