@@ -29,7 +29,13 @@ func HandleChatSizeAPI(
 		}
 
 		queryParams := pR.URL.Query()
+
 		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
 
 		size := pDatabase.Size(aliasName)
 

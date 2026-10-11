@@ -40,8 +40,8 @@ func HandleIncomingLoadHTTP(
 		}
 
 		queryParams := pR.URL.Query()
-		fileName := queryParams.Get("name")
 
+		fileName := queryParams.Get("name")
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "filename", api.WithoutContentType())

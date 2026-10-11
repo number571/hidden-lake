@@ -46,7 +46,7 @@ func HandleCommandPingAPI(
 
 		if chars.HasNotGraphicCharacters(respBody) {
 			pLogger.PushWarn(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusServiceUnavailable, "failed: invalid response")
+			_ = api.Response(pW, http.StatusTeapot, "failed: invalid response")
 			return
 		}
 

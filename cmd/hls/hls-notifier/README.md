@@ -67,14 +67,24 @@ $ make request-node2
 
 ## HLS/HLK API
 
+### 1. /push
+
+- `200` - return "ok"
+- `202` - message already exist in database
+- `400` - invalid input params (uid, body)
+- `405` - invalid method (not PUT, POST)
+- `409` - failed read HTTP request body
+- `500` - load/push from database
+- `502` - get aliasName HLK
+
 ```json
 // header request size = (4 + 53) = 57B
 // body request size can be = (144 - 85) = 87B
 [uint32]{"method":"PUT","host":"hls-notifier","path":"/push"}[body]
 
-// header response size = (4 + 49) = 53B
-// body response size can be = (144 - 53) = 91B
-[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
 ```
 
 ```json
@@ -82,9 +92,9 @@ $ make request-node2
 // body request size can be = (144 - 85) = 59B
 [uint32]{"method":"POST","host":"hls-notifier","path":"/push?uid=0000000000000000000000"}[body]
 
-// header response size = (4 + 49) = 53B
-// body response size can be = (144 - 53) = 91B
-[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
 ```
 
 ## HLS API
@@ -104,6 +114,8 @@ $ make request-node2
 
 ### 1. /api/index
 
+- `200` - return "hidden-lake-service=notifier"
+
 #### 1.1. GET Request
 
 ```bash
@@ -122,6 +134,17 @@ hidden-lake-service=notifier
 ```
 
 ### 2. /api/chat/push
+
+- `200` - return count of messages (GET) or timestamp (POST, PUT)
+- `202` - message already registered and delivered
+- `208` - message in the fetch process
+- `400` - invalid input params (friend, uid, body)
+- `405` - invalid method (not GET, POST, PUT)
+- `409` - failed read HTTP request body
+- `418` - got bad response from node
+- `500` - load/push/recv message into database
+- `502` - failed send request (HLK side)
+- `503` - message was sent but no response was received
 
 #### 2.1. GET Request
 
@@ -176,6 +199,12 @@ Content-Length: 19
 
 ### 3. /api/chat/load
 
+- `200` - return message from database
+- `400` - invalid input params (friend, index)
+- `404` - message not found in database
+- `405` - invalid method (not GET)
+- `500` - load message from database
+
 #### 3.1. GET Request
 
 ```bash
@@ -195,6 +224,10 @@ Content-Length: 71
 
 ### 4. /api/chat/size
 
+- `200` - return count of messages
+- `400` - invalid input params (friend)
+- `405` - invalid method (not GET)
+
 #### 4.1. GET Request
 
 ```bash
@@ -213,6 +246,13 @@ Content-Length: 1
 ```
 
 ### 5. /api/chat/listen
+
+- `200` - return message from broker
+- `204` - no messages in consumer
+- `400` - invalid input params (friend)
+- `405` - invalid method (not GET)
+- `406` - limit of registered subscribers
+- `500` - invalid type of message container
 
 #### 5.1. GET Request
 

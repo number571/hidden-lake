@@ -66,10 +66,19 @@ $ ./_request/raw/request.sh
 
 Got response
 ```json
-{"code":200,"head":{"Content-Type":"application/json"},"body":"W3sibmFtZSI6ImV4YW1wbGUudHh0IiwiaGFzaCI6IjdkMGM2NGUwNTBhMmMzMWNkMmQ1MjY2YjI5MjNjYTUxYjk1ZTk3ZTJkZWRmYzM5ZTRjZTIyMGI0Nzc2ODM5NzViYTAzMmM2YzMxNDFiYWQ4NDQyYWY0OTQzZjkxYWM0MyIsInNpemUiOjE0fSx7Im5hbWUiOiJpbWFnZS5qcGciLCJoYXNoIjoiN2JmZDg4ZDU0NmI0N2I2MGRiYTJjZDVmNWZmOGYyY2NjMTlkYWYzNDg2NDBkNWY1ZDMzODFiYzNmNTQzMDZmMWM3OTg0Njc5YzIzNWI0YzQ0ODViNTZlZWMyYWQ0OTc3Iiwic2l6ZSI6MTc3OTJ9XQ=="}
+{"code":200,"body":"W3sibmFtZSI6ImV4YW1wbGUudHh0IiwiaGFzaCI6IjdkMGM2NGUwNTBhMmMzMWNkMmQ1MjY2YjI5MjNjYTUxYjk1ZTk3ZTJkZWRmYzM5ZTRjZTIyMGI0Nzc2ODM5NzViYTAzMmM2YzMxNDFiYWQ4NDQyYWY0OTQzZjkxYWM0MyIsInNpemUiOjE0fSx7Im5hbWUiOiJpbWFnZS5qcGciLCJoYXNoIjoiN2JmZDg4ZDU0NmI0N2I2MGRiYTJjZDVmNWZmOGYyY2NjMTlkYWYzNDg2NDBkNWY1ZDMzODFiYzNmNTQzMDZmMWM3OTg0Njc5YzIzNWI0YzQ0ODViNTZlZWMyYWQ0OTc3Iiwic2l6ZSI6MTc3OTJ9XQ=="}
 ```
 
 ## HLS/HLK API
+
+### 1. /info
+
+- `200` - return file info
+- `400` - invalid input params (name, personal)
+- `404` - file not found
+- `405` - invalid method (not GET)
+- `500` - load file / info
+- `502` - get aliasName HLK
 
 ```json
 // header request size = (4 + 76) = 80B
@@ -77,10 +86,18 @@ Got response
 // body request size = 0B (null)
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/info?name=&personal=false"}[body]
 
-// header response size = (4 + 55) = 59B
-// body response size can be = (144 - 59) = 85B
-[uint32]{"code":200,"head":{"Content-Type":"application/json"}}[body]
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
 ```
+
+### 2. /list
+
+- `200` - return list of files
+- `400` - invalid input params (page, personal)
+- `405` - invalid method (not GET)
+- `500` - load list of files
+- `502` - get aliasName HLK
 
 ```json
 // header request size = (4 + 76) = 80B
@@ -88,10 +105,20 @@ Got response
 // body request size = 0B (null)
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&personal=false"}[body]
 
-// header response size = (4 + 55) = 59B
-// body response size can be = (144 - 59) = 85B
-[uint32]{"code":200,"head":{"Content-Type":"application/json"}}[body]
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
 ```
+
+### 3. /load
+
+- `200` - return chunk of file
+- `400` - invalid input params (name, chunk, personal)
+- `404` - file not found
+- `405` - invalid method (not GET)
+- `411` - invalid file chunk number
+- `500` - open file, load file chunk
+- `502` - get aliasName HLK, get limit size on load from HLK
 
 ```json
 // header request size = (4 + 83) = 87B
@@ -99,9 +126,9 @@ Got response
 // body request size = 0B (null)
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/load?name=&chunk=&personal=false"}[body]
 
-// header response size = (4 + 88) = 92B
-// body response size can be = (144 - 92) = 52B
-[uint32]{"code":200,"head":{"Content-Type":"application/octet-stream","F-H":"0000000000000000"}}[body]
+// header response size = (4 + 46) = 50B
+// body response size can be = (144 - 50) = 94B
+[uint32]{"code":200,"head":{"F-H":"0000000000000000"}}[body]
 ```
 
 ## HLS API

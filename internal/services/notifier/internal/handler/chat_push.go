@@ -145,7 +145,7 @@ func HandleChatPushAPI(
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))
-			_ = api.Response(pW, http.StatusCreated, msg.GetTimestamp())
+			_ = api.Response(pW, http.StatusServiceUnavailable, msg.GetTimestamp())
 			return
 		}
 

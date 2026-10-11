@@ -71,19 +71,24 @@ $ ./_request/raw/request.sh
 
 Got response
 ```json
-{"code":200,"head":{"Content-Type":"text/plain"}}
+{"code":200}
 ```
 
 ## HLS/HLK API
+
+### 1. /ping
+
+- `200` - return ping message on response
+- `405` - invalid method (not GET)
 
 ```json
 // header request size = (4 + 51) = 55B
 // body request size = 0B (null)
 [uint32]{"method":"GET","host":"hls-pinger","path":"/ping"}[body]
 
-// header response size = (4 + 49) = 53B
-// body response size can be = (144 - 53) = 91B
-[uint32]{"code":200,"head":{"Content-Type":"text/plain"}}[body]
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
 ```
 
 ## HLS API
@@ -96,6 +101,8 @@ Got response
 ```
 
 ### 1. /api/index
+
+- `200` - return "hidden-lake-service=pinger"
 
 #### 1.1. GET Request
 
@@ -115,6 +122,11 @@ hidden-lake-service=pinger
 ```
 
 ### 2. /api/command/ping
+
+- `200` - return ping message on response
+- `405` - invalid method (not GET)
+- `418` - got bad response from node
+- `502` - failed fetch request (HLK side)
 
 #### 2.1. GET Request
 

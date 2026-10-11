@@ -12,3 +12,6 @@
 12. Изменить именования полей в Request/Response структурах HLK API
 13. Добавить в README сервисов HTTP коды возврата
 14. Добавить limiters в pkg/api/services/* (аналогично filesharer)
+15. HLS=filesharer: изменить /list на выдачу только именований файлов
+16. HLS: учесть в описании HLS/HLK API размер тела запроса/ответа
+17. 
