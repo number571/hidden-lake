@@ -6,6 +6,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/process"
+	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
@@ -29,12 +30,23 @@ func HandleRemoteFileProcAPI(
 
 		queryParams := pR.URL.Query()
 
-		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
+
+		fileName := queryParams.Get("name")
+		if utils.FileNameIsInvalid(fileName) {
+			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			return
+		}
 
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
 			return
 		}
@@ -43,12 +55,13 @@ func HandleRemoteFileProcAPI(
 
 		if pR.Method == http.MethodDelete {
 			if ok := pProcessManager.Unlock(dpKey); !ok {
-				pLogger.PushErro(logBuilder.WithMessage("cancel_download"))
+				pLogger.PushWarn(logBuilder.WithMessage("cancel_download"))
 				_ = api.Response(pW, http.StatusNotFound, "failed: cancel download")
 				return
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, "success: cancel download")
+			return
 		}
 
 		val, ok := pProcessManager.Get(dpKey)
@@ -59,6 +72,6 @@ func HandleRemoteFileProcAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, val.ToString())
+		_ = api.Response(pW, http.StatusOK, val.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

@@ -53,6 +53,6 @@ func HandleLocalListAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, utils.FileInfoListToString(list))
+		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

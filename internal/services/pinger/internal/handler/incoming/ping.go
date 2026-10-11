@@ -19,11 +19,11 @@ func HandleIncomingPingHTTP(pConfig config.IConfig, pLogger logger.ILogger) http
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
-			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, pConfig.GetSettings().GetResponseMessage())
+		_ = api.Response(pW, http.StatusOK, pConfig.GetSettings().GetResponseMessage(), api.WithoutContentType())
 	}
 }

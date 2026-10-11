@@ -31,9 +31,9 @@ func HandleLocalFileAPI(
 		}
 
 		queryParams := pR.URL.Query()
-		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
+		fileName := queryParams.Get("name")
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
@@ -47,8 +47,13 @@ func HandleLocalFileAPI(
 		case http.MethodGet:
 			file, err := os.Open(fullPath) // nolint: gosec
 			if err != nil {
+				if os.IsNotExist(err) {
+					pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
+					_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+					return
+				}
 				pLogger.PushErro(logBuilder.WithMessage("read_file"))
-				_ = api.Response(pW, http.StatusNotFound, "failed: read file")
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
 				return
 			}
 			defer func() { _ = file.Close() }()

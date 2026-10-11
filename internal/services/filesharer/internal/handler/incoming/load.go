@@ -35,7 +35,7 @@ func HandleIncomingLoadHTTP(
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
-			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
 		}
 
@@ -44,28 +44,28 @@ func HandleIncomingLoadHTTP(
 
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			_ = api.Response(pW, http.StatusBadRequest, "filename", api.WithoutContentType())
 			return
 		}
 
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "personal", api.WithoutContentType())
 			return
 		}
 
 		chunk, err := strconv.ParseUint(queryParams.Get("chunk"), 10, 64)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("incorrect_chunk"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect chunk")
+			_ = api.Response(pW, http.StatusBadRequest, "readchunk", api.WithoutContentType())
 			return
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
 		if aliasName == "" {
-			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
+			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
 		}
 
@@ -76,32 +76,32 @@ func HandleIncomingLoadHTTP(
 		if err != nil {
 			if os.IsNotExist(err) {
 				pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
-				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+				_ = api.Response(pW, http.StatusNotFound, "notfound", api.WithoutContentType())
 				return
 			}
 			pLogger.PushErro(logBuilder.WithMessage("get_file_info"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
+			_ = api.Response(pW, http.StatusInternalServerError, "fileinfo", api.WithoutContentType())
 			return
 		}
 
 		chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("get_chunk_size"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: get chunk size")
+			pLogger.PushErro(logBuilder.WithMessage("get_chunk_size"))
+			_ = api.Response(pW, http.StatusBadGateway, "sizechunk", api.WithoutContentType())
 			return
 		}
 
 		chunksCount := getChunksCount(info.GetSize(), chunkSize) //nolint:gosec
 		if chunk >= chunksCount {
 			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
-			_ = api.Response(pW, http.StatusLengthRequired, "failed: chunk number")
+			_ = api.Response(pW, http.StatusLengthRequired, "getchunk", api.WithoutContentType())
 			return
 		}
 
 		file, err := os.Open(fullPath) //nolint:gosec
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("open_file"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: open file")
+			pLogger.PushErro(logBuilder.WithMessage("open_file"))
+			_ = api.Response(pW, http.StatusInternalServerError, "openfile", api.WithoutContentType())
 			return
 		}
 		defer func() { _ = file.Close() }()
@@ -109,16 +109,16 @@ func HandleIncomingLoadHTTP(
 		chunkOffset := int64(chunk) * int64(chunkSize) //nolint:gosec
 		nS, err := file.Seek(chunkOffset, io.SeekStart)
 		if err != nil || nS != chunkOffset {
-			pLogger.PushWarn(logBuilder.WithMessage("seek_file"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: seek file")
+			pLogger.PushErro(logBuilder.WithMessage("seek_file"))
+			_ = api.Response(pW, http.StatusInternalServerError, "seekfile", api.WithoutContentType())
 			return
 		}
 
 		buf := make([]byte, chunkSize)
 		nR, err := file.Read(buf)
 		if err != nil || (chunk != chunksCount-1 && uint64(nR) != chunkSize) { //nolint:gosec
-			pLogger.PushWarn(logBuilder.WithMessage("chunk_number"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: chunk number")
+			pLogger.PushErro(logBuilder.WithMessage("chunk_number"))
+			_ = api.Response(pW, http.StatusInternalServerError, "readchunk", api.WithoutContentType())
 			return
 		}
 
@@ -126,7 +126,7 @@ func HandleIncomingLoadHTTP(
 		pW.Header().Set(hls_settings.CHeaderFileHashOnLoad, fileHash)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationOctetStream, buf[:nR])
+		_ = api.Response(pW, http.StatusOK, buf[:nR], api.WithoutContentType())
 	}
 }
 

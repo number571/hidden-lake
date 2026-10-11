@@ -31,9 +31,14 @@ func HandleChatListenAPI(
 
 		queryParams := pR.URL.Query()
 
-		friend := queryParams.Get("friend")
-		sid := queryParams.Get("sid")
+		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
 
+		sid := queryParams.Get("sid")
 		if err := pBroker.Register(sid); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("limit_subs"))
 			_ = api.Response(pW, http.StatusNotAcceptable, "has limit of subscribers")
@@ -58,13 +63,13 @@ func HandleChatListenAPI(
 				return
 			}
 
-			if mc.GetFriend() != friend {
+			if mc.GetFriend() != aliasName {
 				pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
 				continue
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, mc.GetMessage().ToString())
+			_ = api.Response(pW, http.StatusOK, mc.GetMessage().ToString(), api.WithCustomContentType(api.CApplicationJSON))
 			return
 		}
 	}

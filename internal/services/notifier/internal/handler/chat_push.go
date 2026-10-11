@@ -41,7 +41,7 @@ func HandleChatPushAPI(
 		if pR.Method == http.MethodGet {
 			size, err := getLimitOnPushRequestSize(pCtx, pHlkClient)
 			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("get_limit"))
+				pLogger.PushErro(logBuilder.WithMessage("get_limit"))
 				_ = api.Response(pW, http.StatusBadGateway, "failed: get limit")
 				return
 			}
@@ -67,15 +67,20 @@ func HandleChatPushAPI(
 		queryParams := pR.URL.Query()
 
 		aliasName := queryParams.Get("friend")
-		msgUID := queryParams.Get("uid")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
 
+		msgUID := queryParams.Get("uid")
 		if pR.Method == http.MethodPut {
 			msgUID = dto.NewMessageUID()
 		}
 
 		if !dto.MessageUIDIsValid(msgUID) {
-			pLogger.PushErro(logBuilder.WithMessage("msg_uid"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: message uid")
+			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
 			return
 		}
 
@@ -94,8 +99,8 @@ func HandleChatPushAPI(
 				time.Now(),
 			)
 			if err != nil {
-				pLogger.PushWarn(logBuilder.WithMessage("create_message"))
-				_ = api.Response(pW, http.StatusBadGateway, "failed: create message")
+				pLogger.PushErro(logBuilder.WithMessage("create_message"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: create message")
 				return
 			}
 			if pR.Method == http.MethodPost {
@@ -116,7 +121,7 @@ func HandleChatPushAPI(
 
 		// fetch process on UID already exist
 		if ok := pProcessManager.TryLock(msgUID); !ok {
-			pLogger.PushWarn(logBuilder.WithMessage("process_exist"))
+			pLogger.PushInfo(logBuilder.WithMessage("process_exist"))
 			_ = api.Response(pW, http.StatusAlreadyReported, msg.GetTimestamp())
 			return
 		}
@@ -127,7 +132,7 @@ func HandleChatPushAPI(
 			err := pHlkClient.SendRequest(pCtx, aliasName, req)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("send_request"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: send request")
+				_ = api.Response(pW, http.StatusBadGateway, "failed: send request")
 				return
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
@@ -148,8 +153,8 @@ func HandleChatPushAPI(
 		case http.StatusOK, http.StatusAccepted:
 			// ok
 		default:
-			pLogger.PushErro(logBuilder.WithMessage("bad_status_code"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: status code")
+			pLogger.PushWarn(logBuilder.WithMessage("bad_status_code"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: status code")
 			return
 		}
 

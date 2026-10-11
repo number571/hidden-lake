@@ -31,9 +31,9 @@ func HandleLocalFileInfoAPI(
 		}
 
 		queryParams := pR.URL.Query()
-		fileName := queryParams.Get("name")
 		aliasName := queryParams.Get("friend")
 
+		fileName := queryParams.Get("name")
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
@@ -62,6 +62,6 @@ func HandleLocalFileInfoAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, info.ToString())
+		_ = api.Response(pW, http.StatusOK, info.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

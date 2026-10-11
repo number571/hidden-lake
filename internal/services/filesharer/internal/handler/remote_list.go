@@ -33,6 +33,13 @@ func HandleRemoteListAPI(
 
 		queryParams := pR.URL.Query()
 
+		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
+
 		page := uint64(0)
 		if v, ok := queryParams["page"]; ok && len(v) > 0 {
 			var err error
@@ -46,13 +53,13 @@ func HandleRemoteListAPI(
 
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
 			return
 		}
 
 		req := request.NewListRequest(page, isPersonal)
-		resp, err := pHlkClient.FetchRequest(pCtx, queryParams.Get("friend"), req)
+		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
 			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
@@ -60,19 +67,19 @@ func HandleRemoteListAPI(
 		}
 
 		if code := resp.GetCode(); code != http.StatusOK {
-			pLogger.PushErro(logBuilder.WithMessage("status_error"))
+			pLogger.PushWarn(logBuilder.WithMessage("status_error"))
 			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
+			pLogger.PushWarn(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, utils.FileInfoListToString(list))
+		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

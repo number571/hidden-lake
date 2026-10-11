@@ -9,6 +9,42 @@ import (
 	"github.com/number571/go-peer/pkg/encoding"
 )
 
+const (
+	cContentTypeHeader = "Content-Type"
+)
+
+func Response(
+	pW http.ResponseWriter,
+	pRet int,
+	pRsp interface{},
+	pCalls ...func(http.ResponseWriter),
+) error {
+	var (
+		contentType string
+		respBytes   []byte
+	)
+
+	switch x := pRsp.(type) {
+	case []byte:
+		contentType = CApplicationOctetStream
+		respBytes = x
+	case string:
+		contentType = CTextPlain
+		respBytes = []byte(x)
+	default:
+		contentType = CApplicationJSON
+		respBytes = encoding.SerializeJSON(x)
+	}
+
+	pW.Header().Set(cContentTypeHeader, contentType)
+
+	for _, call := range pCalls {
+		call(pW)
+	}
+
+	return ResponseWithReader(pW, pRet, bytes.NewBuffer(respBytes))
+}
+
 func ResponseWithReader(
 	pW http.ResponseWriter,
 	pRet int,
@@ -23,52 +59,14 @@ func ResponseWithReader(
 	return nil
 }
 
-func Response(
-	pW http.ResponseWriter,
-	pRet int,
-	pRes interface{},
-) error {
-	var (
-		contentType string
-	)
-
-	switch pRes.(type) {
-	case []byte:
-		contentType = CApplicationOctetStream
-	case string:
-		contentType = CTextPlain
-	default:
-		contentType = CApplicationJSON
+func WithoutContentType() func(http.ResponseWriter) {
+	return func(pW http.ResponseWriter) {
+		pW.Header().Del(cContentTypeHeader)
 	}
-
-	return ResponseWithContentType(pW, pRet, contentType, pRes)
 }
 
-func ResponseWithContentType(
-	pW http.ResponseWriter,
-	pRet int,
-	pContentType string,
-	pRes interface{},
-) error {
-	var (
-		respBytes []byte
-	)
-
-	switch x := pRes.(type) {
-	case []byte:
-		respBytes = x
-	case string:
-		respBytes = []byte(x)
-	default:
-		respBytes = encoding.SerializeJSON(x)
+func WithCustomContentType(pContentType string) func(http.ResponseWriter) {
+	return func(pW http.ResponseWriter) {
+		pW.Header().Set(cContentTypeHeader, pContentType)
 	}
-
-	pW.Header().Set("Content-Type", pContentType)
-	pW.WriteHeader(pRet)
-
-	if _, err := io.Copy(pW, bytes.NewBuffer(respBytes)); err != nil {
-		return errors.Join(ErrCopyBytes, err)
-	}
-
-	return nil
 }

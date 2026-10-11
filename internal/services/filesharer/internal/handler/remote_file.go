@@ -40,9 +40,15 @@ func HandleRemoteFileAPI(
 		}
 
 		queryParams := pR.URL.Query()
-		fileName := queryParams.Get("name")
-		aliasName := queryParams.Get("friend")
 
+		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
+
+		fileName := queryParams.Get("name")
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
@@ -51,7 +57,7 @@ func HandleRemoteFileAPI(
 
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
 			return
 		}
@@ -98,20 +104,20 @@ func HandleRemoteFileAPI(
 		}
 
 		if code := resp.GetCode(); code != http.StatusOK {
-			pLogger.PushErro(logBuilder.WithMessage("status_error"))
+			pLogger.PushWarn(logBuilder.WithMessage("status_error"))
 			_ = api.Response(pW, http.StatusTeapot, fmt.Sprintf("failed: status %d", code))
 			return
 		}
 
 		fileInfo, err := dto.LoadFileInfo(resp.GetBody())
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("decode_response"))
+			pLogger.PushWarn(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
 		if fileInfo.GetName() != fileName {
-			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: invalid response")
 			return
 		}

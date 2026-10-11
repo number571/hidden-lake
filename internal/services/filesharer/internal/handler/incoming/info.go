@@ -31,7 +31,7 @@ func HandleIncomingInfoHTTP(
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
-			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
 		}
 
@@ -40,21 +40,21 @@ func HandleIncomingInfoHTTP(
 
 		if utils.FileNameIsInvalid(fileName) {
 			pLogger.PushWarn(logBuilder.WithMessage("got_invalid_name"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: got invalid name")
+			_ = api.Response(pW, http.StatusBadRequest, "filename", api.WithoutContentType())
 			return
 		}
 
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "query", api.WithoutContentType())
 			return
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
 		if aliasName == "" {
-			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
+			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
 		}
 
@@ -65,21 +65,21 @@ func HandleIncomingInfoHTTP(
 		if err != nil {
 			if os.IsNotExist(err) {
 				pLogger.PushWarn(logBuilder.WithMessage("file_not_found"))
-				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
+				_ = api.Response(pW, http.StatusNotFound, "notfound", api.WithoutContentType())
 				return
 			}
-			pLogger.PushWarn(logBuilder.WithMessage("get_file_info"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: get file info")
+			pLogger.PushErro(logBuilder.WithMessage("get_file_info"))
+			_ = api.Response(pW, http.StatusInternalServerError, "fileinfo", api.WithoutContentType())
 			return
 		}
 
 		if info.GetName() != fileName {
 			pLogger.PushErro(logBuilder.WithMessage("invalid_response"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid response")
+			_ = api.Response(pW, http.StatusInternalServerError, "filename", api.WithoutContentType())
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, info.ToString())
+		_ = api.Response(pW, http.StatusOK, info.ToString(), api.WithoutContentType())
 	}
 }

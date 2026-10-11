@@ -31,15 +31,15 @@ func HandleIncomingListHTTP(
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
-			_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: incorrect method")
+			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
 		}
 
 		queryParams := pR.URL.Query()
 		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
 		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
+			_ = api.Response(pW, http.StatusBadRequest, "personal", api.WithoutContentType())
 			return
 		}
 
@@ -49,15 +49,15 @@ func HandleIncomingListHTTP(
 			page, err = strconv.ParseUint(v[0], 10, 64)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("incorrect_page"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: incorrect page")
+				_ = api.Response(pW, http.StatusBadRequest, "page", api.WithoutContentType())
 				return
 			}
 		}
 
 		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
 		if aliasName == "" {
-			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: read alias name")
+			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
 		}
 
@@ -65,11 +65,11 @@ func HandleIncomingListHTTP(
 		list, err := utils.GetFileInfoList(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
+			_ = api.Response(pW, http.StatusInternalServerError, "storage", api.WithoutContentType())
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.ResponseWithContentType(pW, http.StatusOK, api.CApplicationJSON, utils.FileInfoListToString(list))
+		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list), api.WithoutContentType())
 	}
 }
