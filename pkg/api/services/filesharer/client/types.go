@@ -10,7 +10,7 @@ import (
 type IClient interface {
 	GetIndex(context.Context) error
 
-	GetRemoteList(context.Context, string, uint64, bool) ([]dto.IFileInfo, error)
+	GetRemoteList(context.Context, string, uint64, bool) ([]string, error)
 	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, error)
 	DelRemoteFile(context.Context, string, string, bool) error
 	GetRemoteFileInfo(context.Context, string, string, bool) (dto.IFileInfo, error)
@@ -19,7 +19,7 @@ type IClient interface {
 	DelRemoteFileProc(context.Context, string, string, bool) error
 	GetRemoteListProc(context.Context) ([]dto.IDownloadProcess, error)
 
-	GetLocalList(context.Context, string, uint64) ([]dto.IFileInfo, error)
+	GetLocalList(context.Context, string, uint64) ([]string, error)
 	GetLocalFile(io.Writer, context.Context, string, string) error
 	PutLocalFile(context.Context, string, string, io.Reader) error
 	DelLocalFile(context.Context, string, string) error
@@ -29,7 +29,7 @@ type IClient interface {
 type IRequester interface {
 	GetIndex(context.Context) error
 
-	GetRemoteList(context.Context, string, uint64, bool) ([]dto.IFileInfo, error)
+	GetRemoteList(context.Context, string, uint64, bool) ([]string, error)
 	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, error)
 	DelRemoteFile(context.Context, string, string, bool) error
 	GetRemoteFileInfo(context.Context, string, string, bool) (dto.IFileInfo, error)
@@ -38,7 +38,7 @@ type IRequester interface {
 	DelRemoteFileProc(context.Context, string, string, bool) error
 	GetRemoteListProc(context.Context) ([]dto.IDownloadProcess, error)
 
-	GetLocalList(context.Context, string, uint64) ([]dto.IFileInfo, error)
+	GetLocalList(context.Context, string, uint64) ([]string, error)
 	GetLocalFile(io.Writer, context.Context, string, string) error
 	PutLocalFile(context.Context, string, string, io.Reader) error
 	DelLocalFile(context.Context, string, string) error

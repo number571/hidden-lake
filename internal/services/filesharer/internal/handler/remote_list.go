@@ -6,14 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/query"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
@@ -72,14 +71,14 @@ func HandleRemoteListAPI(
 			return
 		}
 
-		list, err := fileinfo.LoadFileInfoList(resp.GetBody())
-		if err != nil {
+		var list []string
+		if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list), api.WithCustomContentType(api.CApplicationJSON))
+		_ = api.Response(pW, http.StatusOK, encoding.SerializeJSON(list), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

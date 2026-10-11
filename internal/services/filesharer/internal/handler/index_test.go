@@ -214,7 +214,7 @@ func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRe
 		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
 		return resp.Build(), nil
 	case 2:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}]`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`["example.txt"]`))
 		return resp.Build(), nil
 	case 1:
 		return nil, errors.New("error") // nolint: err113

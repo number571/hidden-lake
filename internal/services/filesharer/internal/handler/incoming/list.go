@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	"github.com/number571/hidden-lake/internal/services/filesharer/pkg/app/config"
@@ -62,7 +63,7 @@ func HandleIncomingListHTTP(
 		}
 
 		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, isPersonal)
-		list, err := utils.GetFileInfoList(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
+		list, err := utils.GetListFiles(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "storage", api.WithoutContentType())
@@ -70,6 +71,6 @@ func HandleIncomingListHTTP(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, utils.FileInfoListToString(list), api.WithoutContentType())
+		_ = api.Response(pW, http.StatusOK, encoding.SerializeJSON(list), api.WithoutContentType())
 	}
 }

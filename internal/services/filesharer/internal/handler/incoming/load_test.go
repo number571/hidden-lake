@@ -341,6 +341,6 @@ func (p *tsHLSClient) SendRequest(context.Context, string, request.IRequest) err
 }
 
 func (p *tsHLSClient) FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error) {
-	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`[{"name":"file.txt","size":500,"hash":"114a856f792c4c292599dba6fa41adba45ef4f851b1d17707e2729651968ff64be375af9cff6f9547b878d5c73c16a11"}]`))
+	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`["file.txt"]`))
 	return resp.Build(), nil
 }

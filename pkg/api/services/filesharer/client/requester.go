@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
@@ -80,7 +81,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 	return nil
 }
 
-func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) ([]dto.IFileInfo, error) {
+func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) ([]string, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -92,11 +93,11 @@ func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPag
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	infos, err := dto.LoadFileInfoList(res)
-	if err != nil {
+	var list []string
+	if err := encoding.DeserializeJSON(res, &list); err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return infos, nil
+	return list, nil
 }
 
 func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (bool, error) {
@@ -151,7 +152,7 @@ func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, 
 	return info, nil
 }
 
-func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) ([]dto.IFileInfo, error) {
+func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) ([]string, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -163,11 +164,11 @@ func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	infos, err := dto.LoadFileInfoList(res)
-	if err != nil {
+	var list []string
+	if err := encoding.DeserializeJSON(res, &list); err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return infos, nil
+	return list, nil
 }
 
 func (p *sRequester) GetLocalFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {

@@ -7,11 +7,11 @@ import (
 func TestGetFileInfoList(t *testing.T) {
 	t.Parallel()
 
-	_, err := GetFileInfoList("./testdata", 1, 1)
+	_, err := GetListFiles("./testdata", 1, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := GetFileInfoList("./testdata/not_found", 1, 1); err != nil {
+	if _, err := GetListFiles("./testdata/not_found", 1, 1); err != nil {
 		t.Fatal(err) // return []
 	}
 }
