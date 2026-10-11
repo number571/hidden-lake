@@ -156,6 +156,8 @@ Got response
 
 ### 1. /api/index
 
+- `200` - return "hidden-lake-service=filesharer"
+
 #### 1.1. GET Request
 
 ```bash
@@ -174,6 +176,12 @@ hidden-lake-service=filesharer
 ```
 
 ### 2. /api/remote/list
+
+- `200` - return list of files
+- `400` - invalid input params (friend, page, personal)
+- `405` - invalid method (not GET)
+- `418` - invalid response from node
+- `502` - fetch request HLK
 
 #### 2.1. GET Request
 
@@ -194,6 +202,9 @@ Content-Length: 280
 
 ### 3. /api/remote/list/proc
 
+- `200` - download process info list
+- `405` - invalid method (not GET)
+
 #### 3.1. GET Request
 
 ```bash
@@ -212,8 +223,15 @@ Content-Type: application/json; charset=utf-8
 [{{"friend":"Bob","name":"example.txt","personal":"false"},{"incindex":0,"download":0,"filesize":0}}]
 ```
 
-
 ### 4. /api/remote/file
+
+- `200` - return file content / delete file
+- `202` - download process already exist 
+- `400` - invalid input params (friend, name, personal)
+- `405` - invalid method (not GET, DELETE)
+- `418` - invalid response from node
+- `500` - mkdir storage, remove file, build/read stream, open file
+- `502` - fetch request HLK
 
 #### 4.1. GET Request
 
@@ -252,6 +270,11 @@ success: delete file
 
 ### 5. /api/remote/file/proc
 
+- `200` - download process info / cancel download
+- `400` - invalid input params (friend, name, personal)
+- `404` - process not found
+- `405` - invalid method (not GET, DELETE)
+
 #### 5.1. GET Request
 
 ```bash
@@ -288,6 +311,12 @@ success: cancel download
 
 ### 6. /api/remote/file/info
 
+- `200` - return file info
+- `400` - invalid input params (friend, name, personal)
+- `405` - invalid method (not GET)
+- `418` - invalid response from node
+- `502` - fetch request HLK
+
 #### 6.1. GET Request
 
 ```bash
@@ -307,6 +336,11 @@ Content-Length: 138
 
 ### 7. /api/local/list
 
+- `200` - return list of files
+- `400` - invalid input params (friend, page)
+- `405` - invalid method (not GET)
+- `500` - get list of files
+
 #### 7.1. GET Request
 
 ```bash
@@ -325,6 +359,12 @@ Content-Length: 280
 ```
 
 ### 8. /api/local/file
+
+- `200` - return file content / delete file / upload file
+- `400` - invalid input params (friend, name)
+- `404` - file not found
+- `405` - invalid method (not GET, POST, DELETE)
+- `500` - mkdir, create/open/remove file
 
 #### 8.1. GET Request
 
@@ -378,6 +418,12 @@ success: delete file
 ```
 
 ### 9. /api/local/file/info
+
+- `200` - return file info
+- `400` - invalid input params (friend, name)
+- `404` - file not found
+- `405` - invalid method (not GET)
+- `500` - open/read file
 
 #### 9.1. GET Request
 

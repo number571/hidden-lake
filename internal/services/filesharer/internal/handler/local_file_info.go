@@ -50,8 +50,8 @@ func HandleLocalFileInfoAPI(
 				_ = api.Response(pW, http.StatusNotFound, "failed: file not found")
 				return
 			}
-			pLogger.PushErro(logBuilder.WithMessage("not_found"))
-			_ = api.Response(pW, http.StatusInternalServerError, "failed: not found")
+			pLogger.PushErro(logBuilder.WithMessage("read_file"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
 			return
 		}
 
