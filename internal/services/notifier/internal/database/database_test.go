@@ -38,7 +38,7 @@ func TestDatabase(t *testing.T) {
 	friend := "friend"
 
 	timeNow := time.Now()
-	msg, err := message_dto.NewMessageWithParams(message_dto.CIncomingState, tcBody, message_dto.NewMessageUID(), timeNow)
+	msg, err := message_dto.NewMessageWithParams(message_dto.CIncomingState, tcBody, message_dto.NewMessageUID(), timeNow, false)
 	if err != nil {
 		t.Fatal(err)
 	}

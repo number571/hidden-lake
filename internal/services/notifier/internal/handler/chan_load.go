@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
-func HandleChatSizeAPI(
+func HandleChanLoadAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -37,9 +38,26 @@ func HandleChatSizeAPI(
 			return
 		}
 
-		size := pDatabase.Size(aliasName)
+		index, err := strconv.ParseUint(queryParams.Get("index"), 10, 64)
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
+			return
+		}
+
+		dbMsg, err := pDatabase.LoadByEnum(aliasName, index)
+		if err != nil {
+			if errors.Is(err, database.ErrNotFoundMessage) {
+				pLogger.PushWarn(logBuilder.WithMessage("not_found_message"))
+				_ = api.Response(pW, http.StatusNotFound, "failed: message not found")
+				return
+			}
+			pLogger.PushErro(logBuilder.WithMessage("load_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "failed: load message")
+			return
+		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10))
+		_ = api.Response(pW, http.StatusOK, dbMsg.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

@@ -101,7 +101,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		case dto.CReceivedState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.PushMessageWithUID(pCtx, friend, msg.GetUID(), msg.GetBody()) // nolint:errcheck
+			go hlsClient.PushMessage(pCtx, friend, msg.GetUID(), msg.GetBody()) // nolint:errcheck
 			state = ">"
 		}
 		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody(), state, msg.GetTimestamp())
@@ -109,7 +109,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	go func() {
 		for {
-			m, err := hlsClient.ListenChat(pCtx, friend, "hls-notifier-cli")
+			m, err := hlsClient.ListenChan(pCtx, friend, "hls-notifier-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
@@ -122,7 +122,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	for {
 		uid := dto.NewMessageUID()
 		msg := inputString(reader, "")
-		go hlsClient.PushMessageWithUID(pCtx, friend, uid, msg) // nolint:errcheck
+		go hlsClient.PushMessage(pCtx, friend, uid, msg) // nolint:errcheck
 	}
 }
 

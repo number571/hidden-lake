@@ -66,10 +66,10 @@ func TestHandler(t *testing.T) {
 	if _, err := client.GetMessageLimit(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushMessage(context.Background(), "abc", "hello, world!"); err != nil {
+	if _, err := client.PushNotify(context.Background(), "abc", "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushMessageWithUID(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
+	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {
@@ -85,7 +85,7 @@ func TestHandler(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", msg))
 	}()
-	gotMsg, err := client.ListenChat(context.Background(), "abc", "sid")
+	gotMsg, err := client.ListenChan(context.Background(), "abc", "sid")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,23 +112,23 @@ func testInitInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatPushPath,
-		HandleChatPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
+		hls_settings.CHandleChanPushPath,
+		HandleChanPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
 	) // POST
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatLoadPath,
-		HandleChatLoadAPI(pCtx, pLogger, pConfig, pDatabase),
+		hls_settings.CHandleChanLoadPath,
+		HandleChanLoadAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatSizePath,
-		HandleChatSizeAPI(pCtx, pLogger, pConfig, pDatabase),
+		hls_settings.CHandleChanSizePath,
+		HandleChanSizeAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChatListenPath,
-		HandleChatListenAPI(pCtx, pLogger, pMsgBroker),
+		hls_settings.CHandleChanListenPath,
+		HandleChanListenAPI(pCtx, pLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

@@ -54,9 +54,11 @@ func HandleIncomingPushHTTP(
 		}
 
 		queryParams := pR.URL.Query()
-		msgUID := queryParams.Get("uid")
 
-		if pR.Method == http.MethodPut {
+		msgUID := queryParams.Get("uid")
+		isNotify := (pR.Method == http.MethodPut)
+
+		if isNotify {
 			msgUID = message_dto.NewMessageUID()
 		}
 
@@ -90,6 +92,7 @@ func HandleIncomingPushHTTP(
 			msgBody,
 			msgUID,
 			time.Now(),
+			isNotify,
 		)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("create_message"))
@@ -97,7 +100,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		if pR.Method == http.MethodPost {
+		if !isNotify {
 			if _, err := pDB.Push(aliasName, msg); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("push_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "setmsg", api.WithoutContentType())

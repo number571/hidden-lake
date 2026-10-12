@@ -16,7 +16,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
-func TestHandleChatListenAPI(t *testing.T) {
+func TestHandleChanListenAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -40,7 +40,7 @@ func TestHandleChatListenAPI(t *testing.T) {
 		msgBroker.Produce(message.NewMessageContainer("abc", msg))
 	}()
 
-	handlerX := HandleChatListenAPI(ctx, httpLogger, msgBroker)
+	handlerX := HandleChanListenAPI(ctx, httpLogger, msgBroker)
 	if err := chatSubscribeRequestOK(handlerX, msg); err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +54,7 @@ func TestHandleChatListenAPI(t *testing.T) {
 	chCtx, cancel := context.WithTimeout(ctx, 200*time.Millisecond)
 	defer cancel()
 
-	handlerY := HandleChatListenAPI(chCtx, httpLogger, msgBroker)
+	handlerY := HandleChanListenAPI(chCtx, httpLogger, msgBroker)
 	if err := chatSubscribeRequestNoContent(handlerY); err != nil {
 		t.Fatal(err)
 	}

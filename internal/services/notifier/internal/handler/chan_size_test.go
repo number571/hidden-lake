@@ -11,7 +11,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleChatSizeAPI(t *testing.T) {
+func TestHandleChanSizeAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -28,7 +28,7 @@ func TestHandleChatSizeAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatSizeAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
+	handlerX := HandleChanSizeAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}

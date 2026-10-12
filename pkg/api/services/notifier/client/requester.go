@@ -20,12 +20,12 @@ var (
 )
 
 const (
-	cHandleIndexTemplate              = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChatMessageTemplate        = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s"
-	cHandleChatMessageWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChatPushPath + "?friend=%s&uid=%s"
-	cHandleChatHistorySizeTemplate    = "http://" + "%s" + hls_settings.CHandleChatSizePath + "?friend=%s"
-	cHandleChatHistoryLoadTemplate    = "http://" + "%s" + hls_settings.CHandleChatLoadPath + "?friend=%s&index=%d"
-	cHandleChatSubscribeTemplate      = "http://" + "%s" + hls_settings.CHandleChatListenPath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleChanPushTemplate        = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s"
+	cHandleChanPushWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s&uid=%s"
+	cHandleChanSizeTemplate        = "http://" + "%s" + hls_settings.CHandleChanSizePath + "?friend=%s"
+	cHandleChanLoadTemplate        = "http://" + "%s" + hls_settings.CHandleChanLoadPath + "?friend=%s&index=%d"
+	cHandleChanListenTemplate      = "http://" + "%s" + hls_settings.CHandleChanListenPath + "?friend=%s&sid=%s"
 )
 
 type sRequester struct {
@@ -58,31 +58,50 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 	return nil
 }
 
-func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
+func (p *sRequester) GetNotifyLimit(pCtx context.Context) (uint64, error) {
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, "_"),
+		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_"),
 		nil,
 		nil,
 	)
 	if err != nil {
 		return 0, errors.Join(ErrBadRequest, err)
 	}
-	limit, err := strconv.ParseUint(string(rsp), 10, 64)
-	if err != nil {
+	var limit [2]uint64
+	if err := encoding.DeserializeJSON(rsp, &limit); err != nil {
 		return 0, errors.Join(ErrDecodeResponse, err)
 	}
-	return limit, nil
+	return limit[0], nil
 }
 
-func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
+func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
+	rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_"),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return 0, errors.Join(ErrBadRequest, err)
+	}
+	var limit [2]uint64
+	if err := encoding.DeserializeJSON(rsp, &limit); err != nil {
+		return 0, errors.Join(ErrDecodeResponse, err)
+	}
+	return limit[1], nil
+}
+
+func (p *sRequester) PushNotify(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPut,
-		fmt.Sprintf(cHandleChatMessageTemplate, p.fHost, pFriend),
+		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, pFriend),
 		nil,
 		pBody,
 	)
@@ -96,7 +115,7 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pBody str
 	return t, nil
 }
 
-func (p *sRequester) PushMessageWithUID(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
 	}
@@ -104,7 +123,7 @@ func (p *sRequester) PushMessageWithUID(pCtx context.Context, pFriend string, pU
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleChatMessageWithUIDTemplate, p.fHost, pFriend, pUID),
+		fmt.Sprintf(cHandleChanPushWithUIDTemplate, p.fHost, pFriend, pUID),
 		nil,
 		pBody,
 	)
@@ -123,7 +142,7 @@ func (p *sRequester) GetChatSize(pCtx context.Context, pFriend string) (uint64, 
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChatHistorySizeTemplate, p.fHost, url.QueryEscape(pFriend)),
+		fmt.Sprintf(cHandleChanSizeTemplate, p.fHost, url.QueryEscape(pFriend)),
 		nil,
 		nil,
 	)
@@ -142,7 +161,7 @@ func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex ui
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChatHistoryLoadTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		fmt.Sprintf(cHandleChanLoadTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
 		nil,
 		nil,
 	)
@@ -156,13 +175,13 @@ func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex ui
 	return msg, nil
 }
 
-func (p *sRequester) ListenChat(pCtx context.Context, pFriend string, pSid string) (dto.IMessage, error) {
+func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (dto.IMessage, error) {
 	for {
 		res, err := api.Request(
 			pCtx,
 			p.fClient,
 			http.MethodGet,
-			fmt.Sprintf(cHandleChatSubscribeTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			fmt.Sprintf(cHandleChanListenTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
 			nil,
 			nil,
 		)

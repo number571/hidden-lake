@@ -102,14 +102,14 @@ $ make request-node2
 ```
 1. GET          /api/index          | params = [] 
                                     |> description = get name of service
-2. GET/POST/PUT /api/chat/push      | params = ["friend":string]
-                                    |> description = get limit message size / send message to chat
-3. GET          /api/chat/load      | params = ["friend":string,"index":uint64]
-                                    |> description = get message from chat by index
-4. GET          /api/chat/size      | params = ["friend":string]
-                                    |> description = get count of messages in the chat
-5. GET          /api/chat/listen    | params = ["friend":string]
-                                    |> description = try get message from chat with longpoll method 
+2. GET/POST/PUT /api/chan/push      | params = ["friend":string]
+                                    |> description = get limit message size / send message to chan
+3. GET          /api/chan/load      | params = ["friend":string,"index":uint64]
+                                    |> description = get message from chan by index
+4. GET          /api/chan/size      | params = ["friend":string]
+                                    |> description = get count of messages in the chan
+5. GET          /api/chan/listen    | params = ["friend":string]
+                                    |> description = try get message from chan with longpoll method 
 ```
 
 ### 1. /api/index
@@ -133,7 +133,7 @@ Content-Length: 29
 hidden-lake-service=notifier
 ```
 
-### 2. /api/chat/push
+### 2. /api/chan/push
 
 - `200` - return count of messages (GET) or timestamp (POST, PUT)
 - `202` - message already registered and delivered
@@ -149,7 +149,7 @@ hidden-lake-service=notifier
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/push"
+curl -i -X GET "http://localhost:9591/api/chan/push"
 ```
 
 #### 2.1. GET Response
@@ -158,15 +158,15 @@ curl -i -X GET "http://localhost:9591/api/chat/push"
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Sun, 18 Jan 2026 20:38:58 GMT
-Content-Length: 4
+Content-Length: 11
 
-3552
+[3552,3525]
 ```
 
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chat/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chan/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
@@ -183,7 +183,7 @@ Content-Length: 19
 #### 2.3. PUT Request
 
 ```bash
-curl -i -X PUT "http://localhost:9591/api/chat/push?friend=Bob" --data 'hello, world!'
+curl -i -X PUT "http://localhost:9591/api/chan/push?friend=Bob" --data 'hello, world!'
 ```
 
 #### 2.3. PUT Response
@@ -197,7 +197,7 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-### 3. /api/chat/load
+### 3. /api/chan/load
 
 - `200` - return message from database
 - `400` - invalid input params (friend, index)
@@ -208,7 +208,7 @@ Content-Length: 19
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/load?friend=Bob&index=0"
+curl -i -X GET "http://localhost:9591/api/chan/load?friend=Bob&index=0"
 ```
 
 #### 3.1. GET Response
@@ -222,7 +222,7 @@ Content-Length: 71
 {"s":2,"u":"0000000000000000000000","b":"hello, world!","t":1768589712}
 ```
 
-### 4. /api/chat/size
+### 4. /api/chan/size
 
 - `200` - return count of messages
 - `400` - invalid input params (friend)
@@ -231,7 +231,7 @@ Content-Length: 71
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/size?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chan/size?friend=Bob"
 ```
 
 #### 4.1. GET Response
@@ -245,7 +245,7 @@ Content-Length: 1
 1
 ```
 
-### 5. /api/chat/listen
+### 5. /api/chan/listen
 
 - `200` - return message from broker
 - `204` - no messages in consumer
@@ -257,7 +257,7 @@ Content-Length: 1
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chat/listen?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chan/listen?friend=Bob"
 ```
 
 #### 5.1. GET Response

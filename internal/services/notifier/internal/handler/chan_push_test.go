@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
-func TestHandleChatPushAPI(t *testing.T) {
+func TestHandleChanPushAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -37,12 +37,12 @@ func TestHandleChatPushAPI(t *testing.T) {
 
 	processManager := process.NewNotifyProcessManager()
 
-	handlerX := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true), processManager)
+	handlerX := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true), processManager)
+	handlerY := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get settings error")
 	}
@@ -57,11 +57,11 @@ func TestHandleChatPushAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerA := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true), processManager)
+	handlerA := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true), processManager)
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChatPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false), processManager)
+	handlerB := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false), processManager)
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}

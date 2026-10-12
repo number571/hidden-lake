@@ -21,5 +21,6 @@ type IMessage interface {
 	GetUID() string
 	GetBody() string
 
+	GetIsNotify() bool
 	GetTimestamp() string
 }

@@ -10,25 +10,29 @@ import (
 type IClient interface {
 	GetIndex(context.Context) error
 
+	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
+
 	GetChatSize(context.Context, string) (uint64, error)
 
+	ListenChan(context.Context, string, string) (message.IMessage, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
-	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string) (time.Time, error)
-	PushMessageWithUID(context.Context, string, string, string) (time.Time, error)
+	PushNotify(context.Context, string, string) (time.Time, error)
+	PushMessage(context.Context, string, string, string) (time.Time, error)
 }
 
 type IRequester interface {
 	GetIndex(context.Context) error
 
+	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
+
 	GetChatSize(context.Context, string) (uint64, error)
 
+	ListenChan(context.Context, string, string) (message.IMessage, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
-	ListenChat(context.Context, string, string) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string) (time.Time, error)
-	PushMessageWithUID(context.Context, string, string, string) (time.Time, error)
+	PushNotify(context.Context, string, string) (time.Time, error)
+	PushMessage(context.Context, string, string, string) (time.Time, error)
 }

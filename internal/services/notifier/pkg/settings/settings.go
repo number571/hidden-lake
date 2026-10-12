@@ -39,13 +39,9 @@ const (
 )
 
 const (
-	CDefaultMessagesCapacity = (2 << 10) // count
-)
-
-const (
 	CHandleIndexPath      = "/api/index"
-	CHandleChatPushPath   = "/api/chat/push"
-	CHandleChatLoadPath   = "/api/chat/load"
-	CHandleChatSizePath   = "/api/chat/size"
-	CHandleChatListenPath = "/api/chat/listen"
+	CHandleChanPushPath   = "/api/chan/push"
+	CHandleChanLoadPath   = "/api/chan/load"
+	CHandleChanSizePath   = "/api/chan/size"
+	CHandleChanListenPath = "/api/chan/listen"
 )

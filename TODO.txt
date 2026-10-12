@@ -2,16 +2,16 @@
 2. Создать модули для HLK, HLS
 3. Создать HLH=register
 4. Тесты для HLA=meshtastic
-5. Гарантированная доставка сообщений (HLA=notifier)
+5. + Гарантированная доставка сообщений (HLA=notifier)
 6. Тесты для HLS=filesharer
-7. Переименовать сущность Chat в HLS=notifier -> Channel
-8. HLS=notifier: добавить Recv, Load, List функции
+7. + Переименовать сущность Chat в HLS=notifier -> Channel
+8. + HLS=notifier: добавить Recv, Load, List функции
 9. Добавить правило для всех HLS: минимально возможный размер Payload / Payload+Headers
-10. Исправить статусы ошибок возврата HTTP ответа в HLS приложениях
+10. + Исправить статусы ошибок возврата HTTP ответа в HLS приложениях
 11. Уменьшить размер возвращаемых сообщений с HLS/HLK API
 12. Изменить именования полей в Request/Response структурах HLK API
-13. Добавить в README сервисов HTTP коды возврата
+13. + Добавить в README HLS сервисов HTTP коды возврата
 14. Добавить limiters в pkg/api/services/* (аналогично filesharer)
-15. HLS=filesharer: изменить /list на выдачу только именований файлов
+15. + HLS=filesharer: изменить /list на выдачу только именований файлов
 16. HLS: учесть в описании HLS/HLK API размер тела запроса/ответа
-17. 
+17. Добавить в README HLK, HLA сервисов HTTP коды возврата

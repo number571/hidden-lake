@@ -12,6 +12,7 @@ var (
 )
 
 type SMessage struct {
+	FNotify    bool          `json:"n"`
 	FState     IMessageState `json:"s"`
 	FUID       string        `json:"u"`
 	FBody      string        `json:"b"`
@@ -19,15 +20,16 @@ type SMessage struct {
 }
 
 func NewMessage(pState IMessageState, pBody string) IMessage {
-	msg, _ := NewMessageWithParams(pState, pBody, NewMessageUID(), time.Now())
+	msg, _ := NewMessageWithParams(pState, pBody, NewMessageUID(), time.Now(), false)
 	return msg
 }
 
-func NewMessageWithParams(pState IMessageState, pBody string, pUID string, pTime time.Time) (IMessage, error) {
+func NewMessageWithParams(pState IMessageState, pBody string, pUID string, pTime time.Time, pIsNotify bool) (IMessage, error) {
 	if !MessageUIDIsValid(pUID) {
 		return nil, ErrUIDSize
 	}
 	return &SMessage{
+		FNotify:    pIsNotify,
 		FUID:       pUID,
 		FState:     pState,
 		FBody:      pBody,
@@ -82,6 +84,10 @@ func (p *SMessage) GetBody() string {
 
 func (p *SMessage) GetTimestamp() string {
 	return time.Unix(int64(p.FTimestamp), 0).Format(time.DateTime) //nolint:gosec
+}
+
+func (p *SMessage) GetIsNotify() bool {
+	return p.FNotify
 }
 
 func (p *SMessage) ToBytes() []byte {

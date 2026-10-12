@@ -20,7 +20,7 @@ func TestMessage(t *testing.T) {
 
 	timeNow := time.Now()
 	msgBody := "hello, world!"
-	msg, err := NewMessageWithParams(CIncomingState, msgBody, NewMessageUID(), timeNow)
+	msg, err := NewMessageWithParams(CIncomingState, msgBody, NewMessageUID(), timeNow, false)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -21,7 +20,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/request"
 )
 
-func HandleChatPushAPI(
+func HandleChanPushAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -39,14 +38,14 @@ func HandleChatPushAPI(
 		}
 
 		if pR.Method == http.MethodGet {
-			size, err := getLimitOnPushRequestSize(pCtx, pHlkClient)
+			sizes, err := getLimitOnPushRequestSize(pCtx, pHlkClient)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("get_limit"))
 				_ = api.Response(pW, http.StatusBadGateway, "failed: get limit")
 				return
 			}
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10))
+			_ = api.Response(pW, http.StatusOK, sizes)
 			return
 		}
 
@@ -74,7 +73,9 @@ func HandleChatPushAPI(
 		}
 
 		msgUID := queryParams.Get("uid")
-		if pR.Method == http.MethodPut {
+		isNotify := (pR.Method == http.MethodPut)
+
+		if isNotify {
 			msgUID = dto.NewMessageUID()
 		}
 
@@ -97,13 +98,14 @@ func HandleChatPushAPI(
 				msgBody,
 				msgUID,
 				time.Now(),
+				isNotify,
 			)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("create_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: create message")
 				return
 			}
-			if pR.Method == http.MethodPost {
+			if !isNotify {
 				if _, err := pDatabase.Push(aliasName, msg); err != nil {
 					pLogger.PushErro(logBuilder.WithMessage("push_message"))
 					_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
@@ -127,8 +129,8 @@ func HandleChatPushAPI(
 		}
 		defer func() { _ = pProcessManager.Unlock(msgUID) }()
 
-		if pR.Method == http.MethodPut {
-			req := request.NewPushRequest(msg)
+		if isNotify {
+			req := request.NewPushRequest(msgBody)
 			err := pHlkClient.SendRequest(pCtx, aliasName, req)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("send_request"))
@@ -141,7 +143,7 @@ func HandleChatPushAPI(
 		}
 
 		// try get response from node (delivery check)
-		req := request.NewPushRequestWithUID(msg)
+		req := request.NewPushRequestWithUID(msgUID, msgBody)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))
@@ -169,18 +171,24 @@ func HandleChatPushAPI(
 	}
 }
 
-func getLimitOnPushRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
+func getLimitOnPushRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) ([2]uint64, error) {
 	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
-		return 0, err
+		return [2]uint64{}, err
 	}
 
 	msg := dto.NewMessage(dto.CIncomingState, "")
-	reqSize := uint64(len(request.NewPushRequest(msg).ToBytes()))
 	pldLimit := sett.GetPayloadSizeBytes()
-	if reqSize >= pldLimit {
-		return 0, errors.New("request size >= payload limit") // nolint: err113
+
+	reqSize1 := uint64(len(request.NewPushRequest(msg.GetBody()).ToBytes()))
+	if reqSize1 >= pldLimit {
+		return [2]uint64{}, errors.New("request size >= payload limit (PUT)") // nolint: err113
 	}
 
-	return pldLimit - reqSize, nil
+	reqSize2 := uint64(len(request.NewPushRequestWithUID(msg.GetUID(), msg.GetBody()).ToBytes()))
+	if reqSize2 >= pldLimit {
+		return [2]uint64{}, errors.New("request size >= payload limit (POST)") // nolint: err113
+	}
+
+	return [2]uint64{reqSize1, reqSize2}, nil
 }

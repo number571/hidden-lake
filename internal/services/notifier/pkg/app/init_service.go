@@ -47,23 +47,23 @@ func (p *sApp) initInternalServiceHTTP(
 	) // GET
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChatPushPath,
-		handler.HandleChatPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
+		hls_notifier_settings.CHandleChanPushPath,
+		handler.HandleChanPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
 	) // POST
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChatLoadPath,
-		handler.HandleChatLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
+		hls_notifier_settings.CHandleChanLoadPath,
+		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChatSizePath,
-		handler.HandleChatSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
+		hls_notifier_settings.CHandleChanSizePath,
+		handler.HandleChanSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChatListenPath,
-		handler.HandleChatListenAPI(pCtx, p.fHTTPLogger, pMsgBroker),
+		hls_notifier_settings.CHandleChanListenPath,
+		handler.HandleChanListenAPI(pCtx, p.fHTTPLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

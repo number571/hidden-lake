@@ -13,7 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
-func HandleChatListenAPI(
+func HandleChanListenAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pBroker broker.IDataBroker,

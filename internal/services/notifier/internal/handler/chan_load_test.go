@@ -11,7 +11,7 @@ import (
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
-func TestHandleChatLoadAPI(t *testing.T) {
+func TestHandleChanLoadAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -28,7 +28,7 @@ func TestHandleChatLoadAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
+	handlerX := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
 	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +42,7 @@ func TestHandleChatLoadAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerZ := HandleChatLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(false, true))
+	handlerZ := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(false, true))
 	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with load message error")
 	}
