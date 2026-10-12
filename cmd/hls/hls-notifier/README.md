@@ -67,25 +67,33 @@ $ make request-node2
 
 ## HLS/HLK API
 
-### 1. /push
+### 1. /notify
 
 - `200` - return "ok"
-- `202` - message already exist in database
-- `400` - invalid input params (uid, body)
-- `405` - invalid method (not PUT, POST)
+- `400` - invalid input params (body)
+- `405` - invalid method (not POST)
 - `409` - failed read HTTP request body
-- `500` - load/push from database
 - `502` - get aliasName HLK
 
 ```json
-// header request size = (4 + 53) = 57B
-// body request size can be = (144 - 85) = 87B
-[uint32]{"method":"PUT","host":"hls-notifier","path":"/push"}[body]
+// header request size = (4 + 56) = 60B
+// body request size can be = (144 - 60) = 84B
+[uint32]{"method":"POST","host":"hls-notifier","path":"/notify"}[body]
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
 [uint32]{"code":200}[body]
 ```
+
+### 2. /push
+
+- `200` - return "ok"
+- `202` - message already exist in database
+- `400` - invalid input params (uid, body)
+- `405` - invalid method (not POST)
+- `409` - failed read HTTP request body
+- `500` - load/push from database
+- `502` - get aliasName HLK
 
 ```json
 // header request size = (4 + 81) = 85B
@@ -102,13 +110,15 @@ $ make request-node2
 ```
 1. GET          /api/index          | params = [] 
                                     |> description = get name of service
-2. GET/POST/PUT /api/chan/push      | params = ["friend":string]
+2. GET/POST     /api/chan/notify    | params = ["friend":string]
+                                    |> description = get limit notify size / send notify to chan
+3. GET/POST     /api/chan/push      | params = ["friend":string]
                                     |> description = get limit message size / send message to chan
-3. GET          /api/chan/load      | params = ["friend":string,"index":uint64]
+4. GET          /api/chan/load      | params = ["friend":string,"index":uint64]
                                     |> description = get message from chan by index
-4. GET          /api/chan/size      | params = ["friend":string]
+5. GET          /api/chan/size      | params = ["friend":string]
                                     |> description = get count of messages in the chan
-5. GET          /api/chan/listen    | params = ["friend":string]
+6. GET          /api/chan/listen    | params = ["friend":string]
                                     |> description = try get message from chan with longpoll method 
 ```
 
@@ -133,23 +143,18 @@ Content-Length: 29
 hidden-lake-service=notifier
 ```
 
-### 2. /api/chan/push
+### 2. /api/chan/notify
 
-- `200` - return count of messages (GET) or timestamp (POST, PUT)
-- `202` - message already registered and delivered
-- `208` - message in the fetch process
-- `400` - invalid input params (friend, uid, body)
-- `405` - invalid method (not GET, POST, PUT)
+- `200` - return limit size (GET) or timestamp (POST)
+- `400` - invalid input params (friend, body)
+- `405` - invalid method (not GET, POST)
 - `409` - failed read HTTP request body
-- `418` - got bad response from node
-- `500` - load/push/recv message into database
 - `502` - failed send request (HLK side)
-- `503` - message was sent but no response was received
 
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/push"
+curl -i -X GET "http://localhost:9591/api/chan/notify"
 ```
 
 #### 2.1. GET Response
@@ -158,15 +163,15 @@ curl -i -X GET "http://localhost:9591/api/chan/push"
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Sun, 18 Jan 2026 20:38:58 GMT
-Content-Length: 11
+Content-Length: 4
 
-[3552,3525]
+3552
 ```
 
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chan/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chan/notify?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
@@ -180,13 +185,43 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-#### 2.3. PUT Request
+### 3. /api/chan/push
+
+- `200` - return limit size (GET) or timestamp (POST)
+- `202` - message already registered and delivered
+- `208` - message in the fetch process
+- `400` - invalid input params (friend, uid, body)
+- `405` - invalid method (not GET, POST)
+- `409` - failed read HTTP request body
+- `418` - got bad response from node
+- `500` - load/push/recv message into database
+- `502` - failed send request (HLK side)
+- `503` - message was sent but no response was received
+
+#### 3.1. GET Request
 
 ```bash
-curl -i -X PUT "http://localhost:9591/api/chan/push?friend=Bob" --data 'hello, world!'
+curl -i -X GET "http://localhost:9591/api/chan/push"
 ```
 
-#### 2.3. PUT Response
+#### 3.1. GET Response
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 18 Jan 2026 20:38:58 GMT
+Content-Length: 4
+
+3525
+```
+
+#### 3.2. POST Request
+
+```bash
+curl -i -X POST "http://localhost:9591/api/chan/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+```
+
+#### 3.2. POST Response
 
 ```
 HTTP/1.1 200 OK
@@ -197,7 +232,7 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-### 3. /api/chan/load
+### 4. /api/chan/load
 
 - `200` - return message from database
 - `400` - invalid input params (friend, index)
@@ -205,36 +240,36 @@ Content-Length: 19
 - `405` - invalid method (not GET)
 - `500` - load message from database
 
-#### 3.1. GET Request
+#### 4.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9591/api/chan/load?friend=Bob&index=0"
 ```
 
-#### 3.1. GET Response
+#### 4.1. GET Response
 
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 18:56:08 GMT
-Content-Length: 71
+Content-Length: 89
 
-{"s":2,"u":"0000000000000000000000","b":"hello, world!","t":1768589712}
+{"head":{"s":2,"u":"0000000000000000000000"},"body":{"d":"hello, world!","t":1768589712}}
 ```
 
-### 4. /api/chan/size
+### 5. /api/chan/size
 
 - `200` - return count of messages
 - `400` - invalid input params (friend)
 - `405` - invalid method (not GET)
 
-#### 4.1. GET Request
+#### 5.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9591/api/chan/size?friend=Bob"
 ```
 
-#### 4.1. GET Response
+#### 5.1. GET Response
 
 ```
 HTTP/1.1 200 OK
@@ -245,7 +280,7 @@ Content-Length: 1
 1
 ```
 
-### 5. /api/chan/listen
+### 6. /api/chan/listen
 
 - `200` - return message from broker
 - `204` - no messages in consumer
@@ -254,19 +289,19 @@ Content-Length: 1
 - `406` - limit of registered subscribers
 - `500` - invalid type of message container
 
-#### 5.1. GET Request
+#### 6.1. GET Request
 
 ```bash
 curl -i -X GET "http://localhost:9591/api/chan/listen?friend=Bob"
 ```
 
-#### 5.1. GET Response
+#### 6.1. GET Response
 
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 18:57:22 GMT
-Content-Length: 63
+Content-Length: 28
 
-{"s":1,"u":"0000000000000000000001","b":"hello","t":1768589838}
+{"d":"hello","t":1768589838}
 ```
