@@ -15,11 +15,11 @@ type IClient interface {
 
 	GetChatSize(context.Context, string) (uint64, error)
 
-	ListenChan(context.Context, string, string) (message.IMessage, error)
+	ListenChan(context.Context, string, string) (message.IMessageBody, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 
-	PushNotify(context.Context, string, string) (time.Time, error)
 	PushMessage(context.Context, string, string, string) (time.Time, error)
+	SendNotification(context.Context, string, string) (time.Time, error)
 }
 
 type IRequester interface {
@@ -30,9 +30,9 @@ type IRequester interface {
 
 	GetChatSize(context.Context, string) (uint64, error)
 
-	ListenChan(context.Context, string, string) (message.IMessage, error)
+	ListenChan(context.Context, string, string) (message.IMessageBody, error)
 	LoadMessage(context.Context, string, uint64) (message.IMessage, error)
 
-	PushNotify(context.Context, string, string) (time.Time, error)
 	PushMessage(context.Context, string, string, string) (time.Time, error)
+	SendNotification(context.Context, string, string) (time.Time, error)
 }

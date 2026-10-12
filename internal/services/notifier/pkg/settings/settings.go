@@ -30,7 +30,8 @@ const (
 )
 
 const (
-	CPushPath = "/push"
+	CNotifyPath = "/notify"
+	CPushPath   = "/push"
 )
 
 const (
@@ -40,6 +41,7 @@ const (
 
 const (
 	CHandleIndexPath      = "/api/index"
+	CHandleChanNotifyPath = "/api/chan/notify"
 	CHandleChanPushPath   = "/api/chan/push"
 	CHandleChanLoadPath   = "/api/chan/load"
 	CHandleChanSizePath   = "/api/chan/size"

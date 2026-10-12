@@ -33,8 +33,8 @@ func (p *sClient) GetMessageLimit(pCtx context.Context) (uint64, error) {
 	return p.fRequester.GetMessageLimit(pCtx)
 }
 
-func (p *sClient) PushNotify(pCtx context.Context, pAliasName string, pBody string) (time.Time, error) {
-	return p.fRequester.PushNotify(pCtx, pAliasName, pBody)
+func (p *sClient) SendNotification(pCtx context.Context, pAliasName string, pBody string) (time.Time, error) {
+	return p.fRequester.SendNotification(pCtx, pAliasName, pBody)
 }
 
 func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
@@ -49,6 +49,6 @@ func (p *sClient) GetChatSize(pCtx context.Context, pAliasName string) (uint64, 
 	return p.fRequester.GetChatSize(pCtx, pAliasName)
 }
 
-func (p *sClient) ListenChan(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessage, error) {
+func (p *sClient) ListenChan(pCtx context.Context, pSubscribeID, pAliasName string) (message.IMessageBody, error) {
 	return p.fRequester.ListenChan(pCtx, pSubscribeID, pAliasName)
 }

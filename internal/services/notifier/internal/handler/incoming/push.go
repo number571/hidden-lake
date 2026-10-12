@@ -29,11 +29,11 @@ func HandleIncomingPushHTTP(
 	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseMode(pConfig, pR.Method))
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseMode(pConfig))
 
 		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
 
-		if pR.Method != http.MethodPost && pR.Method != http.MethodPut {
+		if pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
@@ -56,12 +56,6 @@ func HandleIncomingPushHTTP(
 		queryParams := pR.URL.Query()
 
 		msgUID := queryParams.Get("uid")
-		isNotify := (pR.Method == http.MethodPut)
-
-		if isNotify {
-			msgUID = message_dto.NewMessageUID()
-		}
-
 		if !message_dto.MessageUIDIsValid(msgUID) {
 			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
 			_ = api.Response(pW, http.StatusBadRequest, "uid", api.WithoutContentType())
@@ -87,40 +81,26 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		msg, err := message_dto.NewMessageWithParams(
-			message_dto.CIncomingState,
-			msgBody,
-			msgUID,
-			time.Now(),
-			isNotify,
+		msg := message_dto.NewMessage(
+			message_dto.NewMessageHead(message_dto.CIncomingState, msgUID),
+			message_dto.NewMessageBody(msgBody, time.Now()),
 		)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("create_message"))
-			_ = api.Response(pW, http.StatusInternalServerError, "newmsg", api.WithoutContentType())
+
+		if _, err := pDB.Push(aliasName, msg); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("push_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "setmsg", api.WithoutContentType())
 			return
 		}
 
-		if !isNotify {
-			if _, err := pDB.Push(aliasName, msg); err != nil {
-				pLogger.PushErro(logBuilder.WithMessage("push_message"))
-				_ = api.Response(pW, http.StatusInternalServerError, "setmsg", api.WithoutContentType())
-				return
-			}
-		}
-
-		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
+		pBroker.Produce(message.NewMessageContainer(aliasName, msg.GetBody()))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, "ok", api.WithoutContentType())
 	}
 }
 
-func getResponseMode(pConfig config.IConfig, pMethod string) string {
+func getResponseMode(pConfig config.IConfig) string {
 	if !pConfig.GetSettings().GetResponseEnabled() {
-		return hlk_settings.CHeaderResponseModeOFF
-	}
-	if pMethod == http.MethodPut {
-		// message as notify (without need response)
 		return hlk_settings.CHeaderResponseModeOFF
 	}
 	return hlk_settings.CHeaderResponseModeON

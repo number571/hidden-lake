@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
@@ -22,6 +21,7 @@ var (
 const (
 	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
 	cHandleChanPushTemplate        = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s"
+	cHandleChanNotifyTemplate      = "http://" + "%s" + hls_settings.CHandleChanNotifyPath + "?friend=%s"
 	cHandleChanPushWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s&uid=%s"
 	cHandleChanSizeTemplate        = "http://" + "%s" + hls_settings.CHandleChanSizePath + "?friend=%s"
 	cHandleChanLoadTemplate        = "http://" + "%s" + hls_settings.CHandleChanLoadPath + "?friend=%s&index=%d"
@@ -59,49 +59,38 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 }
 
 func (p *sRequester) GetNotifyLimit(pCtx context.Context) (uint64, error) {
-	rsp, err := api.Request(
-		pCtx,
-		p.fClient,
-		http.MethodGet,
-		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_"),
-		nil,
-		nil,
-	)
-	if err != nil {
-		return 0, errors.Join(ErrBadRequest, err)
-	}
-	var limit [2]uint64
-	if err := encoding.DeserializeJSON(rsp, &limit); err != nil {
-		return 0, errors.Join(ErrDecodeResponse, err)
-	}
-	return limit[0], nil
+	return p.getLimitSize(pCtx, cHandleChanNotifyTemplate)
 }
 
 func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
+	return p.getLimitSize(pCtx, cHandleChanPushTemplate)
+}
+
+func (p *sRequester) getLimitSize(pCtx context.Context, pPathTemplate string) (uint64, error) {
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_"),
+		fmt.Sprintf(pPathTemplate, p.fHost, "_"),
 		nil,
 		nil,
 	)
 	if err != nil {
 		return 0, errors.Join(ErrBadRequest, err)
 	}
-	var limit [2]uint64
-	if err := encoding.DeserializeJSON(rsp, &limit); err != nil {
+	limit, err := strconv.ParseUint(string(rsp), 10, 64)
+	if err != nil {
 		return 0, errors.Join(ErrDecodeResponse, err)
 	}
-	return limit[1], nil
+	return limit, nil
 }
 
-func (p *sRequester) PushNotify(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
+func (p *sRequester) SendNotification(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
 	rsp, err := api.Request(
 		pCtx,
 		p.fClient,
-		http.MethodPut,
-		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, pFriend),
+		http.MethodPost,
+		fmt.Sprintf(cHandleChanNotifyTemplate, p.fHost, pFriend),
 		nil,
 		pBody,
 	)
@@ -168,14 +157,14 @@ func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex ui
 	if err != nil {
 		return nil, errors.Join(ErrBadRequest, err)
 	}
-	msg := new(dto.SMessage)
-	if err := encoding.DeserializeJSON(res, msg); err != nil {
+	msg, err := dto.LoadMessage(res)
+	if err != nil {
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 	return msg, nil
 }
 
-func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (dto.IMessage, error) {
+func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (dto.IMessageBody, error) {
 	for {
 		res, err := api.Request(
 			pCtx,
@@ -191,8 +180,8 @@ func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid strin
 		if len(res) == 0 {
 			continue
 		}
-		msg := &dto.SMessage{}
-		if err := encoding.DeserializeJSON(res, msg); err != nil {
+		msg, err := dto.LoadMessageBody(res)
+		if err != nil {
 			return nil, errors.Join(ErrDecodeResponse, err)
 		}
 		return msg, nil

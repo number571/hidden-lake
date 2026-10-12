@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
@@ -39,8 +40,8 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.ListenChan(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushNotify(context.Background(), "", ""); err == nil {
-		t.Fatal("success incorrect pushMessage")
+	if _, err := client.SendNotification(context.Background(), "", ""); err == nil {
+		t.Fatal("success incorrect sendNotification")
 	}
 	if _, err := client.PushMessage(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
@@ -214,6 +215,9 @@ func (p *tsDatabase) LoadByEnum(string, uint64) (dto.IMessage, error) {
 	if !p.fLoadOK {
 		return nil, errors.New("some error") // nolint: err113
 	}
-	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
+	msg := dto.NewMessage(
+		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageUID()),
+		dto.NewMessageBody("hello, world!", time.Now()),
+	)
 	return msg, nil
 }

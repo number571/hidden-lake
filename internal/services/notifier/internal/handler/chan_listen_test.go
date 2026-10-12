@@ -33,7 +33,7 @@ func TestHandleChanListenAPI(t *testing.T) {
 		},
 	)
 
-	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
+	msg := dto.NewMessageBody("hello, world!", time.Now())
 	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
@@ -60,7 +60,7 @@ func TestHandleChanListenAPI(t *testing.T) {
 	}
 }
 
-func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessage) error {
+func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessageBody) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
 
@@ -77,7 +77,7 @@ func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessage) erro
 		return err
 	}
 
-	msg, err := dto.LoadMessage(body)
+	msg, err := dto.LoadMessageBody(body)
 	if err != nil {
 		return err
 	}

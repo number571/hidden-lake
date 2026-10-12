@@ -20,6 +20,11 @@ func (p *sApp) initExternalServiceHTTP(
 	mux := http.NewServeMux()
 
 	mux.HandleFunc(
+		hls_notifier_settings.CNotifyPath,
+		incoming.HandleIncomingNotifyHTTP(pCtx, p.fHTTPLogger, pMsgBroker),
+	) // POST
+
+	mux.HandleFunc(
 		hls_notifier_settings.CPushPath,
 		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
 	) // POST
@@ -45,6 +50,11 @@ func (p *sApp) initInternalServiceHTTP(
 		hls_notifier_settings.CHandleIndexPath,
 		handler.HandleIndexAPI(p.fHTTPLogger),
 	) // GET
+
+	mux.HandleFunc(
+		hls_notifier_settings.CHandleChanNotifyPath,
+		handler.HandleChanNotifyAPI(pCtx, p.fHTTPLogger, pHlkClient),
+	) // POST
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChanPushPath,

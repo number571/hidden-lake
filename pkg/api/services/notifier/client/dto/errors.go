@@ -13,7 +13,8 @@ func (err *SError) Error() string {
 }
 
 var (
-	ErrUnknownType  = &SError{"unknown type"}
-	ErrUnknownState = &SError{"unknown state"}
-	ErrUIDSize      = &SError{"uid size"}
+	ErrUnknownType   = &SError{"unknown type"}
+	ErrUnknownState  = &SError{"unknown state"}
+	ErrTimestampNull = &SError{"timestamp null"}
+	ErrUIDSize       = &SError{"uid size"}
 )

@@ -20,21 +20,21 @@ func TestMessage(t *testing.T) {
 
 	timeNow := time.Now()
 	msgBody := "hello, world!"
-	msg, err := NewMessageWithParams(CIncomingState, msgBody, NewMessageUID(), timeNow, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	msg := NewMessage(
+		NewMessageHead(CIncomingState, NewMessageUID()),
+		NewMessageBody(msgBody, timeNow),
+	)
 	loadMsg, err := LoadMessage(msg.ToBytes())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loadMsg.GetState() != CIncomingState {
+	if loadMsg.GetHead().GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg.GetBody() != msgBody {
+	if loadMsg.GetBody().GetData() != msgBody {
 		t.Fatal("message is invalid")
 	}
-	if loadMsg.GetTimestamp() != timeNow.Format(time.DateTime) {
+	if loadMsg.GetBody().GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("timestamp is invalid")
 	}
 
@@ -42,7 +42,7 @@ func TestMessage(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	if x, err := ParseTimestamp(loadMsg.GetTimestamp()); err != nil || !x.Equal(y) {
+	if x, err := ParseTimestamp(loadMsg.GetBody().GetTimestamp()); err != nil || !x.Equal(y) {
 		t.Fatal("parse message timestamp")
 	}
 
@@ -50,16 +50,16 @@ func TestMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loadMsg2.GetState() != CIncomingState {
+	if loadMsg2.GetHead().GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg2.GetBody() != msgBody {
+	if loadMsg2.GetBody().GetData() != msgBody {
 		t.Fatal("message is invalid")
 	}
-	if loadMsg2.GetTimestamp() != timeNow.Format(time.DateTime) {
+	if loadMsg2.GetBody().GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("timestamp is invalid")
 	}
-	if x, err := ParseTimestamp(loadMsg2.GetTimestamp()); err != nil || !x.Equal(y) {
+	if x, err := ParseTimestamp(loadMsg2.GetBody().GetTimestamp()); err != nil || !x.Equal(y) {
 		t.Fatal("parse message timestamp")
 	}
 

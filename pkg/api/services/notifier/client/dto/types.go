@@ -15,12 +15,25 @@ const (
 type IMessage interface {
 	types.IConverter
 
-	SetState(IMessageState)
-	GetState() IMessageState
+	GetHead() IMessageHead
+	GetBody() IMessageBody
+}
 
+type IMessageHead interface {
+	types.IConverter
+
+	SetState(IMessageState)
+
+	GetState() IMessageState
 	GetUID() string
-	GetBody() string
+}
+
+type IMessageBody interface {
+	types.IConverter
+
+	SetIsNotify(bool)
 
 	GetIsNotify() bool
+	GetData() string
 	GetTimestamp() string
 }

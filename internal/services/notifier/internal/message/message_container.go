@@ -7,14 +7,14 @@ var (
 )
 
 type sMessageContainer struct {
-	fFriend  string
-	fMessage dto.IMessage
+	fFriend      string
+	fMessageBody dto.IMessageBody
 }
 
-func NewMessageContainer(pFriend string, pMessage dto.IMessage) IMessageContainer {
+func NewMessageContainer(pFriend string, pMessageBody dto.IMessageBody) IMessageContainer {
 	return &sMessageContainer{
-		fFriend:  pFriend,
-		fMessage: pMessage,
+		fFriend:      pFriend,
+		fMessageBody: pMessageBody,
 	}
 }
 
@@ -22,6 +22,6 @@ func (p *sMessageContainer) GetFriend() string {
 	return p.fFriend
 }
 
-func (p *sMessageContainer) GetMessage() dto.IMessage {
-	return p.fMessage
+func (p *sMessageContainer) GetMessageBody() dto.IMessageBody {
+	return p.fMessageBody
 }

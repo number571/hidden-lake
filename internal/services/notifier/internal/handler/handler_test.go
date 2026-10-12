@@ -66,7 +66,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.GetMessageLimit(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushNotify(context.Background(), "abc", "hello, world!"); err != nil {
+	if _, err := client.SendNotification(context.Background(), "abc", "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
@@ -79,7 +79,7 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	msg := dto.NewMessage(dto.CIncomingState, "hello, world!")
+	msg := dto.NewMessageBody("hello, world!", time.Now())
 
 	go func() {
 		time.Sleep(100 * time.Millisecond)
@@ -110,6 +110,11 @@ func testInitInternalServiceHTTP(
 		hls_settings.CHandleIndexPath,
 		HandleIndexAPI(pLogger),
 	) // GET
+
+	mux.HandleFunc(
+		hls_settings.CHandleChanNotifyPath,
+		HandleChanNotifyAPI(pCtx, pLogger, pHlkClient),
+	) // POST
 
 	mux.HandleFunc(
 		hls_settings.CHandleChanPushPath,

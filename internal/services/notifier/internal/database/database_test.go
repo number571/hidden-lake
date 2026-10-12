@@ -38,10 +38,10 @@ func TestDatabase(t *testing.T) {
 	friend := "friend"
 
 	timeNow := time.Now()
-	msg, err := message_dto.NewMessageWithParams(message_dto.CIncomingState, tcBody, message_dto.NewMessageUID(), timeNow, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	msg := message_dto.NewMessage(
+		message_dto.NewMessageHead(message_dto.CIncomingState, message_dto.NewMessageUID()),
+		message_dto.NewMessageBody(tcBody, timeNow),
+	)
 
 	_, err1 := db.Push(friend, msg)
 	if err1 != nil {
@@ -58,15 +58,15 @@ func TestDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if loadMsg.GetState() != message_dto.CIncomingState {
+	if loadMsg.GetHead().GetState() != message_dto.CIncomingState {
 		t.Fatal("!msgs[0].IsIncoming()")
 	}
 
-	if loadMsg.GetBody() != tcBody {
+	if loadMsg.GetBody().GetData() != tcBody {
 		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 	}
 
-	if loadMsg.GetTimestamp() != timeNow.Format(time.DateTime) {
+	if loadMsg.GetBody().GetTimestamp() != timeNow.Format(time.DateTime) {
 		t.Fatal("msgs[0].GetTimestamp() != timeNow.Format(time.DateTime)")
 	}
 }

@@ -60,7 +60,7 @@ func (p *sKeyValueDB) Push(pR string, pMsg message.IMessage) (uint64, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	msgUID := pMsg.GetUID()
+	msgUID := pMsg.GetHead().GetUID()
 
 	if _, err := p.loadIndexByUID(pR, msgUID); err == nil {
 		return 0, ErrExistMessage
@@ -105,11 +105,13 @@ func (p *sKeyValueDB) Recv(pR string, pUID string) error {
 		return errors.Join(ErrLoadMessage, err)
 	}
 
-	switch msg.GetState() {
+	msgHead := msg.GetHead()
+
+	switch msgHead.GetState() {
 	case message.CReceivedState:
 		// pass
 	case message.CSendingState:
-		msg.SetState(message.CReceivedState)
+		msgHead.SetState(message.CReceivedState)
 		if err := p.fDB.Set(key, msg.ToBytes()); err != nil {
 			return errors.Join(ErrSetMessage, err)
 		}

@@ -2,7 +2,6 @@ package dto
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
 )
@@ -12,29 +11,15 @@ var (
 )
 
 type SMessage struct {
-	FNotify    bool          `json:"n"`
-	FState     IMessageState `json:"s"`
-	FUID       string        `json:"u"`
-	FBody      string        `json:"b"`
-	FTimestamp uint64        `json:"t"`
+	FHead *SMessageHead `json:"head"`
+	FBody *SMessageBody `json:"body"`
 }
 
-func NewMessage(pState IMessageState, pBody string) IMessage {
-	msg, _ := NewMessageWithParams(pState, pBody, NewMessageUID(), time.Now(), false)
-	return msg
-}
-
-func NewMessageWithParams(pState IMessageState, pBody string, pUID string, pTime time.Time, pIsNotify bool) (IMessage, error) {
-	if !MessageUIDIsValid(pUID) {
-		return nil, ErrUIDSize
-	}
+func NewMessage(pHead IMessageHead, pBody IMessageBody) IMessage {
 	return &SMessage{
-		FNotify:    pIsNotify,
-		FUID:       pUID,
-		FState:     pState,
-		FBody:      pBody,
-		FTimestamp: uint64(pTime.Unix()), //nolint:gosec
-	}, nil
+		FHead: pHead.(*SMessageHead),
+		FBody: pBody.(*SMessageBody),
+	}
 }
 
 func LoadMessage(pData interface{}) (IMessage, error) {
@@ -54,40 +39,19 @@ func LoadMessage(pData interface{}) (IMessage, error) {
 		return nil, err
 	}
 
-	if !MessageUIDIsValid(msg.GetUID()) {
-		return nil, ErrUIDSize
-	}
-
-	state := msg.GetState()
-	if state == cBeginFlagState || state >= cEndFlagState {
-		return nil, ErrUnknownState
+	if err := ValidateMessageHead(msg.GetHead()); err != nil {
+		return nil, err
 	}
 
 	return msg, nil
 }
 
-func (p *SMessage) SetState(pState IMessageState) {
-	p.FState = pState
+func (p *SMessage) GetHead() IMessageHead {
+	return p.FHead
 }
 
-func (p *SMessage) GetState() IMessageState {
-	return p.FState
-}
-
-func (p *SMessage) GetUID() string {
-	return p.FUID
-}
-
-func (p *SMessage) GetBody() string {
+func (p *SMessage) GetBody() IMessageBody {
 	return p.FBody
-}
-
-func (p *SMessage) GetTimestamp() string {
-	return time.Unix(int64(p.FTimestamp), 0).Format(time.DateTime) //nolint:gosec
-}
-
-func (p *SMessage) GetIsNotify() bool {
-	return p.FNotify
 }
 
 func (p *SMessage) ToBytes() []byte {

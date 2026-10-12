@@ -6,5 +6,5 @@ import (
 
 type IMessageContainer interface {
 	GetFriend() string
-	GetMessage() dto.IMessage
+	GetMessageBody() dto.IMessageBody
 }

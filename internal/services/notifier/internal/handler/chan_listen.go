@@ -69,7 +69,7 @@ func HandleChanListenAPI(
 			}
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, mc.GetMessage().ToString(), api.WithCustomContentType(api.CApplicationJSON))
+			_ = api.Response(pW, http.StatusOK, mc.GetMessageBody().ToString(), api.WithCustomContentType(api.CApplicationJSON))
 			return
 		}
 	}

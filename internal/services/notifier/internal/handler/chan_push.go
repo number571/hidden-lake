@@ -73,12 +73,6 @@ func HandleChanPushAPI(
 		}
 
 		msgUID := queryParams.Get("uid")
-		isNotify := (pR.Method == http.MethodPut)
-
-		if isNotify {
-			msgUID = dto.NewMessageUID()
-		}
-
 		if !dto.MessageUIDIsValid(msgUID) {
 			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
@@ -93,61 +87,38 @@ func HandleChanPushAPI(
 				return
 			}
 			// create new message
-			msg, err = dto.NewMessageWithParams(
-				dto.CSendingState,
-				msgBody,
-				msgUID,
-				time.Now(),
-				isNotify,
+			msg = dto.NewMessage(
+				dto.NewMessageHead(dto.CSendingState, msgUID),
+				dto.NewMessageBody(msgBody, time.Now()),
 			)
-			if err != nil {
-				pLogger.PushErro(logBuilder.WithMessage("create_message"))
-				_ = api.Response(pW, http.StatusInternalServerError, "failed: create message")
+			if _, err := pDatabase.Push(aliasName, msg); err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("push_message"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 				return
-			}
-			if !isNotify {
-				if _, err := pDatabase.Push(aliasName, msg); err != nil {
-					pLogger.PushErro(logBuilder.WithMessage("push_message"))
-					_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
-					return
-				}
 			}
 		}
 
 		// state(msg) = incoming OR received
-		if msg.GetState() != dto.CSendingState {
+		if msg.GetHead().GetState() != dto.CSendingState {
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusAccepted, msg.GetTimestamp())
+			_ = api.Response(pW, http.StatusAccepted, msg.GetBody().GetTimestamp())
 			return
 		}
 
 		// fetch process on UID already exist
 		if ok := pProcessManager.TryLock(msgUID); !ok {
 			pLogger.PushInfo(logBuilder.WithMessage("process_exist"))
-			_ = api.Response(pW, http.StatusAlreadyReported, msg.GetTimestamp())
+			_ = api.Response(pW, http.StatusAlreadyReported, msg.GetBody().GetTimestamp())
 			return
 		}
 		defer func() { _ = pProcessManager.Unlock(msgUID) }()
 
-		if isNotify {
-			req := request.NewPushRequest(msgBody)
-			err := pHlkClient.SendRequest(pCtx, aliasName, req)
-			if err != nil {
-				pLogger.PushErro(logBuilder.WithMessage("send_request"))
-				_ = api.Response(pW, http.StatusBadGateway, "failed: send request")
-				return
-			}
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, msg.GetTimestamp())
-			return
-		}
-
 		// try get response from node (delivery check)
-		req := request.NewPushRequestWithUID(msgUID, msgBody)
+		req := request.NewPushRequest(msgUID, msgBody)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))
-			_ = api.Response(pW, http.StatusServiceUnavailable, msg.GetTimestamp())
+			_ = api.Response(pW, http.StatusServiceUnavailable, msg.GetBody().GetTimestamp())
 			return
 		}
 
@@ -167,28 +138,21 @@ func HandleChanPushAPI(
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, msg.GetTimestamp())
+		_ = api.Response(pW, http.StatusOK, msg.GetBody().GetTimestamp())
 	}
 }
 
-func getLimitOnPushRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) ([2]uint64, error) {
+func getLimitOnPushRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
 	sett, err := pHlkClient.GetSettings(pCtx)
 	if err != nil {
-		return [2]uint64{}, err
+		return 0, err
 	}
 
-	msg := dto.NewMessage(dto.CIncomingState, "")
 	pldLimit := sett.GetPayloadSizeBytes()
-
-	reqSize1 := uint64(len(request.NewPushRequest(msg.GetBody()).ToBytes()))
-	if reqSize1 >= pldLimit {
-		return [2]uint64{}, errors.New("request size >= payload limit (PUT)") // nolint: err113
+	reqSize := uint64(len(request.NewPushRequest(dto.NewMessageUID(), "").ToBytes()))
+	if reqSize >= pldLimit {
+		return 0, errors.New("request size >= payload limit") // nolint: err113
 	}
 
-	reqSize2 := uint64(len(request.NewPushRequestWithUID(msg.GetUID(), msg.GetBody()).ToBytes()))
-	if reqSize2 >= pldLimit {
-		return [2]uint64{}, errors.New("request size >= payload limit (POST)") // nolint: err113
-	}
-
-	return [2]uint64{reqSize1, reqSize2}, nil
+	return reqSize, nil
 }

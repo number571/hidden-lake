@@ -94,17 +94,17 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		}
 		state := ""
 		sender := iam
-		switch msg.GetState() {
+		switch msg.GetHead().GetState() {
 		case dto.CIncomingState:
 			sender = friend
 			state = "<"
 		case dto.CReceivedState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.PushMessage(pCtx, friend, msg.GetUID(), msg.GetBody()) // nolint:errcheck
+			go hlsClient.PushMessage(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
 			state = ">"
 		}
-		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody(), state, msg.GetTimestamp())
+		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody().GetData(), state, msg.GetBody().GetTimestamp())
 	}
 
 	go func() {
@@ -114,7 +114,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
 			}
-			fmt.Printf("%s: %s [%s]\n", friend, m.GetBody(), m.GetTimestamp())
+			fmt.Printf("%s: %s [%s]\n", friend, m.GetData(), m.GetTimestamp())
 		}
 	}()
 
