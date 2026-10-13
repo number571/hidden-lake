@@ -97,8 +97,9 @@ func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender laye
 
 func getResponseHead(pResp *http.Response) map[string]string {
 	headers := make(map[string]string, len(pResp.Header))
-	for k := range pResp.Header {
-		if _, ok := gIgnoreHeaders[k]; ok {
+	for k, v := range pResp.Header {
+		f, ok := gIgnoreHeaders[k]
+		if ok && f(v[0]) {
 			continue
 		}
 		headers[k] = pResp.Header.Get(k)
