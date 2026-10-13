@@ -28,6 +28,19 @@ HLA are based on two functions: `Consume` and `Produce`. Due to this, at the int
 <p align="center"><img src="images/hla_arch.png" alt="hla_arch.png"/></p>
 <p align="center">Figure 1. Architecture of HLA</p>
 
+## Scheme
+
+> [!NOTE]
+> More information about scheme in research paper: [hidden_lake_anonymous_network.pdf](../../docs/hidden_lake_anonymous_network.pdf)
+
+```
+[HLK{HLA-HTTP}] produce(HL-message)-> [{HLA-HTTP}HLA{HLA-PROTO}] send(AP-message)-> [proto]
+[HLK{HLA-HTTP}] <-consume(HL-message) [{HLA-HTTP}HLA{HLA-PROTO}] <-recv(AP-message) [proto]
+
+HL-message = E''(network_key, E'(participant_key, message))
+AP-message = ADAPT-to-PROTO(HL-message)
+```
+
 ## Supported platforms
 
 - Windows (x86_64, arm64)
@@ -77,7 +90,7 @@ $ hla-<proto> --path /root --network xxx
 
 ### 1. /api/index
 
-- `200` - return "hidden-lake-adapter=http"
+- `200` - return "hidden-lake-adapter=`<proto>`"
 
 #### 1.1. GET Request
 
@@ -93,7 +106,7 @@ Content-Type: text/plain
 Date: Thu, 15 Jan 2026 10:30:39 GMT
 Content-Length: 24
 
-hidden-lake-adapter=http
+hidden-lake-adapter=`<proto>`
 ```
 
 ### 2. /api/config/connects
@@ -121,13 +134,13 @@ Content-Length: 49
 ```
 
 ```json
-["http://localhost:9581","http://localhost:8888"]
+["<proto>://localhost:9581","<proto>://localhost:8888"]
 ```
 
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST http://localhost:9502/api/config/connects --data 'http://localhost:8888'
+curl -i -X POST http://localhost:9502/api/config/connects --data '<proto>://localhost:8888'
 ```
 
 #### 2.2. POST Response
@@ -144,7 +157,7 @@ success: update connections
 #### 2.3. DELETE Request
 
 ```bash
-curl -i -X DELETE http://localhost:9502/api/config/connects --data 'http://localhost:8888'
+curl -i -X DELETE http://localhost:9502/api/config/connects --data '<proto>://localhost:8888'
 ```
 
 #### 2.3. DELETE Response
@@ -206,13 +219,13 @@ Content-Length: 25
 ```
 
 ```json
-["http://localhost:9581"]
+["<proto>://localhost:9581"]
 ```
 
 #### 4.2. DELETE Request
 
 ```bash
-curl -i -X DELETE http://localhost:9502/api/network/online --data 'http://localhost:9581'
+curl -i -X DELETE http://localhost:9502/api/network/online --data '<proto>://localhost:9581'
 ```
 
 #### 4.2. DELETE Response

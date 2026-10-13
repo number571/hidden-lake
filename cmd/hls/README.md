@@ -34,6 +34,21 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls-<application>@latest
 
 HLS are classic http servers. The `Hlk-Sender-Name` header received from HLK is always present in requests. The service may return the `Hlk-Response-Mode` header, indicating that the response must be sent (on/off). Services also have a limit on the size of messages sent = `payload_size_bytes` (HLK).
 
+## Scheme
+
+> [!NOTE]
+> More information about scheme in research paper: [hidden_lake_anonymous_network.pdf](../../docs/hidden_lake_anonymous_network.pdf)
+
+```
+[CLIENT{HLS-API}] send(HLS-request)->  [{HLS-API}HLS{HLK-API}] send(HLK-request)->  [{HLK-API}HLK]
+[CLIENT{HLS-API}] <-recv(HLS-response) [{HLS-API}HLS{HLK-API}] <-recv(HLK-response) [{HLK-API}HLK]
+
+HLS-request  = <read the documentation for the service you need>
+HLS-response = <read the documentation for the service you need>
+HLK-request  = {"method":string,"host":string,"path":string,"head":map[string]string,"body":base64}
+HLK-response = {"code":int,"head":map[string]string,"body":base64}
+```
+
 ## Supported platforms
 
 - Windows (x86_64, arm64)

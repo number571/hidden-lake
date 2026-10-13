@@ -46,6 +46,20 @@ Data exchange between network participants is carried out using application serv
 
 As shown in the figure above, HLK acts as an anonymizer and handlers of incoming and outgoing traffic. The remaining parts in the form of applications and services depend on third-party components (as an example, `HLS=notifier`).
 
+## Scheme
+
+> [!NOTE]
+> More information about scheme in research paper: [hidden_lake_anonymous_network.pdf](../../docs/hidden_lake_anonymous_network.pdf)
+
+```
+[HLS{HLK-API}] send(HLK-request)->  [{HLK-API}HLK{HLA-HTTP}] produce(HL-message)-> [{HLA-HTTP}HLA]
+[HLS{HLK-API}] <-recv(HLK-response) [{HLK-API}HLK{HLA-HTTP}] <-consume(HL-message) [{HLA-HTTP}HLA]
+
+HLK-request  = {"method":string,"host":string,"path":string,"head":map[string]string,"body":base64}
+HLK-response = {"code":int,"head":map[string]string,"body":base64}
+HL-message 	 = E''(network_key, E'(participant_key, message))
+```
+
 ##  More details in the works 
 
 1. [Theory of the structure of hidden systems](https://github.com/number571/go-peer/blob/master/docs/theory_of_the_structure_of_hidden_systems.pdf "TotSoHS")
