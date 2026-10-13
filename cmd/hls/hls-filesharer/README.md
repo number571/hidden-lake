@@ -82,18 +82,20 @@ Got response
 
 ```json
 // header request size = (4 + 76) = 80B
-// payload head size = (144 - 80) = 64B
-// body request size = 0B (null)
+// body request size (with query params) can be = (144 - 80) = 64B
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/info?name=&personal=false"}[body]
 
 // header response size = (4 + 12) = 16B
-// body response size can be = (144 - 16) = 128B
+// body response size (with name and size) can be = (144 - 16 - 70) = 58B
+// INFORMATION: hash = trim(sha384) => size(20B)
+// RECOMMENDATION: file_name_size=20B
 [uint32]{"code":200}[body]
+[body]={"name":"","size":0,"hash":"0000000000000000000000000000000000000000"}
 ```
 
 ### 2. /list
 
-- `200` - return list of files
+- `200` - return list of file names
 - `400` - invalid input params (page, personal)
 - `405` - invalid method (not GET)
 - `500` - load list of files
@@ -101,13 +103,14 @@ Got response
 
 ```json
 // header request size = (4 + 76) = 80B
-// payload head size = (144 - 80) = 64B
-// body request size = 0B (null)
+// body request size (with query params) can be = (144 - 80) = 64B
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&personal=false"}[body]
 
 // header response size = (4 + 12) = 16B
-// body response size can be = (144 - 16) = 128B
+// body response size (with list of JSON strings) can be = (144 - 16 - 2) = 126B
+// RECOMMENDATION: page_offset=5 and file_name_size<=20B
 [uint32]{"code":200}[body]
+[body]=[]
 ```
 
 ### 3. /load
@@ -122,12 +125,12 @@ Got response
 
 ```json
 // header request size = (4 + 83) = 87B
-// payload head size = (144 - 87) = 57B
-// body request size = 0B (null)
+// body request size (with query params) can be = (144 - 87) = 57B
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/load?name=&chunk=&personal=false"}[body]
 
 // header response size = (4 + 46) = 50B
 // body response size can be = (144 - 50) = 94B
+// INFORMATION: hash = trim(sha384) => size(8B)
 [uint32]{"code":200,"head":{"F-H":"0000000000000000"}}[body]
 ```
 
@@ -195,9 +198,9 @@ curl -i -X GET "http://localhost:9541/api/remote/list?friend=Bob&page=0&personal
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 21:25:00 GMT
-Content-Length: 280
+Content-Length: 27
 
-[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"},{"name":"image.jpg","size":17792,"hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977"}]
+["example.txt","image.jpg"]
 ```
 
 ### 3. /api/remote/list/proc
@@ -329,9 +332,9 @@ curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=examp
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 21:25:55 GMT
-Content-Length: 138
+Content-Length: 82
 
-{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}
+{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}
 ```
 
 ### 7. /api/local/list
@@ -353,9 +356,9 @@ curl -i -X GET "http://localhost:9541/api/local/list?friend=&page=0"
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Sun, 01 Feb 2026 16:09:56 GMT
-Content-Length: 280
+Content-Length: 27
 
-[{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"},{"name":"image.jpg","size":17792,"hash":"7bfd88d546b47b60dba2cd5f5ff8f2ccc19daf348640d5f5d3381bc3f54306f1c7984679c235b4c4485b56eec2ad4977"}]
+["example.txt","image.jpg"]
 ```
 
 ### 8. /api/local/file
@@ -439,5 +442,5 @@ Content-Type: application/json
 Date: Sun, 01 Feb 2026 16:17:12 GMT
 Content-Length: 138
 
-{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}
+{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}
 ```

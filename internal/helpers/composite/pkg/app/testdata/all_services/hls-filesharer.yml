@@ -1,5 +1,5 @@
 settings:
-  page_offset: 10
+  page_offset: 5
   retry_num: 2
 logging:
 - info

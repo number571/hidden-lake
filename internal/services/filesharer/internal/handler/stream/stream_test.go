@@ -278,12 +278,12 @@ func (p *tsHLSClient) FetchRequest(c context.Context, s string, r request.IReque
 			respBytes = p.fFileBytes[p.fCounter:len(p.fFileBytes)]
 			p.fCounter += len(p.fFileBytes) - p.fCounter
 		}
-		hash := "bf880b2af9d0babacc67a988d2b7b9b6630e131d3ad6a0b78aefac0eaca162e4a3453b27a16de790f7879df4cda4b8c9"[:hls_filesharer_settings.CTrimHashSizeOnLoad]
+		hash := "bf880b2af9d0babacc67a988d2b7b9b6630e131d"[:hls_filesharer_settings.CTrimHashSizeOnLoad]
 		switch p.fErrType {
 		case 0:
 			// ok
 		case 1:
-			hash = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+			hash = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 		case 2:
 			respBytes[0] ^= 1
 		}
@@ -309,7 +309,7 @@ type sFileInfo struct {
 func newFileInfoFromBytes(pName string, b []byte) fileinfo.IFileInfo { // nolint: unparam
 	return &sFileInfo{
 		FName: pName,
-		FHash: hashing.NewHasher(b).ToString(),
+		FHash: hashing.NewHasher(b).ToString()[:fileinfo.CTrimHashSize<<1],
 		FSize: uint64(len(b)),
 	}
 }

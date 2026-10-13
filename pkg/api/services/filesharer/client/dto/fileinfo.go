@@ -4,6 +4,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -59,6 +60,7 @@ func LoadFileInfo(pData interface{}) (IFileInfo, error) {
 	}
 
 	if ok := isValidHexHash(info.FHash); !ok {
+		fmt.Println(info.FHash)
 		return nil, ErrInvalidHash
 	}
 
@@ -90,7 +92,7 @@ func isValidHexHash(hash string) bool {
 	if err != nil {
 		return false
 	}
-	return len(v) == sha512.Size384
+	return len(v) == CTrimHashSize
 }
 
 func getFileSize(filename string) (uint64, error) {
@@ -111,5 +113,5 @@ func getFileHash(filename string) (string, error) {
 	if _, err := io.Copy(h, f); err != nil {
 		return "", err
 	}
-	return encoding.HexEncode(h.Sum(nil)), nil
+	return encoding.HexEncode(h.Sum(nil)[:CTrimHashSize]), nil
 }

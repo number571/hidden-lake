@@ -78,6 +78,7 @@ $ make request-node2
 ```json
 // header request size = (4 + 56) = 60B
 // body request size can be = (144 - 60) = 84B
+// RESTRICTION: body = <graphical text>
 [uint32]{"method":"POST","host":"hls-notifier","path":"/notify"}[body]
 
 // header response size = (4 + 12) = 16B
@@ -98,6 +99,8 @@ $ make request-node2
 ```json
 // header request size = (4 + 81) = 85B
 // body request size can be = (144 - 85) = 59B
+// INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
+// RESTRICTION: body = <graphical text>
 [uint32]{"method":"POST","host":"hls-notifier","path":"/push?uid=0000000000000000000000"}[body]
 
 // header response size = (4 + 12) = 16B

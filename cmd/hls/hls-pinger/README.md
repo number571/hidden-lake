@@ -83,11 +83,12 @@ Got response
 
 ```json
 // header request size = (4 + 51) = 55B
-// body request size = 0B (null)
+// body request size can be = (144 - 55) = 89B
 [uint32]{"method":"GET","host":"hls-pinger","path":"/ping"}[body]
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
+// RESTRICTION: body = <graphical text>
 [uint32]{"code":200}[body]
 ```
 

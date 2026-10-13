@@ -42,8 +42,8 @@ const (
 )
 
 const (
-	CDefaultRetryNum   = 2  // count
-	CDefaultPageOffset = 10 // count
+	CDefaultRetryNum   = 2 // count
+	CDefaultPageOffset = 5 // count
 )
 
 const (

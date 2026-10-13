@@ -2,6 +2,10 @@ package dto
 
 import "github.com/number571/go-peer/pkg/types"
 
+const (
+	CTrimHashSize = 20 // hex encode
+)
+
 type IFileInfo interface {
 	types.IConverter
 

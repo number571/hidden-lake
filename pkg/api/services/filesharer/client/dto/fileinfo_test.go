@@ -8,7 +8,7 @@ import (
 const (
 	testFileNotFound = "./testdata/random-932080293i029if94u0g3/example.txt"
 	testFilePath     = "./testdata/example.txt"
-	testFileHash     = "33d3864ac917b56d4d26f2c453f28db3fcbdaff5f56ac84cea971eb38e84931e9d9a6479d636cc19c04a0cb8c15ca2f9"
+	testFileHash     = "33d3864ac917b56d4d26f2c453f28db3fcbdaff5"
 	testFileSize     = 26
 )
 

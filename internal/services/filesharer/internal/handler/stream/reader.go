@@ -124,7 +124,7 @@ func (p *sStream) Read(b []byte) (int, error) {
 	default:
 	}
 
-	hashSum := encoding.HexEncode(p.fHasher.Sum(nil))
+	hashSum := encoding.HexEncode(p.fHasher.Sum(nil)[:fileinfo.CTrimHashSize])
 	if hashSum != p.fFileInfo.GetHash() {
 		return 0, ErrInvalidHash
 	}

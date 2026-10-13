@@ -208,10 +208,10 @@ func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRe
 	switch p.fFetchType {
 	case 3:
 		if strings.HasPrefix(pReq.GetPath(), "/load") {
-			resp := response.NewResponseBuilder().WithCode(200).WithHead(map[string]string{settings.CHeaderFileHashOnLoad: "7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}).WithBody([]byte("hello, world!\n"))
+			resp := response.NewResponseBuilder().WithCode(200).WithHead(map[string]string{settings.CHeaderFileHashOnLoad: "7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}).WithBody([]byte("hello, world!\n"))
 			return resp.Build(), nil
 		}
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}`))
 		return resp.Build(), nil
 	case 2:
 		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`["example.txt"]`))
@@ -219,7 +219,7 @@ func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRe
 	case 1:
 		return nil, errors.New("error") // nolint: err113
 	case 0:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}`))
 		return resp.Build(), nil
 	case -1:
 		resp := response.NewResponseBuilder().WithCode(500).WithBody([]byte(`500`))
@@ -228,7 +228,7 @@ func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRe
 		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{1})
 		return resp.Build(), nil
 	case -3:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example1.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2dedfc39e4ce220b477683975ba032c6c3141bad8442af4943f91ac43"}`))
+		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example1.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}`))
 		return resp.Build(), nil
 	}
 	panic("unknown fetch type")
