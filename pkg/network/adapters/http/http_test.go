@@ -245,7 +245,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	}
 	defer func() { _ = rsp2.Body.Close() }()
 
-	if rsp2.StatusCode != http.StatusBadRequest {
+	if rsp2.StatusCode != http.StatusTeapot {
 		t.Fatal("got another status code (2)")
 	}
 

@@ -199,6 +199,8 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
 
 ### 1. /api/index
 
+- `200` - return "hidden-lake-kernel"
+
 #### 1.1. GET Request
 
 ```bash
@@ -218,6 +220,12 @@ hidden-lake-kernel
 
 ### 2. /api/config/connects
 
+- `200` - return list of connections / add connection / del connection  
+- `405` - invalid method (not GET, POST, DELETE)
+- `409` - failed read HTTP request body
+- `418` - receive void connect string
+- `502` - get response from HLA (get, add, del)
+
 #### 2.1. GET Request
 
 ```bash
@@ -230,11 +238,11 @@ curl -i -X GET http://localhost:9572/api/config/connects
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Mon, 07 Aug 2023 00:21:25 GMT
-Content-Length: 35
+Content-Length: 47
 ```
 
 ```json
-["localhost:9581","localhost:8888"]
+["tcp://localhost:9581","tcp://localhost:8888"]
 ```
 
 #### 2.2. POST Request
@@ -272,6 +280,16 @@ success: delete connection
 ```
 
 ### 3. /api/config/friends
+
+- `200` - return list of friends / add friend / del friend  
+- `400` - invalid participant key from JSON struct
+- `404` - friend not found (del)
+- `405` - invalid method (not GET, POST, DELETE)
+- `406` - friend already exist (add)
+- `409` - failed decode JSON friend structure
+- `418` - receive void aliasName string
+- `500` - failed update map of friends
+- `502` - get response from HLA (get, add, del)
 
 #### 3.1. GET Request
 
@@ -328,6 +346,9 @@ success: delete friend
 
 ### 4. /api/config/settings
 
+- `200` - return settings from config
+- `405` - invalid method (not GET)
+
 #### 4.1. GET Request
 
 ```bash
@@ -349,6 +370,11 @@ Content-Length: 120
 
 ### 5. /api/network/online
 
+- `200` - return list of online connections / del online connection  
+- `405` - invalid method (not GET, DELETE)
+- `409` - failed read connect string
+- `502` - get response from HLA (get, del)
+
 #### 5.1. GET Request
 
 ```bash
@@ -361,11 +387,11 @@ curl -i -X GET http://localhost:9572/api/network/online
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Mon, 07 Aug 2023 00:23:25 GMT
-Content-Length: 18
+Content-Length: 24
 ```
 
 ```json
-["localhost:9581"]
+["tcp://localhost:9581"]
 ```
 
 #### 5.2. DELETE Request
@@ -386,6 +412,13 @@ success: delete online connection
 ```
 
 ### 6. /api/network/request
+
+- `200` - return success send / response from node
+- `404` - friend not found by aliasName
+- `405` - invalid method (not POST, PUT)
+- `409` - failed decode JSON request structure
+- `418` - receive void aliasName string
+- `500` - failed send / fetch request
 
 #### Prefix script
 

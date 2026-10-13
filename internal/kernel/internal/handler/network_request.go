@@ -37,11 +37,20 @@ func HandleNetworkRequestAPI(
 			return
 		}
 
+		queryParams := pR.URL.Query()
+
+		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: alias name is null")
+			return
+		}
+
 		friends := pConfig.GetFriends()
-		pKey, ok := friends[pR.URL.Query().Get("friend")]
+		pKey, ok := friends[aliasName]
 		if !ok {
 			pLogger.PushWarn(logBuilder.WithMessage("get_friends"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: load public key")
+			_ = api.Response(pW, http.StatusNotFound, "failed: friend not found")
 			return
 		}
 

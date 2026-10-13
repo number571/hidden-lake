@@ -33,7 +33,7 @@ func HandleConfigConnectsAPI(
 				gotConns, err := client.GetConnections(pCtx)
 				if err != nil {
 					pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
-					_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get connections")
+					_ = api.Response(pW, http.StatusBadGateway, "failed: get connections")
 					return
 				}
 				connects = append(connects, gotConns...)
@@ -62,7 +62,7 @@ func HandleConfigConnectsAPI(
 			for _, client := range pEPClients {
 				if err := client.AddConnection(pCtx, connect); err != nil {
 					pLogger.PushWarn(logBuilder.WithMessage("add_connections"))
-					_ = api.Response(pW, http.StatusInternalServerError, "failed: add connections")
+					_ = api.Response(pW, http.StatusBadGateway, "failed: add connections")
 					return
 				}
 			}
@@ -75,7 +75,7 @@ func HandleConfigConnectsAPI(
 			for _, client := range pEPClients {
 				if err := client.DelConnection(pCtx, connect); err != nil {
 					pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-					_ = api.Response(pW, http.StatusInternalServerError, "failed: del connection")
+					_ = api.Response(pW, http.StatusBadGateway, "failed: del connection")
 					return
 				}
 			}

@@ -63,6 +63,7 @@ func WithoutContentType() func(http.ResponseWriter) {
 	return func(pW http.ResponseWriter) {
 		// INFO: if use Del() func -> Go autoset Content-Type
 		// Content-Type full deleted on HLK response side (if value = "")
+		// => work only in the HLS applications
 		pW.Header().Set(cContentTypeHeader, "")
 	}
 }

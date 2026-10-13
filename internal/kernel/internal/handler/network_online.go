@@ -48,7 +48,7 @@ func HandleNetworkOnlineAPI(
 
 			if err := errors.Join(errorList...); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("get_connections"))
-				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: get online connections")
+				_ = api.Response(pW, http.StatusBadGateway, "failed: get online connections")
 				return
 			}
 
@@ -74,7 +74,7 @@ func HandleNetworkOnlineAPI(
 
 			if err := errors.Join(errorList...); err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("del_connection"))
-				_ = api.Response(pW, http.StatusMethodNotAllowed, "failed: delete online connections")
+				_ = api.Response(pW, http.StatusBadGateway, "failed: delete online connections")
 				return
 			}
 

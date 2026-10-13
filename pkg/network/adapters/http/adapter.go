@@ -309,7 +309,7 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 
 		if r.Method != http.MethodPost {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = api.Response(w, http.StatusMethodNotAllowed, "")
 			return
 		}
 
@@ -319,14 +319,14 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 		n, err := io.ReadFull(r.Body, msgStr)
 		if err != nil || uint64(n) != msgLen { //nolint:gosec
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
-			w.WriteHeader(http.StatusBadRequest)
+			_ = api.Response(w, http.StatusTeapot, "")
 			return
 		}
 
 		msg, err := layer1.LoadMessage(adapterSettings, string(msgStr))
 		if err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
-			w.WriteHeader(http.StatusBadRequest)
+			_ = api.Response(w, http.StatusBadRequest, "")
 			return
 		}
 
@@ -339,13 +339,17 @@ func (p *sHTTPAdapter) adapterProduceHandler(_ context.Context) func(w http.Resp
 
 		hash := encoding.HexEncode(msg.GetHash())
 		if ok := p.fCache.Set(hash, []byte{}); !ok {
-			w.WriteHeader(http.StatusAccepted)
+			_ = api.Response(w, http.StatusAccepted, "")
 			return
 		}
 
 		if ok := p.pushMessageToChan(msg); !ok {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+			_ = api.Response(w, http.StatusInternalServerError, "")
+			return
 		}
+
+		_ = api.Response(w, http.StatusOK, "")
 	}
 }
 
@@ -368,7 +372,7 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 
 		if r.Method != http.MethodGet {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
-			_ = api.Response(w, http.StatusMethodNotAllowed, []byte{})
+			_ = api.Response(w, http.StatusMethodNotAllowed, "")
 			return
 		}
 
@@ -376,7 +380,7 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 
 		if err := p.fDataBroker.Register(sid); err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnLimitOfSubscribers))
-			_ = api.Response(w, http.StatusNotAcceptable, []byte{})
+			_ = api.Response(w, http.StatusNotAcceptable, "")
 			return
 		}
 
@@ -386,14 +390,14 @@ func (p *sHTTPAdapter) adapterConsumeHandler(pCtx context.Context) func(w http.R
 		v, err := p.fDataBroker.Consume(ctx, sid)
 		if err != nil {
 			p.fLogger.PushInfo(logBuilder.WithType(internal_anon_logger.CLogInfoNoContent))
-			_ = api.Response(w, http.StatusNoContent, []byte{})
+			_ = api.Response(w, http.StatusNoContent, "")
 			return
 		}
 
 		msg, ok := v.(layer1.IMessage)
 		if !ok {
 			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogErroInvalidMessageType))
-			_ = api.Response(w, http.StatusInternalServerError, []byte{})
+			_ = api.Response(w, http.StatusInternalServerError, "")
 			return
 		}
 

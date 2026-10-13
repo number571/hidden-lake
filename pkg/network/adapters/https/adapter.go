@@ -344,7 +344,7 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 
 		if r.Method != http.MethodPost {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnInvalidRequestMethod))
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = api.Response(w, http.StatusMethodNotAllowed, "")
 			return
 		}
 
@@ -353,7 +353,7 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		at, ok := p.fSettings.GetAuthMapper()[sid]
 		if !ok || at != r.Header.Get(hla_settings.CAuthTokenHeader) {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnAuthSubscriber))
-			w.WriteHeader(http.StatusForbidden)
+			_ = api.Response(w, http.StatusForbidden, "")
 			return
 		}
 
@@ -362,14 +362,14 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 		n, err := io.ReadFull(r.Body, msgBytes)
 		if err != nil || uint64(n) != msgLen { //nolint:gosec
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnFailedReadFullBytes))
-			w.WriteHeader(http.StatusBadRequest)
+			_ = api.Response(w, http.StatusTeapot, "")
 			return
 		}
 
 		msg, err := layer1.LoadMessage(adapterSettings, msgBytes)
 		if err != nil {
 			p.fLogger.PushWarn(logBuilder.WithType(anon_logger.CLogWarnMessageNull))
-			w.WriteHeader(http.StatusBadRequest)
+			_ = api.Response(w, http.StatusBadRequest, "")
 			return
 		}
 
@@ -382,21 +382,23 @@ func (p *sHTTPSAdapter) adapterProduceHandler(_ context.Context) func(w http.Res
 
 		hash := encoding.HexEncode(msg.GetHash())
 		if ok := p.fCache.Set(hash, []byte{}); !ok {
-			w.WriteHeader(http.StatusAccepted)
+			_ = api.Response(w, http.StatusAccepted, "")
 			return
 		}
 
 		if ok := p.fLimitManager.Get(sid).Allow(); !ok {
 			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnTooManyRequests))
-			w.WriteHeader(http.StatusTooManyRequests)
+			_ = api.Response(w, http.StatusTooManyRequests, "")
 			return
 		}
 
 		if ok := p.pushMessageToChan(msg); !ok {
-			p.fLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
-			w.WriteHeader(http.StatusInternalServerError)
+			p.fLogger.PushErro(logBuilder.WithType(internal_anon_logger.CLogWarnMessageChanOverflow))
+			_ = api.Response(w, http.StatusInternalServerError, "")
 			return
 		}
+
+		_ = api.Response(w, http.StatusOK, "")
 	}
 }
 

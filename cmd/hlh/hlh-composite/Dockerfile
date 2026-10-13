@@ -26,8 +26,8 @@ RUN ln -sf /usr/local/bin/python3.14 /usr/local/bin/python && \
     ln -sf /usr/local/bin/pip3.14 /usr/local/bin/pip && \
     rm -rf /tmp/Python-3.14.5*
 
-RUN wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz && \ 
-    tar -C /opt -xzf go1.23.0.linux-amd64.tar.gz
+RUN wget https://go.dev/dl/go1.25.0.linux-amd64.tar.gz && \ 
+    tar -C /opt -xzf go1.25.0.linux-amd64.tar.gz
 
 WORKDIR /hidden-lake
 ENV PATH="${PATH}:/opt/go/bin"
