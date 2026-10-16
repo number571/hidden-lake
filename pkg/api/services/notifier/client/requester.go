@@ -42,7 +42,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 }
 
 func (p *sRequester) GetIndex(pCtx context.Context) error {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -68,7 +68,7 @@ func (p *sRequester) GetMessageLimit(pCtx context.Context) (uint64, error) {
 }
 
 func (p *sRequester) getLimitSize(pCtx context.Context, pPathTemplate string) (uint64, error) {
-	rsp, err := api.Request(
+	_, rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -87,7 +87,7 @@ func (p *sRequester) getLimitSize(pCtx context.Context, pPathTemplate string) (u
 }
 
 func (p *sRequester) SendNotification(pCtx context.Context, pFriend string, pBody string) (time.Time, error) {
-	rsp, err := api.Request(
+	_, rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -109,7 +109,7 @@ func (p *sRequester) SendMessageToBox(pCtx context.Context, pFriend string, pUID
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
 	}
-	rsp, err := api.Request(
+	_, rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -128,7 +128,7 @@ func (p *sRequester) SendMessageToBox(pCtx context.Context, pFriend string, pUID
 }
 
 func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -147,7 +147,7 @@ func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64
 }
 
 func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -166,7 +166,7 @@ func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIn
 }
 
 func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -184,9 +184,9 @@ func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID
 	return msg, nil
 }
 
-func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (dto.IMessageBody, error) {
+func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (string, dto.IMessageBody, error) {
 	for {
-		res, err := api.Request(
+		headers, res, err := api.Request(
 			pCtx,
 			p.fClient,
 			http.MethodGet,
@@ -195,15 +195,16 @@ func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid strin
 			nil,
 		)
 		if err != nil {
-			return nil, errors.Join(ErrBadRequest, err)
+			return "", nil, errors.Join(ErrBadRequest, err)
 		}
 		if len(res) == 0 {
 			continue
 		}
-		msg, err := dto.LoadMessageBody(res)
+		msgBody, err := dto.LoadMessageBody(res)
 		if err != nil {
-			return nil, errors.Join(ErrDecodeResponse, err)
+			return "", nil, errors.Join(ErrDecodeResponse, err)
 		}
-		return msg, nil
+		uid := headers.Get(hls_settings.CHeaderMessageUID)
+		return uid, msgBody, nil
 	}
 }

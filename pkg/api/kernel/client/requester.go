@@ -44,7 +44,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 }
 
 func (p *sRequester) GetIndex(pCtx context.Context) error {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -62,7 +62,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 }
 
 func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -83,7 +83,7 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 }
 
 func (p *sRequester) FetchRequest(pCtx context.Context, pFriend string, pRequest *request.SRequest) (response.IResponse, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -103,7 +103,7 @@ func (p *sRequester) FetchRequest(pCtx context.Context, pFriend string, pRequest
 }
 
 func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest *request.SRequest) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPut,
@@ -118,7 +118,7 @@ func (p *sRequester) SendRequest(pCtx context.Context, pFriend string, pRequest 
 }
 
 func (p *sRequester) GetFriends(pCtx context.Context, pSchemeType scheme.ISchemeType) (map[string]layer2.IParticipantKey, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -148,7 +148,7 @@ func (p *sRequester) GetFriends(pCtx context.Context, pSchemeType scheme.IScheme
 }
 
 func (p *sRequester) AddFriend(pCtx context.Context, pFriend *friend.SFriend) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -163,7 +163,7 @@ func (p *sRequester) AddFriend(pCtx context.Context, pFriend *friend.SFriend) er
 }
 
 func (p *sRequester) DelFriend(pCtx context.Context, pFriend *friend.SFriend) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -178,7 +178,7 @@ func (p *sRequester) DelFriend(pCtx context.Context, pFriend *friend.SFriend) er
 }
 
 func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -199,7 +199,7 @@ func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
 }
 
 func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -214,7 +214,7 @@ func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
 }
 
 func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -235,7 +235,7 @@ func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
 }
 
 func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -250,7 +250,7 @@ func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error 
 }
 
 func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,

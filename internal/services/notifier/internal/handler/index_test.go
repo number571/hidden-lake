@@ -37,7 +37,7 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.GetMessageLimit(context.Background()); err == nil {
 		t.Fatal("success incorrect getMessageLimit")
 	}
-	if _, err := client.ListenChan(context.Background(), "", ""); err == nil {
+	if _, _, err := client.ListenChan(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
 	if _, err := client.SendNotification(context.Background(), "", ""); err == nil {

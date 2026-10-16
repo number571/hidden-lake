@@ -33,7 +33,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 }
 
 func (p *sRequester) GetIndex(pCtx context.Context) error {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -51,7 +51,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 }
 
 func (p *sRequester) PingFriend(pCtx context.Context, pFriend string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,

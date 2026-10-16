@@ -191,7 +191,7 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal(err)
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		context.Background(),
 		&http.Client{Timeout: time.Second},
 		http.MethodPost,

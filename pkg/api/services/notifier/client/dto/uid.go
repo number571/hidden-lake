@@ -1,6 +1,10 @@
 package dto
 
-import "github.com/number571/go-peer/pkg/crypto/random"
+import (
+	"strings"
+
+	"github.com/number571/go-peer/pkg/crypto/random"
+)
 
 const (
 	cUIDSize = 22
@@ -8,6 +12,10 @@ const (
 
 func NewMessageUID() string {
 	return random.NewRandom().GetString(cUIDSize)
+}
+
+func NewMessageNullUID() string {
+	return strings.Repeat("0", cUIDSize)
 }
 
 func MessageUIDIsValid(pUID string) bool {

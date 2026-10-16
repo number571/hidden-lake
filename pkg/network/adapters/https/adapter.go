@@ -292,7 +292,7 @@ func (p *sHTTPSAdapter) produceMessage(pCtx context.Context, pConn string, pMsg 
 	if err != nil {
 		return err
 	}
-	_, err = api.Request(
+	_, _, err = api.Request(
 		pCtx,
 		p.newHTTPClient(),
 		http.MethodPost,
@@ -306,7 +306,7 @@ func (p *sHTTPSAdapter) produceMessage(pCtx context.Context, pConn string, pMsg 
 func (p *sHTTPSAdapter) consumeMessage(pCtx context.Context, pConn [3]string) (layer1.IMessage, error) {
 	httpClient := p.newHTTPClient()
 	for {
-		msgBytes, err := api.Request(
+		_, msgBytes, err := api.Request(
 			pCtx,
 			httpClient,
 			http.MethodGet,

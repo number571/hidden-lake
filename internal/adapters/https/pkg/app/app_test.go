@@ -238,7 +238,7 @@ func TestApp(t *testing.T) {
 		msg2Bytes,
 	)
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,

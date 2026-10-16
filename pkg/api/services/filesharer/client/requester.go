@@ -64,7 +64,7 @@ func NewRequester(pHost string, pClient *http.Client) IRequester {
 }
 
 func (p *sRequester) GetIndex(pCtx context.Context) error {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -82,7 +82,7 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 }
 
 func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -119,7 +119,7 @@ func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasNam
 }
 
 func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -134,7 +134,7 @@ func (p *sRequester) DelRemoteFile(pCtx context.Context, pAliasName string, pFil
 }
 
 func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (dto.IFileInfo, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -153,7 +153,7 @@ func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, 
 }
 
 func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -188,7 +188,7 @@ func (p *sRequester) GetLocalFile(pW io.Writer, pCtx context.Context, pAliasName
 }
 
 func (p *sRequester) PutLocalFile(pCtx context.Context, pAliasName string, pFileName string, pR io.Reader) error {
-	_, err := api.RequestWithReader(
+	_, _, err := api.RequestWithReader(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -203,7 +203,7 @@ func (p *sRequester) PutLocalFile(pCtx context.Context, pAliasName string, pFile
 }
 
 func (p *sRequester) DelLocalFile(pCtx context.Context, pAliasName string, pFileName string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -218,7 +218,7 @@ func (p *sRequester) DelLocalFile(pCtx context.Context, pAliasName string, pFile
 }
 
 func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, pFileName string) (dto.IFileInfo, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -237,7 +237,7 @@ func (p *sRequester) GetLocalFileInfo(pCtx context.Context, pAliasName string, p
 }
 
 func (p *sRequester) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (dto.IDownloadProcess, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -256,7 +256,7 @@ func (p *sRequester) GetRemoteFileProc(pCtx context.Context, pAliasName string, 
 }
 
 func (p *sRequester) DelRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -271,7 +271,7 @@ func (p *sRequester) DelRemoteFileProc(pCtx context.Context, pAliasName string, 
 }
 
 func (p *sRequester) GetRemoteListProc(pCtx context.Context) ([]dto.IDownloadProcess, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,

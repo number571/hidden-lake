@@ -100,15 +100,15 @@ func TestErrorsAPI(t *testing.T) {
 	srv := testRunServer(addr)
 	defer func() { _ = srv.Close() }()
 
-	if _, err := Request(context.Background(), client, http.MethodGet, addr, nil, nil); err == nil {
+	if _, _, err := Request(context.Background(), client, http.MethodGet, addr, nil, nil); err == nil {
 		t.Fatal("success request on incorrect url address")
 	}
 
-	if _, err := Request(context.Background(), client, http.MethodGet, unknownURL, nil, nil); err == nil {
+	if _, _, err := Request(context.Background(), client, http.MethodGet, unknownURL, nil, nil); err == nil {
 		t.Fatal("success request on unknown url address")
 	}
 
-	if _, err := Request(ctx, client, http.MethodGet, "\n\t\a", nil, nil); err == nil {
+	if _, _, err := Request(ctx, client, http.MethodGet, "\n\t\a", nil, nil); err == nil {
 		t.Fatal("success request on invalid url")
 	}
 
@@ -117,11 +117,11 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success request on invalid url")
 	}
 
-	if _, err := RequestWithReader(ctx, client, http.MethodPost, "\n\t\a", nil, bytes.NewReader([]byte{})); err == nil {
+	if _, _, err := RequestWithReader(ctx, client, http.MethodPost, "\n\t\a", nil, bytes.NewReader([]byte{})); err == nil {
 		t.Fatal("success request on invalid url")
 	}
 
-	if _, err := Request(ctx, client, http.MethodGet, undefinedURL, nil, nil); err == nil {
+	if _, _, err := Request(ctx, client, http.MethodGet, undefinedURL, nil, nil); err == nil {
 		t.Fatal("success request on undefined url")
 	}
 
@@ -130,7 +130,7 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success request on undefined url")
 	}
 
-	if _, err := RequestWithReader(ctx, client, http.MethodPost, undefinedURL, nil, bytes.NewReader([]byte{})); err == nil {
+	if _, _, err := RequestWithReader(ctx, client, http.MethodPost, undefinedURL, nil, bytes.NewReader([]byte{})); err == nil {
 		t.Fatal("success request on undefined url")
 	}
 }
@@ -156,11 +156,11 @@ func TestRequestResponseAPI(t *testing.T) {
 
 	ctx := context.Background()
 
-	if _, err := Request(ctx, client, http.MethodPatch, testURL, nil, nil); err == nil {
+	if _, _, err := Request(ctx, client, http.MethodPatch, testURL, nil, nil); err == nil {
 		t.Fatal("PATCH: success request on method not allowed")
 	}
 
-	if _, err := RequestWithReader(ctx, client, http.MethodPatch, testURL, nil, bytes.NewReader([]byte{})); err == nil {
+	if _, _, err := RequestWithReader(ctx, client, http.MethodPatch, testURL, nil, bytes.NewReader([]byte{})); err == nil {
 		t.Fatal("PATCH: success request on method not allowed")
 	}
 
@@ -169,7 +169,7 @@ func TestRequestResponseAPI(t *testing.T) {
 		t.Fatal("success request with failed writer")
 	}
 
-	respGET, err := Request(ctx, client, http.MethodGet, testURL, nil, nil)
+	_, respGET, err := Request(ctx, client, http.MethodGet, testURL, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -184,7 +184,7 @@ func TestRequestResponseAPI(t *testing.T) {
 	}
 
 	// bytes
-	respPOST1, err := Request(ctx, client, http.MethodPost, testURL, nil, []byte(tcMessage))
+	_, respPOST1, err := Request(ctx, client, http.MethodPost, testURL, nil, []byte(tcMessage))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -194,7 +194,7 @@ func TestRequestResponseAPI(t *testing.T) {
 	}
 
 	// with reader (bytes)
-	respPOST2, err := RequestWithReader(ctx, client, http.MethodPost, testURL, nil, bytes.NewReader([]byte(tcMessage)))
+	_, respPOST2, err := RequestWithReader(ctx, client, http.MethodPost, testURL, nil, bytes.NewReader([]byte(tcMessage)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -214,7 +214,7 @@ func TestRequestResponseAPI(t *testing.T) {
 	}
 
 	// string
-	respPOST3, err := Request(ctx, client, http.MethodPost, testURL, nil, tcMessage)
+	_, respPOST3, err := Request(ctx, client, http.MethodPost, testURL, nil, tcMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -234,7 +234,7 @@ func TestRequestResponseAPI(t *testing.T) {
 	}
 
 	// struct
-	respPOST4, err := Request(ctx, client, http.MethodPost, testURL, nil, tsRequest{FMessage: tcMessage})
+	_, respPOST4, err := Request(ctx, client, http.MethodPost, testURL, nil, tsRequest{FMessage: tcMessage})
 	if err != nil {
 		t.Fatal(err)
 	}

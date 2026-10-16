@@ -18,7 +18,7 @@ func RequestWithReader(
 	pMethod, pURL string,
 	pHeader http.Header,
 	pR io.Reader,
-) ([]byte, error) {
+) (http.Header, []byte, error) {
 	contentType := CApplicationOctetStream
 
 	req, err := http.NewRequestWithContext(
@@ -28,7 +28,7 @@ func RequestWithReader(
 		pR,
 	)
 	if err != nil {
-		return nil, errors.Join(ErrBuildRequest, err)
+		return nil, nil, errors.Join(ErrBuildRequest, err)
 	}
 
 	maps.Copy(req.Header, pHeader)
@@ -36,15 +36,15 @@ func RequestWithReader(
 
 	resp, err := pClient.Do(req)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return nil, nil, errors.Join(ErrBadRequest, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	result, err := loadResponse(resp.StatusCode, resp.Body)
 	if err != nil {
-		return nil, errors.Join(ErrLoadResponse, err)
+		return nil, nil, errors.Join(ErrLoadResponse, err)
 	}
-	return result, nil
+	return resp.Header, result, nil
 }
 
 func RequestWithWriter(
@@ -105,7 +105,7 @@ func Request(
 	pMethod, pURL string,
 	pHeader http.Header,
 	pData interface{},
-) ([]byte, error) {
+) (http.Header, []byte, error) {
 	var (
 		contentType string
 		reqBytes    []byte
@@ -130,7 +130,7 @@ func Request(
 		bytes.NewBuffer(reqBytes),
 	)
 	if err != nil {
-		return nil, errors.Join(ErrBuildRequest, err)
+		return nil, nil, errors.Join(ErrBuildRequest, err)
 	}
 
 	maps.Copy(req.Header, pHeader)
@@ -138,15 +138,15 @@ func Request(
 
 	resp, err := pClient.Do(req)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return nil, nil, errors.Join(ErrBadRequest, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	result, err := loadResponse(resp.StatusCode, resp.Body)
 	if err != nil {
-		return nil, errors.Join(ErrLoadResponse, err)
+		return nil, nil, errors.Join(ErrLoadResponse, err)
 	}
-	return result, nil
+	return resp.Header, result, nil
 }
 
 func loadResponse(pStatusCode int, pReader io.ReadCloser) ([]byte, error) {

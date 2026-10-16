@@ -193,7 +193,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		},
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		context.Background(),
 		httpClient,
 		http.MethodPost,
@@ -205,7 +205,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with invalid method")
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodGet,
@@ -217,7 +217,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with invalid method")
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,
@@ -229,7 +229,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with invalid sid")
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,
@@ -242,7 +242,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	}
 
 	size := adapterSettings.GetMessageSizeBytes() + layer1.CMessageHeadSize
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,
@@ -268,7 +268,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 
 	go func() {
 		time.Sleep(time.Second)
-		_, err := api.Request(
+		_, _, err := api.Request(
 			ctx,
 			httpClient,
 			http.MethodGet,
@@ -280,7 +280,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 			chErr1 <- errors.New("got double consume success") // nolint: err113
 			return
 		}
-		_, err = api.Request(
+		_, _, err = api.Request(
 			ctx,
 			httpClient,
 			http.MethodPost,
@@ -292,7 +292,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	}()
 
 	go func() {
-		msgBytes, err = api.Request(
+		_, msgBytes, err = api.Request(
 			ctx,
 			httpClient,
 			http.MethodGet,
@@ -327,7 +327,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		}),
 		msgBytesY,
 	)
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,
@@ -347,7 +347,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		}),
 		msgBytesZ,
 	)
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodPost,
@@ -359,7 +359,7 @@ func TestHTTPSAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 		t.Fatal("success request with overflow broker data")
 	}
 
-	_, err = api.Request(
+	_, _, err = api.Request(
 		ctx,
 		httpClient,
 		http.MethodGet,

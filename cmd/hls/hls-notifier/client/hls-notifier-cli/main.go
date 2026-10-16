@@ -109,10 +109,13 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	go func() {
 		for {
-			m, err := hlsClient.ListenChan(pCtx, friend, "hls-notifier-cli")
+			uid, m, err := hlsClient.ListenChan(pCtx, friend, "hls-notifier-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
+			}
+			if uid == "" {
+				fmt.Print("[NOTIFICATION]")
 			}
 			fmt.Printf("%s: %s [%s]\n", friend, m.GetData(), m.GetTimestamp())
 		}

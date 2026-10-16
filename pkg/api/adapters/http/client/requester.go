@@ -44,7 +44,7 @@ func NewRequester(pHost string, pClient *http.Client, pAdapterSettings adapters.
 }
 
 func (p *sRequester) GetIndex(pCtx context.Context, pScheme string) error {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -66,7 +66,7 @@ func (p *sRequester) GetIndex(pCtx context.Context, pScheme string) error {
 }
 
 func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -87,7 +87,7 @@ func (p *sRequester) GetSettings(pCtx context.Context) (config.IConfigSettings, 
 }
 
 func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -108,7 +108,7 @@ func (p *sRequester) GetOnlines(pCtx context.Context) ([]string, error) {
 }
 
 func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -123,7 +123,7 @@ func (p *sRequester) DelOnline(pCtx context.Context, pConnect string) error {
 }
 
 func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
-	res, err := api.Request(
+	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -144,7 +144,7 @@ func (p *sRequester) GetConnections(pCtx context.Context) ([]string, error) {
 }
 
 func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -159,7 +159,7 @@ func (p *sRequester) AddConnection(pCtx context.Context, pConnect string) error 
 }
 
 func (p *sRequester) DelConnection(pCtx context.Context, pConnect string) error {
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
@@ -177,7 +177,7 @@ func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessag
 	if _, err := layer1.LoadMessage(p.fAdapterSettings, pNetMsg.ToString()); err != nil {
 		return errors.Join(ErrDecodeRequest, err)
 	}
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -193,7 +193,7 @@ func (p *sRequester) ProduceMessage(pCtx context.Context, pNetMsg layer1.IMessag
 
 func (p *sRequester) ConsumeMessage(pCtx context.Context, pSid string) (layer1.IMessage, error) {
 	for {
-		res, err := api.Request(
+		_, res, err := api.Request(
 			pCtx,
 			p.fClient,
 			http.MethodGet,

@@ -142,7 +142,7 @@ func (p *sMeshtasticAdapter) Produce(pCtx context.Context, pNetMsg layer1.IMessa
 	}
 
 	httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
-	_, err := api.Request(
+	_, _, err := api.Request(
 		pCtx,
 		httpClient,
 		http.MethodPost,
@@ -190,7 +190,7 @@ func (p *sMeshtasticAdapter) runSubscriber(pCtx context.Context) error {
 				continue
 			}
 
-			rsp, err := api.Request(
+			_, rsp, err := api.Request(
 				pCtx,
 				&http.Client{Timeout: p.fSettings.GetReadTimeout()},
 				http.MethodGet,
@@ -326,7 +326,7 @@ func (p *sMeshtasticAdapter) runPythonScript(pCtx context.Context) error {
 
 func (p *sMeshtasticAdapter) closePythonScript() error {
 	httpClient := &http.Client{Timeout: p.fSettings.GetWriteTimeout()}
-	_, err := api.Request(
+	_, _, err := api.Request(
 		context.Background(),
 		httpClient,
 		http.MethodDelete,
