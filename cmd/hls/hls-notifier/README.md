@@ -86,7 +86,7 @@ $ make request-node2
 [uint32]{"code":200}[body]
 ```
 
-### 2. /push
+### 2. /msgbox
 
 - `200` - return "ok"
 - `202` - message already exist in database
@@ -97,11 +97,11 @@ $ make request-node2
 - `502` - get aliasName HLK
 
 ```json
-// header request size = (4 + 81) = 85B
-// body request size can be = (144 - 85) = 59B
+// header request size = (4 + 83) = 87B
+// body request size can be = (144 - 87) = 57B
 // INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
 // RESTRICTION: body = <graphical text>
-[uint32]{"method":"POST","host":"hls-notifier","path":"/push?uid=0000000000000000000000"}[body]
+[uint32]{"method":"POST","host":"hls-notifier","path":"/msgbox?uid=0000000000000000000000"}[body]
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
@@ -115,11 +115,11 @@ $ make request-node2
                                     |> description = get name of service
 2. GET/POST     /api/chan/notify    | params = ["friend":string]
                                     |> description = get limit notify size / send notify to chan
-3. GET/POST     /api/chan/push      | params = ["friend":string]
+3. GET/POST     /api/chan/msgbox/push    | params = ["friend":string]
                                     |> description = get limit message size / send message to chan
-4. GET          /api/chan/load      | params = ["friend":string,"index":uint64]
+4. GET          /api/chan/msgbox/load      | params = ["friend":string,"index":uint64]
                                     |> description = get message from chan by index
-5. GET          /api/chan/size      | params = ["friend":string]
+5. GET          /api/chan/msgbox/size      | params = ["friend":string]
                                     |> description = get count of messages in the chan
 6. GET          /api/chan/listen    | params = ["friend":string]
                                     |> description = try get message from chan with longpoll method 
@@ -188,7 +188,7 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-### 3. /api/chan/push
+### 3. /api/chan/msgbox/push
 
 - `200` - return limit size (GET) or timestamp (POST)
 - `202` - message already registered and delivered
@@ -204,7 +204,7 @@ Content-Length: 19
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/push"
+curl -i -X GET "http://localhost:9591/api/chan/msgbox/push"
 ```
 
 #### 3.1. GET Response
@@ -221,7 +221,7 @@ Content-Length: 4
 #### 3.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chan/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chan/msgbox/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 3.2. POST Response
@@ -235,7 +235,7 @@ Content-Length: 19
 2026-01-16T18:55:12
 ```
 
-### 4. /api/chan/load
+### 4. /api/chan/msgbox/load
 
 - `200` - return message from database
 - `400` - invalid input params (friend, index)
@@ -246,7 +246,7 @@ Content-Length: 19
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/load?friend=Bob&index=0"
+curl -i -X GET "http://localhost:9591/api/chan/msgbox/load?friend=Bob&index=0"
 ```
 
 #### 4.1. GET Response
@@ -260,7 +260,7 @@ Content-Length: 89
 {"head":{"s":2,"u":"0000000000000000000000"},"body":{"d":"hello, world!","t":1768589712}}
 ```
 
-### 5. /api/chan/size
+### 5. /api/chan/msgbox/size
 
 - `200` - return count of messages
 - `400` - invalid input params (friend)
@@ -269,7 +269,7 @@ Content-Length: 89
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/size?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chan/msgbox/size?friend=Bob"
 ```
 
 #### 5.1. GET Response

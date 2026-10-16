@@ -1,4 +1,4 @@
-package limiters
+package pldsize
 
 import (
 	"context"
@@ -10,6 +10,10 @@ import (
 	hls_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
+)
+
+const (
+	tcPldSize = 32
 )
 
 func TestError(t *testing.T) {
@@ -25,16 +29,16 @@ func TestError(t *testing.T) {
 func TestUtils(t *testing.T) {
 	t.Parallel()
 
-	limit, err := GetLimitOnLoadResponseSize(context.Background(), newTsHLSClient(1024))
+	limit, err := GetLimitBySize(context.Background(), newTsHLSClient(1024), tcPldSize)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if limit != 1024-gLoadRspSize {
+	if limit != 1024-tcPldSize {
 		t.Fatal("limit != 1024-gRespSize")
 	}
 
-	if _, err := GetLimitOnLoadResponseSize(context.Background(), newTsHLSClient(gLoadRspSize)); err == nil {
-		t.Fatal("success get message limit with gRespSize >= limit")
+	if _, err := GetLimitBySize(context.Background(), newTsHLSClient(tcPldSize), tcPldSize); err == nil {
+		t.Fatal("success get message limit with tcPldSize >= limit")
 	}
 }
 

@@ -15,11 +15,11 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/query"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
-	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
 	"github.com/number571/hidden-lake/internal/services/filesharer/internal/utils"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/limiter"
 )
 
 func HandleIncomingLoadHTTP(
@@ -84,7 +84,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
+		chunkSize, err := limiter.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("get_chunk_size"))
 			_ = api.Response(pW, http.StatusBadGateway, "sizechunk", api.WithoutContentType())

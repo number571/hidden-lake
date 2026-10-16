@@ -1,7 +1,7 @@
-package limiters
+package pldsize
 
 const (
-	errPrefix = "internal/services/filesharer/internal/handler/incoming/limiters = "
+	errPrefix = "internal/utils/pldsize = "
 )
 
 type SError struct {

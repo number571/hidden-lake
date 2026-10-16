@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/internal/services/filesharer/internal/handler/incoming/limiters"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	fileinfo "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/filesharer/limiter"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/request"
 )
 
@@ -49,7 +49,7 @@ func BuildStreamReader(
 	pPersonal bool,
 	pCallback func(uint64),
 ) (io.Reader, error) {
-	chunkSize, err := limiters.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
+	chunkSize, err := limiter.GetLimitOnLoadResponseSize(pCtx, pHlkClient)
 	if err != nil {
 		return nil, errors.Join(ErrGetMessageLimit, err)
 	}

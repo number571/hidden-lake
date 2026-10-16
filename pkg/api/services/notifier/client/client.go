@@ -41,8 +41,12 @@ func (p *sClient) PushMessage(pCtx context.Context, pAliasName string, pUID stri
 	return p.fRequester.PushMessage(pCtx, pAliasName, pUID, pBody)
 }
 
-func (p *sClient) LoadMessage(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {
-	return p.fRequester.LoadMessage(pCtx, pAliasName, pIndex)
+func (p *sClient) LoadMessageByEnum(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {
+	return p.fRequester.LoadMessageByEnum(pCtx, pAliasName, pIndex)
+}
+
+func (p *sClient) LoadMessageByUID(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
+	return p.fRequester.LoadMessageByUID(pCtx, pAliasName, pUID)
 }
 
 func (p *sClient) GetChatSize(pCtx context.Context, pAliasName string) (uint64, error) {

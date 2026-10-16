@@ -19,7 +19,7 @@ import (
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
-func TestHandleIncomingPushHTTP(t *testing.T) {
+func TestHandleIncomingMsgboxHTTP(t *testing.T) {
 	t.Parallel()
 
 	logging, err := std_logger.LoadLogging([]string{})
@@ -40,7 +40,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	msgBroker := broker.NewDataBroker(256, 256)
-	handler := HandleIncomingPushHTTP(ctx, httpLogger, cfg, newTsDatabase(true, true), msgBroker)
+	handler := HandleIncomingMsgboxHTTP(ctx, httpLogger, cfg, newTsDatabase(true, true), msgBroker)
 
 	if err := incomingPushRequestOK(handler); err != nil {
 		t.Fatal(err)
@@ -56,7 +56,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 		t.Fatal("request success with invalid message")
 	}
 
-	handlery := HandleIncomingPushHTTP(ctx, httpLogger, cfg, newTsDatabase(false, true), msgBroker)
+	handlery := HandleIncomingMsgboxHTTP(ctx, httpLogger, cfg, newTsDatabase(false, true), msgBroker)
 	if err := incomingPushRequestOK(handlery); err == nil {
 		t.Fatal("request success with invalid push message")
 	}
@@ -65,7 +65,7 @@ func TestHandleIncomingPushHTTP(t *testing.T) {
 func incomingPushRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 
-	path := fmt.Sprintf("/push?uid=%s", message_dto.NewMessageUID()) // nolint:perfsprint
+	path := fmt.Sprintf("/msgbox?uid=%s", message_dto.NewMessageUID()) // nolint:perfsprint
 	req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte("hello, world!")))
 
 	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
@@ -87,7 +87,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 
 func incomingPushRequestMessage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/push", nil)
+	req := httptest.NewRequest(http.MethodPost, "/msgbox", nil)
 	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)
@@ -107,7 +107,7 @@ func incomingPushRequestMessage(handler http.HandlerFunc) error {
 
 func incomingPushRequestPubKey(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/push", bytes.NewBuffer([]byte("hello, world!")))
+	req := httptest.NewRequest(http.MethodPost, "/msgbox", bytes.NewBuffer([]byte("hello, world!")))
 
 	handler(w, req)
 	res := w.Result()
@@ -126,7 +126,7 @@ func incomingPushRequestPubKey(handler http.HandlerFunc) error {
 
 func incomingPushRequestMethod(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/push", nil)
+	req := httptest.NewRequest(http.MethodGet, "/msgbox", nil)
 
 	handler(w, req)
 	res := w.Result()

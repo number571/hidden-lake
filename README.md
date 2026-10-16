@@ -133,6 +133,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 </tr>
 </table>
 
+> [!NOTE]
 > More information about Hidden Lake and QB-problem in research paper: [hidden_lake_anonymous_network.pdf](docs/hidden_lake_anonymous_network.pdf)
 
 ## List of applications

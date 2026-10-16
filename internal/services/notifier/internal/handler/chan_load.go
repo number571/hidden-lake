@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"math"
 	"net/http"
 	"strconv"
 
@@ -12,6 +13,7 @@ import (
 	pkg_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 func HandleChanLoadAPI(
@@ -31,6 +33,11 @@ func HandleChanLoadAPI(
 
 		queryParams := pR.URL.Query()
 
+		var (
+			index = queryParams.Get("index")
+			uid   = queryParams.Get("uid")
+		)
+
 		aliasName := queryParams.Get("friend")
 		if aliasName == "" {
 			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
@@ -38,14 +45,22 @@ func HandleChanLoadAPI(
 			return
 		}
 
-		index, err := strconv.ParseUint(queryParams.Get("index"), 10, 64)
-		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
+		var (
+			dbMsg dto.IMessage
+			err   error
+		)
+
+		switch {
+		case index != "":
+			dbMsg, err = pDatabase.LoadByEnum(aliasName, parseIndex(index))
+		case uid != "":
+			dbMsg, err = pDatabase.LoadByUID(aliasName, uid)
+		default:
+			pLogger.PushWarn(logBuilder.WithMessage("id_undefined"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: id undefined")
 			return
 		}
 
-		dbMsg, err := pDatabase.LoadByEnum(aliasName, index)
 		if err != nil {
 			if errors.Is(err, database.ErrNotFoundMessage) {
 				pLogger.PushWarn(logBuilder.WithMessage("not_found_message"))
@@ -60,4 +75,12 @@ func HandleChanLoadAPI(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, dbMsg.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 	}
+}
+
+func parseIndex(strIndex string) uint64 {
+	index, err := strconv.ParseUint(strIndex, 10, 64)
+	if err != nil {
+		return math.MaxUint64
+	}
+	return index
 }

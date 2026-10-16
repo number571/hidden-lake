@@ -46,8 +46,11 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.PushMessage(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
-	if _, err := client.LoadMessage(context.Background(), "", 0); err == nil {
-		t.Fatal("success incorrect loadMessage")
+	if _, err := client.LoadMessageByEnum(context.Background(), "", 0); err == nil {
+		t.Fatal("success incorrect loadMessageByEnum")
+	}
+	if _, err := client.LoadMessageByUID(context.Background(), "", ""); err == nil {
+		t.Fatal("success incorrect loadMessageByUID")
 	}
 	if _, err := client.GetChatSize(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect GetChatSize")

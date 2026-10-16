@@ -87,7 +87,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	}
 
 	for ; index < count; index++ {
-		msg, err := hlsClient.LoadMessage(pCtx, friend, index)
+		msg, err := hlsClient.LoadMessageByEnum(pCtx, friend, index)
 		if err != nil {
 			fmt.Printf("error: %s\n", err.Error())
 			return

@@ -24,7 +24,7 @@ func NewPushRequest(pUID, pBody string) hlk_request.IRequest {
 		WithHost(hls_settings.CAppShortName).
 		WithPath(fmt.Sprintf(
 			"%s?uid=%s",
-			hls_settings.CPushPath,
+			hls_settings.CMsgboxPath,
 			url.QueryEscape(pUID),
 		)).
 		WithBody([]byte(pBody)).

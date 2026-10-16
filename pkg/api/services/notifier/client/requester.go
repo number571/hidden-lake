@@ -20,11 +20,12 @@ var (
 
 const (
 	cHandleIndexTemplate           = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChanPushTemplate        = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s"
+	cHandleChanPushTemplate        = "http://" + "%s" + hls_settings.CHandleChanMsgboxPushPath + "?friend=%s"
 	cHandleChanNotifyTemplate      = "http://" + "%s" + hls_settings.CHandleChanNotifyPath + "?friend=%s"
-	cHandleChanPushWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChanPushPath + "?friend=%s&uid=%s"
-	cHandleChanSizeTemplate        = "http://" + "%s" + hls_settings.CHandleChanSizePath + "?friend=%s"
-	cHandleChanLoadTemplate        = "http://" + "%s" + hls_settings.CHandleChanLoadPath + "?friend=%s&index=%d"
+	cHandleChanPushWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChanMsgboxPushPath + "?friend=%s&uid=%s"
+	cHandleChanSizeTemplate        = "http://" + "%s" + hls_settings.CHandleChanMsgboxSizePath + "?friend=%s"
+	cHandleChanLoadByEnumTemplate  = "http://" + "%s" + hls_settings.CHandleChanMsgboxLoadPath + "?friend=%s&index=%d"
+	cHandleChanLoadByUIDTemplate   = "http://" + "%s" + hls_settings.CHandleChanMsgboxLoadPath + "?friend=%s&uid=%s"
 	cHandleChanListenTemplate      = "http://" + "%s" + hls_settings.CHandleChanListenPath + "?friend=%s&sid=%s"
 )
 
@@ -145,12 +146,31 @@ func (p *sRequester) GetChatSize(pCtx context.Context, pFriend string) (uint64, 
 	return count, nil
 }
 
-func (p *sRequester) LoadMessage(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
+func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanLoadTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		fmt.Sprintf(cHandleChanLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	msg, err := dto.LoadMessage(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return msg, nil
+}
+
+func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
+	res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID)),
 		nil,
 		nil,
 	)

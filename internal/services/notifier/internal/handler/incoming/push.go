@@ -21,7 +21,7 @@ import (
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 )
 
-func HandleIncomingPushHTTP(
+func HandleIncomingMsgboxHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,

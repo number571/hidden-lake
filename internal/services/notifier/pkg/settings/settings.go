@@ -31,7 +31,7 @@ const (
 
 const (
 	CNotifyPath = "/notify"
-	CPushPath   = "/push"
+	CMsgboxPath = "/msgbox"
 )
 
 const (
@@ -40,10 +40,10 @@ const (
 )
 
 const (
-	CHandleIndexPath      = "/api/index"
-	CHandleChanNotifyPath = "/api/chan/notify"
-	CHandleChanPushPath   = "/api/chan/push"
-	CHandleChanLoadPath   = "/api/chan/load"
-	CHandleChanSizePath   = "/api/chan/size"
-	CHandleChanListenPath = "/api/chan/listen"
+	CHandleIndexPath          = "/api/index"
+	CHandleChanListenPath     = "/api/chan/listen"
+	CHandleChanNotifyPath     = "/api/chan/notify"
+	CHandleChanMsgboxPushPath = "/api/chan/msgbox/push"
+	CHandleChanMsgboxLoadPath = "/api/chan/msgbox/load"
+	CHandleChanMsgboxSizePath = "/api/chan/msgbox/size"
 )

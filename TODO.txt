@@ -15,3 +15,5 @@
 15. + HLS=filesharer: изменить /list на выдачу только именований файлов
 16. + HLS: учесть в описании HLS/HLK API размер тела запроса/ответа
 17. + Добавить в README HLK, HLA сервисов HTTP коды возврата
+18. HLA=udp (UDP hole punching)
+19. HLS=notifier: возвращать UID в msgbroker

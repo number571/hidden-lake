@@ -72,7 +72,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessage(context.Background(), "abc", 0); err != nil {
+	if _, err := client.LoadMessageByEnum(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.GetChatSize(context.Background(), "abc"); err != nil {
@@ -117,17 +117,17 @@ func testInitInternalServiceHTTP(
 	) // POST
 
 	mux.HandleFunc(
-		hls_settings.CHandleChanPushPath,
+		hls_settings.CHandleChanMsgboxPushPath,
 		HandleChanPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
 	) // POST
 
 	mux.HandleFunc(
-		hls_settings.CHandleChanLoadPath,
+		hls_settings.CHandleChanMsgboxLoadPath,
 		HandleChanLoadAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_settings.CHandleChanSizePath,
+		hls_settings.CHandleChanMsgboxSizePath,
 		HandleChanSizeAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 

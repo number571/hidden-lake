@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -87,6 +88,7 @@ func chatHistoryLoadRequestCountParse(handler http.HandlerFunc) error {
 	defer func() { _ = res.Body.Close() }()
 
 	if res.StatusCode != http.StatusBadRequest {
+		fmt.Println(res.StatusCode)
 		return errors.New("bad status code") // nolint: err113
 	}
 

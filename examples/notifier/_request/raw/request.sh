@@ -5,7 +5,7 @@
 PUSH_FORMAT='{
     "method":"POST",
     "host":"hls-notifier",
-    "path":"/push?uid=0000000000000000000000",
+    "path":"/msgbox?uid=0000000000000000000000",
     "body":"aGVsbG8sIHdvcmxkIQ=="
 }';
 

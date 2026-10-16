@@ -25,8 +25,8 @@ func (p *sApp) initExternalServiceHTTP(
 	) // POST
 
 	mux.HandleFunc(
-		hls_notifier_settings.CPushPath,
-		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
+		hls_notifier_settings.CMsgboxPath,
+		incoming.HandleIncomingMsgboxHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -57,17 +57,17 @@ func (p *sApp) initInternalServiceHTTP(
 	) // POST
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanPushPath,
+		hls_notifier_settings.CHandleChanMsgboxPushPath,
 		handler.HandleChanPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
 	) // POST
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanLoadPath,
+		hls_notifier_settings.CHandleChanMsgboxLoadPath,
 		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanSizePath,
+		hls_notifier_settings.CHandleChanMsgboxSizePath,
 		handler.HandleChanSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
