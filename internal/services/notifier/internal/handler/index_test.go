@@ -43,7 +43,7 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.SendNotification(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect sendNotification")
 	}
-	if _, err := client.PushMessage(context.Background(), "", "", ""); err == nil {
+	if _, err := client.SendMessageToBox(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
 	if _, err := client.LoadMessageByEnum(context.Background(), "", 0); err == nil {
@@ -52,8 +52,8 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.LoadMessageByUID(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect loadMessageByUID")
 	}
-	if _, err := client.GetChatSize(context.Background(), ""); err == nil {
-		t.Fatal("success incorrect GetChatSize")
+	if _, err := client.GetMsgBoxSize(context.Background(), ""); err == nil {
+		t.Fatal("success incorrect GetMsgBoxSize")
 	}
 }
 

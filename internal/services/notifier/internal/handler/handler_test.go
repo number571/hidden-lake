@@ -69,13 +69,13 @@ func TestHandler(t *testing.T) {
 	if _, err := client.SendNotification(context.Background(), "abc", "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.PushMessage(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
+	if _, err := client.SendMessageToBox(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessageByEnum(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.GetChatSize(context.Background(), "abc"); err != nil {
+	if _, err := client.GetMsgBoxSize(context.Background(), "abc"); err != nil {
 		t.Fatal(err)
 	}
 

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -15,6 +14,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/notifier/limiter"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/request"
 )
 
@@ -33,7 +33,7 @@ func HandleChanNotifyAPI(
 		}
 
 		if pR.Method == http.MethodGet {
-			size, err := getLimitOnNotifyRequestSize(pCtx, pHlkClient)
+			size, err := limiter.GetLimitOnNotifyRequestSize(pCtx, pHlkClient)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("get_limit"))
 				_ = api.Response(pW, http.StatusBadGateway, "failed: get limit")
@@ -80,19 +80,4 @@ func HandleChanNotifyAPI(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, msg.GetTimestamp())
 	}
-}
-
-func getLimitOnNotifyRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
-	sett, err := pHlkClient.GetSettings(pCtx)
-	if err != nil {
-		return 0, err
-	}
-
-	pldLimit := sett.GetPayloadSizeBytes()
-	reqSize := uint64(len(request.NewNotifyRequest("").ToBytes()))
-	if reqSize >= pldLimit {
-		return 0, errors.New("request size >= payload limit") // nolint: err113
-	}
-
-	return reqSize, nil
 }

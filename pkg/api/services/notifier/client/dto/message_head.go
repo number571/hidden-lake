@@ -60,10 +60,6 @@ func ValidateMessageHead(pHead IMessageHead) error {
 	return nil
 }
 
-func (p *SMessageHead) SetState(pState IMessageState) {
-	p.FState = pState
-}
-
 func (p *SMessageHead) GetState() IMessageState {
 	return p.FState
 }

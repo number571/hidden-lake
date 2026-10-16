@@ -13,13 +13,13 @@ type IClient interface {
 	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
 
-	GetChatSize(context.Context, string) (uint64, error)
 	ListenChan(context.Context, string, string) (message.IMessageBody, error)
+	GetMsgBoxSize(context.Context, string) (uint64, error)
 
 	LoadMessageByUID(context.Context, string, string) (message.IMessage, error)
 	LoadMessageByEnum(context.Context, string, uint64) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string, string) (time.Time, error)
+	SendMessageToBox(context.Context, string, string, string) (time.Time, error)
 	SendNotification(context.Context, string, string) (time.Time, error)
 }
 
@@ -29,12 +29,12 @@ type IRequester interface {
 	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
 
-	GetChatSize(context.Context, string) (uint64, error)
 	ListenChan(context.Context, string, string) (message.IMessageBody, error)
+	GetMsgBoxSize(context.Context, string) (uint64, error)
 
 	LoadMessageByUID(context.Context, string, string) (message.IMessage, error)
 	LoadMessageByEnum(context.Context, string, uint64) (message.IMessage, error)
 
-	PushMessage(context.Context, string, string, string) (time.Time, error)
+	SendMessageToBox(context.Context, string, string, string) (time.Time, error)
 	SendNotification(context.Context, string, string) (time.Time, error)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
+	"github.com/number571/hidden-lake/pkg/api/services/notifier/limiter"
 )
 
 func TestHandleChanPushAPI(t *testing.T) {
@@ -31,7 +32,7 @@ func TestHandleChanPushAPI(t *testing.T) {
 		},
 	)
 
-	if _, err := getLimitOnPushRequestSize(ctx, newTsHLKClient(true, true, true)); err == nil {
+	if _, err := limiter.GetLimitOnMsgboxRequestSize(ctx, newTsHLKClient(true, true, true)); err == nil {
 		t.Fatal("success get limit payload with incorrect size")
 	}
 

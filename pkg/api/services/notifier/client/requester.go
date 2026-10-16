@@ -105,7 +105,7 @@ func (p *sRequester) SendNotification(pCtx context.Context, pFriend string, pBod
 	return t, nil
 }
 
-func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+func (p *sRequester) SendMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
 	}
@@ -127,7 +127,7 @@ func (p *sRequester) PushMessage(pCtx context.Context, pFriend string, pUID stri
 	return t, nil
 }
 
-func (p *sRequester) GetChatSize(pCtx context.Context, pFriend string) (uint64, error) {
+func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, error) {
 	res, err := api.Request(
 		pCtx,
 		p.fClient,

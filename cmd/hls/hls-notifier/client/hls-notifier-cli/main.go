@@ -75,7 +75,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
-	count, err := hlsClient.GetChatSize(pCtx, friend)
+	count, err := hlsClient.GetMsgBoxSize(pCtx, friend)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return
@@ -101,7 +101,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		case dto.CReceivedState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.PushMessage(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
+			go hlsClient.SendMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
 			state = ">"
 		}
 		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody().GetData(), state, msg.GetBody().GetTimestamp())
@@ -122,7 +122,11 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	for {
 		uid := dto.NewMessageUID()
 		msg := inputString(reader, "")
-		go hlsClient.PushMessage(pCtx, friend, uid, msg) // nolint:errcheck
+		if msgLen := uint64(len(msg)); msgLen > limit {
+			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
+			continue
+		}
+		go hlsClient.SendMessageToBox(pCtx, friend, uid, msg) // nolint:errcheck
 	}
 }
 
