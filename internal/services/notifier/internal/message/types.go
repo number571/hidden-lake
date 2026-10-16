@@ -5,6 +5,9 @@ import (
 )
 
 type IMessageContainer interface {
+	WithMessageUID(string) IMessageContainer
+
 	GetFriend() string
+	GetMessageUID() string
 	GetMessageBody() dto.IMessageBody
 }

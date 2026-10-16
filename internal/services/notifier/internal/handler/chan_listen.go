@@ -68,6 +68,10 @@ func HandleChanListenAPI(
 				continue
 			}
 
+			if msgUID := mc.GetMessageUID(); msgUID != "" {
+				pW.Header().Set(hls_settings.CHeaderMessageUID, msgUID)
+			}
+
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, mc.GetMessageBody().ToString(), api.WithCustomContentType(api.CApplicationJSON))
 			return

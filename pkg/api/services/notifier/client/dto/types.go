@@ -22,8 +22,6 @@ type IMessage interface {
 type IMessageHead interface {
 	types.IConverter
 
-	SetState(IMessageState)
-
 	GetState() IMessageState
 	GetUID() string
 }
@@ -31,9 +29,6 @@ type IMessageHead interface {
 type IMessageBody interface {
 	types.IConverter
 
-	SetIsNotify(bool)
-
-	GetIsNotify() bool
 	GetData() string
 	GetTimestamp() string
 }

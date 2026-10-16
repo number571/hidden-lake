@@ -8,6 +8,7 @@ var (
 
 type sMessageContainer struct {
 	fFriend      string
+	fMessageUID  string
 	fMessageBody dto.IMessageBody
 }
 
@@ -18,8 +19,17 @@ func NewMessageContainer(pFriend string, pMessageBody dto.IMessageBody) IMessage
 	}
 }
 
+func (p *sMessageContainer) WithMessageUID(pUID string) IMessageContainer {
+	p.fMessageUID = pUID
+	return p
+}
+
 func (p *sMessageContainer) GetFriend() string {
 	return p.fFriend
+}
+
+func (p *sMessageContainer) GetMessageUID() string {
+	return p.fMessageUID
 }
 
 func (p *sMessageContainer) GetMessageBody() dto.IMessageBody {

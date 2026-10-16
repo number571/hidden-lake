@@ -12,7 +12,6 @@ var (
 )
 
 type SMessageBody struct {
-	FNotify    bool   `json:"n,omitempty"`
 	FData      string `json:"d"`
 	FTimestamp uint64 `json:"t"`
 }
@@ -42,14 +41,6 @@ func LoadMessageBody(pData interface{}) (IMessageBody, error) {
 	}
 
 	return msgBody, nil
-}
-
-func (p *SMessageBody) SetIsNotify(pV bool) {
-	p.FNotify = pV
-}
-
-func (p *SMessageBody) GetIsNotify() bool {
-	return p.FNotify
 }
 
 func (p *SMessageBody) GetData() string {

@@ -92,7 +92,12 @@ func HandleIncomingMsgboxHTTP(
 			return
 		}
 
-		pBroker.Produce(message.NewMessageContainer(aliasName, msg.GetBody()))
+		msgContainer := message.NewMessageContainer(
+			aliasName,
+			msg.GetBody(),
+		).WithMessageUID(msgUID)
+
+		pBroker.Produce(msgContainer)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, "ok", api.WithoutContentType())

@@ -47,3 +47,7 @@ const (
 	CHandleChanMsgboxLoadPath = "/api/chan/msgbox/load"
 	CHandleChanMsgboxSizePath = "/api/chan/msgbox/size"
 )
+
+const (
+	CHeaderMessageUID = "Hls-Notifier-Message-Uid"
+)

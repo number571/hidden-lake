@@ -55,10 +55,12 @@ func HandleIncomingNotifyHTTP(
 			return
 		}
 
-		msg := message_dto.NewMessageBody(msgBody, time.Now())
-		msg.SetIsNotify(true)
+		msgContainer := message.NewMessageContainer(
+			aliasName,
+			message_dto.NewMessageBody(msgBody, time.Now()),
+		)
 
-		pBroker.Produce(message.NewMessageContainer(aliasName, msg))
+		pBroker.Produce(msgContainer)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, "ok", api.WithoutContentType())
