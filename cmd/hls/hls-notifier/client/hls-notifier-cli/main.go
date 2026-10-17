@@ -109,13 +109,10 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	go func() {
 		for {
-			uid, m, err := hlsClient.ListenChan(pCtx, friend, "hls-notifier-cli")
+			_, m, err := hlsClient.ListenChan(pCtx, friend, "hls-notifier-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
-			}
-			if uid == "" {
-				fmt.Print("[NOTIFICATION]")
 			}
 			fmt.Printf("%s: %s [%s]\n", friend, m.GetData(), m.GetTimestamp())
 		}
@@ -123,13 +120,20 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		uid := dto.NewMessageUID()
 		msg := inputString(reader, "")
-		if msgLen := uint64(len(msg)); msgLen > limit {
+		msgLen := uint64(len(msg))
+		if msgLen == 0 {
+			continue
+		}
+		if msgLen > limit {
 			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
 			continue
 		}
-		go hlsClient.SendMessageToBox(pCtx, friend, uid, msg) // nolint:errcheck
+		if msg[0] == '!' {
+			_, _ = hlsClient.SendNotification(pCtx, friend, msg)
+			continue
+		}
+		go hlsClient.SendMessageToBox(pCtx, friend, dto.NewMessageUID(), msg) // nolint:errcheck
 	}
 }
 

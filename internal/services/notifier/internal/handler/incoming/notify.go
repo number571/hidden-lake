@@ -34,6 +34,13 @@ func HandleIncomingNotifyHTTP(
 			return
 		}
 
+		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		if aliasName == "" {
+			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
+			return
+		}
+
 		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
@@ -45,13 +52,6 @@ func HandleIncomingNotifyHTTP(
 		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
 			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
 			_ = api.Response(pW, http.StatusBadRequest, "graph", api.WithoutContentType())
-			return
-		}
-
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
-		if aliasName == "" {
-			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
 		}
 
