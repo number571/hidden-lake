@@ -17,3 +17,6 @@
 17. + Добавить в README HLK, HLA сервисов HTTP коды возврата
 18. HLA=udp (UDP hole punching)
 19. + HLS=notifier: возвращать UID в msgbroker
+20. Util generate private/public key pair and encrypt/decrypt keys 
+21. HLK: scheme hybrid -> symmetric
+22.

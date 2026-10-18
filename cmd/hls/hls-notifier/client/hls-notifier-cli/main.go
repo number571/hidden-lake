@@ -34,7 +34,6 @@ var (
 func main() {
 	args := os.Args[1:]
 	if ok := gFlags.Validate(args); !ok {
-		fmt.Println(args)
 		fmt.Println("args invalid")
 		os.Exit(1)
 	}
