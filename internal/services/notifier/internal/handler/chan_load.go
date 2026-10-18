@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,17 +39,16 @@ func HandleChanLoadAPI(
 		queryParams := pR.URL.Query()
 
 		var (
-			index  = queryParams.Get("index")
-			msgUID = queryParams.Get("uid")
+			strIndex  = queryParams.Get("index")
+			msgUID    = queryParams.Get("uid")
+			aliasName = queryParams.Get("friend")
 		)
 
-		if index != "" && msgUID != "" {
+		if strIndex != "" && msgUID != "" {
 			pLogger.PushWarn(logBuilder.WithMessage("has_many_ids"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: has many ids")
 			return
 		}
-
-		aliasName := queryParams.Get("friend")
 		if aliasName == "" {
 			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
@@ -63,12 +61,24 @@ func HandleChanLoadAPI(
 			_ = api.Response(pW, http.StatusBadRequest, "failed: remote is unknown")
 			return
 		}
+		if isRemote && msgUID == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("msg_uid_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: message uid is null")
+			return
+		}
 
 		var dbMsg dto.IMessage
 
 		switch {
-		case index != "":
-			dbMsg, err = pDatabase.LoadByEnum(aliasName, parseIndex(index))
+		case strIndex != "":
+			var index uint64
+			index, err = strconv.ParseUint(strIndex, 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("msg_index"))
+				_ = api.Response(pW, http.StatusBadRequest, "failed: message index")
+				return
+			}
+			dbMsg, err = pDatabase.LoadByEnum(aliasName, index)
 		case msgUID != "":
 			if !dto.MessageUIDIsValid(msgUID) {
 				pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
@@ -95,11 +105,6 @@ func HandleChanLoadAPI(
 		}
 
 		if isRemote { // nolint:nestif
-			if !dto.MessageUIDIsValid(msgUID) {
-				pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
-				_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
-				return
-			}
 			req := request.NewMsgboxLoadRequest(msgUID)
 			rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 			if err != nil {
@@ -135,12 +140,4 @@ func HandleChanLoadAPI(
 		pLogger.PushWarn(logBuilder.WithMessage("not_found_message"))
 		_ = api.Response(pW, http.StatusNotFound, "failed: message not found")
 	}
-}
-
-func parseIndex(strIndex string) uint64 {
-	index, err := strconv.ParseUint(strIndex, 10, 64)
-	if err != nil {
-		return math.MaxUint64
-	}
-	return index
 }
