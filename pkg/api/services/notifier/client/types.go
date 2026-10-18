@@ -13,7 +13,7 @@ type IClient interface {
 	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
 
-	ListenChan(context.Context, string, string) (string, message.IMessageBody, error)
+	ListenChan(context.Context, string, string) ([2]string, message.IMessageBody, error)
 	GetMsgBoxSize(context.Context, string) (uint64, error)
 
 	LoadMessageByUID(context.Context, string, string) (message.IMessage, error)
@@ -31,7 +31,7 @@ type IRequester interface {
 	GetNotifyLimit(context.Context) (uint64, error)
 	GetMessageLimit(context.Context) (uint64, error)
 
-	ListenChan(context.Context, string, string) (string, message.IMessageBody, error)
+	ListenChan(context.Context, string, string) ([2]string, message.IMessageBody, error)
 	GetMsgBoxSize(context.Context, string) (uint64, error)
 
 	LoadMessageByUID(context.Context, string, string) (message.IMessage, error)

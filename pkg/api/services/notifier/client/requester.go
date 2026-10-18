@@ -207,7 +207,7 @@ func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pU
 	return msg, nil
 }
 
-func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (string, dto.IMessageBody, error) {
+func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) ([2]string, dto.IMessageBody, error) {
 	for {
 		headers, res, err := api.Request(
 			pCtx,
@@ -218,16 +218,16 @@ func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid strin
 			nil,
 		)
 		if err != nil {
-			return "", nil, errors.Join(ErrBadRequest, err)
+			return [2]string{}, nil, errors.Join(ErrBadRequest, err)
 		}
 		if len(res) == 0 {
 			continue
 		}
 		msgBody, err := dto.LoadMessageBody(res)
 		if err != nil {
-			return "", nil, errors.Join(ErrDecodeResponse, err)
+			return [2]string{}, nil, errors.Join(ErrDecodeResponse, err)
 		}
-		uid := headers.Get(hls_settings.CHeaderMessageUID)
-		return uid, msgBody, nil
+		head := [2]string{headers.Get(hls_settings.CHeaderFriendName), headers.Get(hls_settings.CHeaderMessageUID)}
+		return head, msgBody, nil
 	}
 }

@@ -57,6 +57,6 @@ func (p *sClient) GetMsgBoxSize(pCtx context.Context, pAliasName string) (uint64
 	return p.fRequester.GetMsgBoxSize(pCtx, pAliasName)
 }
 
-func (p *sClient) ListenChan(pCtx context.Context, pSubscribeID, pAliasName string) (string, message.IMessageBody, error) {
+func (p *sClient) ListenChan(pCtx context.Context, pSubscribeID, pAliasName string) ([2]string, message.IMessageBody, error) {
 	return p.fRequester.ListenChan(pCtx, pSubscribeID, pAliasName)
 }

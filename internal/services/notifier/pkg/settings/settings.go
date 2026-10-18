@@ -49,5 +49,6 @@ const (
 )
 
 const (
+	CHeaderFriendName = "Hls-Notifier-Friend-Name"
 	CHeaderMessageUID = "Hls-Notifier-Message-Uid"
 )

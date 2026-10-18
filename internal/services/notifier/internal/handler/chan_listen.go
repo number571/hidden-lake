@@ -31,12 +31,8 @@ func HandleChanListenAPI(
 
 		queryParams := pR.URL.Query()
 
+		// aliasName can be empty -> listen all friends
 		aliasName := queryParams.Get("friend")
-		if aliasName == "" {
-			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
-			return
-		}
 
 		sid := queryParams.Get("sid")
 		if err := pBroker.Register(sid); err != nil {
@@ -63,11 +59,13 @@ func HandleChanListenAPI(
 				return
 			}
 
-			if mc.GetFriend() != aliasName {
+			friend := mc.GetFriend()
+			if aliasName != "" && friend != aliasName {
 				pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
 				continue
 			}
 
+			pW.Header().Set(hls_settings.CHeaderFriendName, friend)
 			if msgUID := mc.GetMessageUID(); msgUID != "" {
 				pW.Header().Set(hls_settings.CHeaderMessageUID, msgUID)
 			}
