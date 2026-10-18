@@ -80,6 +80,7 @@ $ make request-node2
 // body request size can be = (144 - 60) = 84B
 // RESTRICTION: body = <graphical text>
 [uint32]{"method":"POST","host":"hls-notifier","path":"/notify"}[body]
+[body]=""
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
@@ -88,10 +89,11 @@ $ make request-node2
 
 ### 2. /msgbox
 
-- `200` - return "ok"
+- `200` - return "ok" / message body
 - `202` - message already exist in database
 - `400` - invalid input params (uid, body)
-- `405` - invalid method (not POST)
+- `404` - message by uid not found
+- `405` - invalid method (not GET)
 - `409` - failed read HTTP request body
 - `500` - load/push from database
 - `502` - get aliasName HLK
@@ -102,27 +104,39 @@ $ make request-node2
 // INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
 // RESTRICTION: body = <graphical text>
 [uint32]{"method":"POST","host":"hls-notifier","path":"/msgbox?uid=0000000000000000000000"}[body]
+[body]=""
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
 [uint32]{"code":200}[body]
 ```
 
+```json
+// header request size = (4 + 82) = 86B
+// body request size can be = (144 - 86) = 58B
+[uint32]{"method":"GET","host":"hls-notifier","path":"/msgbox?uid=0000000000000000000000"}[body]
+
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
+[body]=""
+```
+
 ## HLS API
 
 ```
-1. GET          /api/index          | params = [] 
-                                    |> description = get name of service
-2. GET/POST     /api/chan/notify    | params = ["friend":string]
-                                    |> description = get limit notify size / send notify to chan
-3. GET/POST     /api/chan/msgbox/push    | params = ["friend":string]
-                                    |> description = get limit message size / send message to chan
-4. GET          /api/chan/msgbox/load      | params = ["friend":string,"index":uint64]
-                                    |> description = get message from chan by index
-5. GET          /api/chan/msgbox/size      | params = ["friend":string]
-                                    |> description = get count of messages in the chan
-6. GET          /api/chan/listen    | params = ["friend":string]
-                                    |> description = try get message from chan with longpoll method 
+1. GET          /api/index              | params = [] 
+                                        |> description = get name of service
+2. GET/POST     /api/chan/notify        | params = ["friend":string]
+                                        |> description = get limit notify size / send notify to chan
+3. GET/POST     /api/chan/msgbox/push   | params = ["friend":string]
+                                        |> description = get limit message size / send message to chan
+4. GET          /api/chan/msgbox/load   | params = ["friend":string,"index":?uint64,"uid":?string,"remote":?bool]
+                                        |> description = get message from chan by index / uid
+5. GET          /api/chan/msgbox/size   | params = ["friend":string]
+                                        |> description = get count of messages in the chan
+6. GET          /api/chan/listen        | params = ["friend":string]
+                                        |> description = try get message from chan with longpoll method 
 ```
 
 ### 1. /api/index
@@ -237,11 +251,13 @@ Content-Length: 19
 
 ### 4. /api/chan/msgbox/load
 
-- `200` - return message from database
+- `200` - return message from database / node
 - `400` - invalid input params (friend, index)
 - `404` - message not found in database
 - `405` - invalid method (not GET)
+- `418` - got bad response from node
 - `500` - load message from database
+- `503` - request was sent but no response was received
 
 #### 4.1. GET Request
 

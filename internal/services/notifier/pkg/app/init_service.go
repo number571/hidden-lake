@@ -63,7 +63,7 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChanMsgboxLoadPath,
-		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
+		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(

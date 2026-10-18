@@ -1,12 +1,12 @@
-1. Динамические конфиги
-2. Создать модули для HLK, HLS
-3. Создать HLH=register
-4. Тесты для HLA=meshtastic
-5. + Гарантированная доставка сообщений (HLA=notifier)
-6. Тесты для HLS=filesharer
-7. + Переименовать сущность Chat в HLS=notifier -> Channel
-8. + HLS=notifier: добавить Recv, Load, List функции
-9. + Добавить правило для всех HLS: минимально возможный размер Payload / Payload+Headers
+1.  Динамические конфиги
+2.  Создать модули для HLK, HLS
+3.  Создать HLH=register
+4.  Тесты для HLA=meshtastic
+5.  + Гарантированная доставка сообщений (HLA=notifier)
+6.  Тесты для HLS=filesharer
+7.  + Переименовать сущность Chat в HLS=notifier -> Channel
+8.  + HLS=notifier: добавить Recv, Load, List функции
+9.  + Добавить правило для всех HLS: минимально возможный размер Payload / Payload+Headers
 10. + Исправить статусы ошибок возврата HTTP ответа в HLS приложениях
 11. Уменьшить размер возвращаемых сообщений с HLS/HLK API
 12. Изменить именования полей в Request/Response структурах HLK API
@@ -19,4 +19,5 @@
 19. + HLS=notifier: возвращать UID в msgbroker
 20. Util generate private/public key pair and encrypt/decrypt keys 
 21. HLK: scheme hybrid -> symmetric
-22.
+22. Создать HLS=publisher
+23. 

@@ -33,7 +33,7 @@ func HandleIncomingMsgboxHTTP(
 
 		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
 
-		if pR.Method != http.MethodPost {
+		if pR.Method != http.MethodGet && pR.Method != http.MethodPost {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
 			_ = api.Response(pW, http.StatusMethodNotAllowed, "method", api.WithoutContentType())
 			return
@@ -43,6 +43,32 @@ func HandleIncomingMsgboxHTTP(
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
+			return
+		}
+
+		queryParams := pR.URL.Query()
+
+		msgUID := queryParams.Get("uid")
+		if !message_dto.MessageUIDIsValid(msgUID) {
+			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
+			_ = api.Response(pW, http.StatusBadRequest, "uid", api.WithoutContentType())
+			return
+		}
+
+		if pR.Method == http.MethodGet {
+			msg, err := pDB.LoadByUID(aliasName, msgUID)
+			if err == nil {
+				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+				_ = api.Response(pW, http.StatusOK, msg.ToBytes(), api.WithoutContentType())
+				return
+			}
+			if errors.Is(err, database.ErrNotFoundMessage) {
+				pLogger.PushWarn(logBuilder.WithMessage("message_not_found"))
+				_ = api.Response(pW, http.StatusNotFound, "notfound", api.WithoutContentType())
+				return
+			}
+			pLogger.PushErro(logBuilder.WithMessage("load_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "getmsg", api.WithoutContentType())
 			return
 		}
 
@@ -57,15 +83,6 @@ func HandleIncomingMsgboxHTTP(
 		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
 			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
 			_ = api.Response(pW, http.StatusBadRequest, "graph", api.WithoutContentType())
-			return
-		}
-
-		queryParams := pR.URL.Query()
-
-		msgUID := queryParams.Get("uid")
-		if !message_dto.MessageUIDIsValid(msgUID) {
-			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
-			_ = api.Response(pW, http.StatusBadRequest, "uid", api.WithoutContentType())
 			return
 		}
 
@@ -105,8 +122,8 @@ func HandleIncomingMsgboxHTTP(
 }
 
 func getResponseMode(pConfig config.IConfig) string {
-	if !pConfig.GetSettings().GetResponseEnabled() {
-		return hlk_settings.CHeaderResponseModeOFF
+	if pConfig.GetSettings().GetResponseEnabled() {
+		return hlk_settings.CHeaderResponseModeON
 	}
-	return hlk_settings.CHeaderResponseModeON
+	return hlk_settings.CHeaderResponseModeOFF
 }

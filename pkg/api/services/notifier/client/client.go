@@ -37,8 +37,12 @@ func (p *sClient) SendNotification(pCtx context.Context, pAliasName string, pBod
 	return p.fRequester.SendNotification(pCtx, pAliasName, pBody)
 }
 
-func (p *sClient) SendMessageToBox(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
-	return p.fRequester.SendMessageToBox(pCtx, pAliasName, pUID, pBody)
+func (p *sClient) PushMessageToBox(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
+	return p.fRequester.PushMessageToBox(pCtx, pAliasName, pUID, pBody)
+}
+
+func (p *sClient) LoadMessageFromBox(pCtx context.Context, pAliasName string, pUID string) (string, error) {
+	return p.fRequester.LoadMessageFromBox(pCtx, pAliasName, pUID)
 }
 
 func (p *sClient) LoadMessageByEnum(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {

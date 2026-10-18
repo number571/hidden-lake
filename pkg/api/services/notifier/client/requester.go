@@ -11,6 +11,7 @@ import (
 
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
@@ -23,6 +24,7 @@ const (
 	cHandleChanPushTemplate        = "http://" + "%s" + hls_settings.CHandleChanMsgboxPushPath + "?friend=%s"
 	cHandleChanNotifyTemplate      = "http://" + "%s" + hls_settings.CHandleChanNotifyPath + "?friend=%s"
 	cHandleChanPushWithUIDTemplate = "http://" + "%s" + hls_settings.CHandleChanMsgboxPushPath + "?friend=%s&uid=%s"
+	cHandleChanLoadRemoteTemplate  = "http://" + "%s" + hls_settings.CHandleChanMsgboxLoadPath + "?friend=%s&uid=%s&remote"
 	cHandleChanSizeTemplate        = "http://" + "%s" + hls_settings.CHandleChanMsgboxSizePath + "?friend=%s"
 	cHandleChanLoadByEnumTemplate  = "http://" + "%s" + hls_settings.CHandleChanMsgboxLoadPath + "?friend=%s&index=%d"
 	cHandleChanLoadByUIDTemplate   = "http://" + "%s" + hls_settings.CHandleChanMsgboxLoadPath + "?friend=%s&uid=%s"
@@ -105,7 +107,7 @@ func (p *sRequester) SendNotification(pCtx context.Context, pFriend string, pBod
 	return t, nil
 }
 
-func (p *sRequester) SendMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+func (p *sRequester) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
 	}
@@ -182,6 +184,28 @@ func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID
 		return nil, errors.Join(ErrDecodeResponse, err)
 	}
 	return msg, nil
+}
+
+func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pUID string) (string, error) {
+	if !dto.MessageUIDIsValid(pUID) {
+		return "", ErrSizeMessageUID
+	}
+	_, rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanLoadRemoteTemplate, p.fHost, pFriend, pUID),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return "", errors.Join(ErrBadRequest, err)
+	}
+	res := string(rsp)
+	if chars.HasNotGraphicCharacters(res) {
+		return "", ErrDecodeResponse
+	}
+	return res, nil
 }
 
 func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (string, dto.IMessageBody, error) {

@@ -29,7 +29,7 @@ func TestHandleChanLoadAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
+	handlerX := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
 	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func TestHandleChanLoadAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerZ := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(false, true))
+	handlerZ := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
 	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with load message error")
 	}

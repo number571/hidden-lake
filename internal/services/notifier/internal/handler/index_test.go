@@ -43,7 +43,7 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.SendNotification(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect sendNotification")
 	}
-	if _, err := client.SendMessageToBox(context.Background(), "", "", ""); err == nil {
+	if _, err := client.PushMessageToBox(context.Background(), "", "", ""); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
 	if _, err := client.LoadMessageByEnum(context.Background(), "", 0); err == nil {

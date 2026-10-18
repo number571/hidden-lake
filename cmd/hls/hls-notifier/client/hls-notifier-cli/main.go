@@ -100,7 +100,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		case dto.CReceivedState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.SendMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
+			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
 			state = ">"
 		}
 		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody().GetData(), state, msg.GetBody().GetTimestamp())
@@ -132,7 +132,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			_, _ = hlsClient.SendNotification(pCtx, friend, msg)
 			continue
 		}
-		go hlsClient.SendMessageToBox(pCtx, friend, dto.NewMessageUID(), msg) // nolint:errcheck
+		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), msg) // nolint:errcheck
 	}
 }
 

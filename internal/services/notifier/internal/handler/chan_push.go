@@ -115,11 +115,11 @@ func HandleChanPushAPI(
 		defer func() { _ = pProcessManager.Unlock(msgUID) }()
 
 		// try get response from node (delivery check)
-		req := request.NewPushRequest(msgUID, msgBody)
+		req := request.NewMsgboxPushRequest(msgUID, msgBody)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))
-			_ = api.Response(pW, http.StatusServiceUnavailable, msg.GetBody().GetTimestamp())
+			_ = api.Response(pW, http.StatusServiceUnavailable, "failed: no response")
 			return
 		}
 

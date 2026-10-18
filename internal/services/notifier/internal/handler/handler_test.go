@@ -69,7 +69,7 @@ func TestHandler(t *testing.T) {
 	if _, err := client.SendNotification(context.Background(), "abc", "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.SendMessageToBox(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
+	if _, err := client.PushMessageToBox(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessageByEnum(context.Background(), "abc", 0); err != nil {
@@ -123,7 +123,7 @@ func testInitInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_settings.CHandleChanMsgboxLoadPath,
-		HandleChanLoadAPI(pCtx, pLogger, pConfig, pDatabase),
+		HandleChanLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
