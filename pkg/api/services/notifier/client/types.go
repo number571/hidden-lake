@@ -19,7 +19,7 @@ type IClient interface {
 	LoadMessageByUID(context.Context, string, string) (message.IMessage, error)
 	LoadMessageByEnum(context.Context, string, uint64) (message.IMessage, error)
 
-	LoadMessageFromBox(context.Context, string, string) (string, error)
+	LoadMessageFromBox(context.Context, string, string) (message.IMessage, error)
 
 	PushMessageToBox(context.Context, string, string, string) (time.Time, error)
 	SendNotification(context.Context, string, string) (time.Time, error)
@@ -38,7 +38,7 @@ type IRequester interface {
 	LoadMessageByEnum(context.Context, string, uint64) (message.IMessage, error)
 
 	PushMessageToBox(context.Context, string, string, string) (time.Time, error)
-	LoadMessageFromBox(context.Context, string, string) (string, error)
+	LoadMessageFromBox(context.Context, string, string) (message.IMessage, error)
 
 	SendNotification(context.Context, string, string) (time.Time, error)
 }

@@ -11,7 +11,6 @@ import (
 
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
@@ -186,9 +185,9 @@ func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID
 	return msg, nil
 }
 
-func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pUID string) (string, error) {
+func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
 	if !dto.MessageUIDIsValid(pUID) {
-		return "", ErrSizeMessageUID
+		return nil, ErrSizeMessageUID
 	}
 	_, rsp, err := api.Request(
 		pCtx,
@@ -199,13 +198,13 @@ func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pU
 		nil,
 	)
 	if err != nil {
-		return "", errors.Join(ErrBadRequest, err)
+		return nil, errors.Join(ErrBadRequest, err)
 	}
-	res := string(rsp)
-	if chars.HasNotGraphicCharacters(res) {
-		return "", ErrDecodeResponse
+	msg, err := dto.LoadMessage(rsp)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return res, nil
+	return msg, nil
 }
 
 func (p *sRequester) ListenChan(pCtx context.Context, pFriend string, pSid string) (string, dto.IMessageBody, error) {

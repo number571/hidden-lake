@@ -118,7 +118,7 @@ func HandleChanLoadAPI(
 				return
 			}
 			msgBody := string(rsp.GetBody())
-			if chars.HasNotGraphicCharacters(msgBody) {
+			if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
 				pLogger.PushWarn(logBuilder.WithMessage("bad_response"))
 				_ = api.Response(pW, http.StatusTeapot, "failed: body response")
 				return

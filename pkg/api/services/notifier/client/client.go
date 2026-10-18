@@ -41,7 +41,7 @@ func (p *sClient) PushMessageToBox(pCtx context.Context, pAliasName string, pUID
 	return p.fRequester.PushMessageToBox(pCtx, pAliasName, pUID, pBody)
 }
 
-func (p *sClient) LoadMessageFromBox(pCtx context.Context, pAliasName string, pUID string) (string, error) {
+func (p *sClient) LoadMessageFromBox(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
 	return p.fRequester.LoadMessageFromBox(pCtx, pAliasName, pUID)
 }
 
