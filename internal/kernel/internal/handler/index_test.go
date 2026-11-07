@@ -37,7 +37,7 @@ func TestErrorsAPI(t *testing.T) {
 		t.Fatal("success del connection with unknown host")
 	}
 
-	if err := client.AddFriend(context.Background(), "", tgPrivKey1.GetPubKey()); err == nil {
+	if err := client.AddFriend(context.Background(), "", scheme.LoadParticipantKey(scheme.CHybridScheme, tgPrivKey1.GetPubKey().ToString())); err == nil {
 		t.Fatal("success add friend with unknown host")
 	}
 

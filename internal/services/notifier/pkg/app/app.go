@@ -12,8 +12,6 @@ import (
 	"github.com/number571/go-peer/pkg/state"
 	"github.com/number571/go-peer/pkg/types"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 
 	pkg_config "github.com/number571/hidden-lake/internal/services/notifier/pkg/config"
@@ -36,7 +34,6 @@ type sApp struct {
 	fConfig config.IConfig
 	fPathTo string
 
-	fDatabase       database.IKVDatabase
 	fIntServiceHTTP *http.Server
 	fExtServiceHTTP *http.Server
 
@@ -96,12 +93,7 @@ func (p *sApp) Run(pCtx context.Context) error {
 
 func (p *sApp) enable(pCtx context.Context) state.IStateF {
 	return func() error {
-		if err := p.initDatabase(); err != nil {
-			return errors.Join(ErrInitDB, err)
-		}
-
 		msgBroker := broker.NewDataBroker(256, 256)
-		processManager := process.NewNotifyProcessManager()
 
 		hlkClient := hlk_client.NewClient(
 			hlk_client.NewBuilder(),
@@ -111,8 +103,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 			),
 		)
 
-		p.initExternalServiceHTTP(pCtx, msgBroker)
-		p.initInternalServiceHTTP(pCtx, hlkClient, msgBroker, processManager)
+		p.initExternalServiceHTTP(pCtx, p.fConfig, msgBroker)
+		p.initInternalServiceHTTP(pCtx, hlkClient, msgBroker)
 
 		p.fStdfLogger.PushInfo(fmt.Sprintf(
 			"%s is started; %s",
@@ -174,7 +166,6 @@ func (p *sApp) stop() error {
 	closer := closer.NewCloser(
 		p.fIntServiceHTTP,
 		p.fExtServiceHTTP,
-		p.fDatabase,
 	)
 	if err := closer.Close(); err != nil {
 		return errors.Join(ErrClose, err)

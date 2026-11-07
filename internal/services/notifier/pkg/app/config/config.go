@@ -15,7 +15,7 @@ var (
 )
 
 type SConfigSettings struct {
-	FResponseEnabled bool `yaml:"response_enabled,omitempty"`
+	FResponseEnabled bool `json:"response_enabled,omitempty" yaml:"response_enabled,omitempty"`
 }
 
 type SConfig struct {
@@ -77,6 +77,10 @@ func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
 }
 
+func (p *SConfigSettings) GetResponseEnabled() bool {
+	return p.FResponseEnabled
+}
+
 func (p *SConfig) isValid() bool {
 	return true &&
 		p.FConnection != ""
@@ -129,8 +133,4 @@ func (p *SAddress) GetExternal() string {
 
 func (p *SConfig) GetLogging() logger.ILogging {
 	return p.fLogging
-}
-
-func (p *SConfigSettings) GetResponseEnabled() bool {
-	return p.FResponseEnabled
 }

@@ -1,0 +1,125 @@
+package handler
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"github.com/number571/go-peer/pkg/logger"
+	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
+	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
+)
+
+func TestHandleChanLoadAPI(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	httpLogger := std_logger.NewStdLogger(
+		func() std_logger.ILogging {
+			logging, err := std_logger.LoadLogging([]string{})
+			if err != nil {
+				panic(err)
+			}
+			return logging
+		}(),
+		func(_ logger.ILogArg) string {
+			return ""
+		},
+	)
+
+	testdb := newTsDatabase(true, true)
+	_, err := testdb.Push(
+		"",
+		dto.NewMessage(
+			dto.NewMessageHead(dto.CIncomingState, dto.NewMessageUID()),
+			dto.NewMessageBody("", time.Now()),
+		),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	handlerX := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), testdb)
+	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
+		t.Fatal(err)
+	}
+	if err := chatHistoryLoadRequestInvalidMethod(handlerX); err != nil {
+		t.Fatal(err)
+	}
+	if err := chatHistoryLoadRequestCountParse(handlerX); err != nil {
+		t.Fatal(err)
+	}
+	if err := chatHistoryLoadRequestStartParse(handlerX); err != nil {
+		t.Fatal(err)
+	}
+
+	handlerZ := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
+	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
+		t.Fatal("success request with load message error")
+	}
+}
+
+func chatHistoryLoadRequestOK(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&index=0", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusOK {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func chatHistoryLoadRequestInvalidMethod(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusMethodNotAllowed {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func chatHistoryLoadRequestCountParse(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&count=qqq", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
+		fmt.Println(res.StatusCode)
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}
+
+func chatHistoryLoadRequestStartParse(handler http.HandlerFunc) error {
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc", nil)
+
+	handler(w, req)
+	res := w.Result()
+	defer func() { _ = res.Body.Close() }()
+
+	if res.StatusCode != http.StatusBadRequest {
+		return errors.New("bad status code") // nolint: err113
+	}
+
+	return nil
+}

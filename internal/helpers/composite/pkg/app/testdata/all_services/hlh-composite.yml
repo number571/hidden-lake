@@ -4,6 +4,10 @@ logging:
 - erro
 applications:
 - hlk
-- hls-pinger
+- hla-tcp
+- hla-http
+- hla-https
+- hla-meshtastic
 - hls-notifier
+- hls-publisher
 - hls-filesharer

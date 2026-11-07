@@ -5,7 +5,7 @@ __Step 1__. Run HLH=composite (composite of HL services).
 ```bash
 $ go install github.com/number571/hidden-lake/cmd/hlh/hlh-composite@latest
 $ hlh-composite --network std-external-tcp
-### Run HLK, HLA=tcp, HLS=pinger, HLS=notifier, HLS=filesharer ###
+### Run HLK, HLA=tcp, HLS=notifier, HLS=publisher, HLS=filesharer ###
 ```
 
 > The list of networks can be found here: [hidden-lake/build/networks.yml](https://github.com/number571/hidden-lake/blob/master/build/networks.yml).

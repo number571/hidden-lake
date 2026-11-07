@@ -1,0 +1,204 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+	"time"
+
+	hls_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
+	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
+)
+
+var (
+	_ IRequester = &sRequester{}
+)
+
+const (
+	cHandleIndexTemplate               = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleChanPushTemplate            = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s"
+	cHandleChanSizeTemplate            = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s"
+	cHandleChanLoadByEnumTemplate      = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&index=%d"
+	cHandleChanLoadByUIDTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s"
+	cHandleChanLoadByUIDRemoteTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote"
+	cHandleChanListenTemplate          = "http://" + "%s" + hls_settings.CHandleMsgboxListenPath + "?friend=%s&sid=%s"
+)
+
+type sRequester struct {
+	fHost   string
+	fClient *http.Client
+}
+
+func NewRequester(pHost string, pClient *http.Client) IRequester {
+	return &sRequester{
+		fHost:   pHost,
+		fClient: pClient,
+	}
+}
+
+func (p *sRequester) GetIndex(pCtx context.Context) error {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	if string(res) != hls_settings.CAppFullName {
+		return ErrInvalidTitle
+	}
+	return nil
+}
+
+func (p *sRequester) GetPushLimit(pCtx context.Context) (uint64, error) {
+	_, rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_", "_"),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return 0, errors.Join(ErrBadRequest, err)
+	}
+	limit, err := strconv.ParseUint(string(rsp), 10, 64)
+	if err != nil {
+		return 0, errors.Join(ErrDecodeResponse, err)
+	}
+	return limit, nil
+}
+
+func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanSizeTemplate, p.fHost, url.QueryEscape(pFriend)),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return 0, errors.Join(ErrBadRequest, err)
+	}
+	count, err := strconv.ParseUint(string(res), 10, 64)
+	if err != nil {
+		return 0, errors.Join(ErrDecodeResponse, err)
+	}
+	return count, nil
+}
+
+func (p *sRequester) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+	if !dto.MessageUIDIsValid(pUID) {
+		return time.Time{}, ErrSizeMessageUID
+	}
+	_, rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodPost,
+		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, pFriend, pUID),
+		nil,
+		pBody,
+	)
+	if err != nil {
+		return time.Time{}, errors.Join(ErrBadRequest, err)
+	}
+	t, err := dto.ParseTimestamp(string(rsp))
+	if err != nil {
+		return time.Time{}, errors.Join(ErrDecodeResponse, err)
+	}
+	return t, nil
+}
+
+func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	msg, err := dto.LoadMessage(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return msg, nil
+}
+
+func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID)),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	msg, err := dto.LoadMessage(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return msg, nil
+}
+
+func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
+	if !dto.MessageUIDIsValid(pUID) {
+		return nil, ErrSizeMessageUID
+	}
+	_, rsp, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleChanLoadByUIDRemoteTemplate, p.fHost, pFriend, pUID),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	msg, err := dto.LoadMessage(rsp)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return msg, nil
+}
+
+func (p *sRequester) ListenMsgbox(pCtx context.Context, pFriend string, pSid string) ([2]string, dto.IMessageBody, error) {
+	for {
+		headers, res, err := api.Request(
+			pCtx,
+			p.fClient,
+			http.MethodGet,
+			fmt.Sprintf(cHandleChanListenTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			nil,
+			nil,
+		)
+		if err != nil {
+			return [2]string{}, nil, errors.Join(ErrBadRequest, err)
+		}
+		if len(res) == 0 {
+			continue
+		}
+		msgBody, err := dto.LoadMessageBody(res)
+		if err != nil {
+			return [2]string{}, nil, errors.Join(ErrDecodeResponse, err)
+		}
+		head := [2]string{headers.Get(hls_settings.CHeaderFriendName), headers.Get(hls_settings.CHeaderMessageUID)}
+		return head, msgBody, nil
+	}
+}

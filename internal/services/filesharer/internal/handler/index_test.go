@@ -42,7 +42,7 @@ func TestErrorsAPI(t *testing.T) {
 	if err := client.GetIndex(ctx); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
-	if _, err := client.GetRemoteList(ctx, "", 0, false); err == nil {
+	if _, _, err := client.GetRemoteList(ctx, "", 0, false); err == nil {
 		t.Fatal("success incorrect getRemoteList")
 	}
 	if _, err := client.GetRemoteFile(nil, ctx, "", "", false); err == nil {
@@ -54,7 +54,7 @@ func TestErrorsAPI(t *testing.T) {
 	if err := client.DelRemoteFile(ctx, "", "", false); err == nil {
 		t.Fatal("success incorrect delRemoteFile")
 	}
-	if _, err := client.GetLocalList(ctx, "", 0); err == nil {
+	if _, _, err := client.GetLocalList(ctx, "", 0); err == nil {
 		t.Fatal("success incorrect getLocalList")
 	}
 	if err := client.GetLocalFile(nil, ctx, "", ""); err == nil {
@@ -214,7 +214,7 @@ func (p *tsHLKClient) FetchRequest(_ context.Context, _ string, pReq request.IRe
 		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`{"name":"example.txt","size":14,"hash":"7d0c64e050a2c31cd2d5266b2923ca51b95e97e2"}`))
 		return resp.Build(), nil
 	case 2:
-		resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte(`["example.txt"]`))
+		resp := response.NewResponseBuilder().WithCode(200).WithHead(map[string]string{settings.CHeaderPagesCountOnList: "1"}).WithBody([]byte(`["example.txt"]`))
 		return resp.Build(), nil
 	case 1:
 		return nil, errors.New("error") // nolint: err113

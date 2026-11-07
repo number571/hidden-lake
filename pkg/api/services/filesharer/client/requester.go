@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/number571/go-peer/pkg/encoding"
 	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
@@ -81,8 +82,8 @@ func (p *sRequester) GetIndex(pCtx context.Context) error {
 	return nil
 }
 
-func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) ([]string, error) {
-	_, res, err := api.Request(
+func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPersonal bool) (uint64, []string, error) {
+	header, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -91,13 +92,17 @@ func (p *sRequester) GetRemoteList(pCtx context.Context, pAliasName string, pPag
 		nil,
 	)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return 0, nil, errors.Join(ErrBadRequest, err)
 	}
 	var list []string
 	if err := encoding.DeserializeJSON(res, &list); err != nil {
-		return nil, errors.Join(ErrDecodeResponse, err)
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return list, nil
+	pagesCount, err := strconv.ParseUint(header.Get(hls_settings.CHeaderPagesCount), 10, 64)
+	if err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return pagesCount, list, nil
 }
 
 func (p *sRequester) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPersonal bool) (bool, error) {
@@ -152,8 +157,8 @@ func (p *sRequester) GetRemoteFileInfo(pCtx context.Context, pAliasName string, 
 	return info, nil
 }
 
-func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) ([]string, error) {
-	_, res, err := api.Request(
+func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) (uint64, []string, error) {
+	header, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -162,13 +167,17 @@ func (p *sRequester) GetLocalList(pCtx context.Context, pAliasName string, pPage
 		nil,
 	)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return 0, nil, errors.Join(ErrBadRequest, err)
 	}
 	var list []string
 	if err := encoding.DeserializeJSON(res, &list); err != nil {
-		return nil, errors.Join(ErrDecodeResponse, err)
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return list, nil
+	pagesCount, err := strconv.ParseUint(header.Get(hls_settings.CHeaderPagesCount), 10, 64)
+	if err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return pagesCount, list, nil
 }
 
 func (p *sRequester) GetLocalFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {

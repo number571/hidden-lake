@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppHelperName  = "composite"
-	CAppDescription = "runs many HL applications as one application"
+	CAppDescription = "runs many HL services as one application"
 )
 
 const (

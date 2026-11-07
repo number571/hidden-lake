@@ -106,10 +106,12 @@ Got response
 // body request size (with query params) can be = (144 - 80) = 64B
 [uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&personal=false"}[body]
 
-// header response size = (4 + 12) = 16B
-// body response size (with list of JSON strings) can be = (144 - 16 - 2) = 126B
-// RECOMMENDATION: page_offset=5 and file_name_size<=20B
-[uint32]{"code":200}[body]
+// header response size = (4 + 31) = 35B
+// body response size (with list of JSON strings) can be = (144 - 35 - 2) = 107B
+//  where '2'=brackets='[]' in the JSON format
+// RECOMMENDATION: page_offset=5 and file_name_size<=18B ( [5] * ([18] + 2 + 1) = 105 < [107] ) 
+//  where '2'=escapes='""', '1'=comma=',' in the JSON format
+[uint32]{"code":200,"head":{"P-C":"0"}}[body]
 [body]=[]
 ```
 
@@ -198,6 +200,7 @@ curl -i -X GET "http://localhost:9541/api/remote/list?friend=Bob&page=0&personal
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Fri, 16 Jan 2026 21:25:00 GMT
+Hls-Filesharer-Pages-Count: 1
 Content-Length: 27
 
 ["example.txt","image.jpg"]
@@ -223,7 +226,7 @@ Date: Mon, 19 Jan 2026 08:05:06 GMT
 Content-Length: 101
 Content-Type: application/json; charset=utf-8
 
-[{{"friend":"Bob","name":"example.txt","personal":"false"},{"incindex":0,"download":0,"filesize":0}}]
+[{"friend":"Bob","name":"example.txt","personal":"false"}]
 ```
 
 ### 4. /api/remote/file
@@ -356,6 +359,7 @@ curl -i -X GET "http://localhost:9541/api/local/list?friend=&page=0"
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Sun, 01 Feb 2026 16:09:56 GMT
+Hls-Filesharer-Pages-Count: 1
 Content-Length: 27
 
 ["example.txt","image.jpg"]

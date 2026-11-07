@@ -63,12 +63,14 @@ func HandleIncomingListHTTP(
 		}
 
 		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, isPersonal)
-		list, err := utils.GetListFiles(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
+		pagesCount, list, err := utils.GetListFiles(stgPath, page, pCfg.GetSettings().GetPageOffset()) //nolint:gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "storage", api.WithoutContentType())
 			return
 		}
+
+		pW.Header().Set(hls_settings.CHeaderPagesCountOnList, strconv.FormatUint(pagesCount, 10))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, encoding.SerializeJSON(list), api.WithoutContentType())

@@ -23,6 +23,9 @@ var (
 	gListRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
+			WithHead(map[string]string{
+				hls_settings.CHeaderPagesCountOnList: "0",
+			}).
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

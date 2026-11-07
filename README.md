@@ -80,7 +80,7 @@
 > [!IMPORTANT]
 > The project is being actively developed, the implementation of some details may change over time. More information about the changes can be obtained from the [CHANGELOG.md](CHANGELOG.md) file.
 
-The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLK` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLS=filesharer`, `HLS=notifier`, `HLS=pinger` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
+The `Hidden Lake` is an anonymous network built on a `micro-service` architecture. At the heart of HL is the core - `HLK` (service), which generates anonymizing (queue based) traffic and combines many other services (`HLS=filesharer`, `HLS=notifier` and etc). Thus, Hidden Lake is not a whole and monolithic solution, but a composition of several combined services. The HL is a `friend-to-friend` (F2F) network, which means building trusted communications. Due to this approach, members of the HL network can avoid `spam` in their direction, as well as `possible attacks` if vulnerabilities are found in the code.
 
 ## Coverage map
 
@@ -139,18 +139,19 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 ## List of applications
 
 1. Main:
-   * [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
+	* [HLK](cmd/hlk) - anonymizes traffic using the QB-problem
 2. Helpers:
-   * [HLH=composite](cmd/hlh/hlh-composite) - runs many HL applications as one application
+	* [HLH=keyops](cmd/hlh/hlh-keyops) - generate / encapsulate / decapsulate key operations
+	* [HLH=composite](cmd/hlh/hlh-composite) - runs many HL services as one application
 3. Services:
-   * [HLS=notifier](cmd/hls/hls-notifier) - send and recv text messages
-   * [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
-   * [HLS=pinger](cmd/hls/hls-pinger) - ping the node to check online status
+	* [HLS=notifier](cmd/hls/hls-notifier) - send and recv notification bytes
+	* [HLS=publisher](cmd/hls/hls-publisher) - TODO:
+	* [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
 4. Adapters:
-   * [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
-   * [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP protocol
-   * [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS protocol
-   * [HLA=meshtastic](cmd/hla/hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa protocol
+	* [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol
+	* [HLA=http](cmd/hla/hla-http) - adapts HL traffic over HTTP protocol
+	* [HLA=https](cmd/hla/hla-https) - adapts HL traffic over HTTPS protocol
+	* [HLA=meshtastic](cmd/hla/hla-meshtastic) - adapts HL traffic over Meshtastic/LoRa protocol
 
 ### External applications
 
@@ -202,7 +203,7 @@ To communicate with other network nodes, you must first obtain your public key, 
 $ curl -X POST 'http://localhost:9572/api/config/friends' --data '{"alias_name":"<name>", "friend_key":"<key>"}'
 ```
 
-__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-notifier-cli](cmd/hls/hls-notifier/client/hls-notifier-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-pinger-cli](cmd/hls/hls-pinger/client/hls-pinger-cli/). 
+__Success__. Now you can start communicating! You can write own applied services over `HLK/HLS API` or just use simple `CLI` applications, as example [hlk-cli](cmd/hlk/client/hlk-cli/), [hls-notifier-cli](cmd/hls/hls-notifier/client/hls-notifier-cli/), [hls-filesharer-cli](cmd/hls/hls-filesharer/client/hls-filesharer-cli/), [hls-publisher-cli](cmd/hls/hls-publisher/client/hls-publisher-cli/). 
 
 ## Star History
 

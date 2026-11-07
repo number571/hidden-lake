@@ -4,27 +4,26 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
-	message_dto "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 )
 
 func HandleIncomingNotifyHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
+	pConfig config.IConfig,
 	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeOFF)
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseStatusMode(pConfig))
 
 		logBuilder := http_logger.NewLogBuilder(hls_notifier_settings.GetAppShortNameFMT(), pR)
 
@@ -41,28 +40,24 @@ func HandleIncomingNotifyHTTP(
 			return
 		}
 
-		msgBytes, err := io.ReadAll(pR.Body)
+		body, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			_ = api.Response(pW, http.StatusConflict, "readmsg", api.WithoutContentType())
 			return
 		}
 
-		msgBody := string(msgBytes)
-		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
-			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
-			_ = api.Response(pW, http.StatusBadRequest, "graph", api.WithoutContentType())
-			return
-		}
-
-		msgContainer := message.NewMessageContainer(
-			aliasName,
-			message_dto.NewMessageBody(msgBody, time.Now()),
-		)
-
+		msgContainer := message.NewMessageContainer(aliasName, body)
 		pBroker.Produce(msgContainer)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, "ok", api.WithoutContentType())
 	}
+}
+
+func getResponseStatusMode(pConfig config.IConfig) string {
+	if pConfig.GetSettings().GetResponseEnabled() {
+		return hlk_settings.CHeaderResponseModeON
+	}
+	return hlk_settings.CHeaderResponseModeOFF
 }

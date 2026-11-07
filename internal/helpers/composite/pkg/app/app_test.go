@@ -12,8 +12,9 @@ import (
 	"github.com/number571/hidden-lake/internal/helpers/composite/pkg/app/config"
 	hlc_settings "github.com/number571/hidden-lake/internal/helpers/composite/pkg/settings"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
-	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
+	hls_publisher_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 )
 
@@ -37,7 +38,8 @@ const (
 	tcPathConfigHLC    = hlc_settings.CPathYML
 	tcPathConfigHLS    = hlk_settings.CPathYML
 	tcPathConfigHLM    = hls_notifier_settings.CPathYML
-	tcPathConfigHLP    = hls_pinger_settings.CPathYML
+	tcPathConfigHLP    = hls_publisher_settings.CPathYML
+	tcPathConfigHLF    = hls_filesharer_settings.CPathYML
 	tcPathConfigHLAtcp = hla_tcp_settings.CPathYML
 	tcPathKeyHLS       = hlk_settings.CPathKey
 	tcPathPubKeyHLS    = hlk_settings.CPathPubKey
@@ -57,6 +59,7 @@ func testDeleteFiles(prefixPath string) {
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLC)
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLS)
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLP)
+	_ = os.RemoveAll(prefixPath + tcPathConfigHLF)
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLM)
 	_ = os.RemoveAll(prefixPath + tcPathConfigHLAtcp)
 	_ = os.RemoveAll(prefixPath + tcPathKeyHLS)

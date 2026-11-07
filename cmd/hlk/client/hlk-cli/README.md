@@ -27,8 +27,8 @@ $ echo '{"method":"POST","host":"hls-notifier","path":"/msgbox","body":"aGVsbG8s
 ```
 
 ```bash
-### Send message and get response (example from hls-pinger) ###
-$ echo '{"method":"GET","host":"hls-pinger","path":"/ping"}' | hlk-cli -d fetch -a {{friend-name}}
+### Send message and get response (example from hls-notifier) ###
+$ echo '{"method":"GET","host":"hls-notifier","path":"/notify"}' | hlk-cli -d fetch -a {{friend-name}}
 ```
 
 2. Onlines

@@ -8,9 +8,9 @@
 
 ## List of services
 
-1. [HLS=notifier](hls-notifier) - send and recv text messages
-2. [HLS=filesharer](hls-filesharer) - view storage and download files 
-3. [HLS=pinger](hls-pinger) - ping the node to check online status
+1. [HLS=notifier](hls-notifier) - send and recv notification bytes
+2. [HLS=publisher](hls-publisher) - TODO:
+3. [HLS=filesharer](hls-filesharer) - view storage and download files 
 
 ## Borders and Limits
 

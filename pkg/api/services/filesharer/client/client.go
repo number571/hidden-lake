@@ -25,7 +25,7 @@ func (p *sClient) GetIndex(pCtx context.Context) error {
 	return p.fRequester.GetIndex(pCtx)
 }
 
-func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) ([]string, error) {
+func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) (uint64, []string, error) {
 	return p.fRequester.GetRemoteList(pCtx, pFriend, pPage, pPersonal)
 }
 
@@ -41,7 +41,7 @@ func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilen
 	return p.fRequester.GetRemoteFileInfo(pCtx, pFriend, pFilename, pPersonal)
 }
 
-func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) ([]string, error) {
+func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) (uint64, []string, error) {
 	return p.fRequester.GetLocalList(pCtx, pFriend, pPage)
 }
 

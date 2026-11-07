@@ -10,6 +10,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 )
 
@@ -31,9 +32,6 @@ func HandleChanListenAPI(
 
 		queryParams := pR.URL.Query()
 
-		// aliasName can be empty -> listen all friends
-		aliasName := queryParams.Get("friend")
-
 		sid := queryParams.Get("sid")
 		if err := pBroker.Register(sid); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("limit_subs"))
@@ -44,35 +42,33 @@ func HandleChanListenAPI(
 		ctx, cancel := context.WithTimeout(pCtx, buildSettings.GetHttpReadTimeout())
 		defer cancel()
 
-		for {
-			v, err := pBroker.Consume(ctx, sid)
-			if err != nil {
-				pLogger.PushInfo(logBuilder.WithMessage("no_content"))
-				_ = api.Response(pW, http.StatusNoContent, "")
-				return
-			}
-
-			mc, ok := v.(message.IMessageContainer)
-			if !ok {
-				pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
-				_ = api.Response(pW, http.StatusInternalServerError, "invalid type")
-				return
-			}
-
-			friend := mc.GetFriend()
-			if aliasName != "" && friend != aliasName {
-				pLogger.PushInfo(logBuilder.WithMessage("another_friend"))
-				continue
-			}
-
-			pW.Header().Set(hls_settings.CHeaderFriendName, friend)
-			if msgUID := mc.GetMessageUID(); msgUID != "" {
-				pW.Header().Set(hls_settings.CHeaderMessageUID, msgUID)
-			}
-
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, mc.GetMessageBody().ToString(), api.WithCustomContentType(api.CApplicationJSON))
+		v, err := pBroker.Consume(ctx, sid)
+		if err != nil {
+			pLogger.PushInfo(logBuilder.WithMessage("no_content"))
+			_ = api.Response(pW, http.StatusNoContent, "")
 			return
 		}
+
+		mc, ok := v.(message.IMessageContainer)
+		if !ok {
+			pLogger.PushErro(logBuilder.WithMessage("invalid_type"))
+			_ = api.Response(pW, http.StatusInternalServerError, "invalid type")
+			return
+		}
+
+		pW.Header().Set(hls_settings.CHeaderFriendName, mc.GetFriend())
+
+		msgBody := mc.GetMessageBody()
+		contentType := getContentType(msgBody)
+
+		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+		_ = api.Response(pW, http.StatusOK, msgBody, api.WithCustomContentType(contentType))
 	}
+}
+
+func getContentType(msgBody []byte) string {
+	if chars.HasNotGraphicCharacters(string(msgBody)) {
+		return api.CApplicationOctetStream
+	}
+	return api.CTextPlain
 }

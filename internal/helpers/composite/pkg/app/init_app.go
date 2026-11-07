@@ -31,11 +31,11 @@ import (
 	hls_notifier_app "github.com/number571/hidden-lake/internal/services/notifier/pkg/app"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 
+	hls_publisher_app "github.com/number571/hidden-lake/internal/services/publisher/pkg/app"
+	hls_publisher_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
+
 	hls_filesharer_app "github.com/number571/hidden-lake/internal/services/filesharer/pkg/app"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
-
-	hls_pinger_app "github.com/number571/hidden-lake/internal/services/pinger/pkg/app"
-	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
 )
 
 var (
@@ -46,8 +46,8 @@ var (
 		hla_https_settings.CAppShortName:      hla_https_app.InitApp,
 		hla_meshtastic_settings.CAppShortName: hla_meshtastic_app.InitApp,
 		hls_notifier_settings.CAppShortName:   hls_notifier_app.InitApp,
+		hls_publisher_settings.CAppShortName:  hls_publisher_app.InitApp,
 		hls_filesharer_settings.CAppShortName: hls_filesharer_app.InitApp,
-		hls_pinger_settings.CAppShortName:     hls_pinger_app.InitApp,
 	}
 )
 

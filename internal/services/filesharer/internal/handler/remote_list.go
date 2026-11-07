@@ -71,12 +71,21 @@ func HandleRemoteListAPI(
 			return
 		}
 
+		pagesCountValue := resp.GetHead()[hls_settings.CHeaderPagesCountOnList]
+		if _, err := strconv.ParseUint(pagesCountValue, 10, 64); err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("pages_count"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: read pages count")
+			return
+		}
+
 		var list []string
 		if err := encoding.DeserializeJSON(resp.GetBody(), &list); err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("decode_response"))
 			_ = api.Response(pW, http.StatusTeapot, "failed: decode response")
 			return
 		}
+
+		pW.Header().Set(hls_settings.CHeaderPagesCount, pagesCountValue)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, encoding.SerializeJSON(list), api.WithCustomContentType(api.CApplicationJSON))

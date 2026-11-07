@@ -5,15 +5,12 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/limiter"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/request"
 )
@@ -51,13 +48,6 @@ func HandleChanNotifyAPI(
 			return
 		}
 
-		msgBody := string(body)
-		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
-			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
-			return
-		}
-
 		queryParams := pR.URL.Query()
 
 		aliasName := queryParams.Get("friend")
@@ -67,17 +57,14 @@ func HandleChanNotifyAPI(
 			return
 		}
 
-		msg := dto.NewMessageBody(msgBody, time.Now())
-
-		req := request.NewNotifyRequest(msg.GetData())
-		err = pHlkClient.SendRequest(pCtx, aliasName, req)
-		if err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("send_request"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: send request")
+		req := request.NewNotifyRequest(body)
+		if _, err := pHlkClient.FetchRequest(pCtx, aliasName, req); err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
 			return
 		}
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, msg.GetTimestamp())
+		_ = api.Response(pW, http.StatusOK, "ok")
 	}
 }

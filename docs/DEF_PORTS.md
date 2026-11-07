@@ -1,10 +1,10 @@
 # Default ports
 
-1. HLS=notifier  = 959x
+1. HLS=notifier   = 959x
 2. `reserved`     = 958x
 3. HLK            = 957x
 4. `reserved`     = 956x
-5. HLS=pinger     = 955x
+5. HLS=publisher  = 955x
 6. HLS=filesharer = 954x
 7. `reserved`     = 953x
 8. `reserved`     = 952x

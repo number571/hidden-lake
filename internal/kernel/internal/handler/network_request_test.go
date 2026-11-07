@@ -243,6 +243,7 @@ func TestHandleRequestAPI(t *testing.T) {
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()
 	_ = networkNode.AddConnection(ctx, testutils.TgAddrs[11])
+
 	node.GetKeysContainer().Add(tgPrivKey1.GetPubKey())
 
 	testSend(t, client)

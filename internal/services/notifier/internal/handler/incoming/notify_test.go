@@ -11,6 +11,7 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
@@ -32,7 +33,9 @@ func TestHandleIncomingNotifyHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	msgBroker := broker.NewDataBroker(256, 256)
-	handler := HandleIncomingNotifyHTTP(ctx, httpLogger, msgBroker)
+
+	cfg := &config.SConfig{FSettings: &config.SConfigSettings{}}
+	handler := HandleIncomingNotifyHTTP(ctx, httpLogger, cfg, msgBroker)
 
 	if err := incomingNotifyRequestOK(handler); err != nil {
 		t.Fatal(err)
@@ -44,35 +47,12 @@ func TestHandleIncomingNotifyHTTP(t *testing.T) {
 	if err := incomingNotifyRequestPubKey(handler); err == nil {
 		t.Fatal("request success with invalid pubkey")
 	}
-	if err := incomingNotifyRequestMessage(handler); err == nil {
-		t.Fatal("request success with invalid message")
-	}
 }
 
 func incomingNotifyRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 
 	req := httptest.NewRequest(http.MethodPost, "/notify", bytes.NewBuffer([]byte("hello, world!")))
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
-
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
-
-	if res.StatusCode != http.StatusOK {
-		return errors.New("bad status code") // nolint: err113
-	}
-
-	if _, err := io.ReadAll(res.Body); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func incomingNotifyRequestMessage(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/notify", nil)
 	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
 
 	handler(w, req)

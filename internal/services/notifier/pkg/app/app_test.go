@@ -28,7 +28,6 @@ var (
 const (
 	tcTestdataPath = "./testdata/"
 	tcPathConfig   = pkg_settings.CPathYML
-	tcPathDatabase = pkg_settings.CPathDB
 )
 
 func TestError(t *testing.T) {
@@ -42,7 +41,6 @@ func TestError(t *testing.T) {
 }
 
 func testDeleteFiles(prefixPath string) {
-	_ = os.RemoveAll(prefixPath + tcPathDatabase)
 	_ = os.RemoveAll(prefixPath + tcPathConfig)
 }
 

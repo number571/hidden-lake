@@ -22,12 +22,16 @@ type IDownloadProcess interface {
 }
 
 type IDownloadProcessKey interface {
+	types.IConverter
+
 	GetFriend() string
 	GetFileName() string
 	GetIsPersonal() bool
 }
 
 type IDownloadProcessValue interface {
+	types.IConverter
+
 	GetIncIndex() uint64
 	GetDownload() uint64
 	GetFileSize() uint64

@@ -2,9 +2,6 @@ package client
 
 import (
 	"context"
-	"time"
-
-	message "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 var (
@@ -29,34 +26,10 @@ func (p *sClient) GetNotifyLimit(pCtx context.Context) (uint64, error) {
 	return p.fRequester.GetNotifyLimit(pCtx)
 }
 
-func (p *sClient) GetMessageLimit(pCtx context.Context) (uint64, error) {
-	return p.fRequester.GetMessageLimit(pCtx)
-}
-
-func (p *sClient) SendNotification(pCtx context.Context, pAliasName string, pBody string) (time.Time, error) {
+func (p *sClient) SendNotification(pCtx context.Context, pAliasName string, pBody []byte) error {
 	return p.fRequester.SendNotification(pCtx, pAliasName, pBody)
 }
 
-func (p *sClient) PushMessageToBox(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
-	return p.fRequester.PushMessageToBox(pCtx, pAliasName, pUID, pBody)
-}
-
-func (p *sClient) LoadMessageFromBox(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
-	return p.fRequester.LoadMessageFromBox(pCtx, pAliasName, pUID)
-}
-
-func (p *sClient) LoadMessageByEnum(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {
-	return p.fRequester.LoadMessageByEnum(pCtx, pAliasName, pIndex)
-}
-
-func (p *sClient) LoadMessageByUID(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
-	return p.fRequester.LoadMessageByUID(pCtx, pAliasName, pUID)
-}
-
-func (p *sClient) GetMsgBoxSize(pCtx context.Context, pAliasName string) (uint64, error) {
-	return p.fRequester.GetMsgBoxSize(pCtx, pAliasName)
-}
-
-func (p *sClient) ListenChan(pCtx context.Context, pSubscribeID, pAliasName string) ([2]string, message.IMessageBody, error) {
-	return p.fRequester.ListenChan(pCtx, pSubscribeID, pAliasName)
+func (p *sClient) RecvNotification(pCtx context.Context, pSubscribeID string) (string, []byte, error) {
+	return p.fRequester.RecvNotification(pCtx, pSubscribeID)
 }

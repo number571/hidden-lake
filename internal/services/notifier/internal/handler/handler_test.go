@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"net/http"
 	"testing"
@@ -8,16 +9,12 @@ import (
 
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/build"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/message"
-	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/notifier/client"
-	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
 
@@ -42,9 +39,7 @@ func TestHandler(t *testing.T) {
 	server := testInitInternalServiceHTTP(
 		ctx,
 		httpLogger,
-		&tsConfig{},
 		newTsHLKClient(true, true, false),
-		newTsDatabase(true, true),
 		msgBroker,
 		testutils.TgAddrs[24],
 	)
@@ -63,33 +58,21 @@ func TestHandler(t *testing.T) {
 	if err := client.GetIndex(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.GetMessageLimit(context.Background()); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := client.SendNotification(context.Background(), "abc", "hello, world!"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := client.PushMessageToBox(context.Background(), "abc", dto.NewMessageUID(), "hello, world!"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := client.LoadMessageByEnum(context.Background(), "abc", 0); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := client.GetMsgBoxSize(context.Background(), "abc"); err != nil {
+	if err := client.SendNotification(context.Background(), "abc", []byte("hello, world!")); err != nil {
 		t.Fatal(err)
 	}
 
-	msg := dto.NewMessageBody("hello, world!", time.Now())
+	msg := []byte("hello, world!")
 
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", msg))
 	}()
-	_, gotMsg, err := client.ListenChan(context.Background(), "abc", "sid")
+	_, gotMsg, err := client.RecvNotification(context.Background(), "sid")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if gotMsg.ToString() != msg.ToString() {
+	if !bytes.Equal(gotMsg, msg) {
 		t.Fatal("gotMsg.ToString() != msg.ToString()")
 	}
 }
@@ -97,14 +80,11 @@ func TestHandler(t *testing.T) {
 func testInitInternalServiceHTTP(
 	pCtx context.Context,
 	pLogger logger.ILogger,
-	pConfig config.IConfig,
 	pHlkClient hlk_client.IClient,
-	pDatabase database.IKVDatabase,
 	pMsgBroker broker.IDataBroker,
 	pAddress string,
 ) *http.Server {
 	mux := http.NewServeMux()
-	processManager := process.NewNotifyProcessManager()
 
 	mux.HandleFunc(
 		hls_settings.CHandleIndexPath,
@@ -115,21 +95,6 @@ func testInitInternalServiceHTTP(
 		hls_settings.CHandleChanNotifyPath,
 		HandleChanNotifyAPI(pCtx, pLogger, pHlkClient),
 	) // POST
-
-	mux.HandleFunc(
-		hls_settings.CHandleChanMsgboxPushPath,
-		HandleChanPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
-	) // POST
-
-	mux.HandleFunc(
-		hls_settings.CHandleChanMsgboxLoadPath,
-		HandleChanLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
-	) // GET
-
-	mux.HandleFunc(
-		hls_settings.CHandleChanMsgboxSizePath,
-		HandleChanSizeAPI(pCtx, pLogger, pConfig, pDatabase),
-	) // GET
 
 	mux.HandleFunc(
 		hls_settings.CHandleChanListenPath,

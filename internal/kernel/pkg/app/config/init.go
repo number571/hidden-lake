@@ -10,7 +10,7 @@ import (
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	hls_filesharer_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
-	hls_pinger_settings "github.com/number571/hidden-lake/internal/services/pinger/pkg/settings"
+	hls_publisher_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
 	logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 )
 
@@ -70,7 +70,7 @@ func initConfig() *SConfig {
 			FInternal: hlk_settings.CDefaultInternalAddress,
 		},
 		FServices: map[string]string{
-			hls_pinger_settings.CAppShortName:     hls_pinger_settings.CDefaultExternalAddress,
+			hls_publisher_settings.CAppShortName:  hls_publisher_settings.CDefaultExternalAddress,
 			hls_notifier_settings.CAppShortName:   hls_notifier_settings.CDefaultExternalAddress,
 			hls_filesharer_settings.CAppShortName: hls_filesharer_settings.CDefaultExternalAddress,
 		},

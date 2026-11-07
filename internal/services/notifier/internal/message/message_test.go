@@ -1,13 +1,12 @@
 package message
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/number571/hidden-lake/internal/utils/broker"
-	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 func TestMessageBroker(t *testing.T) {
@@ -23,7 +22,7 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	friendName := "Alice"
-	msg := dto.NewMessageBody("hello, world", time.Now())
+	msg := []byte("hello, world")
 	msgBroker.Produce(NewMessageContainer(friendName, msg))
 
 	if msgBroker.CountSubscribers() != 1 {
@@ -43,12 +42,12 @@ func TestMessageBroker(t *testing.T) {
 	if v.GetFriend() != friendName {
 		t.Fatal("x.GetFriend() != friendName")
 	}
-	if v.GetMessageBody().ToString() != msg.ToString() {
+	if !bytes.Equal(v.GetMessageBody(), msg) {
 		t.Fatal("x.GetMessageBody().ToString() != msg.ToString()")
 	}
 
 	// check auto close channel after overflow
-	newMsg := dto.NewMessageBody("new_message", time.Now())
+	newMsg := []byte("new_message")
 	for range chanSize + 1 {
 		msgBroker.Produce(NewMessageContainer(friendName, newMsg))
 	}
@@ -77,7 +76,7 @@ func TestMessageBroker(t *testing.T) {
 	if v1.GetFriend() != friendName {
 		t.Fatal("x.GetFriend() != friendName")
 	}
-	if v1.GetMessageBody().ToString() != newMsg.ToString() {
+	if !bytes.Equal(v1.GetMessageBody(), newMsg) {
 		t.Fatal("x.GetMessageBody().ToString() != newMsg.ToString()")
 	}
 

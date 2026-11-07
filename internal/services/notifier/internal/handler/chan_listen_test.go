@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"io"
@@ -13,7 +14,6 @@ import (
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/message"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
-	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 )
 
 func TestHandleChanListenAPI(t *testing.T) {
@@ -33,7 +33,7 @@ func TestHandleChanListenAPI(t *testing.T) {
 		},
 	)
 
-	msg := dto.NewMessageBody("hello, world!", time.Now())
+	msg := []byte("hello, world!")
 	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
@@ -47,20 +47,9 @@ func TestHandleChanListenAPI(t *testing.T) {
 	if err := chatSubscribeRequestInvalidMethod(handlerX); err != nil {
 		t.Fatal(err)
 	}
-
-	// used for check got message from another friend
-	msgBroker.Produce(message.NewMessageContainer("qwerty", msg))
-
-	chCtx, cancel := context.WithTimeout(ctx, 200*time.Millisecond)
-	defer cancel()
-
-	handlerY := HandleChanListenAPI(chCtx, httpLogger, msgBroker)
-	if err := chatSubscribeRequestNoContent(handlerY); err != nil {
-		t.Fatal(err)
-	}
 }
 
-func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessageBody) error {
+func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend []byte) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
 
@@ -77,31 +66,27 @@ func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessageBody) 
 		return err
 	}
 
-	msg, err := dto.LoadMessageBody(body)
-	if err != nil {
-		return err
-	}
-	if msg.ToString() != msgSend.ToString() {
+	if !bytes.Equal(body, msgSend) {
 		return errors.New("invalid message") // nolint: err113
 	}
 
 	return nil
 }
 
-func chatSubscribeRequestNoContent(handler http.HandlerFunc) error {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
+// func chatSubscribeRequestNoContent(handler http.HandlerFunc) error {
+// 	w := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
 
-	handler(w, req)
-	res := w.Result()
-	defer func() { _ = res.Body.Close() }()
+// 	handler(w, req)
+// 	res := w.Result()
+// 	defer func() { _ = res.Body.Close() }()
 
-	if res.StatusCode != http.StatusNoContent {
-		return errors.New("bad status code") // nolint: err113
-	}
+// 	if res.StatusCode != http.StatusNoContent {
+// 		return errors.New("bad status code") // nolint: err113
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func chatSubscribeRequestInvalidMethod(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()

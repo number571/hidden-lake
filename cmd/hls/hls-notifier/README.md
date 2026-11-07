@@ -4,7 +4,7 @@
 
 <img src="images/hls_notifier_logo.png" alt="hls_notifier_logo.png"/>
 
-The `Hidden Lake Service (Notifier)` is a notifier based on the core of an anonymous network with theoretically provable anonymity of HLK. A feature of this notifier is the provision of anonymity of the fact of transactions (sending, receiving) text messages.
+The `Hidden Lake Service (Notifier)` is a notifier based on the core of an anonymous network with theoretically provable anonymity of HLK. A feature of this notifier is the provision of anonymity of the fact of transactions (sending, receiving) bytes messages.
 
 > More information about HLS=notifier in the [habr.com/ru/post/701488](https://habr.com/ru/post/701488/ "Habr HLS=notifier")
 
@@ -36,13 +36,13 @@ $ go run ./cmd/hls/hls-notifier
 ```
 
 Open ports `9591` (HTTP, internal) and `9592` (HTTP, incoming).
-Creates [`./hls-notifier.yml`](./hls-notifier.yml) and `./hls-notifier.db` files.
+Creates [`./hls-notifier.yml`](./hls-notifier.yml) file.
 
 ## Running options
 
 ```bash
 $ hls-notifier --path /root
-# path = path to config and database files
+# path = path to config file
 ```
 
 ## Example
@@ -78,65 +78,24 @@ $ make request-node2
 ```json
 // header request size = (4 + 56) = 60B
 // body request size can be = (144 - 60) = 84B
-// RESTRICTION: body = <graphical text>
+// RECOMMENDATION: empty body is equivalent to a PING request
 [uint32]{"method":"POST","host":"hls-notifier","path":"/notify"}[body]
-[body]=""
+[body]=<bytes>
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
 [uint32]{"code":200}[body]
-```
-
-### 2. /msgbox
-
-- `200` - return "ok" / message body
-- `202` - message already exist in database
-- `400` - invalid input params (uid, body)
-- `404` - message by uid not found
-- `405` - invalid method (not GET)
-- `409` - failed read HTTP request body
-- `500` - load/push from database
-- `502` - get aliasName HLK
-
-```json
-// header request size = (4 + 83) = 87B
-// body request size can be = (144 - 87) = 57B
-// INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
-// RESTRICTION: body = <graphical text>
-[uint32]{"method":"POST","host":"hls-notifier","path":"/msgbox?uid=0000000000000000000000"}[body]
-[body]=""
-
-// header response size = (4 + 12) = 16B
-// body response size can be = (144 - 16) = 128B
-[uint32]{"code":200}[body]
-```
-
-```json
-// header request size = (4 + 82) = 86B
-// body request size can be = (144 - 86) = 58B
-[uint32]{"method":"GET","host":"hls-notifier","path":"/msgbox?uid=0000000000000000000000"}[body]
-
-// header response size = (4 + 12) = 16B
-// body response size can be = (144 - 16) = 128B
-[uint32]{"code":200}[body]
-[body]=""
 ```
 
 ## HLS API
 
 ```
-1. GET          /api/index              | params = [] 
-                                        |> description = get name of service
-2. GET/POST     /api/chan/notify        | params = ["friend":string]
-                                        |> description = get limit notify size / send notify to chan
-3. GET/POST     /api/chan/msgbox/push   | params = ["friend":string]
-                                        |> description = get limit message size / send message to chan
-4. GET          /api/chan/msgbox/load   | params = ["friend":string,"index":?uint64,"uid":?string,"remote":?bool]
-                                        |> description = get message from chan by index / uid
-5. GET          /api/chan/msgbox/size   | params = ["friend":string]
-                                        |> description = get count of messages in the chan
-6. GET          /api/chan/listen        | params = ["friend":string]
-                                        |> description = try get message from chan with longpoll method 
+1. GET      /api/index          | params = [] 
+                                |> description = get name of service
+2. GET/POST /api/chan/notify    | params = ["friend":string]
+                                |> description = get limit notify size / send notify to chan
+3. GET      /api/chan/listen    | params = ["sid":string]
+                                |> description = try get message from chan with longpoll method 
 ```
 
 ### 1. /api/index
@@ -188,7 +147,7 @@ Content-Length: 4
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chan/notify?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9591/api/chan/notify?friend=Bob" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
@@ -197,109 +156,12 @@ curl -i -X POST "http://localhost:9591/api/chan/notify?friend=Bob&uid=0000000000
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Fri, 16 Jan 2026 18:55:12 GMT
-Content-Length: 19
+Content-Length: 2
 
-2026-01-16T18:55:12
+ok
 ```
 
-### 3. /api/chan/msgbox/push
-
-- `200` - return limit size (GET) or timestamp (POST)
-- `202` - message already registered and delivered
-- `208` - message in the fetch process
-- `400` - invalid input params (friend, uid, body)
-- `405` - invalid method (not GET, POST)
-- `409` - failed read HTTP request body
-- `418` - got bad response from node
-- `500` - load/push/recv message into database
-- `502` - failed send request (HLK side)
-- `503` - message was sent but no response was received
-
-#### 3.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/push"
-```
-
-#### 3.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Sun, 18 Jan 2026 20:38:58 GMT
-Content-Length: 4
-
-3525
-```
-
-#### 3.2. POST Request
-
-```bash
-curl -i -X POST "http://localhost:9591/api/chan/msgbox/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
-```
-
-#### 3.2. POST Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Fri, 16 Jan 2026 18:55:12 GMT
-Content-Length: 19
-
-2026-01-16T18:55:12
-```
-
-### 4. /api/chan/msgbox/load
-
-- `200` - return message from database / node
-- `400` - invalid input params (friend, index)
-- `404` - message not found in database
-- `405` - invalid method (not GET)
-- `418` - got bad response from node
-- `500` - load message from database
-- `503` - request was sent but no response was received
-
-#### 4.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/load?friend=Bob&index=0"
-```
-
-#### 4.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Date: Fri, 16 Jan 2026 18:56:08 GMT
-Content-Length: 89
-
-{"head":{"s":2,"u":"0000000000000000000000"},"body":{"d":"hello, world!","t":1768589712}}
-```
-
-### 5. /api/chan/msgbox/size
-
-- `200` - return count of messages
-- `400` - invalid input params (friend)
-- `405` - invalid method (not GET)
-
-#### 5.1. GET Request
-
-```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/size?friend=Bob"
-```
-
-#### 5.1. GET Response
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain
-Date: Fri, 16 Jan 2026 18:56:08 GMT
-Content-Length: 1
-
-1
-```
-
-### 6. /api/chan/listen
+### 3. /api/chan/listen
 
 - `200` - return message from broker
 - `204` - no messages in consumer
@@ -308,19 +170,19 @@ Content-Length: 1
 - `406` - limit of registered subscribers
 - `500` - invalid type of message container
 
-#### 6.1. GET Request
+#### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/listen?friend=Bob"
+curl -i -X GET "http://localhost:9591/api/chan/listen?sid=some_application_id"
 ```
 
-#### 6.1. GET Response
+#### 3.1. GET Response
 
 ```
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: text/plain
 Date: Fri, 16 Jan 2026 18:57:22 GMT
-Content-Length: 28
+Content-Length: 13
 
-{"d":"hello","t":1768589838}
+hello, world!
 ```

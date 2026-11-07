@@ -74,6 +74,14 @@ func (p *sDownloadProcess) ToString() string {
 	return string(p.ToBytes())
 }
 
+func (p sDownloadProcessValue) ToBytes() []byte {
+	return encoding.SerializeJSON(p)
+}
+
+func (p sDownloadProcessValue) ToString() string {
+	return string(p.ToBytes())
+}
+
 func (p sDownloadProcessValue) GetIncIndex() uint64 {
 	return p.FIncIndex
 }
@@ -84,6 +92,14 @@ func (p sDownloadProcessValue) GetDownload() uint64 {
 
 func (p sDownloadProcessValue) GetFileSize() uint64 {
 	return p.FFileSize
+}
+
+func (p sDownloadProcessKey) ToBytes() []byte {
+	return encoding.SerializeJSON(p)
+}
+
+func (p sDownloadProcessKey) ToString() string {
+	return string(p.ToBytes())
 }
 
 func (p sDownloadProcessKey) GetFriend() string {

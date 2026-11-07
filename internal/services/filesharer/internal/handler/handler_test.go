@@ -61,7 +61,7 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := client.GetLocalList(context.Background(), "", 0); err != nil {
+	if _, _, err := client.GetLocalList(context.Background(), "", 0); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.GetLocalFileInfo(context.Background(), "", "example.txt"); err != nil {
@@ -83,8 +83,12 @@ func TestHandler(t *testing.T) {
 	}
 
 	hlkClient.fClient = newTsHLKClient(2, true)
-	if _, err := client.GetRemoteList(context.Background(), "abc", 0, false); err != nil {
+	pagesCount, _, err := client.GetRemoteList(context.Background(), "abc", 0, false)
+	if err != nil {
 		t.Fatal(err)
+	}
+	if pagesCount != 1 {
+		t.Fatal("pagesCount != 1")
 	}
 
 	hlkClient.fClient = newTsHLKClient(3, true)

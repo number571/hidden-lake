@@ -1,37 +1,25 @@
 package message
 
-import "github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
-
 var (
 	_ IMessageContainer = &sMessageContainer{}
 )
 
 type sMessageContainer struct {
 	fFriend      string
-	fMessageUID  string
-	fMessageBody dto.IMessageBody
+	fMessageBody []byte
 }
 
-func NewMessageContainer(pFriend string, pMessageBody dto.IMessageBody) IMessageContainer {
+func NewMessageContainer(pFriend string, pBody []byte) IMessageContainer {
 	return &sMessageContainer{
 		fFriend:      pFriend,
-		fMessageBody: pMessageBody,
+		fMessageBody: pBody,
 	}
-}
-
-func (p *sMessageContainer) WithMessageUID(pUID string) IMessageContainer {
-	p.fMessageUID = pUID
-	return p
 }
 
 func (p *sMessageContainer) GetFriend() string {
 	return p.fFriend
 }
 
-func (p *sMessageContainer) GetMessageUID() string {
-	return p.fMessageUID
-}
-
-func (p *sMessageContainer) GetMessageBody() dto.IMessageBody {
+func (p *sMessageContainer) GetMessageBody() []byte {
 	return p.fMessageBody
 }

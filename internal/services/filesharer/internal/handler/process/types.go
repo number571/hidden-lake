@@ -5,7 +5,7 @@ import "github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 type IDownloadProcessManager interface {
 	Update(dto.IDownloadProcessKey, [2]uint64) bool
 
-	GetList() []dto.IDownloadProcess
+	GetKeys() []dto.IDownloadProcessKey
 	Get(dto.IDownloadProcessKey) (dto.IDownloadProcess, bool)
 
 	Unlock(dto.IDownloadProcessKey) bool

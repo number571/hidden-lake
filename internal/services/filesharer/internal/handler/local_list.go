@@ -46,12 +46,14 @@ func HandleLocalListAPI(
 		}
 
 		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName != "")
-		list, err := utils.GetListFiles(stgPath, page, pConfig.GetSettings().GetPageOffset())
+		pagesCount, list, err := utils.GetListFiles(stgPath, page, pConfig.GetSettings().GetPageOffset())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: open storage")
 			return
 		}
+
+		pW.Header().Set(hls_settings.CHeaderPagesCount, strconv.FormatUint(pagesCount, 10))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, encoding.SerializeJSON(list), api.WithCustomContentType(api.CApplicationJSON))

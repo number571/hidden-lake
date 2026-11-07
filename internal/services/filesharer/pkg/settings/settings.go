@@ -65,12 +65,14 @@ const (
 )
 
 const (
-	CHeaderFileHashOnLoad = "F-H"
-	CTrimHashSizeOnLoad   = 16 // hex encode
+	CHeaderFileHashOnLoad   = "F-H"
+	CHeaderPagesCountOnList = "P-C"
+	CTrimHashSizeOnLoad     = 16 // hex encode
 )
 
 const (
-	CHeaderInProcess = "Hls-Filesharer-In-Process"
+	CHeaderInProcess  = "Hls-Filesharer-In-Process"
+	CHeaderPagesCount = "Hls-Filesharer-Pages-Count"
 )
 
 const (

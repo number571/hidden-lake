@@ -126,19 +126,20 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 		printDownloadProcess(downloadProcess)
 	case "list":
 		var (
-			fileList []string
-			err      error
+			pagesCount uint64
+			fileList   []string
+			err        error
 		)
 		page := gFlags.Get("-a").GetInt64Value(pArgs)
 		if isLocal {
-			fileList, err = hlfClient.GetLocalList(pCtx, friend, uint64(page)) // nolint:gosec
+			pagesCount, fileList, err = hlfClient.GetLocalList(pCtx, friend, uint64(page)) // nolint:gosec
 		} else {
-			fileList, err = hlfClient.GetRemoteList(pCtx, friend, uint64(page), isPersonal) // nolint:gosec
+			pagesCount, fileList, err = hlfClient.GetRemoteList(pCtx, friend, uint64(page), isPersonal) // nolint:gosec
 		}
 		if err != nil {
 			return err
 		}
-		printFileList(fileList)
+		printFileList(pagesCount, fileList)
 	case "info":
 		var (
 			fileInfo dto.IFileInfo
@@ -274,7 +275,8 @@ func printDownloadProcess(pDP dto.IDownloadProcess) {
 	)
 }
 
-func printFileList(pFiles []string) {
+func printFileList(pPagesCount uint64, pFiles []string) {
+	fmt.Printf("Pages: %d\nFiles:\n", pPagesCount)
 	for _, file := range pFiles {
 		fmt.Println(file)
 	}

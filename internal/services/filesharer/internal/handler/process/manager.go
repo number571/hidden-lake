@@ -1,7 +1,6 @@
 package process
 
 import (
-	"fmt"
 	"sort"
 	"sync"
 
@@ -34,7 +33,7 @@ func (p *sDownloadProcessManager) Update(k dto.IDownloadProcessKey, u [2]uint64)
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	sk := getDownloadProcessKey(k)
+	sk := k.ToString()
 	v, ok := p.fMap[sk]
 	if !ok {
 		return false
@@ -53,7 +52,7 @@ func (p *sDownloadProcessManager) Get(k dto.IDownloadProcessKey) (dto.IDownloadP
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	sk := getDownloadProcessKey(k)
+	sk := k.ToString()
 	v, ok := p.fMap[sk]
 	if !ok {
 		return nil, false
@@ -62,17 +61,24 @@ func (p *sDownloadProcessManager) Get(k dto.IDownloadProcessKey) (dto.IDownloadP
 	return *v.fProcess, true
 }
 
-func (p *sDownloadProcessManager) GetList() []dto.IDownloadProcess {
+func (p *sDownloadProcessManager) GetKeys() []dto.IDownloadProcessKey {
 	p.fMutex.RLock()
 	defer p.fMutex.RUnlock()
 
-	result := make([]dto.IDownloadProcess, 0, len(p.fMap))
+	processes := make([]dto.IDownloadProcess, 0, len(p.fMap))
 	for _, v := range p.fMap {
-		result = append(result, *v.fProcess)
+		processes = append(processes, *v.fProcess)
 	}
 
-	sort.Slice(result, func(i, j int) bool { return result[i].GetIncIndex() < result[j].GetIncIndex() })
+	sort.Slice(
+		processes,
+		func(i, j int) bool { return processes[i].GetIncIndex() < processes[j].GetIncIndex() },
+	)
 
+	result := make([]dto.IDownloadProcessKey, 0, len(processes))
+	for _, v := range processes {
+		result = append(result, v)
+	}
 	return result
 }
 
@@ -80,7 +86,7 @@ func (p *sDownloadProcessManager) TryLock(k dto.IDownloadProcessKey, c func()) b
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	sk := getDownloadProcessKey(k)
+	sk := k.ToString()
 	if _, ok := p.fMap[sk]; ok {
 		return false
 	}
@@ -103,7 +109,7 @@ func (p *sDownloadProcessManager) Unlock(k dto.IDownloadProcessKey) bool {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
-	sk := getDownloadProcessKey(k)
+	sk := k.ToString()
 	val, ok := p.fMap[sk]
 	if !ok {
 		return false
@@ -113,8 +119,4 @@ func (p *sDownloadProcessManager) Unlock(k dto.IDownloadProcessKey) bool {
 	delete(p.fMap, sk)
 
 	return true
-}
-
-func getDownloadProcessKey(k dto.IDownloadProcessKey) string {
-	return fmt.Sprintf("friend=%s&name=%s&personal=%t", k.GetFriend(), k.GetFileName(), k.GetIsPersonal())
 }

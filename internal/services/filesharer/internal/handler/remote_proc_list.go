@@ -26,8 +26,9 @@ func HandleRemoteListProcAPI(
 			return
 		}
 
-		list := pProcessManager.GetList()
+		keys := utils.DownloadProcessKeysToString(pProcessManager.GetKeys())
+
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, utils.DownloadProcessListToString(list), api.WithCustomContentType(api.CApplicationJSON))
+		_ = api.Response(pW, http.StatusOK, keys, api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

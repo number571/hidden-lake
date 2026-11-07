@@ -7,19 +7,15 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/number571/go-peer/pkg/crypto/asymmetric"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
 	"github.com/number571/go-peer/pkg/logger"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/database"
-	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	logger_std "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	hlk_config "github.com/number571/hidden-lake/pkg/api/kernel/config"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/notifier/client"
-	"github.com/number571/hidden-lake/pkg/api/services/notifier/client/dto"
 	"github.com/number571/hidden-lake/pkg/network/request"
 	"github.com/number571/hidden-lake/pkg/network/response"
 )
@@ -34,26 +30,11 @@ func TestErrorsAPI(t *testing.T) {
 	if err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
-	if _, err := client.GetMessageLimit(context.Background()); err == nil {
-		t.Fatal("success incorrect getMessageLimit")
-	}
-	if _, _, err := client.ListenChan(context.Background(), "", ""); err == nil {
+	if _, _, err := client.RecvNotification(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.SendNotification(context.Background(), "", ""); err == nil {
+	if err := client.SendNotification(context.Background(), "", nil); err == nil {
 		t.Fatal("success incorrect sendNotification")
-	}
-	if _, err := client.PushMessageToBox(context.Background(), "", "", ""); err == nil {
-		t.Fatal("success incorrect pushMessage")
-	}
-	if _, err := client.LoadMessageByEnum(context.Background(), "", 0); err == nil {
-		t.Fatal("success incorrect loadMessageByEnum")
-	}
-	if _, err := client.LoadMessageByUID(context.Background(), "", ""); err == nil {
-		t.Fatal("success incorrect loadMessageByUID")
-	}
-	if _, err := client.GetMsgBoxSize(context.Background(), ""); err == nil {
-		t.Fatal("success incorrect GetMsgBoxSize")
 	}
 }
 
@@ -160,67 +141,4 @@ func (p *tsHLKClient) FetchRequest(context.Context, string, request.IRequest) (r
 	}
 	resp := response.NewResponseBuilder().WithCode(200).WithBody([]byte{1})
 	return resp.Build(), nil
-}
-
-type tsConfig struct {
-}
-
-func (p *tsConfig) GetSettings() config.IConfigSettings {
-	return &config.SConfigSettings{}
-}
-func (p *tsConfig) GetAddress() config.IAddress {
-	return nil
-}
-func (p *tsConfig) GetLogging() logger_std.ILogging {
-	return nil
-}
-func (p *tsConfig) GetConnection() string {
-	return ""
-}
-
-type tsDatabase struct {
-	fLoadOK bool
-	fPushOK bool
-}
-
-func newTsDatabase(pLoadOK, pPushOK bool) *tsDatabase {
-	return &tsDatabase{
-		fLoadOK: pLoadOK,
-		fPushOK: pPushOK,
-	}
-}
-
-func (p *tsDatabase) Close() error { return nil }
-
-func (p *tsDatabase) Size(string) uint64 {
-	return 1
-}
-
-func (p *tsDatabase) Push(_ string, pM dto.IMessage) (uint64, error) {
-	if !p.fPushOK {
-		return 0, errors.New("some error") // nolint: err113
-	}
-	return 0, nil
-}
-
-func (p *tsDatabase) Recv(string, string) error {
-	return nil
-}
-
-func (p *tsDatabase) LoadByUID(string, string) (dto.IMessage, error) {
-	if !p.fLoadOK {
-		return nil, errors.New("some error") // nolint: err113
-	}
-	return nil, database.ErrNotFoundMessage
-}
-
-func (p *tsDatabase) LoadByEnum(string, uint64) (dto.IMessage, error) {
-	if !p.fLoadOK {
-		return nil, errors.New("some error") // nolint: err113
-	}
-	msg := dto.NewMessage(
-		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageUID()),
-		dto.NewMessageBody("hello, world!", time.Now()),
-	)
-	return msg, nil
 }

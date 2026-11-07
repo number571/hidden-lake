@@ -21,17 +21,15 @@ const (
 
 const (
 	CAppServiceName = "notifier"
-	CAppDescription = "send and recv text messages"
+	CAppDescription = "send and recv notification bytes"
 )
 
 const (
 	CPathYML = CAppShortName + ".yml"
-	CPathDB  = CAppShortName + ".db"
 )
 
 const (
 	CNotifyPath = "/notify"
-	CMsgboxPath = "/msgbox"
 )
 
 const (
@@ -40,15 +38,11 @@ const (
 )
 
 const (
-	CHandleIndexPath          = "/api/index"
-	CHandleChanListenPath     = "/api/chan/listen"
-	CHandleChanNotifyPath     = "/api/chan/notify"
-	CHandleChanMsgboxPushPath = "/api/chan/msgbox/push"
-	CHandleChanMsgboxLoadPath = "/api/chan/msgbox/load"
-	CHandleChanMsgboxSizePath = "/api/chan/msgbox/size"
+	CHandleIndexPath      = "/api/index"
+	CHandleChanListenPath = "/api/chan/listen"
+	CHandleChanNotifyPath = "/api/chan/notify"
 )
 
 const (
 	CHeaderFriendName = "Hls-Notifier-Friend-Name"
-	CHeaderMessageUID = "Hls-Notifier-Message-Uid"
 )

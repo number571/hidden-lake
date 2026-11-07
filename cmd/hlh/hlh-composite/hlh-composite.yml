@@ -5,7 +5,8 @@ logging:
 applications:
 - hlk
 - hla-tcp
-- hls-pinger
 - hls-notifier
+- hls-publisher
+- hls-filesharer
 # - hla-http
-# - hls-filesharer
+# - hla-meshtastic

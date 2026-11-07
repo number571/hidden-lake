@@ -7,7 +7,7 @@ import (
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler"
 	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/incoming"
-	"github.com/number571/hidden-lake/internal/services/notifier/internal/handler/process"
+	"github.com/number571/hidden-lake/internal/services/notifier/pkg/app/config"
 	hls_notifier_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
@@ -15,18 +15,14 @@ import (
 
 func (p *sApp) initExternalServiceHTTP(
 	pCtx context.Context,
+	pConfig config.IConfig,
 	pMsgBroker broker.IDataBroker,
 ) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc(
 		hls_notifier_settings.CNotifyPath,
-		incoming.HandleIncomingNotifyHTTP(pCtx, p.fHTTPLogger, pMsgBroker),
-	) // POST
-
-	mux.HandleFunc(
-		hls_notifier_settings.CMsgboxPath,
-		incoming.HandleIncomingMsgboxHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
+		incoming.HandleIncomingNotifyHTTP(pCtx, p.fHTTPLogger, pConfig, pMsgBroker),
 	) // POST
 
 	buildSettings := build.GetSettings()
@@ -42,7 +38,6 @@ func (p *sApp) initInternalServiceHTTP(
 	pCtx context.Context,
 	pHlkClient hlk_client.IClient,
 	pMsgBroker broker.IDataBroker,
-	pProcessManager process.INotifyProcessManager,
 ) {
 	mux := http.NewServeMux()
 
@@ -55,21 +50,6 @@ func (p *sApp) initInternalServiceHTTP(
 		hls_notifier_settings.CHandleChanNotifyPath,
 		handler.HandleChanNotifyAPI(pCtx, p.fHTTPLogger, pHlkClient),
 	) // POST
-
-	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanMsgboxPushPath,
-		handler.HandleChanPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
-	) // POST
-
-	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanMsgboxLoadPath,
-		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
-	) // GET
-
-	mux.HandleFunc(
-		hls_notifier_settings.CHandleChanMsgboxSizePath,
-		handler.HandleChanSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
-	) // GET
 
 	mux.HandleFunc(
 		hls_notifier_settings.CHandleChanListenPath,
