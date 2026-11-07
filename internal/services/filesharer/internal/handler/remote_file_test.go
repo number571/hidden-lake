@@ -80,6 +80,12 @@ func TestHandleRemoteFileAPI(t *testing.T) {
 	}
 	defer func() { _ = os.Remove(tmpFile) }()
 
+	tmpFileInfo := "./testdata/hls-filesharer.stg/private/abc/~something.txt.pfalse"
+	if err := os.WriteFile(tmpFileInfo, []byte("_info_"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Remove(tmpFileInfo) }()
+
 	if err := remoteFileRequestDeleteOK(handlerA); err != nil {
 		t.Fatal(err)
 	}

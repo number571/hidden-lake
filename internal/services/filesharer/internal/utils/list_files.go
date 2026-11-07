@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"math"
 	"os"
+	"strings"
 )
 
 func GetListFiles(pStgPath string, pPage uint64, pOffset uint64) (uint64, []string, error) {
@@ -21,6 +22,9 @@ func GetListFiles(pStgPath string, pPage uint64, pOffset uint64) (uint64, []stri
 	for _, e := range entries {
 		if e.IsDir() {
 			continue
+		}
+		if strings.HasPrefix(e.Name(), "~") {
+			continue // pass file_info files if exists
 		}
 		files = append(files, e)
 	}

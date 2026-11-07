@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -82,11 +84,20 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		fullPath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPersonal))
+		filePath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPersonal))
+		fileInfoPath := filepath.Join(stgPath, fmt.Sprintf("~%s.p%t", fileName, isPersonal))
 
 		if pR.Method == http.MethodDelete {
-			if err := os.Remove(fullPath); err != nil {
-				pLogger.PushErro(logBuilder.WithMessage("delete_file"))
+			var hasError bool
+			if err := os.Remove(fileInfoPath); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("delete_file_info"))
+				hasError = true
+			}
+			if err := os.Remove(filePath); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("delete_file"))
+				hasError = true
+			}
+			if hasError {
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: delete file")
 				return
 			}
@@ -122,11 +133,37 @@ func HandleRemoteFileAPI(
 			return
 		}
 
+		loadFileInfoBytes, err := os.ReadFile(fileInfoPath) //nolint:gosec
+		if err != nil {                                     //nolint:nestif
+			if !errors.Is(err, os.ErrNotExist) {
+				pLogger.PushErro(logBuilder.WithMessage("read_file_info_file"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: read file info file")
+				return
+			}
+			if err := os.WriteFile(fileInfoPath, fileInfo.ToBytes(), 0600); err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("write_file_info_file"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: write file info file")
+				return
+			}
+		} else {
+			loadFileInfo, err := dto.LoadFileInfo(loadFileInfoBytes)
+			if err != nil {
+				pLogger.PushErro(logBuilder.WithMessage("load_file_info_file"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: load file info file")
+				return
+			}
+			if !bytes.Equal(loadFileInfo.ToBytes(), fileInfo.ToBytes()) {
+				pLogger.PushWarn(logBuilder.WithMessage("invalid_file_info"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: invalid file info")
+				return
+			}
+		}
+
 		_ = pProcessManager.Update(dpKey, [2]uint64{0, fileInfo.GetSize()})
 		streamReader, err := stream.BuildStreamReader(
 			ctx,
 			pConfig.GetSettings().GetRetryNum(),
-			fullPath,
+			filePath,
 			aliasName,
 			pHlkClient,
 			fileInfo,
@@ -148,7 +185,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		file, err := os.Open(fullPath) // nolint: gosec
+		file, err := os.Open(filePath) // nolint: gosec
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("read_file"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: read file")
