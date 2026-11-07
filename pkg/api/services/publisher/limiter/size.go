@@ -12,15 +12,15 @@ import (
 )
 
 var (
-	gNotifyReqSize = uint64(len(
+	gSizeReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
-			WithMethod(http.MethodPost).
-			WithPath(hls_settings.CAppShortName + "/notify").
+			WithMethod(http.MethodGet).
+			WithPath(hls_settings.CAppShortName + "/size").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),
 	))
-	gNotifyRspSize = uint64(len(
+	gSizeRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
 			WithBody([]byte{}).
@@ -29,10 +29,10 @@ var (
 	))
 )
 
-func GetLimitOnNotifyRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
-	return pldsize.GetLimitBySize(pCtx, pHlkClient, gNotifyReqSize)
+func GetLimitOnSizeRequestSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
+	return pldsize.GetLimitBySize(pCtx, pHlkClient, gSizeReqSize)
 }
 
-func GetLimitOnNotifyResponseSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
-	return pldsize.GetLimitBySize(pCtx, pHlkClient, gNotifyRspSize)
+func GetLimitOnSizeResponseSize(pCtx context.Context, pHlkClient hlk_client.IClient) (uint64, error) {
+	return pldsize.GetLimitBySize(pCtx, pHlkClient, gSizeRspSize)
 }

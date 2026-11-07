@@ -112,7 +112,7 @@ func testInitInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_settings.CHandleMsgboxSizePath,
-		HandleMsgboxSizeAPI(pCtx, pLogger, pConfig, pDatabase),
+		HandleMsgboxSizeAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // GET
 
 	mux.HandleFunc(

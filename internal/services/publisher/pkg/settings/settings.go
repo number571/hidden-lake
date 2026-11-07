@@ -30,7 +30,9 @@ const (
 )
 
 const (
-	CMsgboxPath = "/msgbox"
+	CPushPath = "/push"
+	CLoadPath = "/load"
+	CSizePath = "/size"
 )
 
 const (

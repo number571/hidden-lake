@@ -20,9 +20,19 @@ func (p *sApp) initExternalServiceHTTP(
 	mux := http.NewServeMux()
 
 	mux.HandleFunc(
-		hls_publisher_settings.CMsgboxPath,
-		incoming.HandleIncomingMsgboxHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
+		hls_publisher_settings.CPushPath,
+		incoming.HandleIncomingPushHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
 	) // POST
+
+	mux.HandleFunc(
+		hls_publisher_settings.CLoadPath,
+		incoming.HandleIncomingLoadHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
+	) // GET
+
+	mux.HandleFunc(
+		hls_publisher_settings.CSizePath,
+		incoming.HandleIncomingSizeHTTP(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase, pMsgBroker),
+	) // GET
 
 	buildSettings := build.GetSettings()
 	p.fExtServiceHTTP = &http.Server{
@@ -48,7 +58,7 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_publisher_settings.CHandleMsgboxSizePath,
-		handler.HandleMsgboxSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
+		handler.HandleMsgboxSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(

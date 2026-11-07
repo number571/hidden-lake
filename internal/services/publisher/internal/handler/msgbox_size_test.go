@@ -28,7 +28,7 @@ func TestHandleMsgboxSizeAPI(t *testing.T) {
 		},
 	)
 
-	handlerX := HandleMsgboxSizeAPI(ctx, httpLogger, &tsConfig{}, newTsDatabase(true, true))
+	handlerX := HandleMsgboxSizeAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(true, true))
 	if err := chatHistorySizeRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}

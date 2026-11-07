@@ -67,7 +67,7 @@ $ make request-node2
 
 ## HLS/HLK API
 
-### 1. /msgbox
+### 1. /push
 
 - `200` - return "ok" / message body
 - `202` - message already exist in database
@@ -79,11 +79,10 @@ $ make request-node2
 - `502` - get aliasName HLK
 
 ```json
-// header request size = (4 + 84) = 88B
-// body request size can be = (144 - 88) = 56B
+// header request size = (4 + 82) = 86B
+// body request size can be = (144 - 86) = 58B
 // INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
-// RESTRICTION: body = <graphical text>
-[uint32]{"method":"POST","host":"hls-publisher","path":"/msgbox?uid=0000000000000000000000"}[body]
+[uint32]{"method":"POST","host":"hls-publisher","path":"/push?uid=0000000000000000000000"}[body]
 [body]=""
 
 // header response size = (4 + 12) = 16B
@@ -91,14 +90,29 @@ $ make request-node2
 [uint32]{"code":200}[body]
 ```
 
+### 2. /load
+
 ```json
-// header request size = (4 + 83) = 87B
-// body request size can be = (144 - 87) = 57B
-[uint32]{"method":"GET","host":"hls-publisher","path":"/msgbox?uid=0000000000000000000000"}[body]
-// | OR
 // header request size = (4 + 81) = 85B
 // body request size can be = (144 - 85) = 59B
-[uint32]{"method":"GET","host":"hls-publisher","path":"/msgbox?nid=18446744073709551616"}[body]
+[uint32]{"method":"GET","host":"hls-publisher","path":"/load?uid=0000000000000000000000"}[body]
+// | OR
+// header request size = (4 + 79) = 83B
+// body request size can be = (144 - 83) = 61B
+[uint32]{"method":"GET","host":"hls-publisher","path":"/load?nid=18446744073709551616"}[body]
+
+// header response size = (4 + 12) = 16B
+// body response size can be = (144 - 16) = 128B
+[uint32]{"code":200}[body]
+[body]=""
+```
+
+### 3. /size
+
+```json
+// header request size = (4 + 54) = 58B
+// body request size can be = (144 - 58) = 86B
+[uint32]{"method":"GET","host":"hls-publisher","path":"/size"}[body]
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
@@ -111,11 +125,11 @@ $ make request-node2
 ```
 1. GET          /api/index          | params = [] 
                                     |> description = get name of service
-3. GET/POST     /api/msgbox/push    | params = ["friend":string]
+3. GET/POST     /api/msgbox/push    | params = ["friend":string,"remote":?bool]
                                     |> description = get limit message size / send message to chan
 4. GET          /api/msgbox/load    | params = ["friend":string,"nid":?uint64,"uid":?string,"remote":?bool]
                                     |> description = get message from chan by index / uid
-5. GET          /api/msgbox/size    | params = ["friend":string]
+5. GET          /api/msgbox/size    | params = ["friend":string,"remote":?bool]
                                     |> description = get count of messages in the chan
 6. GET          /api/msgbox/listen  | params = ["friend":string]
                                     |> description = try get message from chan with longpoll method 

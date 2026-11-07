@@ -32,7 +32,7 @@ func TestHandleMsgboxPushAPI(t *testing.T) {
 		},
 	)
 
-	if _, err := limiter.GetLimitOnMsgboxRequestSize(ctx, newTsHLKClient(true, true, true)); err == nil {
+	if _, err := limiter.GetLimitOnPushRequestSize(ctx, newTsHLKClient(true, true, true)); err == nil {
 		t.Fatal("success get limit payload with incorrect size")
 	}
 

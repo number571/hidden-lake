@@ -39,7 +39,7 @@ func HandleMsgboxPushAPI(
 		}
 
 		if pR.Method == http.MethodGet {
-			sizes, err := limiter.GetLimitOnMsgboxRequestSize(pCtx, pHlkClient)
+			sizes, err := limiter.GetLimitOnPushRequestSize(pCtx, pHlkClient)
 			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("get_limit"))
 				_ = api.Response(pW, http.StatusBadGateway, "failed: get limit")
