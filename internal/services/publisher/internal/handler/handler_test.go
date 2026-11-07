@@ -68,23 +68,23 @@ func TestHandler(t *testing.T) {
 	}
 
 	msgUID := dto.NewMessageUID()
-	if _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, "hello, world!"); err != nil {
+	if _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, []byte("hello, world!"), false); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessageByEnum(context.Background(), "abc", 0); err != nil {
+	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "abc", 0, false); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessageByUID(context.Background(), "abc", msgUID); err != nil {
+	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "abc", msgUID, false); err != nil {
 		t.Fatal(err)
 	}
 
-	msg := dto.NewMessageBody("hello, world!", time.Now())
+	msg := dto.NewMessageBody([]byte("hello, world!"), time.Now())
 
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", "", msg))
 	}()
-	_, gotMsg, err := client.ListenMsgbox(context.Background(), "abc", "sid")
+	_, gotMsg, err := client.ListenMsgbox(context.Background(), "sid")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,22 +112,22 @@ func testInitInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_settings.CHandleMsgboxSizePath,
-		HandleChanSizeAPI(pCtx, pLogger, pConfig, pDatabase),
+		HandleMsgboxSizeAPI(pCtx, pLogger, pConfig, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_settings.CHandleMsgboxLoadPath,
-		HandleChanLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
+		HandleMsgboxLoadAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_settings.CHandleMsgboxPushPath,
-		HandleChanPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
+		HandleMsgboxPushAPI(pCtx, pLogger, pConfig, pHlkClient, pDatabase, processManager),
 	) // POST
 
 	mux.HandleFunc(
 		hls_settings.CHandleMsgboxListenPath,
-		HandleChanListenAPI(pCtx, pLogger, pMsgBroker),
+		HandleMsgboxListenAPI(pCtx, pLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

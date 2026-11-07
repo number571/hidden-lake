@@ -10,6 +10,7 @@ import (
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/chars"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/publisher/client"
@@ -86,13 +87,14 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	}
 
 	for ; index < count; index++ {
-		msg, err := hlsClient.LoadMessageByEnum(pCtx, friend, index)
+		msg, err := hlsClient.LoadMessageFromBoxByEnum(pCtx, friend, index, false)
 		if err != nil {
 			fmt.Printf("error: %s\n", err.Error())
 			return
 		}
 		state := ""
 		sender := iam
+		msgData := msg.GetBody().GetData()
 		switch msg.GetHead().GetState() {
 		case dto.CIncomingState:
 			sender = friend
@@ -100,20 +102,31 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		case dto.CReceivedState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msg.GetBody().GetData()) // nolint:errcheck
+			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData, true) // nolint:errcheck
 			state = ">"
 		}
-		fmt.Printf("%s: %s [%s][%s]\n", sender, msg.GetBody().GetData(), state, msg.GetBody().GetTimestamp())
+		strMsg := string(msgData)
+		if chars.HasNotGraphicCharacters(strMsg) {
+			strMsg = "<binary data>"
+		}
+		fmt.Printf("%s: %s [%s][%s]\n", sender, strMsg, state, msg.GetBody().GetTimestamp())
 	}
 
 	go func() {
 		for {
-			_, m, err := hlsClient.ListenMsgbox(pCtx, friend, "hls-notifier-cli")
+			h, m, err := hlsClient.ListenMsgbox(pCtx, "hls-notifier-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
 			}
-			fmt.Printf("%s: %s [%s]\n", friend, m.GetData(), m.GetTimestamp())
+			if h[0] != friend {
+				continue
+			}
+			strMsg := string(m.GetData())
+			if chars.HasNotGraphicCharacters(strMsg) {
+				strMsg = "<binary data>"
+			}
+			fmt.Printf("%s: %s [%s]\n", friend, strMsg, m.GetTimestamp())
 		}
 	}()
 
@@ -128,7 +141,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
 			continue
 		}
-		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), msg) // nolint:errcheck
+		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg), true) // nolint:errcheck
 	}
 }
 

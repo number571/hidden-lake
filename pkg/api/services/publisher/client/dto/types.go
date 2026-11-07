@@ -29,6 +29,6 @@ type IMessageHead interface {
 type IMessageBody interface {
 	types.IConverter
 
-	GetData() string
+	GetData() []byte
 	GetTimestamp() string
 }

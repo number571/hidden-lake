@@ -48,22 +48,22 @@ func (p *sApp) initInternalServiceHTTP(
 
 	mux.HandleFunc(
 		hls_publisher_settings.CHandleMsgboxSizePath,
-		handler.HandleChanSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
+		handler.HandleMsgboxSizeAPI(pCtx, p.fHTTPLogger, p.fConfig, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_publisher_settings.CHandleMsgboxLoadPath,
-		handler.HandleChanLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
+		handler.HandleMsgboxLoadAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase),
 	) // GET
 
 	mux.HandleFunc(
 		hls_publisher_settings.CHandleMsgboxPushPath,
-		handler.HandleChanPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
+		handler.HandleMsgboxPushAPI(pCtx, p.fHTTPLogger, p.fConfig, pHlkClient, p.fDatabase, pProcessManager),
 	) // POST
 
 	mux.HandleFunc(
 		hls_publisher_settings.CHandleMsgboxListenPath,
-		handler.HandleChanListenAPI(pCtx, p.fHTTPLogger, pMsgBroker),
+		handler.HandleMsgboxListenAPI(pCtx, p.fHTTPLogger, pMsgBroker),
 	) // GET
 
 	buildSettings := build.GetSettings()

@@ -23,7 +23,7 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	friendName := "Alice"
-	msg := dto.NewMessageBody("hello, world", time.Now())
+	msg := dto.NewMessageBody([]byte("hello, world"), time.Now())
 	msgBroker.Produce(NewMessageContainer(friendName, "", msg))
 
 	if msgBroker.CountSubscribers() != 1 {
@@ -48,7 +48,7 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	// check auto close channel after overflow
-	newMsg := dto.NewMessageBody("new_message", time.Now())
+	newMsg := dto.NewMessageBody([]byte("new_message"), time.Now())
 	for range chanSize + 1 {
 		msgBroker.Produce(NewMessageContainer(friendName, "", newMsg))
 	}

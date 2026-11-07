@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -12,7 +13,6 @@ import (
 	"github.com/number571/hidden-lake/internal/services/publisher/internal/message"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 
@@ -47,16 +47,49 @@ func HandleIncomingMsgboxHTTP(
 		}
 
 		queryParams := pR.URL.Query()
+		var (
+			msgNID = queryParams.Get("nid")
+			msgUID = queryParams.Get("uid")
+		)
 
-		msgUID := queryParams.Get("uid")
-		if !message_dto.MessageUIDIsValid(msgUID) {
-			pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
-			_ = api.Response(pW, http.StatusBadRequest, "uid", api.WithoutContentType())
+		if msgNID != "" && msgUID != "" {
+			pLogger.PushWarn(logBuilder.WithMessage("has_many_ids"))
+			_ = api.Response(pW, http.StatusBadRequest, "manyids")
+			return
+		}
+
+		var index uint64
+		switch {
+		case msgNID != "":
+			var err error
+			index, err = strconv.ParseUint(msgNID, 10, 64)
+			if err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("msg_index"))
+				_ = api.Response(pW, http.StatusBadRequest, "nid", api.WithoutContentType())
+				return
+			}
+		case msgUID != "":
+			if !message_dto.MessageUIDIsValid(msgUID) {
+				pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
+				_ = api.Response(pW, http.StatusBadRequest, "uid", api.WithoutContentType())
+				return
+			}
+		default:
+			pLogger.PushWarn(logBuilder.WithMessage("id_undefined"))
+			_ = api.Response(pW, http.StatusBadRequest, "idundef", api.WithoutContentType())
 			return
 		}
 
 		if pR.Method == http.MethodGet {
-			msg, err := pDB.LoadByUID(aliasName, msgUID)
+			var (
+				msg message_dto.IMessage
+				err error
+			)
+			if msgUID != "" {
+				msg, err = pDB.LoadByUID(aliasName, msgUID)
+			} else {
+				msg, err = pDB.LoadByEnum(aliasName, index)
+			}
 			if err == nil {
 				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 				_ = api.Response(pW, http.StatusOK, msg.ToBytes(), api.WithoutContentType())
@@ -72,17 +105,21 @@ func HandleIncomingMsgboxHTTP(
 			return
 		}
 
+		if msgUID == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("push_only_by_uid"))
+			_ = api.Response(pW, http.StatusBadRequest, "pushbyuid", api.WithoutContentType())
+			return
+		}
+
 		msgBytes, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			_ = api.Response(pW, http.StatusConflict, "readmsg", api.WithoutContentType())
 			return
 		}
-
-		msgBody := string(msgBytes)
-		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
-			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
-			_ = api.Response(pW, http.StatusBadRequest, "graph", api.WithoutContentType())
+		if len(msgBytes) == 0 {
+			pLogger.PushWarn(logBuilder.WithMessage("msg_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "msgnil", api.WithoutContentType())
 			return
 		}
 
@@ -100,7 +137,7 @@ func HandleIncomingMsgboxHTTP(
 
 		msg := message_dto.NewMessage(
 			message_dto.NewMessageHead(message_dto.CIncomingState, msgUID),
-			message_dto.NewMessageBody(msgBody, time.Now()),
+			message_dto.NewMessageBody(msgBytes, time.Now()),
 		)
 
 		if _, err := pDB.Push(aliasName, msg); err != nil {

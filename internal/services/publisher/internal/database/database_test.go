@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bytes"
 	"os"
 	"testing"
 	"time"
@@ -40,7 +41,7 @@ func TestDatabase(t *testing.T) {
 	timeNow := time.Now()
 	msg := message_dto.NewMessage(
 		message_dto.NewMessageHead(message_dto.CIncomingState, message_dto.NewMessageUID()),
-		message_dto.NewMessageBody(tcBody, timeNow),
+		message_dto.NewMessageBody([]byte(tcBody), timeNow),
 	)
 
 	_, err1 := db.Push(friend, msg)
@@ -62,7 +63,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal("!msgs[0].IsIncoming()")
 	}
 
-	if loadMsg.GetBody().GetData() != tcBody {
+	if !bytes.Equal(loadMsg.GetBody().GetData(), []byte(tcBody)) {
 		t.Fatal("!bytes.Equal(msgs[0].GetMessage(), []byte(tcBody))")
 	}
 

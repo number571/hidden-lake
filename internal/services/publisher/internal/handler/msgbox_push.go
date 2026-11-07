@@ -13,15 +13,15 @@ import (
 	"github.com/number571/hidden-lake/internal/services/publisher/pkg/app/config"
 	hls_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/limiter"
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/request"
 )
 
-func HandleChanPushAPI(
+func HandleMsgboxPushAPI(
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -50,21 +50,27 @@ func HandleChanPushAPI(
 			return
 		}
 
-		body, err := io.ReadAll(pR.Body)
+		msgBody, err := io.ReadAll(pR.Body)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogDecodeBody))
 			_ = api.Response(pW, http.StatusConflict, "failed: decode request")
 			return
 		}
 
-		msgBody := string(body)
-		if len(msgBody) == 0 || chars.HasNotGraphicCharacters(msgBody) {
+		if len(msgBody) == 0 {
 			pLogger.PushWarn(logBuilder.WithMessage("has_not_graphic_chars"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: has not graphic characters")
 			return
 		}
 
 		queryParams := pR.URL.Query()
+
+		isRemote, err := query.GetBoolValueFromQuery(queryParams, "remote")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("remote_error"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: remote is unknown")
+			return
+		}
 
 		aliasName := queryParams.Get("friend")
 		if aliasName == "" {
@@ -97,6 +103,12 @@ func HandleChanPushAPI(
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 				return
 			}
+		}
+
+		if !isRemote {
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusCreated, msg.GetBody().GetTimestamp())
+			return
 		}
 
 		// state(msg) = incoming OR received

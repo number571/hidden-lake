@@ -19,4 +19,5 @@ var (
 	ErrPushMessage    = &SError{"push message"}
 	ErrInvalidTitle   = &SError{"invalid title"}
 	ErrSizeMessageUID = &SError{"size message uid"}
+	ErrSizeBodyData   = &SError{"size body data"}
 )

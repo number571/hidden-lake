@@ -15,7 +15,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/limiter"
 )
 
-func TestHandleChanPushAPI(t *testing.T) {
+func TestHandleMsgboxPushAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -38,12 +38,12 @@ func TestHandleChanPushAPI(t *testing.T) {
 
 	processManager := process.NewPublishProcessManager()
 
-	handlerX := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true), processManager)
+	handlerX := HandleMsgboxPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
-	handlerY := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true), processManager)
+	handlerY := HandleMsgboxPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(false, true, false), newTsDatabase(true, true), processManager)
 	if err := chatMessageGetRequestOK(handlerY); err == nil {
 		t.Fatal("success request with get settings error")
 	}
@@ -58,11 +58,11 @@ func TestHandleChanPushAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerA := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true), processManager)
+	handlerA := HandleMsgboxPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, false, false), newTsDatabase(true, true), processManager)
 	if err := chatMessagePostRequestOK(handlerA); err == nil {
 		t.Fatal("success request with send message error")
 	}
-	handlerB := HandleChanPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false), processManager)
+	handlerB := HandleMsgboxPushAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, false), newTsDatabase(true, false), processManager)
 	if err := chatMessagePostRequestOK(handlerB); err == nil {
 		t.Fatal("success request with send message error")
 	}
@@ -85,7 +85,7 @@ func chatMessageGetRequestOK(handler http.HandlerFunc) error {
 
 func chatMessagePostRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/?friend=abc&uid="+dto.NewMessageUID(), bytes.NewBuffer([]byte("hello, world!")))
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc&remote=true&uid="+dto.NewMessageUID(), bytes.NewBuffer([]byte("hello, world!")))
 
 	handler(w, req)
 	res := w.Result()

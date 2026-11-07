@@ -16,7 +16,8 @@ build:
 		hls/hls-notifier \
 		hls/hls-publisher \
 		hls/hls-filesharer \
-		hlh/hlh-composite; \
+		hlh/hlh-composite \
+		hlh/hlh-keyops; \
 	do \
 		$(GC) -o $(BINPATH)/$${app} ./$${app}; \
 		for arch in amd64 arm64; \

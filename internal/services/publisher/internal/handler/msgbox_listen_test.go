@@ -16,7 +16,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 )
 
-func TestHandleChanListenAPI(t *testing.T) {
+func TestHandleMsgboxListenAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -33,14 +33,14 @@ func TestHandleChanListenAPI(t *testing.T) {
 		},
 	)
 
-	msg := dto.NewMessageBody("hello, world!", time.Now())
+	msg := dto.NewMessageBody([]byte("hello, world!"), time.Now())
 	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", "", msg))
 	}()
 
-	handlerX := HandleChanListenAPI(ctx, httpLogger, msgBroker)
+	handlerX := HandleMsgboxListenAPI(ctx, httpLogger, msgBroker)
 	if err := chatSubscribeRequestOK(handlerX, msg); err != nil {
 		t.Fatal(err)
 	}

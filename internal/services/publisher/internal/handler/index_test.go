@@ -39,16 +39,16 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.GetMsgBoxSize(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect getMsgBoxSize")
 	}
-	if _, _, err := client.ListenMsgbox(context.Background(), "", ""); err == nil {
+	if _, _, err := client.ListenMsgbox(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushMessageToBox(context.Background(), "", "", ""); err == nil {
+	if _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}, false); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
-	if _, err := client.LoadMessageByEnum(context.Background(), "", 0); err == nil {
+	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "", 0, false); err == nil {
 		t.Fatal("success incorrect loadMessageByEnum")
 	}
-	if _, err := client.LoadMessageByUID(context.Background(), "", ""); err == nil {
+	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "", "", false); err == nil {
 		t.Fatal("success incorrect loadMessageByUID")
 	}
 }

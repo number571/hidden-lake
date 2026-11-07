@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/number571/go-peer/pkg/encoding"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 )
 
 var (
@@ -13,26 +12,16 @@ var (
 )
 
 type SMessageBody struct {
-	FData      string `json:"d"`
+	FData      []byte `json:"d"`
 	FTimestamp uint64 `json:"t"`
 }
 
-func NewMessageBody(pData string, pTime time.Time) IMessageBody {
+func NewMessageBody(pData []byte, pTime time.Time) IMessageBody {
 	msgBody := &SMessageBody{
 		FData:      pData,
 		FTimestamp: uint64(pTime.Unix()), //nolint:gosec
 	}
-	if err := ValidateMessageBody(msgBody); err != nil {
-		panic(err)
-	}
 	return msgBody
-}
-
-func ValidateMessageBody(pBody IMessageBody) error {
-	if chars.HasNotGraphicCharacters(pBody.GetData()) {
-		return ErrHasNotGraphicChars
-	}
-	return nil
 }
 
 func LoadMessageBody(pData interface{}) (IMessageBody, error) {
@@ -52,14 +41,10 @@ func LoadMessageBody(pData interface{}) (IMessageBody, error) {
 		return nil, err
 	}
 
-	if err := ValidateMessageBody(msgBody); err != nil {
-		return nil, err
-	}
-
 	return msgBody, nil
 }
 
-func (p *SMessageBody) GetData() string {
+func (p *SMessageBody) GetData() []byte {
 	return p.FData
 }
 

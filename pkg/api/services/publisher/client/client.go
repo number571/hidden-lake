@@ -33,22 +33,18 @@ func (p *sClient) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, e
 	return p.fRequester.GetMsgBoxSize(pCtx, pFriend)
 }
 
-func (p *sClient) PushMessageToBox(pCtx context.Context, pAliasName string, pUID string, pBody string) (time.Time, error) {
-	return p.fRequester.PushMessageToBox(pCtx, pAliasName, pUID, pBody)
+func (p *sClient) PushMessageToBox(pCtx context.Context, pAliasName string, pUID string, pBody []byte, pRemote bool) (time.Time, error) {
+	return p.fRequester.PushMessageToBox(pCtx, pAliasName, pUID, pBody, pRemote)
 }
 
-func (p *sClient) LoadMessageFromBox(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
-	return p.fRequester.LoadMessageFromBox(pCtx, pAliasName, pUID)
+func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pAliasName string, pUID string, pRemote bool) (message.IMessage, error) {
+	return p.fRequester.LoadMessageFromBoxByUID(pCtx, pAliasName, pUID, pRemote)
 }
 
-func (p *sClient) LoadMessageByEnum(pCtx context.Context, pAliasName string, pIndex uint64) (message.IMessage, error) {
-	return p.fRequester.LoadMessageByEnum(pCtx, pAliasName, pIndex)
+func (p *sClient) LoadMessageFromBoxByEnum(pCtx context.Context, pAliasName string, pEnum uint64, pRemote bool) (message.IMessage, error) {
+	return p.fRequester.LoadMessageFromBoxByEnum(pCtx, pAliasName, pEnum, pRemote)
 }
 
-func (p *sClient) LoadMessageByUID(pCtx context.Context, pAliasName string, pUID string) (message.IMessage, error) {
-	return p.fRequester.LoadMessageByUID(pCtx, pAliasName, pUID)
-}
-
-func (p *sClient) ListenMsgbox(pCtx context.Context, pSubscribeID, pAliasName string) ([2]string, message.IMessageBody, error) {
-	return p.fRequester.ListenMsgbox(pCtx, pSubscribeID, pAliasName)
+func (p *sClient) ListenMsgbox(pCtx context.Context, pSubscribeID string) ([2]string, message.IMessageBody, error) {
+	return p.fRequester.ListenMsgbox(pCtx, pSubscribeID)
 }

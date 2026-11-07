@@ -9,7 +9,7 @@
 ## List of services
 
 1. [HLS=notifier](hls-notifier) - send and recv notification bytes
-2. [HLS=publisher](hls-publisher) - TODO:
+2. [HLS=publisher](hls-publisher) - push and load publication by option
 3. [HLS=filesharer](hls-filesharer) - view storage and download files 
 
 ## Borders and Limits

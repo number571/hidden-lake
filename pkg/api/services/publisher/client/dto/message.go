@@ -43,10 +43,6 @@ func LoadMessage(pData interface{}) (IMessage, error) {
 		return nil, err
 	}
 
-	if err := ValidateMessageBody(msg.GetBody()); err != nil {
-		return nil, err
-	}
-
 	return msg, nil
 }
 

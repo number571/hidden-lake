@@ -14,7 +14,7 @@ import (
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 )
 
-func TestHandleChanLoadAPI(t *testing.T) {
+func TestHandleMsgboxLoadAPI(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -36,14 +36,14 @@ func TestHandleChanLoadAPI(t *testing.T) {
 		"",
 		dto.NewMessage(
 			dto.NewMessageHead(dto.CIncomingState, dto.NewMessageUID()),
-			dto.NewMessageBody("", time.Now()),
+			dto.NewMessageBody([]byte{1}, time.Now()),
 		),
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	handlerX := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), testdb)
+	handlerX := HandleMsgboxLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), testdb)
 	if err := chatHistoryLoadRequestOK(handlerX); err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestHandleChanLoadAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	handlerZ := HandleChanLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
+	handlerZ := HandleMsgboxLoadAPI(ctx, httpLogger, &tsConfig{}, newTsHLKClient(true, true, true), newTsDatabase(false, true))
 	if err := chatHistoryLoadRequestOK(handlerZ); err == nil {
 		t.Fatal("success request with load message error")
 	}
@@ -65,7 +65,7 @@ func TestHandleChanLoadAPI(t *testing.T) {
 
 func chatHistoryLoadRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&index=0", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&nid=0", nil)
 
 	handler(w, req)
 	res := w.Result()

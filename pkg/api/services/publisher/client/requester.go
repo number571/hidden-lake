@@ -19,13 +19,12 @@ var (
 )
 
 const (
-	cHandleIndexTemplate               = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChanPushTemplate            = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s"
-	cHandleChanSizeTemplate            = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s"
-	cHandleChanLoadByEnumTemplate      = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&index=%d"
-	cHandleChanLoadByUIDTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s"
-	cHandleChanLoadByUIDRemoteTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote"
-	cHandleChanListenTemplate          = "http://" + "%s" + hls_settings.CHandleMsgboxListenPath + "?friend=%s&sid=%s"
+	cHandleIndexTemplate            = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleMsgboxPushTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s&remote=%t"
+	cHandleMsgboxSizeTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s"
+	cHandleMsgboxLoadByEnumTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&nid=%d&remote=%t"
+	cHandleMsgboxLoadByUIDTemplate  = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote=%t"
+	cHandleMsgboxListenTemplate     = "http://" + "%s" + hls_settings.CHandleMsgboxListenPath + "?sid=%s"
 )
 
 type sRequester struct {
@@ -63,7 +62,7 @@ func (p *sRequester) GetPushLimit(pCtx context.Context) (uint64, error) {
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, "_", "_"),
+		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, "_", "_", false),
 		nil,
 		nil,
 	)
@@ -82,7 +81,7 @@ func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanSizeTemplate, p.fHost, url.QueryEscape(pFriend)),
+		fmt.Sprintf(cHandleMsgboxSizeTemplate, p.fHost, url.QueryEscape(pFriend)),
 		nil,
 		nil,
 	)
@@ -96,15 +95,18 @@ func (p *sRequester) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64
 	return count, nil
 }
 
-func (p *sRequester) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody string) (time.Time, error) {
+func (p *sRequester) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody []byte, pRemote bool) (time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
 		return time.Time{}, ErrSizeMessageUID
+	}
+	if len(pBody) == 0 {
+		return time.Time{}, ErrSizeBodyData
 	}
 	_, rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleChanPushTemplate, p.fHost, pFriend, pUID),
+		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, pFriend, pUID, pRemote),
 		nil,
 		pBody,
 	)
@@ -118,12 +120,12 @@ func (p *sRequester) PushMessageToBox(pCtx context.Context, pFriend string, pUID
 	return t, nil
 }
 
-func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
+func (p *sRequester) LoadMessageFromBoxByEnum(pCtx context.Context, pFriend string, pIndex uint64, pRemote bool) (dto.IMessage, error) {
 	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex),
+		fmt.Sprintf(cHandleMsgboxLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex, pRemote),
 		nil,
 		nil,
 	)
@@ -137,12 +139,12 @@ func (p *sRequester) LoadMessageByEnum(pCtx context.Context, pFriend string, pIn
 	return msg, nil
 }
 
-func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
+func (p *sRequester) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, pUID string, pRemote bool) (dto.IMessage, error) {
 	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID)),
+		fmt.Sprintf(cHandleMsgboxLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID), pRemote),
 		nil,
 		nil,
 	)
@@ -156,35 +158,13 @@ func (p *sRequester) LoadMessageByUID(pCtx context.Context, pFriend string, pUID
 	return msg, nil
 }
 
-func (p *sRequester) LoadMessageFromBox(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
-	if !dto.MessageUIDIsValid(pUID) {
-		return nil, ErrSizeMessageUID
-	}
-	_, rsp, err := api.Request(
-		pCtx,
-		p.fClient,
-		http.MethodGet,
-		fmt.Sprintf(cHandleChanLoadByUIDRemoteTemplate, p.fHost, pFriend, pUID),
-		nil,
-		nil,
-	)
-	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
-	}
-	msg, err := dto.LoadMessage(rsp)
-	if err != nil {
-		return nil, errors.Join(ErrDecodeResponse, err)
-	}
-	return msg, nil
-}
-
-func (p *sRequester) ListenMsgbox(pCtx context.Context, pFriend string, pSid string) ([2]string, dto.IMessageBody, error) {
+func (p *sRequester) ListenMsgbox(pCtx context.Context, pSid string) ([2]string, dto.IMessageBody, error) {
 	for {
 		headers, res, err := api.Request(
 			pCtx,
 			p.fClient,
 			http.MethodGet,
-			fmt.Sprintf(cHandleChanListenTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pSid)),
+			fmt.Sprintf(cHandleMsgboxListenTemplate, p.fHost, url.QueryEscape(pSid)),
 			nil,
 			nil,
 		)
@@ -198,7 +178,10 @@ func (p *sRequester) ListenMsgbox(pCtx context.Context, pFriend string, pSid str
 		if err != nil {
 			return [2]string{}, nil, errors.Join(ErrDecodeResponse, err)
 		}
-		head := [2]string{headers.Get(hls_settings.CHeaderFriendName), headers.Get(hls_settings.CHeaderMessageUID)}
+		head := [2]string{
+			headers.Get(hls_settings.CHeaderFriendName),
+			headers.Get(hls_settings.CHeaderMessageUID),
+		}
 		return head, msgBody, nil
 	}
 }

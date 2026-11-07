@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"bytes"
 	"testing"
 	"time"
 )
@@ -19,7 +20,7 @@ func TestMessage(t *testing.T) {
 	t.Parallel()
 
 	timeNow := time.Now()
-	msgBody := "hello, world!"
+	msgBody := []byte("hello, world!")
 	msg := NewMessage(
 		NewMessageHead(CIncomingState, NewMessageUID()),
 		NewMessageBody(msgBody, timeNow),
@@ -31,7 +32,7 @@ func TestMessage(t *testing.T) {
 	if loadMsg.GetHead().GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg.GetBody().GetData() != msgBody {
+	if !bytes.Equal(loadMsg.GetBody().GetData(), msgBody) {
 		t.Fatal("message is invalid")
 	}
 	if loadMsg.GetBody().GetTimestamp() != timeNow.Format(time.DateTime) {
@@ -53,7 +54,7 @@ func TestMessage(t *testing.T) {
 	if loadMsg2.GetHead().GetState() != CIncomingState {
 		t.Fatal("is_incoming is invalid")
 	}
-	if loadMsg2.GetBody().GetData() != msgBody {
+	if !bytes.Equal(loadMsg2.GetBody().GetData(), msgBody) {
 		t.Fatal("message is invalid")
 	}
 	if loadMsg2.GetBody().GetTimestamp() != timeNow.Format(time.DateTime) {
