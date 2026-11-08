@@ -234,11 +234,8 @@ func TestHandleRequestAPI(t *testing.T) {
 	defer testAllPushFree(pushNode, pushCancel, pushSrv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TgAddrs[9],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[9],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	networkNode := node.GetAdapter().(tcp.ITCPAdapter).GetConnKeeper().GetNetworkNode()

@@ -74,51 +74,52 @@ Got response
 ### 1. /info
 
 - `200` - return file info
-- `400` - invalid input params (name, personal)
+- `400` - invalid input params (name, pub)
 - `404` - file not found
 - `405` - invalid method (not GET)
 - `500` - load file / info
 - `502` - get aliasName HLK
 
 ```json
-// header request size = (4 + 76) = 80B
-// body request size (with query params) can be = (144 - 80) = 64B
-[uint32]{"method":"GET","host":"hls-filesharer","path":"/info?name=&personal=false"}[body]
+// header request size = (4 + 71) = 75B
+// body request size (with query params) can be = (144 - 75) = 69B
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/info?name=&pub=false"}[body]
 
 // header response size = (4 + 12) = 16B
-// body response size (with name and size) can be = (144 - 16 - 70) = 58B
+// body response size (for file name) can be = (144 - 16 - 89) = 39B
 // INFORMATION: hash = trim(sha384) => size(20B)
-// RECOMMENDATION: file_name_size=20B
 [uint32]{"code":200}[body]
-[body]={"name":"","size":0,"hash":"0000000000000000000000000000000000000000"}
+[body]={"name":"","size":18446744073709551616,"hash":"0000000000000000000000000000000000000000"}
 ```
 
 ### 2. /list
 
 - `200` - return list of file names
-- `400` - invalid input params (page, personal)
+- `400` - invalid input params (page, pub)
 - `405` - invalid method (not GET)
 - `500` - load list of files
 - `502` - get aliasName HLK
 
 ```json
-// header request size = (4 + 76) = 80B
-// body request size (with query params) can be = (144 - 80) = 64B
-[uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&personal=false"}[body]
+// header request size = (4 + 71) = 75B
+// body request size (with query params) can be = (144 - 75) = 69B
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/list?page=&pub=false"}[body]
 
 // header response size = (4 + 31) = 35B
 // body response size (with list of JSON strings) can be = (144 - 35 - 2) = 107B
 //  where '2'=brackets='[]' in the JSON format
-// RECOMMENDATION: page_offset=5 and file_name_size<=18B ( [5] * ([18] + 2 + 1) = 105 < [107] ) 
+// RECOMMENDATION: 
+//  pages_count<=999 (5*999=4995 files for one private/public storage), page_offset=5, file_name_size<=18B:
+//      ( [5] * ([18] + 2 + 1) = 105 < [107] ) 
 //  where '2'=escapes='""', '1'=comma=',' in the JSON format
 [uint32]{"code":200,"head":{"P-C":"0"}}[body]
-[body]=[]
+[body]=<list[string]>
 ```
 
 ### 3. /load
 
 - `200` - return chunk of file
-- `400` - invalid input params (name, chunk, personal)
+- `400` - invalid input params (name, chunk, pub)
 - `404` - file not found
 - `405` - invalid method (not GET)
 - `411` - invalid file chunk number
@@ -126,14 +127,15 @@ Got response
 - `502` - get aliasName HLK, get limit size on load from HLK
 
 ```json
-// header request size = (4 + 83) = 87B
-// body request size (with query params) can be = (144 - 87) = 57B
-[uint32]{"method":"GET","host":"hls-filesharer","path":"/load?name=&chunk=&personal=false"}[body]
+// header request size = (4 + 78) = 82B
+// body request size (with query params) can be = (144 - 82) = 62B
+[uint32]{"method":"GET","host":"hls-filesharer","path":"/load?name=&chunk=&pub=false"}[body]
 
 // header response size = (4 + 46) = 50B
 // body response size can be = (144 - 50) = 94B
 // INFORMATION: hash = trim(sha384) => size(8B)
 [uint32]{"code":200,"head":{"F-H":"0000000000000000"}}[body]
+[body]=<bytes>
 ```
 
 ## HLS API
@@ -141,15 +143,15 @@ Got response
 ```
 1. GET                  /api/index              | params = []
                                                 |> description = get name of service
-2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"personal":?bool]
+2. GET                  /api/remote/list        | params = ["friend":string,"page":uint64,"pub":?bool]
                                                 |> description = get list of files from storage
 3. GET                  /api/remote/list/proc   | params = []
                                                 |> description = get list of file download processes
-4. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"personal":?bool]
+4. GET, DELETE          /api/remote/file        | params = ["friend":string,"name":string,"pub":?bool]
                                                 |> description = download / delete file content by name
-5. GET, DELETE          /api/remote/file/proc   | params = ["friend":string,"name":string,"personal":?bool]
+5. GET, DELETE          /api/remote/file/proc   | params = ["friend":string,"name":string,"pub":?bool]
                                                 |> description = view / cancel file download process
-6. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"personal":?bool]
+6. GET                  /api/remote/file/info   | params = ["friend":string,"name":string,"pub":?bool]
                                                 |> description = get info of the file by name
 7. GET                  /api/local/list         | params = ["friend":?string,"page":uint64]
                                                 |> description = get list of files from storage
@@ -183,7 +185,7 @@ hidden-lake-service=filesharer
 ### 2. /api/remote/list
 
 - `200` - return list of files
-- `400` - invalid input params (friend, page, personal)
+- `400` - invalid input params (friend, page, pub)
 - `405` - invalid method (not GET)
 - `418` - invalid response from node
 - `502` - fetch request HLK
@@ -191,7 +193,7 @@ hidden-lake-service=filesharer
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/remote/list?friend=Bob&page=0&personal=false"
+curl -i -X GET "http://localhost:9541/api/remote/list?friend=Bob&page=0&pub=false"
 ```
 
 #### 2.1. GET Response
@@ -226,14 +228,14 @@ Date: Mon, 19 Jan 2026 08:05:06 GMT
 Content-Length: 101
 Content-Type: application/json; charset=utf-8
 
-[{"friend":"Bob","name":"example.txt","personal":"false"}]
+[{"friend":"Bob","name":"example.txt","pub":"false"}]
 ```
 
 ### 4. /api/remote/file
 
 - `200` - return file content / delete file
 - `202` - download process already exist 
-- `400` - invalid input params (friend, name, personal)
+- `400` - invalid input params (friend, name, pub)
 - `405` - invalid method (not GET, DELETE)
 - `418` - invalid response from node
 - `500` - mkdir storage, remove file, build/read stream, open file
@@ -242,7 +244,7 @@ Content-Type: application/json; charset=utf-8
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
+curl -i -X GET "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&pub=false"
 ```
 
 #### 4.1. GET Response
@@ -260,7 +262,7 @@ hello, world!
 #### 4.2. DELETE Request
 
 ```bash
-curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&personal=false"
+curl -i -X DELETE "http://localhost:9541/api/remote/file?friend=Bob&name=example.txt&pub=false"
 ```
 
 #### 4.2. DELETE Response
@@ -277,14 +279,14 @@ success: delete file
 ### 5. /api/remote/file/proc
 
 - `200` - download process info / cancel download
-- `400` - invalid input params (friend, name, personal)
+- `400` - invalid input params (friend, name, pub)
 - `404` - process not found
 - `405` - invalid method (not GET, DELETE)
 
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/remote/file/proc?friend=&name=example.txt&personal=false"
+curl -i -X GET "http://localhost:9541/api/remote/file/proc?friend=&name=example.txt&pub=false"
 ```
 
 #### 5.1. GET Response
@@ -295,13 +297,13 @@ Date: Sun, 01 Feb 2026 16:11:23 GMT
 Content-Length: 99
 Content-Type: application/json; charset=utf-8
 
-{{"friend":"Bob","name":"example.txt","personal":"false"},{"incindex":0,"download":0,"filesize":0}}
+{{"friend":"Bob","name":"example.txt","pub":"false"},{"incindex":0,"download":0,"filesize":0}}
 ```
 
 #### 5.2. DELETE Request
 
 ```bash
-curl -i -X DELETE "http://localhost:9541/api/remote/file/proc?friend=Alice&name=example.txt&personal=false"
+curl -i -X DELETE "http://localhost:9541/api/remote/file/proc?friend=Alice&name=example.txt&pub=false"
 ```
 
 #### 5.2. DELETE Response
@@ -318,7 +320,7 @@ success: cancel download
 ### 6. /api/remote/file/info
 
 - `200` - return file info
-- `400` - invalid input params (friend, name, personal)
+- `400` - invalid input params (friend, name, pub)
 - `405` - invalid method (not GET)
 - `418` - invalid response from node
 - `502` - fetch request HLK
@@ -326,7 +328,7 @@ success: cancel download
 #### 6.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=example.txt&personal=false"
+curl -i -X GET "http://localhost:9541/api/remote/file/info?friend=Bob&name=example.txt&pub=false"
 ```
 
 #### 6.1. GET Response

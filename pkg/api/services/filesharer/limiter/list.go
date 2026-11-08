@@ -15,7 +15,7 @@ var (
 	gListReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
-			WithPath(hls_settings.CAppShortName + "/list?page=&personal=false").
+			WithPath(hls_settings.CAppShortName + "/list?page=&pub=false").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

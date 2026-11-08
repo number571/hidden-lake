@@ -21,11 +21,8 @@ func TestHandleNetworkKeyAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TgAddrs[14],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[14],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	testGetNetworkKey(t, client, "test")

@@ -17,24 +17,24 @@ func GetPrivateStoragePath(
 	pPathTo string,
 	pAliasName string,
 ) string {
-	return getStoragePath(cStgPrivateType, pPathTo, pAliasName, true)
+	return getStoragePath(cStgPrivateType, pPathTo, pAliasName, false)
 }
 
 func GetSharingStoragePath(
 	pPathTo string,
 	pAliasName string,
-	pPersonal bool,
+	pPublic bool,
 ) string {
-	return getStoragePath(cStgSharingType, pPathTo, pAliasName, pPersonal)
+	return getStoragePath(cStgSharingType, pPathTo, pAliasName, pPublic)
 }
 
 func getStoragePath(
 	pStgType iStgType,
 	pPathTo string,
 	pAliasName string,
-	pPersonal bool,
+	pPublic bool,
 ) string {
-	if !pPersonal {
+	if pPublic {
 		return filepath.Join(pPathTo, hls_filesharer_settings.CPathSharingPublicSTG)
 	}
 

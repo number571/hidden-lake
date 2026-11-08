@@ -33,7 +33,7 @@ func TestHandleIncomingInfoHTTP(t *testing.T) {
 	if err := incomingInfoRequestOK(handler); err != nil {
 		t.Fatal(err)
 	}
-	if err := incomingInfoRequestInvalidPersonal(handler); err != nil {
+	if err := incomingInfoRequestInvalidPublic(handler); err != nil {
 		t.Fatal(err)
 	}
 	if err := incomingInfoRequestInvalidFileName(handler); err != nil {
@@ -57,8 +57,8 @@ func TestHandleIncomingInfoHTTP(t *testing.T) {
 
 func incomingInfoRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&personal=false", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&pub=true", nil)
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -77,8 +77,8 @@ func incomingInfoRequestOK(handler http.HandlerFunc) error {
 
 func incomingInfoRequestInvalidFriend(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	// aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName) (void)
-	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&personal=true", nil)
+	// aliasName := pR.Header.Get(hlk_settings.CHeaderFriendName) (void)
+	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&pub=false", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -95,9 +95,9 @@ func incomingInfoRequestInvalidFriend(handler http.HandlerFunc) error {
 	return nil
 }
 
-func incomingInfoRequestInvalidPersonal(handler http.HandlerFunc) error {
+func incomingInfoRequestInvalidPublic(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&personal=qwefew", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&pub=qwefew", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -116,7 +116,7 @@ func incomingInfoRequestInvalidPersonal(handler http.HandlerFunc) error {
 
 func incomingInfoRequestInvalidFileName(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=&personal=false", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=&pub", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -154,8 +154,8 @@ func incomingInfoRequestInvalidMethod(handler http.HandlerFunc) error {
 
 func incomingInfoRequestNotFoundFile(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=file111.txt&personal=false", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req := httptest.NewRequest(http.MethodGet, "/?name=file111.txt&pub", nil)
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()

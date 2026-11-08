@@ -21,18 +21,3 @@ type IClient interface {
 	ProduceMessage(context.Context, layer1.IMessage) error
 	ConsumeMessage(context.Context, string) (layer1.IMessage, error)
 }
-
-type IRequester interface {
-	GetIndex(context.Context, string) error
-	GetSettings(context.Context) (config.IConfigSettings, error)
-
-	GetOnlines(context.Context) ([]string, error)
-	DelOnline(context.Context, string) error
-
-	GetConnections(context.Context) ([]string, error)
-	AddConnection(context.Context, string) error
-	DelConnection(context.Context, string) error
-
-	ProduceMessage(context.Context, layer1.IMessage) error
-	ConsumeMessage(context.Context, string) (layer1.IMessage, error)
-}

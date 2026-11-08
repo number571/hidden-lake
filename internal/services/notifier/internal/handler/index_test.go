@@ -23,9 +23,7 @@ import (
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
-	client := hls_client.NewClient(
-		hls_client.NewRequester("", &http.Client{}),
-	)
+	client := hls_client.NewClient("", &http.Client{})
 
 	if err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success incorrect getIndex")

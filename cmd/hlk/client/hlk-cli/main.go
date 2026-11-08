@@ -64,11 +64,8 @@ func main() {
 
 func runFunction(pCtx context.Context, pArgs []string) error {
 	hlkClient := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			gFlags.Get("-k").GetStringValue(pArgs),
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		),
+		gFlags.Get("-k").GetStringValue(pArgs),
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 	)
 
 	settings, err := hlkClient.GetSettings(pCtx)

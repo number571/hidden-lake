@@ -55,10 +55,8 @@ func main() {
 
 func runFunction(pCtx context.Context, pArgs []string) {
 	hlsClient := hls_client.NewClient(
-		hls_client.NewRequester(
-			gFlags.Get("-s").GetStringValue(pArgs),
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		),
+		gFlags.Get("-s").GetStringValue(pArgs),
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 	)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)

@@ -71,7 +71,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 		t.Fatal("success request with failed get message size")
 	}
 
-	if err := incomingLoadRequestInvalidPersonal(handler); err != nil {
+	if err := incomingLoadRequestInvalidPublic(handler); err != nil {
 		t.Fatal(err)
 	}
 	if err := incomingLoadRequestInvalidFileName(handler); err != nil {
@@ -84,7 +84,7 @@ func TestHandleIncomingLoadHTTP(t *testing.T) {
 
 func incomingLoadRequestGetSharingStorage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&chunk=0&personal", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=file.txt&chunk=0", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -101,9 +101,9 @@ func incomingLoadRequestGetSharingStorage(handler http.HandlerFunc) error {
 	return nil
 }
 
-func incomingLoadRequestInvalidPersonal(handler http.HandlerFunc) error {
+func incomingLoadRequestInvalidPublic(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0&personal=qwerty", nil)
+	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0&pub=qwerty", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -179,8 +179,8 @@ func incomingLoadRequestNotFound(handler http.HandlerFunc) error {
 
 func incomingLoadRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req := httptest.NewRequest(http.MethodGet, "/load?name=file.txt&chunk=0&pub=true", nil)
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -200,7 +200,7 @@ func incomingLoadRequestOK(handler http.HandlerFunc) error {
 func incomingLoadRequestFileNotFound(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/load?name=file_not_found.txt&chunk=0", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()

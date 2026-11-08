@@ -91,11 +91,8 @@ func TestHandleConfigSettingsAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			addr,
-			&http.Client{Timeout: time.Minute},
-		),
+		addr,
+		&http.Client{Timeout: time.Minute},
 	)
 
 	sett, err := client.GetSettings(context.Background())

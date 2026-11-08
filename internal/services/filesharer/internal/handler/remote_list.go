@@ -50,14 +50,14 @@ func HandleRemoteListAPI(
 			}
 		}
 
-		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_public"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse public")
 			return
 		}
 
-		req := request.NewListRequest(page, isPersonal)
+		req := request.NewListRequest(page, isPublic)
 		resp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))

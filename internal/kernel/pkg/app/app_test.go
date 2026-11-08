@@ -118,11 +118,8 @@ func TestApp(t *testing.T) {
 	}()
 
 	client := client.NewClient(
-		client.NewBuilder(),
-		client.NewRequester(
-			testutils.TgAddrs[3],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[3],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	err1 := testutils_gopeer.TryN(

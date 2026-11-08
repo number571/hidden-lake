@@ -273,22 +273,18 @@ func (p *sHTTPAdapter) runSubscriber(pCtx context.Context) error {
 
 func (p *sHTTPAdapter) produceMessage(pCtx context.Context, pHost string, pMsg layer1.IMessage) error {
 	hlaClient := client.NewClient(
-		client.NewRequester(
-			pHost,
-			&http.Client{Timeout: p.fSettings.GetHandleTimeout()},
-			p.fSettings.GetAdapterSettings(),
-		),
+		pHost,
+		&http.Client{Timeout: p.fSettings.GetHandleTimeout()},
+		p.fSettings.GetAdapterSettings(),
 	)
 	return hlaClient.ProduceMessage(pCtx, pMsg)
 }
 
 func (p *sHTTPAdapter) consumeMessage(pCtx context.Context, pHost string) (layer1.IMessage, error) {
 	hlaClient := client.NewClient(
-		client.NewRequester(
-			pHost,
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-			p.fSettings.GetAdapterSettings(),
-		),
+		pHost,
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+		p.fSettings.GetAdapterSettings(),
 	)
 	return hlaClient.ConsumeMessage(pCtx, p.fSettings.GetSubscribeID())
 }

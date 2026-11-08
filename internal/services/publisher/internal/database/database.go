@@ -108,11 +108,11 @@ func (p *sKeyValueDB) Recv(pR string, pUID string) error {
 	msgHead := msg.GetHead()
 
 	switch msgHead.GetState() {
-	case message.CReceivedState:
+	case message.CDeliveredState:
 		// pass
 	case message.CSendingState:
 		newMsg := message.NewMessage(
-			message.NewMessageHead(message.CReceivedState, msgHead.GetUID()),
+			message.NewMessageHead(message.CDeliveredState, msgHead.GetUID()),
 			msg.GetBody(),
 		)
 		if err := p.fDB.Set(key, newMsg.ToBytes()); err != nil {

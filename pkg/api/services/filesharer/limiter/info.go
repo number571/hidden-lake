@@ -15,7 +15,7 @@ var (
 	gInfoReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
-			WithPath(hls_settings.CAppShortName + "/info?name=&personal=false").
+			WithPath(hls_settings.CAppShortName + "/info?name=&pub=false").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

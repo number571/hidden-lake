@@ -96,11 +96,8 @@ func (p *sApp) enable(pCtx context.Context) state.IStateF {
 		msgBroker := broker.NewDataBroker(256, 256)
 
 		hlkClient := hlk_client.NewClient(
-			hlk_client.NewBuilder(),
-			hlk_client.NewRequester(
-				p.fConfig.GetConnection(),
-				&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-			),
+			p.fConfig.GetConnection(),
+			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 		)
 
 		p.initExternalServiceHTTP(pCtx, p.fConfig, msgBroker)

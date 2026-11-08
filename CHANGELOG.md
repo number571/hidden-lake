@@ -190,7 +190,7 @@
 ### CHANGES
 
 - `cmd/hlk`: change API '/api/kernel/pubkey' -> '/api/profile/pubkey'
-- `cmd/hlk`: change headers CHeaderSenderName, CHeaderResponseMode
+- `cmd/hlk`: change headers CHeaderFriendName, CHeaderResponseMode
 - `cmd/hlc,cmd/hlk`: change applications/services names
 
 ### BUG FIXES

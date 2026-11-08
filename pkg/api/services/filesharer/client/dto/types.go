@@ -26,7 +26,7 @@ type IDownloadProcessKey interface {
 
 	GetFriend() string
 	GetFileName() string
-	GetIsPersonal() bool
+	GetIsPublic() bool
 }
 
 type IDownloadProcessValue interface {

@@ -49,10 +49,8 @@ func TestHandler(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	client := hls_client.NewClient(
-		hls_client.NewRequester(
-			testutils.TgAddrs[24],
-			&http.Client{Timeout: time.Second},
-		),
+		testutils.TgAddrs[24],
+		&http.Client{Timeout: time.Second},
 	)
 
 	if err := client.GetIndex(context.Background()); err != nil {

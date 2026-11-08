@@ -24,4 +24,8 @@
 24. + Delete HLS=pinger 
 25. HLK symmetric scheme - generate key by password
 26. + HLS=filesharer: сохранять / подгружать file info при начале скачивания 
-27. 
+27. + Отрефакторить / изменить API клиентов
+28. + Изменить API в HLK 
+29. Дописать API README для HLS=publisher 
+30. Реализовать examples для HLS=publisher 
+31. 

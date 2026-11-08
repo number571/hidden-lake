@@ -11,12 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/number571/go-peer/pkg/encoding"
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/kernel/pkg/app/config"
 	std_logger "github.com/number571/hidden-lake/internal/utils/logger/std"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
-	friend "github.com/number571/hidden-lake/pkg/api/kernel/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/kernel/client/scheme"
 	testutils "github.com/number571/hidden-lake/test/utils"
 )
@@ -77,12 +75,8 @@ func TestHandleFriendsAPI2(t *testing.T) {
 }
 
 func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "abc",
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer([]byte("abc")))
 
 	handler(w, req)
 	res := w.Result()
@@ -100,13 +94,10 @@ func friendsAPIRequestDeleteOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "new_friend",
-		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(
+		[]byte(fmt.Sprintf(`["%s","%s"]`, "new_friend", tgPrivKey3.GetPubKey().ToString())),
+	))
 
 	handler(w, req)
 	res := w.Result()
@@ -124,12 +115,8 @@ func friendsAPIRequestPostOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestNotFound(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "notfound",
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer([]byte("notfound")))
 
 	handler(w, req)
 	res := w.Result()
@@ -166,13 +153,8 @@ func friendsAPIRequestOK(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "new_friend",
-		FFriendKey: "abc",
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`["new_friend","abc"]`)))
 
 	handler(w, req)
 	res := w.Result()
@@ -190,13 +172,10 @@ func friendsAPIRequestPubKey(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestExist(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "abc",
-		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(
+		fmt.Sprintf(`["%s","%s"]`, "abc", tgPrivKey3.GetPubKey().ToString()),
+	)))
 
 	handler(w, req)
 	res := w.Result()
@@ -214,13 +193,10 @@ func friendsAPIRequestExist(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "",
-		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
-	}
-
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(encoding.SerializeJSON(newFriend)))
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(
+		fmt.Sprintf(`["%s","%s"]`, "", tgPrivKey3.GetPubKey().ToString()),
+	)))
 
 	handler(w, req)
 	res := w.Result()
@@ -238,16 +214,11 @@ func friendsAPIRequestAliasName(handler http.HandlerFunc) error {
 }
 
 func friendsAPIRequestDecode(handler http.HandlerFunc) error {
-	newFriend := friend.SFriend{
-		FAliasName: "new_friend",
-		FFriendKey: tgPrivKey3.GetPubKey().ToString(),
-	}
-
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(bytes.Join(
 		[][]byte{
 			[]byte{1},
-			encoding.SerializeJSON(newFriend),
+			[]byte(fmt.Sprintf(`["%s","%s"]`, "new_friend", tgPrivKey3.GetPubKey().ToString())),
 		},
 		[]byte{},
 	)))
@@ -296,11 +267,8 @@ func TestHandleFriendsAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TgAddrs[7],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[7],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	aliasName := "test_name4"

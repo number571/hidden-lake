@@ -34,9 +34,7 @@ var (
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
-	client := hls_client.NewClient(
-		hls_client.NewRequester("", &http.Client{}),
-	)
+	client := hls_client.NewClient("", &http.Client{})
 
 	ctx := context.Background()
 	if err := client.GetIndex(ctx); err == nil {

@@ -40,7 +40,7 @@ func HandleLocalFileInfoAPI(
 			return
 		}
 
-		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName != "")
+		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName == "")
 		fullPath := filepath.Join(stgPath, fileName)
 
 		info, err := fileinfo.NewFileInfo(fullPath)

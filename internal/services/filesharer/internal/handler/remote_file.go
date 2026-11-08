@@ -57,17 +57,17 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_public"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse public")
 			return
 		}
 
 		ctx, cancel := context.WithCancel(pCtx)
 		defer cancel()
 
-		dpKey := dto.NewDownloadProcessKey(aliasName, fileName, isPersonal)
+		dpKey := dto.NewDownloadProcessKey(aliasName, fileName, isPublic)
 
 		if ok := pProcessManager.TryLock(dpKey, cancel); !ok {
 			pW.Header().Set(hls_settings.CHeaderInProcess, hls_settings.CHeaderProcessModeY)
@@ -84,8 +84,8 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		filePath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPersonal))
-		fileInfoPath := filepath.Join(stgPath, fmt.Sprintf("~%s.p%t", fileName, isPersonal))
+		filePath := filepath.Join(stgPath, fmt.Sprintf("%s.p%t", fileName, isPublic))
+		fileInfoPath := filepath.Join(stgPath, fmt.Sprintf("~%s.p%t", fileName, isPublic))
 
 		if pR.Method == http.MethodDelete {
 			var hasError bool
@@ -106,7 +106,7 @@ func HandleRemoteFileAPI(
 			return
 		}
 
-		req := request.NewInfoRequest(fileName, isPersonal)
+		req := request.NewInfoRequest(fileName, isPublic)
 		resp, err := pHlkClient.FetchRequest(ctx, aliasName, req)
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
@@ -167,7 +167,7 @@ func HandleRemoteFileAPI(
 			aliasName,
 			pHlkClient,
 			fileInfo,
-			isPersonal,
+			isPublic,
 			func(u uint64) {
 				_ = pProcessManager.Update(dpKey, [2]uint64{u, fileInfo.GetSize()})
 			},

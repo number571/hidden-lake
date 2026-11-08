@@ -37,7 +37,7 @@ func TestHandleOnlineAPI2(t *testing.T) {
 	ctx := context.Background()
 
 	epClients := []client.IClient{
-		client.NewClient(&tsRequester{}),
+		&tsClient{},
 	}
 
 	handler := HandleNetworkOnlineAPI(ctx, httpLogger, epClients)
@@ -53,7 +53,7 @@ func TestHandleOnlineAPI2(t *testing.T) {
 	}
 
 	epClientsx := []client.IClient{
-		client.NewClient(&tsRequester{fWithFail: true}),
+		&tsClient{fWithFail: true},
 	}
 
 	handlerx := HandleNetworkOnlineAPI(ctx, httpLogger, epClientsx)
@@ -132,11 +132,8 @@ func TestHandleOnlineAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TgAddrs[12],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[12],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	testGetOnlines(t, client)

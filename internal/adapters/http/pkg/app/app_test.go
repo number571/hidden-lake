@@ -123,15 +123,13 @@ func TestApp(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	intClient := client.NewClient(
-		client.NewRequester(
-			testutils.TgAddrs[21],
-			&http.Client{Timeout: time.Minute},
-			adapters.NewSettings(&adapters.SSettings{
-				FMessageSizeBytes: 8192,
-				FWorkSizeBits:     10,
-				FNetworkKey:       "_",
-			}),
-		),
+		testutils.TgAddrs[21],
+		&http.Client{Timeout: time.Minute},
+		adapters.NewSettings(&adapters.SSettings{
+			FMessageSizeBytes: 8192,
+			FWorkSizeBits:     10,
+			FNetworkKey:       "_",
+		}),
 	)
 
 	err1 := testutils_gopeer.TryN(
@@ -163,15 +161,13 @@ func TestApp(t *testing.T) {
 	}
 
 	extClient := client.NewClient(
-		client.NewRequester(
-			testutils.TgAddrs[22],
-			&http.Client{Timeout: time.Minute},
-			adapters.NewSettings(&adapters.SSettings{
-				FMessageSizeBytes: 8192,
-				FWorkSizeBits:     10,
-				FNetworkKey:       "_",
-			}),
-		),
+		testutils.TgAddrs[22],
+		&http.Client{Timeout: time.Minute},
+		adapters.NewSettings(&adapters.SSettings{
+			FMessageSizeBytes: 8192,
+			FWorkSizeBits:     10,
+			FNetworkKey:       "_",
+		}),
 	)
 
 	msg2Bytes := []byte("hello, world!")

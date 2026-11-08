@@ -33,7 +33,7 @@ func HandleIncomingNotifyHTTP(
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderFriendName)
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())

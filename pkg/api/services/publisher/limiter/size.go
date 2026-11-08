@@ -15,7 +15,7 @@ var (
 	gSizeReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
-			WithPath(hls_settings.CAppShortName + "/size").
+			WithPath(hls_settings.CAppShortName + "/size?pub=false").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

@@ -23,11 +23,9 @@ func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
 	client := client.NewClient(
-		client.NewRequester(
-			testutils.TcUnknownHost,
-			&http.Client{Timeout: time.Second},
-			adapters.NewSettings(&adapters.SSettings{}),
-		),
+		testutils.TcUnknownHost,
+		&http.Client{Timeout: time.Second},
+		adapters.NewSettings(&adapters.SSettings{}),
 	)
 
 	if err := client.AddConnection(context.Background(), ""); err == nil {

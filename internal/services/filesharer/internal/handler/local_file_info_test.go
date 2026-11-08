@@ -63,7 +63,7 @@ func localFileInfoRequestOK(handler http.HandlerFunc) error {
 
 func localFileInfoRequestPersonalOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?name=something.txt&friend=abc", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?name=something.txt&friend=abc&pub=false", nil)
 
 	handler(w, req)
 	res := w.Result()

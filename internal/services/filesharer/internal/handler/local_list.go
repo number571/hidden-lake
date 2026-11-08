@@ -45,7 +45,7 @@ func HandleLocalListAPI(
 			}
 		}
 
-		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName != "")
+		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, aliasName == "")
 		pagesCount, list, err := utils.GetListFiles(stgPath, page, pConfig.GetSettings().GetPageOffset())
 		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("open storage"))

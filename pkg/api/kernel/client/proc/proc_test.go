@@ -10,19 +10,19 @@ import (
 func TestFriendsMapToList(t *testing.T) {
 	t.Parallel()
 
-	sortList := []string{"Alice", "Bob", "Carol"}
+	sortList := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
 	fMap := make(map[string]layer2.IParticipantKey, len(sortList))
 	for _, v := range sortList {
 		fMap[v] = asymmetric.NewPrivKey().GetPubKey()
 	}
 
 	list := FriendsMapToList(fMap)
-	if len(list) != 3 {
-		t.Fatal("len(list) != 3")
+	if len(list) != 10 {
+		t.Fatal("len(list) != 10")
 	}
 
 	for i := range list {
-		if list[i].FAliasName != sortList[i] {
+		if list[i][0] != sortList[i] {
 			t.Fatal("sort failed")
 		}
 	}

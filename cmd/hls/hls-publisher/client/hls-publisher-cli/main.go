@@ -60,10 +60,9 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	)
 
 	hlsClient := hls_client.NewClient(
-		hls_client.NewRequester(
-			gFlags.Get("-s").GetStringValue(pArgs),
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		),
+		gFlags.Get("-s").GetStringValue(pArgs),
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+		hls_client.WithRemote(true),
 	)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
@@ -87,7 +86,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	}
 
 	for ; index < count; index++ {
-		msg, err := hlsClient.LoadMessageFromBoxByEnum(pCtx, friend, index, false)
+		msg, err := hlsClient.LoadMessageFromBoxByEnum(pCtx, friend, index)
 		if err != nil {
 			fmt.Printf("error: %s\n", err.Error())
 			return
@@ -99,10 +98,10 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		case dto.CIncomingState:
 			sender = friend
 			state = "<"
-		case dto.CReceivedState:
+		case dto.CDeliveredState:
 			state = "v"
 		case dto.CSendingState:
-			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData, true) // nolint:errcheck
+			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData) // nolint:errcheck
 			state = ">"
 		}
 		strMsg := string(msgData)
@@ -141,7 +140,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
 			continue
 		}
-		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg), true) // nolint:errcheck
+		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg)) // nolint:errcheck
 	}
 }
 

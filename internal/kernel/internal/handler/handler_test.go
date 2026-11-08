@@ -161,7 +161,7 @@ func testRunService(ctx context.Context, wcfg config.IWrapper, node anonymity.IN
 	)
 
 	epClients := []hla_http_client.IClient{
-		hla_http_client.NewClient(&tsRequester{}),
+		&tsClient{},
 	}
 
 	cfg := wcfg.GetConfig()

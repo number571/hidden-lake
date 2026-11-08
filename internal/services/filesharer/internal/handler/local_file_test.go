@@ -56,7 +56,7 @@ func TestHandleLocalFileAPI(t *testing.T) {
 
 func localFileRequestGetOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=something.txt", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=something.txt&pub", nil)
 
 	handler(w, req)
 	res := w.Result()

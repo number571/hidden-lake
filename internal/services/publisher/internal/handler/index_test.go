@@ -26,9 +26,7 @@ import (
 func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
-	client := hls_client.NewClient(
-		hls_client.NewRequester("", &http.Client{}),
-	)
+	client := hls_client.NewClient("", &http.Client{})
 
 	if err := client.GetIndex(context.Background()); err == nil {
 		t.Fatal("success incorrect getIndex")
@@ -42,13 +40,13 @@ func TestErrorsAPI(t *testing.T) {
 	if _, _, err := client.ListenMsgbox(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}, false); err == nil {
+	if _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
-	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "", 0, false); err == nil {
+	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "", 0); err == nil {
 		t.Fatal("success incorrect loadMessageByEnum")
 	}
-	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "", "", false); err == nil {
+	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect loadMessageByUID")
 	}
 }

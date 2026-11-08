@@ -12,7 +12,7 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls-filesharer/client/hls-
 $ hls-filesharer-cli --service {{HLS-address}} --path {{path-to-files}} --type {{type-of-storage}} --friend {{friend-name}} --do {{function-name}} --arg {{arguments}}
 # service = address of the HLS internal address (default localhost:9541)
 # path    = path to store download files (default .)
-# type    = type of storage [local|personal|public] (default public)
+# type    = type of storage [local|personal|public] (default personal)
 # friend  = alias name of the friend
 # do      = function to run [list|info|download|upload|delete]
 # arg     = arguments of the function
@@ -25,49 +25,49 @@ $ hls-filesharer-cli --service {{HLS-address}} --path {{path-to-files}} --type {
 1. Remote list
 
 ```bash
-### Get list of files from friend (public) ###
+### Get list of files from friend (personal) ###
 $ hls-filesharer-cli -f {{friend-name}} -d list -a {{page}}
 ```
 
 ```bash
-### Get list of files from friend (personal) ###
-$ hls-filesharer-cli -f {{friend-name}} -t personal -d list -a {{page}}
+### Get list of files from friend (public) ###
+$ hls-filesharer-cli -f {{friend-name}} -t public -d list -a {{page}}
 ```
 
 2. Remote info
 
 ```bash
-### Get info of the file from friend (public) ###
+### Get info of the file from friend (personal) ###
 $ hls-filesharer-cli -f {{friend-name}} -d info -a {{filename}}
 ```
 
 ```bash
-### Get info of the file from friend (personal) ###
-$ hls-filesharer-cli -f {{friend-name}} -t personal -d info -a {{filename}}
+### Get info of the file from friend (public) ###
+$ hls-filesharer-cli -f {{friend-name}} -t public -d info -a {{filename}}
 ```
 
 3. Remote download
 
 ```bash
-### Download file from friend (public) ###
+### Download file from friend (personal) ###
 $ hls-filesharer-cli -f {{friend-name}} -d download -a {{filename}}
 ```
 
 ```bash
-### Download file from friend (personal) ###
-$ hls-filesharer-cli -f {{friend-name}} -t personal -d download -a {{filename}}
+### Download file from friend (public) ###
+$ hls-filesharer-cli -f {{friend-name}} -t public -d download -a {{filename}}
 ```
 
 4. Remote delete
 
 ```bash
-### Delete file from private storage of friend's (public) ###
+### Delete file from private storage of friend's (personal) ###
 $ hls-filesharer-cli -f {{friend-name}} -d delete -a {{filename}}
 ```
 
 ```bash
-### Delete file from private storage of friend's (personal) ###
-$ hls-filesharer-cli -f {{friend-name}} -t personal -d delete -a {{filename}}
+### Delete file from private storage of friend's (public) ###
+$ hls-filesharer-cli -f {{friend-name}} -t public -d delete -a {{filename}}
 ```
 
 5. Local list

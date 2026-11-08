@@ -89,7 +89,7 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender layer2.IParticipantKey) {
 	for aliasName, key := range pCfg.GetFriends() {
 		if key.ToString() == pSender.ToString() {
-			pReq.Header.Set(hlk_settings.CHeaderSenderName, aliasName)
+			pReq.Header.Set(hlk_settings.CHeaderFriendName, aliasName)
 			break
 		}
 	}

@@ -38,7 +38,7 @@ func TestHandleRemoteListAPI(t *testing.T) {
 	if err := remoteListRequestInvalidPage(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := remoteListRequestInvalidPersonal(handlerX); err != nil {
+	if err := remoteListRequestInvalidPublic(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
@@ -60,7 +60,7 @@ func TestHandleRemoteListAPI(t *testing.T) {
 
 func remoteListRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&personal", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -75,7 +75,7 @@ func remoteListRequestOK(handler http.HandlerFunc) error {
 
 func remoteListRequestInvalidPage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&personal&page=qqqq", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&page=qqqq", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -88,9 +88,9 @@ func remoteListRequestInvalidPage(handler http.HandlerFunc) error {
 	return nil
 }
 
-func remoteListRequestInvalidPersonal(handler http.HandlerFunc) error {
+func remoteListRequestInvalidPublic(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?page=0&personal=gjrid", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?page=0&pub=gjrid", nil)
 
 	handler(w, req)
 	res := w.Result()

@@ -38,7 +38,7 @@ func TestHandleRemoteFileInfoAPI(t *testing.T) {
 	if err := remoteFileInfoRequestInvalidFileName(handlerX); err != nil {
 		t.Fatal(err)
 	}
-	if err := remoteFileInfoRequestInvalidPersonal(handlerX); err != nil {
+	if err := remoteFileInfoRequestInvalidPublic(handlerX); err != nil {
 		t.Fatal(err)
 	}
 
@@ -65,7 +65,7 @@ func TestHandleRemoteFileInfoAPI(t *testing.T) {
 
 func remoteFileInfoRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=example.txt&personal", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=example.txt", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -108,9 +108,9 @@ func remoteFileInfoRequestInvalidFileName(handler http.HandlerFunc) error {
 	return nil
 }
 
-func remoteFileInfoRequestInvalidPersonal(handler http.HandlerFunc) error {
+func remoteFileInfoRequestInvalidPublic(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=example.txt&personal=8492", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&name=example.txt&pub=8492", nil)
 
 	handler(w, req)
 	res := w.Result()

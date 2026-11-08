@@ -10,7 +10,7 @@ import (
 	"github.com/number571/go-peer/pkg/logger"
 	"github.com/number571/hidden-lake/internal/services/publisher/internal/database"
 	"github.com/number571/hidden-lake/internal/services/publisher/pkg/app/config"
-	pkg_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
+	"github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/query"
@@ -28,7 +28,7 @@ func HandleMsgboxLoadAPI(
 	pDatabase database.IKVDatabase,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		logBuilder := http_logger.NewLogBuilder(pkg_settings.GetAppShortNameFMT(), pR)
+		logBuilder := http_logger.NewLogBuilder(settings.GetAppShortNameFMT(), pR)
 
 		if pR.Method != http.MethodGet {
 			pLogger.PushWarn(logBuilder.WithMessage(http_logger.CLogMethod))
@@ -62,6 +62,18 @@ func HandleMsgboxLoadAPI(
 			return
 		}
 
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("public_error"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: public is unknown")
+			return
+		}
+
+		aliasNameForDB := aliasName
+		if isPublic {
+			aliasNameForDB = settings.CUnknownCreatorName
+		}
+
 		var (
 			dbMsg dto.IMessage
 			index uint64
@@ -75,14 +87,14 @@ func HandleMsgboxLoadAPI(
 				_ = api.Response(pW, http.StatusBadRequest, "failed: message index")
 				return
 			}
-			dbMsg, err = pDatabase.LoadByEnum(aliasName, index)
+			dbMsg, err = pDatabase.LoadByEnum(aliasNameForDB, index)
 		case msgUID != "":
 			if !dto.MessageUIDIsValid(msgUID) {
 				pLogger.PushWarn(logBuilder.WithMessage("msg_uid"))
 				_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
 				return
 			}
-			dbMsg, err = pDatabase.LoadByUID(aliasName, msgUID)
+			dbMsg, err = pDatabase.LoadByUID(aliasNameForDB, msgUID)
 		default:
 			pLogger.PushWarn(logBuilder.WithMessage("id_undefined"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: id undefined")
@@ -109,9 +121,9 @@ func HandleMsgboxLoadAPI(
 
 		var req hlk_request.IRequest
 		if msgUID != "" {
-			req = request.NewMsgboxLoadRequestByUID(msgUID)
+			req = request.NewMsgboxLoadRequestByUID(msgUID, isPublic)
 		} else {
-			req = request.NewMsgboxLoadRequestByEnum(index)
+			req = request.NewMsgboxLoadRequestByEnum(index, isPublic)
 		}
 
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
@@ -133,11 +145,41 @@ func HandleMsgboxLoadAPI(
 			return
 		}
 
+		gotMsgUID := rsp.GetHead()[settings.CHeaderMessageUIDOnLoad]
+		if (msgUID != "" && msgUID != gotMsgUID) || !dto.MessageUIDIsValid(gotMsgUID) {
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_uid"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: got invalid uid")
+			return
+		}
+
+		gotMsgStateStr := rsp.GetHead()[settings.CHeaderMessageStateOnLoad]
+		gotMsgStateP, err := strconv.ParseUint(gotMsgStateStr, 10, 64)
+		if err != nil || !dto.Uint64InStateRange(gotMsgStateP) {
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_state"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: got invalid state")
+			return
+		}
+
+		// inverse states
+		invMapping := map[dto.IMessageState]dto.IMessageState{
+			dto.CIncomingState:  dto.CDeliveredState,
+			dto.CSendingState:   dto.CIncomingState,
+			dto.CDeliveredState: dto.CIncomingState,
+			dto.CPublishedState: dto.CPublishedState,
+		}
+
+		msgState, ok := invMapping[dto.IMessageState(gotMsgStateP)] //nolint:gosec
+		if !ok {
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_state"))
+			_ = api.Response(pW, http.StatusTeapot, "failed: got invalid state")
+			return
+		}
+
 		msg := dto.NewMessage(
-			dto.NewMessageHead(dto.CIncomingState, msgUID),
+			dto.NewMessageHead(msgState, gotMsgUID),
 			dto.NewMessageBody(msgBody, time.Now()),
 		)
-		if _, err := pDatabase.Push(aliasName, msg); err != nil {
+		if _, err := pDatabase.Push(aliasNameForDB, msg); err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return

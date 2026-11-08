@@ -65,6 +65,13 @@ func HandleMsgboxPushAPI(
 
 		queryParams := pR.URL.Query()
 
+		aliasName := queryParams.Get("friend")
+		if aliasName == "" {
+			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+			return
+		}
+
 		isRemote, err := query.GetBoolValueFromQuery(queryParams, "remote")
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("remote_error"))
@@ -72,11 +79,16 @@ func HandleMsgboxPushAPI(
 			return
 		}
 
-		aliasName := queryParams.Get("friend")
-		if aliasName == "" {
-			pLogger.PushWarn(logBuilder.WithMessage("alias_name_is_null"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: alias name is null")
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("public_error"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: public is unknown")
 			return
+		}
+
+		aliasNameForDB := aliasName
+		if isPublic {
+			aliasNameForDB = hls_settings.CUnknownCreatorName
 		}
 
 		msgUID := queryParams.Get("uid")
@@ -86,19 +98,23 @@ func HandleMsgboxPushAPI(
 			return
 		}
 
-		msg, err := pDatabase.LoadByUID(aliasName, msgUID)
+		msg, err := pDatabase.LoadByUID(aliasNameForDB, msgUID)
 		if err != nil { // nolint:nestif
 			if !errors.Is(err, database.ErrNotFoundMessage) {
 				pLogger.PushErro(logBuilder.WithMessage("load_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: load message from database")
 				return
 			}
+			state := dto.CSendingState
+			if isPublic {
+				state = dto.CPublishedState
+			}
 			// create new message
 			msg = dto.NewMessage(
-				dto.NewMessageHead(dto.CSendingState, msgUID),
+				dto.NewMessageHead(state, msgUID),
 				dto.NewMessageBody(msgBody, time.Now()),
 			)
-			if _, err := pDatabase.Push(aliasName, msg); err != nil {
+			if _, err := pDatabase.Push(aliasNameForDB, msg); err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("push_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 				return
@@ -111,7 +127,7 @@ func HandleMsgboxPushAPI(
 			return
 		}
 
-		// state(msg) = incoming OR received
+		// state(msg) = incoming OR delivered OR published
 		if msg.GetHead().GetState() != dto.CSendingState {
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusAccepted, msg.GetBody().GetTimestamp())

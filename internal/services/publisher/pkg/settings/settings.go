@@ -52,3 +52,12 @@ const (
 	CHeaderFriendName = "Hls-Publisher-Friend-Name"
 	CHeaderMessageUID = "Hls-Publisher-Message-Uid"
 )
+
+const (
+	CHeaderMessageStateOnLoad = "M-S"
+	CHeaderMessageUIDOnLoad   = "M-U"
+)
+
+const (
+	CUnknownCreatorName = "" // null string
+)

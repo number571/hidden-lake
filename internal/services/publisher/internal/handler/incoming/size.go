@@ -10,6 +10,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
 	"github.com/number571/hidden-lake/internal/services/publisher/pkg/app/config"
@@ -34,11 +35,23 @@ func HandleIncomingSizeHTTP(
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderFriendName)
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
+		}
+
+		queryParams := pR.URL.Query()
+
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_public"))
+			_ = api.Response(pW, http.StatusBadRequest, "public", api.WithoutContentType())
+			return
+		}
+		if !isPublic {
+			aliasName = hls_publisher_settings.CUnknownCreatorName
 		}
 
 		size := pDB.Size(aliasName)

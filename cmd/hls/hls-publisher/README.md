@@ -83,7 +83,7 @@ $ make request-node2
 // body request size can be = (144 - 86) = 58B
 // INFORMATION: uid = random chars from [go-peer/pkg/crypto/random/random.go]
 [uint32]{"method":"POST","host":"hls-publisher","path":"/push?uid=0000000000000000000000"}[body]
-[body]=""
+[body]=<bytes>
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
@@ -93,31 +93,31 @@ $ make request-node2
 ### 2. /load
 
 ```json
-// header request size = (4 + 81) = 85B
-// body request size can be = (144 - 85) = 59B
-[uint32]{"method":"GET","host":"hls-publisher","path":"/load?uid=0000000000000000000000"}[body]
+// header request size = (4 + 91) = 95B
+// body request size can be = (144 - 95) = 49B
+[uint32]{"method":"GET","host":"hls-publisher","path":"/load?uid=0000000000000000000000&pub=false"}[body]
 // | OR
-// header request size = (4 + 79) = 83B
-// body request size can be = (144 - 83) = 61B
-[uint32]{"method":"GET","host":"hls-publisher","path":"/load?nid=18446744073709551616"}[body]
+// header request size = (4 + 89) = 93B
+// body request size can be = (144 - 93) = 51B
+[uint32]{"method":"GET","host":"hls-publisher","path":"/load?nid=18446744073709551616&pub=false"}[body]
 
-// header response size = (4 + 12) = 16B
-// body response size can be = (144 - 16) = 128B
-[uint32]{"code":200}[body]
-[body]=""
+// header response size = (4 + 60) = 64B
+// body response size can be = (144 - 64) = 80B
+[uint32]{"code":200,"head":{"M-S":1,"M-U":"0000000000000000000000"}}[body]
+[body]=<bytes>
 ```
 
 ### 3. /size
 
 ```json
-// header request size = (4 + 54) = 58B
-// body request size can be = (144 - 58) = 86B
-[uint32]{"method":"GET","host":"hls-publisher","path":"/size"}[body]
+// header request size = (4 + 64) = 68B
+// body request size can be = (144 - 68) = 76B
+[uint32]{"method":"GET","host":"hls-publisher","path":"/size&pub=false"}[body]
 
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
 [uint32]{"code":200}[body]
-[body]=""
+[body]=<uint64>
 ```
 
 ## HLS API

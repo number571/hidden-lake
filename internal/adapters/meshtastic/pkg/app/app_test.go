@@ -129,13 +129,11 @@ func TestApp(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	intClient := client.NewClient(
-		client.NewRequester(
-			testutils.TgAddrs[30],
-			&http.Client{Timeout: time.Minute},
-			adapters.NewSettings(&adapters.SSettings{
-				FMessageSizeBytes: tcMessageSize,
-			}),
-		),
+		testutils.TgAddrs[30],
+		&http.Client{Timeout: time.Minute},
+		adapters.NewSettings(&adapters.SSettings{
+			FMessageSizeBytes: tcMessageSize,
+		}),
 	)
 
 	err1 := testutils_gopeer.TryN(

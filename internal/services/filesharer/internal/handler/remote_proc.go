@@ -44,14 +44,14 @@ func HandleRemoteFileProcAPI(
 			return
 		}
 
-		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
-			_ = api.Response(pW, http.StatusBadRequest, "failed: parse personal")
+			pLogger.PushWarn(logBuilder.WithMessage("parse_public"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse public")
 			return
 		}
 
-		dpKey := dto.NewDownloadProcessKey(aliasName, fileName, isPersonal)
+		dpKey := dto.NewDownloadProcessKey(aliasName, fileName, isPublic)
 
 		if pR.Method == http.MethodDelete {
 			if ok := pProcessManager.Unlock(dpKey); !ok {

@@ -16,7 +16,7 @@ var (
 	gLoadReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
-			WithPath(hls_settings.CAppShortName + "?name=&chunk=&personal=false").
+			WithPath(hls_settings.CAppShortName + "?name=&chunk=&pub=false").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

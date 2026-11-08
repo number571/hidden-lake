@@ -3,6 +3,7 @@ package incoming
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/internal/utils/broker"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 	message_dto "github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 
 	hlk_settings "github.com/number571/hidden-lake/internal/kernel/pkg/settings"
@@ -36,7 +38,7 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderFriendName)
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
@@ -51,8 +53,18 @@ func HandleIncomingLoadHTTP(
 
 		if msgNID != "" && msgUID != "" {
 			pLogger.PushWarn(logBuilder.WithMessage("has_many_ids"))
-			_ = api.Response(pW, http.StatusBadRequest, "manyids")
+			_ = api.Response(pW, http.StatusBadRequest, "manyids", api.WithoutContentType())
 			return
+		}
+
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("invalid_public"))
+			_ = api.Response(pW, http.StatusBadRequest, "public", api.WithoutContentType())
+			return
+		}
+		if isPublic {
+			aliasName = hls_publisher_settings.CUnknownCreatorName
 		}
 
 		var index uint64
@@ -77,27 +89,27 @@ func HandleIncomingLoadHTTP(
 			return
 		}
 
-		var (
-			msg message_dto.IMessage
-			err error
-		)
+		var msg message_dto.IMessage
 		if msgUID != "" {
 			msg, err = pDB.LoadByUID(aliasName, msgUID)
 		} else {
 			msg, err = pDB.LoadByEnum(aliasName, index)
 		}
-		if err == nil {
-			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusOK, msg.ToBytes(), api.WithoutContentType())
-			return
-		}
-		if errors.Is(err, database.ErrNotFoundMessage) {
-			pLogger.PushWarn(logBuilder.WithMessage("message_not_found"))
-			_ = api.Response(pW, http.StatusNotFound, "notfound", api.WithoutContentType())
+		if err != nil {
+			if errors.Is(err, database.ErrNotFoundMessage) {
+				pLogger.PushWarn(logBuilder.WithMessage("message_not_found"))
+				_ = api.Response(pW, http.StatusNotFound, "notfound", api.WithoutContentType())
+				return
+			}
+			pLogger.PushErro(logBuilder.WithMessage("load_message"))
+			_ = api.Response(pW, http.StatusInternalServerError, "getmsg", api.WithoutContentType())
 			return
 		}
 
-		pLogger.PushErro(logBuilder.WithMessage("load_message"))
-		_ = api.Response(pW, http.StatusInternalServerError, "getmsg", api.WithoutContentType())
+		pW.Header().Set(hls_publisher_settings.CHeaderMessageStateOnLoad, fmt.Sprintf("%d", msg.GetHead().GetState()))
+		pW.Header().Set(hls_publisher_settings.CHeaderMessageUIDOnLoad, msg.GetHead().GetUID())
+
+		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+		_ = api.Response(pW, http.StatusOK, msg.ToBytes(), api.WithoutContentType())
 	}
 }

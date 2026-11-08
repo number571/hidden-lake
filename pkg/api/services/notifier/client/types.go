@@ -5,19 +5,10 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) error
+	GetIndex(pCtx context.Context) error
 
-	GetNotifyLimit(context.Context) (uint64, error)
+	GetNotifyLimit(pCtx context.Context) (uint64, error)
 
-	RecvNotification(context.Context, string) (string, []byte, error)
-	SendNotification(context.Context, string, []byte) error
-}
-
-type IRequester interface {
-	GetIndex(context.Context) error
-
-	GetNotifyLimit(context.Context) (uint64, error)
-
-	RecvNotification(context.Context, string) (string, []byte, error)
-	SendNotification(context.Context, string, []byte) error
+	RecvNotification(pCtx context.Context, pSID string) (string, []byte, error)
+	SendNotification(pCtx context.Context, pFriend string, pData []byte) error
 }

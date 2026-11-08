@@ -9,16 +9,16 @@ import (
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 
-func NewLoadRequest(pFileName string, pChunk uint64, pPersonal bool) hlk_request.IRequest {
+func NewLoadRequest(pFileName string, pChunk uint64, pPublic bool) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
 		WithPath(fmt.Sprintf(
-			"%s?name=%s&chunk=%d&personal=%t",
+			"%s?name=%s&chunk=%d&pub=%t",
 			hls_settings.CLoadPath,
 			url.QueryEscape(pFileName),
 			pChunk,
-			pPersonal,
+			pPublic,
 		)).
 		Build()
 }

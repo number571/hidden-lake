@@ -68,7 +68,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 	path := fmt.Sprintf("/push?uid=%s", message_dto.NewMessageUID()) // nolint:perfsprint
 	req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte("hello, world!")))
 
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -88,7 +88,7 @@ func incomingPushRequestOK(handler http.HandlerFunc) error {
 func incomingPushRequestMessage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/push", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()

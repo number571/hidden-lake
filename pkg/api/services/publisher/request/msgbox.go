@@ -22,37 +22,44 @@ func NewMsgboxPushRequest(pUID string, pBody []byte) hlk_request.IRequest {
 		Build()
 }
 
-func NewMsgboxLoadRequestByUID(pUID string) hlk_request.IRequest {
+func NewMsgboxLoadRequestByUID(pUID string, pPublic bool) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
 		WithPath(fmt.Sprintf(
-			"%s?uid=%s",
+			"%s?uid=%s&pub=%t",
 			hls_settings.CLoadPath,
 			url.QueryEscape(pUID),
+			pPublic,
 		)).
 		WithBody([]byte{}).
 		Build()
 }
 
-func NewMsgboxLoadRequestByEnum(pEnum uint64) hlk_request.IRequest {
+func NewMsgboxLoadRequestByEnum(pEnum uint64, pPublic bool) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
 		WithPath(fmt.Sprintf(
-			"%s?nid=%d",
+			"%s?nid=%d&pub=%t",
 			hls_settings.CLoadPath,
 			pEnum,
+			pPublic,
 		)).
 		WithBody([]byte{}).
 		Build()
 }
 
-func NewMsgboxSizeRequest() hlk_request.IRequest {
+func NewMsgboxSizeRequest(pPublic bool) hlk_request.IRequest {
 	return hlk_request.NewRequestBuilder().
 		WithMethod(http.MethodGet).
 		WithHost(hls_settings.CAppShortName).
 		WithPath(hls_settings.CSizePath).
+		WithPath(fmt.Sprintf(
+			"%s?pub=%t",
+			hls_settings.CSizePath,
+			pPublic,
+		)).
 		WithBody([]byte{}).
 		Build()
 }

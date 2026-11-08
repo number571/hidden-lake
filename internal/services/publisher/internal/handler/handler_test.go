@@ -54,10 +54,8 @@ func TestHandler(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	client := hls_client.NewClient(
-		hls_client.NewRequester(
-			testutils.TgAddrs[13],
-			&http.Client{Timeout: time.Second},
-		),
+		testutils.TgAddrs[13],
+		&http.Client{Timeout: time.Second},
 	)
 
 	if err := client.GetIndex(context.Background()); err != nil {
@@ -68,13 +66,13 @@ func TestHandler(t *testing.T) {
 	}
 
 	msgUID := dto.NewMessageUID()
-	if _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, []byte("hello, world!"), false); err != nil {
+	if _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, []byte("hello, world!")); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "abc", 0, false); err != nil {
+	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "abc", msgUID, false); err != nil {
+	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "abc", msgUID); err != nil {
 		t.Fatal(err)
 	}
 

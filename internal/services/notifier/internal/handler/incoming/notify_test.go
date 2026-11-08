@@ -53,7 +53,7 @@ func incomingNotifyRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 
 	req := httptest.NewRequest(http.MethodPost, "/notify", bytes.NewBuffer([]byte("hello, world!")))
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()

@@ -86,11 +86,9 @@ func TestHTTPAdapter(t *testing.T) { // nolint: gocyclo, maintidx
 	go func() { _ = adapter1.Run(ctx) }()
 
 	client := client.NewClient(
-		client.NewRequester(
-			testutils.TgAddrs[18],
-			&http.Client{Timeout: 5 * time.Second},
-			adapterSettings,
-		),
+		testutils.TgAddrs[18],
+		&http.Client{Timeout: 5 * time.Second},
+		adapterSettings,
 	)
 
 	err1 := testutils_gopeer.TryN(

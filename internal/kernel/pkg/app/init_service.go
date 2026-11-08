@@ -25,7 +25,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 	msgSettings := qbProcessor.GetSettings().GetMessageConstructSettings().GetSettings()
 
 	for _, ep := range endpoints {
-		requester := client.NewRequester(
+		epClient := client.NewClient(
 			ep,
 			&http.Client{Timeout: buildSettings.GetHttpHandleTimeout()},
 			adapters.NewSettings(&adapters.SSettings{
@@ -34,7 +34,7 @@ func (p *sApp) initServiceHTTP(pCtx context.Context) {
 				FNetworkKey:       msgSettings.GetNetworkKey(),
 			}),
 		)
-		epClients = append(epClients, client.NewClient(requester))
+		epClients = append(epClients, epClient)
 	}
 
 	mux.HandleFunc(hlk_settings.CHandleIndexPath, handler.HandleIndexAPI(p.fHTTPLogger))

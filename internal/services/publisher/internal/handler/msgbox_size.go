@@ -48,15 +48,27 @@ func HandleMsgboxSizeAPI(
 			return
 		}
 
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("public_error"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: public is unknown")
+			return
+		}
+
+		aliasNameForDB := aliasName
+		if isPublic {
+			aliasNameForDB = pkg_settings.CUnknownCreatorName
+		}
+
 		if !isRemote {
-			size := pDatabase.Size(aliasName)
+			size := pDatabase.Size(aliasNameForDB)
 
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10))
 			return
 		}
 
-		req := request.NewMsgboxSizeRequest()
+		req := request.NewMsgboxSizeRequest(isPublic)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))

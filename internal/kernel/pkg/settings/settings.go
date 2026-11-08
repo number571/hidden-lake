@@ -31,7 +31,7 @@ const (
 )
 
 const (
-	CHeaderSenderName   = "Hlk-Sender-Name"
+	CHeaderFriendName   = "Hlk-Friend-Name"
 	CHeaderResponseMode = "Hlk-Response-Mode"
 )
 

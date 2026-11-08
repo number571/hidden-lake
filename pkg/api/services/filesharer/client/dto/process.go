@@ -12,9 +12,9 @@ type sDownloadProcess struct {
 }
 
 type sDownloadProcessKey struct {
-	FFriend   string `json:"friend"`
-	FName     string `json:"name"`
-	FPersonal bool   `json:"personal"`
+	FFriend string `json:"friend"`
+	FName   string `json:"name"`
+	FPublic bool   `json:"public"`
 }
 
 type sDownloadProcessValue struct {
@@ -58,11 +58,11 @@ func NewDownloadProcessValue(incIndex, download, fileSize uint64) IDownloadProce
 	}
 }
 
-func NewDownloadProcessKey(friend, filename string, isPersonal bool) IDownloadProcessKey {
+func NewDownloadProcessKey(friend, filename string, isPublic bool) IDownloadProcessKey {
 	return sDownloadProcessKey{
-		FFriend:   friend,
-		FName:     filename,
-		FPersonal: isPersonal,
+		FFriend: friend,
+		FName:   filename,
+		FPublic: isPublic,
 	}
 }
 
@@ -110,6 +110,6 @@ func (p sDownloadProcessKey) GetFileName() string {
 	return p.FName
 }
 
-func (p sDownloadProcessKey) GetIsPersonal() bool {
-	return p.FPersonal
+func (p sDownloadProcessKey) GetIsPublic() bool {
+	return p.FPublic
 }

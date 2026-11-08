@@ -15,8 +15,8 @@ var (
 	gLoadReqSize = uint64(len(
 		hlk_request.NewRequestBuilder().
 			WithMethod(http.MethodGet).
-			WithPath(hls_settings.CAppShortName + "/load?uid=0000000000000000000000").
-			// OR => WithPath(hls_settings.CAppShortName + "/load?nid=18446744073709551616").
+			WithPath(hls_settings.CAppShortName + "/load?uid=0000000000000000000000&pub=false").
+			// OR => WithPath(hls_settings.CAppShortName + "/load?nid=18446744073709551616&pub=false").
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

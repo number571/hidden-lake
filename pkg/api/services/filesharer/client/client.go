@@ -2,8 +2,18 @@ package client
 
 import (
 	"context"
+	"crypto/sha512"
+	"errors"
+	"fmt"
+	"hash"
 	"io"
+	"net/http"
+	"net/url"
+	"strconv"
 
+	"github.com/number571/go-peer/pkg/encoding"
+	hls_settings "github.com/number571/hidden-lake/internal/services/filesharer/pkg/settings"
+	"github.com/number571/hidden-lake/internal/utils/api"
 	"github.com/number571/hidden-lake/pkg/api/services/filesharer/client/dto"
 )
 
@@ -11,64 +21,279 @@ var (
 	_ IClient = &sClient{}
 )
 
+const (
+	cHandleIndexTemplate          = "http://" + "%s" + hls_settings.CHandleIndexPath
+	cHandleRemoteListTemplate     = "http://" + "%s" + hls_settings.CHandleRemoteListPath + "?friend=%s&page=%d&pub=%t"
+	cHandleRemoteFileTemplate     = "http://" + "%s" + hls_settings.CHandleRemoteFilePath + "?friend=%s&name=%s&pub=%t"
+	cHandleRemoteFileInfoTemplate = "http://" + "%s" + hls_settings.CHandleRemoteFileInfoPath + "?friend=%s&name=%s&pub=%t"
+	cHandleRemoteFileProcTemplate = "http://" + "%s" + hls_settings.CHandleRemoteFileProcPath + "?friend=%s&name=%s&pub=%t"
+	cHandleRemoteListProcTemplate = "http://" + "%s" + hls_settings.CHandleRemoteListProcPath
+	cHandleLocalListTemplate      = "http://" + "%s" + hls_settings.CHandleLocalListPath + "?friend=%s&page=%d"
+	cHandleLocalFileTemplate      = "http://" + "%s" + hls_settings.CHandleLocalFilePath + "?friend=%s&name=%s"
+	cHandleLocalFileInfoTemplate  = "http://" + "%s" + hls_settings.CHandleLocalFileInfoPath + "?friend=%s&name=%s"
+)
+
 type sClient struct {
-	fRequester IRequester
+	fHost   string
+	fClient *http.Client
 }
 
-func NewClient(pRequester IRequester) IClient {
+type sWriterWithHash struct {
+	fMain io.Writer
+	fHash hash.Hash
+}
+
+func newWriterWithHash(pW io.Writer) *sWriterWithHash {
+	return &sWriterWithHash{
+		fMain: pW,
+		fHash: sha512.New384(),
+	}
+}
+
+func (p *sWriterWithHash) Write(b []byte) (n int, err error) {
+	if _, err := p.fHash.Write(b); err != nil {
+		return 0, err
+	}
+	return p.fMain.Write(b)
+}
+
+func NewClient(pHost string, pClient *http.Client) IClient {
 	return &sClient{
-		fRequester: pRequester,
+		fHost:   pHost,
+		fClient: pClient,
 	}
 }
 
 func (p *sClient) GetIndex(pCtx context.Context) error {
-	return p.fRequester.GetIndex(pCtx)
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleIndexTemplate, p.fHost),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	if string(res) != hls_settings.CAppFullName {
+		return ErrInvalidTitle
+	}
+	return nil
 }
 
-func (p *sClient) GetRemoteList(pCtx context.Context, pFriend string, pPage uint64, pPersonal bool) (uint64, []string, error) {
-	return p.fRequester.GetRemoteList(pCtx, pFriend, pPage, pPersonal)
+func (p *sClient) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPublic bool) (uint64, []string, error) {
+	header, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage, pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return 0, nil, errors.Join(ErrBadRequest, err)
+	}
+	var list []string
+	if err := encoding.DeserializeJSON(res, &list); err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	pagesCount, err := strconv.ParseUint(header.Get(hls_settings.CHeaderPagesCount), 10, 64)
+	if err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return pagesCount, list, nil
 }
 
-func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (bool, error) {
-	return p.fRequester.GetRemoteFile(pW, pCtx, pFriend, pFilename, pPersonal)
+func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (bool, error) {
+	writer := newWriterWithHash(pW)
+	headers, err := api.RequestWithWriter(
+		writer,
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return false, errors.Join(ErrBadRequest, err)
+	}
+	inProcess := headers.Get(hls_settings.CHeaderInProcess) == hls_settings.CHeaderProcessModeY
+	return inProcess, nil
 }
 
-func (p *sClient) DelRemoteFile(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) error {
-	return p.fRequester.DelRemoteFile(pCtx, pFriend, pFilename, pPersonal)
+func (p *sClient) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) error {
+	_, _, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
-func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (dto.IFileInfo, error) {
-	return p.fRequester.GetRemoteFileInfo(pCtx, pFriend, pFilename, pPersonal)
+func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (dto.IFileInfo, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	info, err := dto.LoadFileInfo(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return info, nil
 }
 
-func (p *sClient) GetLocalList(pCtx context.Context, pFriend string, pPage uint64) (uint64, []string, error) {
-	return p.fRequester.GetLocalList(pCtx, pFriend, pPage)
+func (p *sClient) GetLocalList(pCtx context.Context, pAliasName string, pPage uint64) (uint64, []string, error) {
+	header, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleLocalListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return 0, nil, errors.Join(ErrBadRequest, err)
+	}
+	var list []string
+	if err := encoding.DeserializeJSON(res, &list); err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	pagesCount, err := strconv.ParseUint(header.Get(hls_settings.CHeaderPagesCount), 10, 64)
+	if err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return pagesCount, list, nil
 }
 
-func (p *sClient) GetLocalFile(pW io.Writer, pCtx context.Context, pFriend string, pFilename string) error {
-	return p.fRequester.GetLocalFile(pW, pCtx, pFriend, pFilename)
+func (p *sClient) GetLocalFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) error {
+	_, err := api.RequestWithWriter(
+		pW,
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
-func (p *sClient) PutLocalFile(pCtx context.Context, pFriend string, pFilename string, pR io.Reader) error {
-	return p.fRequester.PutLocalFile(pCtx, pFriend, pFilename, pR)
+func (p *sClient) PutLocalFile(pCtx context.Context, pAliasName string, pFileName string, pR io.Reader) error {
+	_, _, err := api.RequestWithReader(
+		pCtx,
+		p.fClient,
+		http.MethodPost,
+		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
+		pR,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
-func (p *sClient) DelLocalFile(pCtx context.Context, pFriend string, pFilename string) error {
-	return p.fRequester.DelLocalFile(pCtx, pFriend, pFilename)
+func (p *sClient) DelLocalFile(pCtx context.Context, pAliasName string, pFileName string) error {
+	_, _, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleLocalFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
-func (p *sClient) GetLocalFileInfo(pCtx context.Context, pFriend string, pFilename string) (dto.IFileInfo, error) {
-	return p.fRequester.GetLocalFileInfo(pCtx, pFriend, pFilename)
+func (p *sClient) GetLocalFileInfo(pCtx context.Context, pAliasName string, pFileName string) (dto.IFileInfo, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleLocalFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName)),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	info, err := dto.LoadFileInfo(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return info, nil
 }
 
-func (p *sClient) GetRemoteFileProc(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) (dto.IDownloadProcess, error) {
-	return p.fRequester.GetRemoteFileProc(pCtx, pFriend, pFilename, pPersonal)
+func (p *sClient) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (dto.IDownloadProcess, error) {
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	dp, err := dto.LoadDownloadProcess(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return dp, nil
 }
 
-func (p *sClient) DelRemoteFileProc(pCtx context.Context, pFriend string, pFilename string, pPersonal bool) error {
-	return p.fRequester.DelRemoteFileProc(pCtx, pFriend, pFilename, pPersonal)
+func (p *sClient) DelRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) error {
+	_, _, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodDelete,
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return errors.Join(ErrBadRequest, err)
+	}
+	return nil
 }
 
 func (p *sClient) GetRemoteListProc(pCtx context.Context) ([]dto.IDownloadProcess, error) {
-	return p.fRequester.GetRemoteListProc(pCtx)
+	_, res, err := api.Request(
+		pCtx,
+		p.fClient,
+		http.MethodGet,
+		fmt.Sprintf(cHandleRemoteListProcTemplate, p.fHost),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, errors.Join(ErrBadRequest, err)
+	}
+	dpl, err := dto.LoadDownloadProcessList(res)
+	if err != nil {
+		return nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return dpl, nil
 }

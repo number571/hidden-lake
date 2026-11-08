@@ -43,7 +43,7 @@ func TestHandleConnectsAPI2(t *testing.T) {
 	)
 
 	epClients := []client.IClient{
-		client.NewClient(&tsRequester{}),
+		&tsClient{},
 	}
 
 	handler := HandleConfigConnectsAPI(ctx, httpLogger, epClients)
@@ -65,7 +65,7 @@ func TestHandleConnectsAPI2(t *testing.T) {
 	}
 
 	epClientsx := []client.IClient{
-		client.NewClient(&tsRequester{fWithFail: true}),
+		&tsClient{fWithFail: true},
 	}
 
 	handlerx := HandleConfigConnectsAPI(ctx, httpLogger, epClientsx)
@@ -185,11 +185,8 @@ func TestHandleConnectsAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TgAddrs[6],
-			&http.Client{Timeout: time.Minute},
-		),
+		testutils.TgAddrs[6],
+		&http.Client{Timeout: time.Minute},
 	)
 
 	testGetConnects(t, client)
@@ -221,46 +218,46 @@ func testDelConnect(t *testing.T, client hlk_client.IClient) {
 }
 
 var (
-	_ client.IRequester = &tsRequester{}
+	_ client.IClient = &tsClient{}
 )
 
-type tsRequester struct {
+type tsClient struct {
 	fWithFail bool
 }
 
-func (p *tsRequester) GetIndex(context.Context, string) error                      { return nil }
-func (p *tsRequester) GetSettings(context.Context) (config.IConfigSettings, error) { return nil, nil }
-func (p *tsRequester) GetOnlines(context.Context) ([]string, error) {
+func (p *tsClient) GetIndex(context.Context, string) error                      { return nil }
+func (p *tsClient) GetSettings(context.Context) (config.IConfigSettings, error) { return nil, nil }
+func (p *tsClient) GetOnlines(context.Context) ([]string, error) {
 	if p.fWithFail {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	return tgConnections, nil
 }
-func (p *tsRequester) DelOnline(context.Context, string) error {
+func (p *tsClient) DelOnline(context.Context, string) error {
 	if p.fWithFail {
 		return errors.New("some error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsRequester) GetConnections(context.Context) ([]string, error) {
+func (p *tsClient) GetConnections(context.Context) ([]string, error) {
 	if p.fWithFail {
 		return nil, errors.New("some error") // nolint: err113
 	}
 	return tgConnections, nil
 }
-func (p *tsRequester) AddConnection(context.Context, string) error {
+func (p *tsClient) AddConnection(context.Context, string) error {
 	if p.fWithFail {
 		return errors.New("some error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsRequester) DelConnection(context.Context, string) error {
+func (p *tsClient) DelConnection(context.Context, string) error {
 	if p.fWithFail {
 		return errors.New("some error") // nolint: err113
 	}
 	return nil
 }
-func (p *tsRequester) ProduceMessage(context.Context, layer1.IMessage) error { return nil }
-func (p *tsRequester) ConsumeMessage(context.Context, string) (layer1.IMessage, error) {
+func (p *tsClient) ProduceMessage(context.Context, layer1.IMessage) error { return nil }
+func (p *tsClient) ConsumeMessage(context.Context, string) (layer1.IMessage, error) {
 	return nil, nil
 }

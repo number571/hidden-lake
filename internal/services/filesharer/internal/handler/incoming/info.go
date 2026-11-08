@@ -44,21 +44,21 @@ func HandleIncomingInfoHTTP(
 			return
 		}
 
-		isPersonal, err := query.GetBoolValueFromQuery(queryParams, "personal")
+		isPublic, err := query.GetBoolValueFromQuery(queryParams, "pub")
 		if err != nil {
-			pLogger.PushWarn(logBuilder.WithMessage("parse_personal"))
+			pLogger.PushWarn(logBuilder.WithMessage("parse_public"))
 			_ = api.Response(pW, http.StatusBadRequest, "query", api.WithoutContentType())
 			return
 		}
 
-		aliasName := pR.Header.Get(hlk_settings.CHeaderSenderName)
+		aliasName := pR.Header.Get(hlk_settings.CHeaderFriendName)
 		if aliasName == "" {
 			pLogger.PushErro(logBuilder.WithMessage("alias_name_is_null"))
 			_ = api.Response(pW, http.StatusBadGateway, "alias", api.WithoutContentType())
 			return
 		}
 
-		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, isPersonal)
+		stgPath := utils.GetSharingStoragePath(pPathTo, aliasName, isPublic)
 		fullPath := filepath.Join(stgPath, fileName)
 
 		info, err := fileinfo.NewFileInfo(fullPath)

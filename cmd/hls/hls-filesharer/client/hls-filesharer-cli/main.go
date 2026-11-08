@@ -32,7 +32,7 @@ var (
 			WithDefinedValue("localhost:9541"),
 		flag.NewFlagBuilder("-t", "--type").
 			WithDescription("set type [local|personal|public]").
-			WithDefinedValue("public"),
+			WithDefinedValue("personal"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
@@ -76,10 +76,8 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 	}
 
 	hlfClient := hls_filesharer_client.NewClient(
-		hls_filesharer_client.NewRequester(
-			gFlags.Get("-s").GetStringValue(pArgs),
-			&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		),
+		gFlags.Get("-s").GetStringValue(pArgs),
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
 	)
 
 	stgType := gFlags.Get("-t").GetStringValue(pArgs)
@@ -87,16 +85,16 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 	do := gFlags.Get("-d").GetStringValue(pArgs)
 
 	var (
-		isLocal    = false
-		isPersonal = false
+		isLocal  = false
+		isPublic = false
 	)
 	switch stgType {
 	case "local":
 		isLocal = true
 	case "personal":
-		isPersonal = true
-	case "public":
 		// used by default
+	case "public":
+		isPublic = true
 	default:
 		return ErrUnknownStorageType
 	}
@@ -104,7 +102,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 	switch do {
 	case "cancel":
 		fileName := gFlags.Get("-a").GetStringValue(pArgs)
-		err := hlfClient.DelRemoteFileProc(pCtx, friend, fileName, isPersonal) // nolint:gosec
+		err := hlfClient.DelRemoteFileProc(pCtx, friend, fileName, isPublic) // nolint:gosec
 		if err != nil {
 			return err
 		}
@@ -119,7 +117,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 			printDownloadProcessList(procList)
 			return nil
 		}
-		downloadProcess, err := hlfClient.GetRemoteFileProc(pCtx, friend, fileName, isPersonal) // nolint:gosec
+		downloadProcess, err := hlfClient.GetRemoteFileProc(pCtx, friend, fileName, isPublic) // nolint:gosec
 		if err != nil {
 			return err
 		}
@@ -134,7 +132,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 		if isLocal {
 			pagesCount, fileList, err = hlfClient.GetLocalList(pCtx, friend, uint64(page)) // nolint:gosec
 		} else {
-			pagesCount, fileList, err = hlfClient.GetRemoteList(pCtx, friend, uint64(page), isPersonal) // nolint:gosec
+			pagesCount, fileList, err = hlfClient.GetRemoteList(pCtx, friend, uint64(page), isPublic) // nolint:gosec
 		}
 		if err != nil {
 			return err
@@ -149,7 +147,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 		if isLocal {
 			fileInfo, err = hlfClient.GetLocalFileInfo(pCtx, friend, fileName)
 		} else {
-			fileInfo, err = hlfClient.GetRemoteFileInfo(pCtx, friend, fileName, isPersonal)
+			fileInfo, err = hlfClient.GetRemoteFileInfo(pCtx, friend, fileName, isPublic)
 		}
 		if err != nil {
 			return err
@@ -188,7 +186,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 				pCtx,
 				friend,
 				fileName,
-				isPersonal,
+				isPublic,
 			)
 			if err != nil {
 				return err
@@ -212,7 +210,7 @@ func runFunction(pCtx context.Context, pArgs []string) error { // nolint:gocyclo
 				return err
 			}
 		} else {
-			if err := hlfClient.DelRemoteFile(pCtx, friend, fileName, isPersonal); err != nil {
+			if err := hlfClient.DelRemoteFile(pCtx, friend, fileName, isPublic); err != nil {
 				return err
 			}
 		}

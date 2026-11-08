@@ -44,7 +44,7 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 	if err := incomingListRequestVoidDir(handler); err != nil {
 		t.Fatal(err)
 	}
-	if err := incomingListRequestInvalidPersonal(handler); err != nil {
+	if err := incomingListRequestInvalidPublic(handler); err != nil {
 		t.Fatal(err)
 	}
 	if err := incomingListRequestGetSharingStorage(handler); err != nil {
@@ -62,7 +62,7 @@ func TestHandleIncomingListHTTP(t *testing.T) {
 func incomingListRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/list?page=0", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -81,8 +81,8 @@ func incomingListRequestOK(handler http.HandlerFunc) error {
 
 func incomingListRequestVoidDir(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/list?page=0&personal", nil)
-	req.Header.Set(hlk_settings.CHeaderSenderName, "abc")
+	req := httptest.NewRequest(http.MethodGet, "/list?page=0", nil)
+	req.Header.Set(hlk_settings.CHeaderFriendName, "abc")
 
 	handler(w, req)
 	res := w.Result()
@@ -101,7 +101,7 @@ func incomingListRequestVoidDir(handler http.HandlerFunc) error {
 
 func incomingListRequestGetSharingStorage(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?page=0&personal", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?page=0", nil)
 
 	handler(w, req)
 	res := w.Result()
@@ -118,9 +118,9 @@ func incomingListRequestGetSharingStorage(handler http.HandlerFunc) error {
 	return nil
 }
 
-func incomingListRequestInvalidPersonal(handler http.HandlerFunc) error {
+func incomingListRequestInvalidPublic(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/?personal=qwerty", nil)
+	req := httptest.NewRequest(http.MethodGet, "/?pub=qwerty", nil)
 
 	handler(w, req)
 	res := w.Result()

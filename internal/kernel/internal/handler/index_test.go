@@ -22,11 +22,8 @@ func TestErrorsAPI(t *testing.T) {
 	t.Parallel()
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			testutils.TcUnknownHost,
-			&http.Client{Timeout: time.Second},
-		),
+		testutils.TcUnknownHost,
+		&http.Client{Timeout: time.Second},
 	)
 
 	if err := client.AddConnection(context.Background(), ""); err == nil {
@@ -130,11 +127,8 @@ func TestHandleIndexAPI(t *testing.T) {
 	defer testAllFree(node, cancel, srv, pathCfg, pathDB)
 
 	client := hlk_client.NewClient(
-		hlk_client.NewBuilder(),
-		hlk_client.NewRequester(
-			addr,
-			&http.Client{Timeout: time.Minute},
-		),
+		addr,
+		&http.Client{Timeout: time.Minute},
 	)
 
 	err := client.GetIndex(context.Background())

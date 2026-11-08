@@ -8,7 +8,8 @@ const (
 	cBeginFlagState IMessageState = iota
 	CIncomingState
 	CSendingState
-	CReceivedState
+	CDeliveredState
+	CPublishedState
 	cEndFlagState
 )
 
