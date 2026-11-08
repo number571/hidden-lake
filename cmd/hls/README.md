@@ -9,18 +9,19 @@
 ## List of services
 
 1. [HLS=notifier](hls-notifier) - send and recv notification bytes
-2. [HLS=publisher](hls-publisher) - push and load publication by option
+2. [HLS=publisher](hls-publisher) - push and load publications by options
 3. [HLS=filesharer](hls-filesharer) - view storage and download files 
 
 ## Borders and Limits
 
 - Each service must be exposed through simple API calls
-- Each service must have a clearly defined request/response size
 - Each service should be a function, not ready-made business logic
-- Each service must successfully work with a payload size of 144 bytes*
+- Each service should not have a functions with an infinite loop
+- Each service must have a clearly defined request/response size
+- Each service must successfully work with a raw payload size of 144 bytes*
 
 > [!NOTE]
-> The minimum possible ciphertext size in HL is 200 bytes. Of these 200 bytes, 56 bytes are allocated to header data in a symmetric encryption scheme. This leaves 144 bytes available for applications.
+> *The minimum possible ciphertext size in HL (by standart) is 200 bytes. Of these 200 bytes, 56 bytes are allocated to header data in a symmetric encryption scheme. This leaves 144 raw bytes available for applications. Of these 144 bytes, some amount is allocated for the HLS/HLK API headers bytes (method, host, path, head). The exact size of the header data should be considered on a service-by-service basis.
 
 ## Installation
 

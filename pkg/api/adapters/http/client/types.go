@@ -8,16 +8,16 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context, string) error
-	GetSettings(context.Context) (config.IConfigSettings, error)
+	GetIndex(pCtx context.Context, pProtoScheme string) error
+	GetSettings(pCtx context.Context) (config.IConfigSettings, error)
 
-	GetOnlines(context.Context) ([]string, error)
-	DelOnline(context.Context, string) error
+	GetOnlines(pCtx context.Context) ([]string, error)
+	DelOnline(pCtx context.Context, pAddr string) error
 
-	GetConnections(context.Context) ([]string, error)
-	AddConnection(context.Context, string) error
-	DelConnection(context.Context, string) error
+	GetConnections(pCtx context.Context) ([]string, error)
+	AddConnection(pCtx context.Context, pAddr string) error
+	DelConnection(pCtx context.Context, pAddr string) error
 
-	ProduceMessage(context.Context, layer1.IMessage) error
-	ConsumeMessage(context.Context, string) (layer1.IMessage, error)
+	ProduceMessage(pCtx context.Context, pMessage layer1.IMessage) error
+	ConsumeMessage(pCtx context.Context, pSID string) (layer1.IMessage, error)
 }

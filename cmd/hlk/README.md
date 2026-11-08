@@ -201,7 +201,7 @@ echo "eyJlY2hvIjoiaGVsbG8sIHdvcmxkISIsInJldHVybiI6MX0K" | base64 -d
                             			|> description = get name of service
 2. GET/POST/DELETE /api/config/connects	| params = []
                             			|> description = get/add/del connections via adapter
-3. GET/POST/DELETE /api/config/friends	| params = ["name":string]
+3. GET/POST/DELETE /api/config/friends	| params = []
                             			|> description = get/add/del friend's participantKey
 4. GET             /api/config/settings	| params = []
                             			|> description = get current settings

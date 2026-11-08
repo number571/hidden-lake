@@ -145,7 +145,7 @@ The Hidden Lake assigns the task of anonymity to the `QB-problem` (queue based).
 	* [HLH=composite](cmd/hlh/hlh-composite) - runs many HL services as one application
 3. Services:
 	* [HLS=notifier](cmd/hls/hls-notifier) - send and recv notification bytes
-	* [HLS=publisher](cmd/hls/hls-publisher) - push and load publication by option
+	* [HLS=publisher](cmd/hls/hls-publisher) - push and load publications by options
 	* [HLS=filesharer](cmd/hls/hls-filesharer) - view storage and download files 
 4. Adapters:
 	* [HLA=tcp](cmd/hla/hla-tcp) - adapts HL traffic over TCP protocol

@@ -8,20 +8,20 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) error
+	GetIndex(pCtx context.Context) error
 
-	GetRemoteList(context.Context, string, uint64, bool) (uint64, []string, error)
-	GetRemoteFile(io.Writer, context.Context, string, string, bool) (bool, error)
-	DelRemoteFile(context.Context, string, string, bool) error
-	GetRemoteFileInfo(context.Context, string, string, bool) (dto.IFileInfo, error)
+	GetRemoteList(pCtx context.Context, pFriend string, pPage uint64) (uint64, []string, error)
+	GetRemoteFile(pW io.Writer, pCtx context.Context, pFriend string, pFileName string) (bool, error)
+	DelRemoteFile(pCtx context.Context, pFriend string, pFileName string) error
+	GetRemoteFileInfo(pCtx context.Context, pFriend string, pFileName string) (dto.IFileInfo, error)
 
-	GetRemoteFileProc(context.Context, string, string, bool) (dto.IDownloadProcess, error)
-	DelRemoteFileProc(context.Context, string, string, bool) error
-	GetRemoteListProc(context.Context) ([]dto.IDownloadProcess, error)
+	GetRemoteFileProc(pCtx context.Context, pFriend string, pFileName string) (dto.IDownloadProcess, error)
+	DelRemoteFileProc(pCtx context.Context, pFriend string, pFileName string) error
+	GetRemoteListProc(pCtx context.Context) ([]dto.IDownloadProcess, error)
 
-	GetLocalList(context.Context, string, uint64) (uint64, []string, error)
-	GetLocalFile(io.Writer, context.Context, string, string) error
-	PutLocalFile(context.Context, string, string, io.Reader) error
-	DelLocalFile(context.Context, string, string) error
-	GetLocalFileInfo(context.Context, string, string) (dto.IFileInfo, error)
+	GetLocalList(pCtx context.Context, pFriend string, pPage uint64) (uint64, []string, error)
+	GetLocalFile(pW io.Writer, pCtx context.Context, pFriend string, pFileName string) error
+	PutLocalFile(pCtx context.Context, pFriend string, pFileName string, pR io.Reader) error
+	DelLocalFile(pCtx context.Context, pFriend string, pFileName string) error
+	GetLocalFileInfo(pCtx context.Context, pFriend string, pFileName string) (dto.IFileInfo, error)
 }

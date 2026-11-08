@@ -40,16 +40,16 @@ func TestErrorsAPI(t *testing.T) {
 	if err := client.GetIndex(ctx); err == nil {
 		t.Fatal("success incorrect getIndex")
 	}
-	if _, _, err := client.GetRemoteList(ctx, "", 0, false); err == nil {
+	if _, _, err := client.GetRemoteList(ctx, "", 0); err == nil {
 		t.Fatal("success incorrect getRemoteList")
 	}
-	if _, err := client.GetRemoteFile(nil, ctx, "", "", false); err == nil {
+	if _, err := client.GetRemoteFile(nil, ctx, "", ""); err == nil {
 		t.Fatal("success incorrect getRemoteFile")
 	}
-	if _, err := client.GetRemoteFileInfo(ctx, "", "", false); err == nil {
+	if _, err := client.GetRemoteFileInfo(ctx, "", ""); err == nil {
 		t.Fatal("success incorrect getRemoteFileInfo")
 	}
-	if err := client.DelRemoteFile(ctx, "", "", false); err == nil {
+	if err := client.DelRemoteFile(ctx, "", ""); err == nil {
 		t.Fatal("success incorrect delRemoteFile")
 	}
 	if _, _, err := client.GetLocalList(ctx, "", 0); err == nil {

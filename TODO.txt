@@ -19,7 +19,7 @@
 19. + HLS=notifier: возвращать UID в msgbroker
 20. + Util generate private/public key pair and encrypt/decrypt keys 
 21. HLK: scheme hybrid -> symmetric
-22. Создать HLS=publisher
+22. + Создать HLS=publisher
 23. + HLS=notifier: переименовать path API
 24. + Delete HLS=pinger 
 25. HLK symmetric scheme - generate key by password

@@ -12,20 +12,20 @@ import (
 )
 
 type IClient interface {
-	GetIndex(context.Context) error
-	GetSettings(context.Context) (config.IConfigSettings, error)
+	GetIndex(pCtx context.Context) error
+	GetSettings(pCtx context.Context) (config.IConfigSettings, error)
 
-	GetOnlines(context.Context) ([]string, error)
-	DelOnline(context.Context, string) error
+	GetOnlines(pCtx context.Context) ([]string, error)
+	DelOnline(pCtx context.Context, pAddr string) error
 
-	GetFriends(context.Context, scheme.ISchemeType) (map[string]layer2.IParticipantKey, error)
-	AddFriend(context.Context, string, layer2.IParticipantKey) error
-	DelFriend(context.Context, string) error
+	GetFriends(pCtx context.Context, pSchemeType scheme.ISchemeType) (map[string]layer2.IParticipantKey, error)
+	AddFriend(pCtx context.Context, pFriend string, pKey layer2.IParticipantKey) error
+	DelFriend(pCtx context.Context, pFriend string) error
 
-	GetConnections(context.Context) ([]string, error)
-	AddConnection(context.Context, string) error
-	DelConnection(context.Context, string) error
+	GetConnections(pCtx context.Context) ([]string, error)
+	AddConnection(pCtx context.Context, pAddr string) error
+	DelConnection(pCtx context.Context, pAddr string) error
 
-	SendRequest(context.Context, string, request.IRequest) error
-	FetchRequest(context.Context, string, request.IRequest) (response.IResponse, error)
+	SendRequest(pCtx context.Context, pFriend string, pRequest request.IRequest) error
+	FetchRequest(pCtx context.Context, pFriend string, pRequest request.IRequest) (response.IResponse, error)
 }

@@ -59,14 +59,14 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		iam  = "<iam>"
 	)
 
-	hlsClient := hls_client.NewClient(
-		gFlags.Get("-s").GetStringValue(pArgs),
-		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		hls_client.WithRemote(true),
-	)
+	hlsHost := gFlags.Get("-s").GetStringValue(pArgs)
+	hlsHTTP := &http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()}
+
+	hlsClientRemote := hls_client.NewClient(hlsHost, hlsHTTP, hls_client.WithRemote(true))
+	hlsClientLocal := hls_client.NewClient(hlsHost, hlsHTTP)
 
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
-	limit, err := hlsClient.GetPushLimit(pCtx)
+	limit, err := hlsClientLocal.GetPushLimit(pCtx)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return
@@ -74,7 +74,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
-	count, err := hlsClient.GetMsgBoxSize(pCtx, friend)
+	count, err := hlsClientLocal.GetMsgBoxSize(pCtx, friend)
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
 		return
@@ -86,7 +86,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	}
 
 	for ; index < count; index++ {
-		msg, err := hlsClient.LoadMessageFromBoxByEnum(pCtx, friend, index)
+		msg, err := hlsClientLocal.LoadMessageFromBoxByEnum(pCtx, friend, index)
 		if err != nil {
 			fmt.Printf("error: %s\n", err.Error())
 			return
@@ -100,8 +100,11 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			state = "<"
 		case dto.CDeliveredState:
 			state = "v"
+		case dto.CPublishedState:
+			sender = ""
+			state = "#"
 		case dto.CSendingState:
-			go hlsClient.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData) // nolint:errcheck
+			go hlsClientRemote.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData) // nolint:errcheck
 			state = ">"
 		}
 		strMsg := string(msgData)
@@ -113,7 +116,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 
 	go func() {
 		for {
-			h, m, err := hlsClient.ListenMsgbox(pCtx, "hls-notifier-cli")
+			h, m, err := hlsClientRemote.ListenMsgbox(pCtx, "hls-notifier-cli")
 			if err != nil {
 				fmt.Printf("error: %s\n", err.Error())
 				continue
@@ -140,7 +143,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
 			continue
 		}
-		go hlsClient.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg)) // nolint:errcheck
+		go hlsClientRemote.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg)) // nolint:errcheck
 	}
 }
 

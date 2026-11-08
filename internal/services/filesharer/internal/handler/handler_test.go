@@ -76,12 +76,12 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := client.GetRemoteFileInfo(context.Background(), "abc", "example.txt", false); err != nil {
+	if _, err := client.GetRemoteFileInfo(context.Background(), "abc", "example.txt"); err != nil {
 		t.Fatal(err)
 	}
 
 	hlkClient.fClient = newTsHLKClient(2, true)
-	pagesCount, _, err := client.GetRemoteList(context.Background(), "abc", 0, false)
+	pagesCount, _, err := client.GetRemoteList(context.Background(), "abc", 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +91,7 @@ func TestHandler(t *testing.T) {
 
 	hlkClient.fClient = newTsHLKClient(3, true)
 	w2 := &strings.Builder{}
-	if _, err := client.GetRemoteFile(w2, context.Background(), "abc", "example.txt", false); err != nil {
+	if _, err := client.GetRemoteFile(w2, context.Background(), "abc", "example.txt"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -107,7 +107,7 @@ func TestHandler(t *testing.T) {
 	}
 	defer func() { _ = os.Remove(tmpFileInfo) }()
 
-	if err := client.DelRemoteFile(ctx, "abc", "example111.txt", false); err != nil {
+	if err := client.DelRemoteFile(ctx, "abc", "example111.txt"); err != nil {
 		t.Fatal(err)
 	}
 }

@@ -2,10 +2,8 @@ package client
 
 import (
 	"context"
-	"crypto/sha512"
 	"errors"
 	"fmt"
-	"hash"
 	"io"
 	"net/http"
 	"net/url"
@@ -34,33 +32,20 @@ const (
 )
 
 type sClient struct {
-	fHost   string
-	fClient *http.Client
+	fHost      string
+	fClient    *http.Client
+	fClientOps *sClientOps
 }
 
-type sWriterWithHash struct {
-	fMain io.Writer
-	fHash hash.Hash
-}
-
-func newWriterWithHash(pW io.Writer) *sWriterWithHash {
-	return &sWriterWithHash{
-		fMain: pW,
-		fHash: sha512.New384(),
+func NewClient(pHost string, pClient *http.Client, ops ...IClientOption) IClient {
+	clientOps := &sClientOps{}
+	for _, o := range ops {
+		o(clientOps)
 	}
-}
-
-func (p *sWriterWithHash) Write(b []byte) (n int, err error) {
-	if _, err := p.fHash.Write(b); err != nil {
-		return 0, err
-	}
-	return p.fMain.Write(b)
-}
-
-func NewClient(pHost string, pClient *http.Client) IClient {
 	return &sClient{
-		fHost:   pHost,
-		fClient: pClient,
+		fHost:      pHost,
+		fClient:    pClient,
+		fClientOps: clientOps,
 	}
 }
 
@@ -82,12 +67,12 @@ func (p *sClient) GetIndex(pCtx context.Context) error {
 	return nil
 }
 
-func (p *sClient) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64, pPublic bool) (uint64, []string, error) {
+func (p *sClient) GetRemoteList(pCtx context.Context, pAliasName string, pPage uint64) (uint64, []string, error) {
 	header, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleRemoteListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage, pPublic),
+		fmt.Sprintf(cHandleRemoteListTemplate, p.fHost, url.QueryEscape(pAliasName), pPage, p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -105,14 +90,13 @@ func (p *sClient) GetRemoteList(pCtx context.Context, pAliasName string, pPage u
 	return pagesCount, list, nil
 }
 
-func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (bool, error) {
-	writer := newWriterWithHash(pW)
+func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName string, pFileName string) (bool, error) {
 	headers, err := api.RequestWithWriter(
-		writer,
+		pW,
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -123,12 +107,12 @@ func (p *sClient) GetRemoteFile(pW io.Writer, pCtx context.Context, pAliasName s
 	return inProcess, nil
 }
 
-func (p *sClient) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) error {
+func (p *sClient) DelRemoteFile(pCtx context.Context, pAliasName string, pFileName string) error {
 	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
-		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		fmt.Sprintf(cHandleRemoteFileTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -138,12 +122,12 @@ func (p *sClient) DelRemoteFile(pCtx context.Context, pAliasName string, pFileNa
 	return nil
 }
 
-func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (dto.IFileInfo, error) {
+func (p *sClient) GetRemoteFileInfo(pCtx context.Context, pAliasName string, pFileName string) (dto.IFileInfo, error) {
 	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleRemoteFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		fmt.Sprintf(cHandleRemoteFileInfoTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -245,12 +229,12 @@ func (p *sClient) GetLocalFileInfo(pCtx context.Context, pAliasName string, pFil
 	return info, nil
 }
 
-func (p *sClient) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) (dto.IDownloadProcess, error) {
+func (p *sClient) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string) (dto.IDownloadProcess, error) {
 	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -264,12 +248,12 @@ func (p *sClient) GetRemoteFileProc(pCtx context.Context, pAliasName string, pFi
 	return dp, nil
 }
 
-func (p *sClient) DelRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string, pPublic bool) error {
+func (p *sClient) DelRemoteFileProc(pCtx context.Context, pAliasName string, pFileName string) error {
 	_, _, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodDelete,
-		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), pPublic),
+		fmt.Sprintf(cHandleRemoteFileProcTemplate, p.fHost, url.QueryEscape(pAliasName), url.QueryEscape(pFileName), p.fClientOps.fPublic),
 		nil,
 		nil,
 	)

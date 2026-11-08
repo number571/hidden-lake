@@ -21,7 +21,7 @@ var (
 const (
 	cHandleIndexTemplate            = "http://" + "%s" + hls_settings.CHandleIndexPath
 	cHandleMsgboxPushTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s&remote=%t&pub=%t"
-	cHandleMsgboxSizeTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s"
+	cHandleMsgboxSizeTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s&remote=%t&pub=%t"
 	cHandleMsgboxLoadByEnumTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&nid=%d&remote=%t&pub=%t"
 	cHandleMsgboxLoadByUIDTemplate  = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote=%t&pub=%t"
 	cHandleMsgboxListenTemplate     = "http://" + "%s" + hls_settings.CHandleMsgboxListenPath + "?sid=%s"
@@ -87,7 +87,7 @@ func (p *sClient) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, e
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleMsgboxSizeTemplate, p.fHost, url.QueryEscape(pFriend)),
+		fmt.Sprintf(cHandleMsgboxSizeTemplate, p.fHost, url.QueryEscape(pFriend), p.fClientOps.fRemote, p.fClientOps.fPublic),
 		nil,
 		nil,
 	)

@@ -21,7 +21,7 @@ const (
 
 const (
 	CAppServiceName = "publisher"
-	CAppDescription = "push and load publication by option"
+	CAppDescription = "push and load publications by options"
 )
 
 const (
