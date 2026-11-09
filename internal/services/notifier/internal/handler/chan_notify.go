@@ -10,6 +10,7 @@ import (
 	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/api"
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
+	"github.com/number571/hidden-lake/internal/utils/query"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/limiter"
 	"github.com/number571/hidden-lake/pkg/api/services/notifier/request"
@@ -57,10 +58,22 @@ func HandleChanNotifyAPI(
 			return
 		}
 
+		wait, err := query.GetBoolValueFromQuery(queryParams, "wait")
+		if err != nil {
+			pLogger.PushWarn(logBuilder.WithMessage("parse_wait"))
+			_ = api.Response(pW, http.StatusBadRequest, "failed: parse wait")
+			return
+		}
+
 		req := request.NewNotifyRequest(body)
-		if _, err := pHlkClient.FetchRequest(pCtx, aliasName, req); err != nil {
-			pLogger.PushErro(logBuilder.WithMessage("fetch_request"))
-			_ = api.Response(pW, http.StatusBadGateway, "failed: fetch request")
+		if wait {
+			_, err = pHlkClient.FetchRequest(pCtx, aliasName, req)
+		} else {
+			err = pHlkClient.SendRequest(pCtx, aliasName, req)
+		}
+		if err != nil {
+			pLogger.PushErro(logBuilder.WithMessage("do_request"))
+			_ = api.Response(pW, http.StatusBadGateway, "failed: do request")
 			return
 		}
 

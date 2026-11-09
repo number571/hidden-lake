@@ -83,7 +83,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 
 	switch do {
 	case "size":
-		size, err := hlsClient.GetMsgBoxSize(pCtx, friend)
+		size, err := hlsClient.GetBoxSize(pCtx, friend)
 		if err != nil {
 			return err
 		}
@@ -127,7 +127,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			return ErrAvailableOnlyForTypePersonal
 		}
 		for {
-			head, body, err := hlsClient.ListenMsgbox(pCtx, "hls-publisher")
+			head, body, err := hlsClient.ListenMessage(pCtx, "hls-publisher")
 			if err != nil {
 				fmt.Printf("warn: %s\n", err.Error())
 				continue

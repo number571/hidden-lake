@@ -18,19 +18,25 @@ var (
 
 const (
 	cHandleIndexTemplate      = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleChanNotifyTemplate = "http://" + "%s" + hls_settings.CHandleChanNotifyPath + "?friend=%s"
 	cHandleChanListenTemplate = "http://" + "%s" + hls_settings.CHandleChanListenPath + "?sid=%s"
+	cHandleChanNotifyTemplate = "http://" + "%s" + hls_settings.CHandleChanNotifyPath + "?friend=%s&wait=%t"
 )
 
 type sClient struct {
-	fHost   string
-	fClient *http.Client
+	fHost      string
+	fClient    *http.Client
+	fClientOps *sClientOps
 }
 
-func NewClient(pHost string, pClient *http.Client) IClient {
+func NewClient(pHost string, pClient *http.Client, ops ...IClientOption) IClient {
+	clientOps := &sClientOps{}
+	for _, o := range ops {
+		o(clientOps)
+	}
 	return &sClient{
-		fHost:   pHost,
-		fClient: pClient,
+		fHost:      pHost,
+		fClient:    pClient,
+		fClientOps: clientOps,
 	}
 }
 
@@ -57,7 +63,7 @@ func (p *sClient) GetNotifyLimit(pCtx context.Context) (uint64, error) {
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleChanNotifyTemplate, p.fHost, "_"),
+		fmt.Sprintf(cHandleChanNotifyTemplate, p.fHost, "_", false),
 		nil,
 		nil,
 	)
@@ -76,7 +82,7 @@ func (p *sClient) SendNotification(pCtx context.Context, pFriend string, pBody [
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleChanNotifyTemplate, p.fHost, pFriend),
+		fmt.Sprintf(cHandleChanNotifyTemplate, p.fHost, pFriend, p.fClientOps.fWaitResponse),
 		nil,
 		pBody,
 	)

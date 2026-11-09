@@ -82,7 +82,7 @@ func TestHandler(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 		msgBroker.Produce(message.NewMessageContainer("abc", "", msg))
 	}()
-	_, gotMsg, err := client.ListenMsgbox(context.Background(), "sid")
+	_, gotMsg, err := client.ListenMessage(context.Background(), "sid")
 	if err != nil {
 		t.Fatal(err)
 	}

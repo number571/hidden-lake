@@ -82,7 +82,7 @@ func (p *sClient) GetPushLimit(pCtx context.Context) (uint64, error) {
 	return limit, nil
 }
 
-func (p *sClient) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, error) {
+func (p *sClient) GetBoxSize(pCtx context.Context, pFriend string) (uint64, error) {
 	_, res, err := api.Request(
 		pCtx,
 		p.fClient,
@@ -177,7 +177,7 @@ func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, 
 	return index, msg, nil
 }
 
-func (p *sClient) ListenMsgbox(pCtx context.Context, pSid string) ([2]string, dto.IMessageBody, error) {
+func (p *sClient) ListenMessage(pCtx context.Context, pSid string) ([2]string, dto.IMessageBody, error) {
 	for {
 		headers, res, err := api.Request(
 			pCtx,

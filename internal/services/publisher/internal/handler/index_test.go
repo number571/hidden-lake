@@ -34,10 +34,10 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.GetPushLimit(context.Background()); err == nil {
 		t.Fatal("success incorrect getPushLimit")
 	}
-	if _, err := client.GetMsgBoxSize(context.Background(), ""); err == nil {
-		t.Fatal("success incorrect getMsgBoxSize")
+	if _, err := client.GetBoxSize(context.Background(), ""); err == nil {
+		t.Fatal("success incorrect GetBoxSize")
 	}
-	if _, _, err := client.ListenMsgbox(context.Background(), ""); err == nil {
+	if _, _, err := client.ListenMessage(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
 	if _, _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}); err == nil {

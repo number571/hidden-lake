@@ -35,7 +35,7 @@ $ go run ./cmd/hls/hls-publisher
 > ...
 ```
 
-Open ports `9591` (HTTP, internal) and `9592` (HTTP, incoming).
+Open ports `9551` (HTTP, internal) and `9552` (HTTP, incoming).
 Creates [`./hls-publisher.yml`](./hls-publisher.yml) and `./hls-publisher.db` files.
 
 ## Running options
@@ -148,7 +148,7 @@ $ ARG='"hello, world!"' make request-test-push-remote
 #### 1.1. GET Request
 
 ```bash
-curl -i -X GET http://localhost:9591/api/index
+curl -i -X GET http://localhost:9551/api/index
 ```
 
 #### 1.1. GET Response
@@ -173,7 +173,7 @@ hidden-lake-service=publisher
 #### 2.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/notify"
+curl -i -X GET "http://localhost:9551/api/chan/notify"
 ```
 
 #### 2.1. GET Response
@@ -190,7 +190,7 @@ Content-Length: 4
 #### 2.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chan/notify?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9551/api/chan/notify?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 2.2. POST Response
@@ -220,7 +220,7 @@ Content-Length: 19
 #### 3.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/push"
+curl -i -X GET "http://localhost:9551/api/chan/msgbox/push"
 ```
 
 #### 3.1. GET Response
@@ -237,7 +237,7 @@ Content-Length: 4
 #### 3.2. POST Request
 
 ```bash
-curl -i -X POST "http://localhost:9591/api/chan/msgbox/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
+curl -i -X POST "http://localhost:9551/api/chan/msgbox/push?friend=Bob&uid=0000000000000000000000" --data 'hello, world!'
 ```
 
 #### 3.2. POST Response
@@ -264,7 +264,7 @@ Content-Length: 19
 #### 4.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/load?friend=Bob&nid=0"
+curl -i -X GET "http://localhost:9551/api/chan/msgbox/load?friend=Bob&nid=0"
 ```
 
 #### 4.1. GET Response
@@ -287,7 +287,7 @@ Content-Length: 89
 #### 5.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/msgbox/size?friend=Bob"
+curl -i -X GET "http://localhost:9551/api/chan/msgbox/size?friend=Bob"
 ```
 
 #### 5.1. GET Response
@@ -313,7 +313,7 @@ Content-Length: 1
 #### 6.1. GET Request
 
 ```bash
-curl -i -X GET "http://localhost:9591/api/chan/listen?friend=Bob"
+curl -i -X GET "http://localhost:9551/api/chan/listen?friend=Bob"
 ```
 
 #### 6.1. GET Response

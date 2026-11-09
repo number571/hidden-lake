@@ -29,6 +29,8 @@ var (
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
+		flag.NewFlagBuilder("-w", "--wait").
+			WithDescription("wait response from node"),
 	).Build()
 )
 
@@ -60,14 +62,15 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 	hlsClient := hls_client.NewClient(
 		gFlags.Get("-s").GetStringValue(pArgs),
 		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+		hls_client.WithWaitResponse(gFlags.Get("-w").GetBoolValue(pArgs)),
 	)
 
-	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	limit, err := hlsClient.GetNotifyLimit(pCtx)
 	if err != nil {
 		return err
 	}
 
+	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
 
 	go func() {

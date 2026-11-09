@@ -7,11 +7,6 @@
    		</strong>
 	</p>
 	<p align="center">
-		<a href="https://github.com/number571/hidden-lake">
-        	<img src="images/badge.svg" alt="Hidden Lake" />
-		</a>
-	</p>
-	<p align="center">
         <a href="https://github.com/topics/golang">
         	<img src="https://img.shields.io/github/go-mod/go-version/number571/hidden-lake" alt="Go" />
 		</a>

@@ -104,7 +104,7 @@
 
 ### CHANGES
 
-- `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetMsgBoxSize
+- `cmd/hls/hls-messenger`: change API paths, LoadMessages -> LoadMessage, CountMessages -> GetBoxSize
 - `cmd/hla/*`: add suffix `<` for internal adapter
 - `cmd/hla/*`: log NOCON: WARN -> INFO
 - `test/prod`: add http, https tests
