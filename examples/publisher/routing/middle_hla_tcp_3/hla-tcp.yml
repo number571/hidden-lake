@@ -1,0 +1,12 @@
+settings:
+  message_size_bytes: 8192
+  work_size_bits: 22
+  network_key: oMj49BD8he1n8bfq
+logging:
+- info
+- warn
+- erro
+address:
+  external: :6581
+connections:
+  - middle_hla_tcp_2:6581

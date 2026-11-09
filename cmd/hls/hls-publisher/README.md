@@ -59,17 +59,17 @@ Than run commands
 ```bash
 ### Terminal 1 ###
 $ cd examples/publisher
-$ make request-node1
+$ make request-test-listen
 ### Terminal 2 ###
 $ cd examples/publisher
-$ make request-node2
+$ ARG='"hello, world!"' make request-test-push-remote
 ```
 
 ## HLS/HLK API
 
 ### 1. /push
 
-- `200` - return "ok" / message body
+- `200` - return index
 - `202` - message already exist in database
 - `400` - invalid input params (uid, body)
 - `404` - message by uid not found
@@ -88,6 +88,7 @@ $ make request-node2
 // header response size = (4 + 12) = 16B
 // body response size can be = (144 - 16) = 128B
 [uint32]{"code":200}[body]
+[body]=<uint64>
 ```
 
 ### 2. /load
@@ -103,7 +104,12 @@ $ make request-node2
 
 // header response size = (4 + 60) = 64B
 // body response size can be = (144 - 64) = 80B
-[uint32]{"code":200,"head":{"M-S":1,"M-U":"0000000000000000000000"}}[body]
+[uint32]{"code":200,"head":{"M-S":"1","M-I":"18446744073709551616"}}[body]
+[body]=<bytes>
+// | OR
+// header response size = (4 + 62) = 66B
+// body response size can be = (144 - 66) = 78B
+[uint32]{"code":200,"head":{"M-S":"1","M-I":"0000000000000000000000"}}[body]
 [body]=<bytes>
 ```
 

@@ -49,7 +49,7 @@ func (p *sKeyValueDB) LoadByEnum(pR string, pNID uint64) (message.IMessage, erro
 	return msg, nil
 }
 
-func (p *sKeyValueDB) LoadByUID(pR string, pUID string) (message.IMessage, error) {
+func (p *sKeyValueDB) LoadByUID(pR string, pUID string) (uint64, message.IMessage, error) {
 	p.fMutex.Lock()
 	defer p.fMutex.Unlock()
 
@@ -135,24 +135,24 @@ func (p *sKeyValueDB) Close() error {
 	return nil
 }
 
-func (p *sKeyValueDB) loadByUID(pR string, pUID string) (message.IMessage, error) {
+func (p *sKeyValueDB) loadByUID(pR string, pUID string) (uint64, message.IMessage, error) {
 	index, err := p.loadIndexByUID(pR, pUID)
 	if err != nil {
-		return nil, errors.Join(ErrGetIndexMessage, err)
+		return 0, nil, errors.Join(ErrGetIndexMessage, err)
 	}
 
 	key := getKeyMessageByEnum(pR, index)
 	data, err := p.fDB.Get(key)
 	if err != nil {
-		return nil, errors.Join(ErrGetMessage, err)
+		return 0, nil, errors.Join(ErrGetMessage, err)
 	}
 
 	msg, err := message.LoadMessage(data)
 	if err != nil {
-		return nil, errors.Join(ErrLoadMessage, err)
+		return 0, nil, errors.Join(ErrLoadMessage, err)
 	}
 
-	return msg, nil
+	return index, msg, nil
 }
 
 func (p *sKeyValueDB) loadIndexByUID(pR string, pUID string) (uint64, error) {

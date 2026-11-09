@@ -12,7 +12,6 @@ type IConfig interface {
 }
 
 type IConfigSettings interface {
-	GetResponseEnabled() bool
 }
 
 type IAddress interface {

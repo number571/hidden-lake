@@ -14,6 +14,6 @@ type IKVDatabase interface {
 
 	Recv(string, string) error
 
-	LoadByUID(string, string) (message.IMessage, error)
+	LoadByUID(string, string) (uint64, message.IMessage, error)
 	LoadByEnum(string, uint64) (message.IMessage, error)
 }

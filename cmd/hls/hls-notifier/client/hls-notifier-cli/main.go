@@ -50,10 +50,13 @@ func main() {
 	}
 
 	ctx := context.Background()
-	runFunction(ctx, args)
+	if err := runFunction(ctx, args); err != nil {
+		fmt.Fprintln(os.Stderr, "\n", err)
+		os.Exit(1)
+	}
 }
 
-func runFunction(pCtx context.Context, pArgs []string) {
+func runFunction(pCtx context.Context, pArgs []string) error {
 	hlsClient := hls_client.NewClient(
 		gFlags.Get("-s").GetStringValue(pArgs),
 		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
@@ -62,8 +65,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	limit, err := hlsClient.GetNotifyLimit(pCtx)
 	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
-		return
+		return err
 	}
 
 	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
@@ -72,7 +74,7 @@ func runFunction(pCtx context.Context, pArgs []string) {
 		for {
 			sender, msg, err := hlsClient.RecvNotification(pCtx, "hls-notifier-cli")
 			if err != nil {
-				fmt.Printf("error: %s\n", err.Error())
+				fmt.Printf("warn: %s\n", err.Error())
 				continue
 			}
 			if friend != sender {

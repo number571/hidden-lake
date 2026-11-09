@@ -3,6 +3,7 @@ package incoming
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -66,10 +67,10 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		_, err = pDB.LoadByUID(aliasName, msgUID)
+		index, _, err := pDB.LoadByUID(aliasName, msgUID)
 		if err == nil {
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-			_ = api.Response(pW, http.StatusAccepted, "exist", api.WithoutContentType())
+			_ = api.Response(pW, http.StatusAccepted, fmt.Sprintf("%d", index), api.WithoutContentType()) //nolint:perfsprint
 			return
 		}
 		if !errors.Is(err, database.ErrNotFoundMessage) {
@@ -83,7 +84,8 @@ func HandleIncomingPushHTTP(
 			message_dto.NewMessageBody(msgBytes, time.Now()),
 		)
 
-		if _, err := pDB.Push(aliasName, msg); err != nil {
+		index, err = pDB.Push(aliasName, msg)
+		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "setmsg", api.WithoutContentType())
 			return
@@ -93,6 +95,6 @@ func HandleIncomingPushHTTP(
 		pBroker.Produce(msgContainer)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, "ok", api.WithoutContentType())
+		_ = api.Response(pW, http.StatusOK, fmt.Sprintf("%d", index), api.WithoutContentType()) //nolint:perfsprint
 	}
 }

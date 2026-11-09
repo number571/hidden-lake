@@ -24,18 +24,18 @@ var (
 			WithDescription("print version of application"),
 		flag.NewFlagBuilder("-h", "--help").
 			WithDescription("print information about application"),
-		flag.NewFlagBuilder("-p", "--path").
-			WithDescription("set path to load files").
-			WithDefinedValue("."),
 		flag.NewFlagBuilder("-s", "--service").
 			WithDescription("set internal address of the HLS").
 			WithDefinedValue("localhost:9541"),
-		flag.NewFlagBuilder("-t", "--type").
-			WithDescription("set type [local|personal|public]").
-			WithDefinedValue("personal"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
+		flag.NewFlagBuilder("-p", "--path").
+			WithDescription("set path to load files").
+			WithDefinedValue("."),
+		flag.NewFlagBuilder("-t", "--type").
+			WithDescription("set type [local|personal|public]").
+			WithDefinedValue("personal"),
 		flag.NewFlagBuilder("-d", "--do").
 			WithDescription("set runner [list|info|download|upload|delete]").
 			WithDefinedValue(""),

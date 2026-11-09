@@ -14,8 +14,8 @@ type IClient interface {
 	ListenMsgbox(pCtx context.Context, pSID string) ([2]string, message.IMessageBody, error)
 
 	GetPushLimit(pCtx context.Context) (uint64, error)
-	PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pData []byte) (time.Time, error)
+	PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pData []byte) (uint64, time.Time, error)
 
-	LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, pUID string) (message.IMessage, error)
+	LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, pUID string) (uint64, message.IMessage, error)
 	LoadMessageFromBoxByEnum(pCtx context.Context, pFriend string, pNID uint64) (message.IMessage, error)
 }

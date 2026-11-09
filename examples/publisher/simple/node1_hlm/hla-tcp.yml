@@ -1,0 +1,12 @@
+settings:
+  message_size_bytes: 8192
+logging:
+- info
+- warn
+- erro
+address:
+  internal: 127.0.0.1:9522
+endpoints: 
+- 127.0.0.1:8571
+connections:
+- node2_hlc:9521

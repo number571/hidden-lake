@@ -63,8 +63,10 @@ func HandleIncomingLoadHTTP(
 			_ = api.Response(pW, http.StatusBadRequest, "public", api.WithoutContentType())
 			return
 		}
+
+		aliasNameForDB := aliasName
 		if isPublic {
-			aliasName = hls_publisher_settings.CUnknownCreatorName
+			aliasNameForDB = hls_publisher_settings.CUnknownCreatorName
 		}
 
 		var index uint64
@@ -91,9 +93,9 @@ func HandleIncomingLoadHTTP(
 
 		var msg message_dto.IMessage
 		if msgUID != "" {
-			msg, err = pDB.LoadByUID(aliasName, msgUID)
+			index, msg, err = pDB.LoadByUID(aliasNameForDB, msgUID)
 		} else {
-			msg, err = pDB.LoadByEnum(aliasName, index)
+			msg, err = pDB.LoadByEnum(aliasNameForDB, index)
 		}
 		if err != nil {
 			if errors.Is(err, database.ErrNotFoundMessage) {
@@ -107,9 +109,18 @@ func HandleIncomingLoadHTTP(
 		}
 
 		pW.Header().Set(hls_publisher_settings.CHeaderMessageStateOnLoad, fmt.Sprintf("%d", msg.GetHead().GetState()))
-		pW.Header().Set(hls_publisher_settings.CHeaderMessageUIDOnLoad, msg.GetHead().GetUID())
+		pW.Header().Set(hls_publisher_settings.CHeaderMessageAnotherIDOnLoad, selectMessageID(msgUID, msg, index))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, msg.ToBytes(), api.WithoutContentType())
+		_ = api.Response(pW, http.StatusOK, msg.GetBody().GetData(), api.WithoutContentType())
 	}
+}
+
+func selectMessageID(reqMsgUID string, msg message_dto.IMessage, index uint64) string {
+	// got request with UID -> send response with NID
+	if reqMsgUID != "" {
+		return fmt.Sprintf("%d", index) //nolint:perfsprint
+	}
+	// got request with NID -> send response with UID
+	return msg.GetHead().GetUID()
 }

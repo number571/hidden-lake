@@ -1,0 +1,9 @@
+settings: {}
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :8080
+  external: 127.0.0.1:8081
+connection: 127.0.0.1:8572

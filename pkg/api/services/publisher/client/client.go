@@ -101,14 +101,14 @@ func (p *sClient) GetMsgBoxSize(pCtx context.Context, pFriend string) (uint64, e
 	return count, nil
 }
 
-func (p *sClient) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody []byte) (time.Time, error) {
+func (p *sClient) PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pBody []byte) (uint64, time.Time, error) {
 	if !dto.MessageUIDIsValid(pUID) {
-		return time.Time{}, ErrSizeMessageUID
+		return 0, time.Time{}, ErrSizeMessageUID
 	}
 	if len(pBody) == 0 {
-		return time.Time{}, ErrSizeBodyData
+		return 0, time.Time{}, ErrSizeBodyData
 	}
-	_, rsp, err := api.Request(
+	headers, rsp, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodPost,
@@ -117,13 +117,18 @@ func (p *sClient) PushMessageToBox(pCtx context.Context, pFriend string, pUID st
 		pBody,
 	)
 	if err != nil {
-		return time.Time{}, errors.Join(ErrBadRequest, err)
+		return 0, time.Time{}, errors.Join(ErrBadRequest, err)
 	}
 	t, err := dto.ParseTimestamp(string(rsp))
 	if err != nil {
-		return time.Time{}, errors.Join(ErrDecodeResponse, err)
+		return 0, time.Time{}, errors.Join(ErrDecodeResponse, err)
 	}
-	return t, nil
+	msgNID := headers.Get(hls_settings.CHeaderMessageNID)
+	index, err := strconv.ParseUint(msgNID, 10, 64)
+	if err != nil {
+		return 0, time.Time{}, errors.Join(ErrDecodeResponse, err)
+	}
+	return index, t, nil
 }
 
 func (p *sClient) LoadMessageFromBoxByEnum(pCtx context.Context, pFriend string, pIndex uint64) (dto.IMessage, error) {
@@ -145,8 +150,8 @@ func (p *sClient) LoadMessageFromBoxByEnum(pCtx context.Context, pFriend string,
 	return msg, nil
 }
 
-func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, pUID string) (dto.IMessage, error) {
-	_, res, err := api.Request(
+func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, pUID string) (uint64, dto.IMessage, error) {
+	headers, res, err := api.Request(
 		pCtx,
 		p.fClient,
 		http.MethodGet,
@@ -155,16 +160,21 @@ func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, 
 		nil,
 	)
 	if err != nil {
-		return nil, errors.Join(ErrBadRequest, err)
+		return 0, nil, errors.Join(ErrBadRequest, err)
 	}
 	msg, err := dto.LoadMessage(res)
 	if err != nil {
-		return nil, errors.Join(ErrDecodeResponse, err)
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
 	}
 	if msg.GetHead().GetUID() != pUID {
-		return nil, errors.Join(ErrDecodeResponse, err)
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
 	}
-	return msg, nil
+	msgNID := headers.Get(hls_settings.CHeaderMessageNID)
+	index, err := strconv.ParseUint(msgNID, 10, 64)
+	if err != nil {
+		return 0, nil, errors.Join(ErrDecodeResponse, err)
+	}
+	return index, msg, nil
 }
 
 func (p *sClient) ListenMsgbox(pCtx context.Context, pSid string) ([2]string, dto.IMessageBody, error) {

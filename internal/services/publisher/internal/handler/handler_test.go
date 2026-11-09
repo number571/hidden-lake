@@ -66,13 +66,13 @@ func TestHandler(t *testing.T) {
 	}
 
 	msgUID := dto.NewMessageUID()
-	if _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, []byte("hello, world!")); err != nil {
+	if _, _, err := client.PushMessageToBox(context.Background(), "abc", msgUID, []byte("hello, world!")); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "abc", 0); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "abc", msgUID); err != nil {
+	if _, _, err := client.LoadMessageFromBoxByUID(context.Background(), "abc", msgUID); err != nil {
 		t.Fatal(err)
 	}
 

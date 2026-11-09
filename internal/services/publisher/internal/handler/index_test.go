@@ -40,13 +40,13 @@ func TestErrorsAPI(t *testing.T) {
 	if _, _, err := client.ListenMsgbox(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
-	if _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}); err == nil {
+	if _, _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}); err == nil {
 		t.Fatal("success incorrect pushMessage")
 	}
 	if _, err := client.LoadMessageFromBoxByEnum(context.Background(), "", 0); err == nil {
 		t.Fatal("success incorrect loadMessageByEnum")
 	}
-	if _, err := client.LoadMessageFromBoxByUID(context.Background(), "", ""); err == nil {
+	if _, _, err := client.LoadMessageFromBoxByUID(context.Background(), "", ""); err == nil {
 		t.Fatal("success incorrect loadMessageByUID")
 	}
 }
@@ -203,14 +203,14 @@ func (p *tsDatabase) Recv(string, string) error {
 	return nil
 }
 
-func (p *tsDatabase) LoadByUID(string, string) (dto.IMessage, error) {
+func (p *tsDatabase) LoadByUID(string, string) (uint64, dto.IMessage, error) {
 	if !p.fLoadOK {
-		return nil, errors.New("some error") // nolint: err113
+		return 0, nil, errors.New("some error") // nolint: err113
 	}
 	if p.fMsg == nil {
-		return nil, database.ErrNotFoundMessage
+		return 0, nil, database.ErrNotFoundMessage
 	}
-	return p.fMsg, nil
+	return 0, p.fMsg, nil
 }
 
 func (p *tsDatabase) LoadByEnum(string, uint64) (dto.IMessage, error) {

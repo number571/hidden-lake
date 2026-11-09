@@ -51,11 +51,12 @@ const (
 const (
 	CHeaderFriendName = "Hls-Publisher-Friend-Name"
 	CHeaderMessageUID = "Hls-Publisher-Message-Uid"
+	CHeaderMessageNID = "Hls-Publisher-Message-Nid"
 )
 
 const (
-	CHeaderMessageStateOnLoad = "M-S"
-	CHeaderMessageUIDOnLoad   = "M-U"
+	CHeaderMessageStateOnLoad     = "M-S"
+	CHeaderMessageAnotherIDOnLoad = "M-I"
 )
 
 const (

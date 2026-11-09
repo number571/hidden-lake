@@ -62,7 +62,6 @@ func HandleMsgboxSizeAPI(
 
 		if !isRemote {
 			size := pDatabase.Size(aliasNameForDB)
-
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10))
 			return

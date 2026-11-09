@@ -50,11 +50,13 @@ func HandleIncomingSizeHTTP(
 			_ = api.Response(pW, http.StatusBadRequest, "public", api.WithoutContentType())
 			return
 		}
-		if !isPublic {
-			aliasName = hls_publisher_settings.CUnknownCreatorName
+
+		aliasNameForDB := aliasName
+		if isPublic {
+			aliasNameForDB = hls_publisher_settings.CUnknownCreatorName
 		}
 
-		size := pDB.Size(aliasName)
+		size := pDB.Size(aliasNameForDB)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10), api.WithoutContentType())

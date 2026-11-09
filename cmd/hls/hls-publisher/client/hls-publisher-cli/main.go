@@ -1,18 +1,17 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
+	"strconv"
 
 	"github.com/number571/hidden-lake/build"
 	"github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
-	"github.com/number571/hidden-lake/internal/utils/chars"
 	"github.com/number571/hidden-lake/internal/utils/flag"
 	"github.com/number571/hidden-lake/internal/utils/help"
+
 	hls_client "github.com/number571/hidden-lake/pkg/api/services/publisher/client"
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 )
@@ -25,9 +24,19 @@ var (
 			WithDescription("print information about application"),
 		flag.NewFlagBuilder("-s", "--service").
 			WithDescription("set internal address of the HLS").
-			WithDefinedValue("localhost:9591"),
+			WithDefinedValue("localhost:9551"),
 		flag.NewFlagBuilder("-f", "--friend").
 			WithDescription("set alias name of the friend").
+			WithDefinedValue(""),
+		flag.NewFlagBuilder("-r", "--remote").
+			WithDescription("use remote alg option"),
+		flag.NewFlagBuilder("-p", "--public").
+			WithDescription("use public alg option"),
+		flag.NewFlagBuilder("-d", "--do").
+			WithDescription("set runner [size|push|load-by-uid|load-by-nid|listen]").
+			WithDefinedValue(""),
+		flag.NewFlagBuilder("-a", "--arg").
+			WithDescription("set argument for runner <data|uid|nid>").
 			WithDefinedValue(""),
 	).Build()
 )
@@ -50,108 +59,91 @@ func main() {
 	}
 
 	ctx := context.Background()
-	runFunction(ctx, args)
+	if err := runFunction(ctx, args); err != nil {
+		fmt.Fprintln(os.Stderr, "\n", err)
+		os.Exit(1)
+	}
 }
 
-func runFunction(pCtx context.Context, pArgs []string) {
-	const (
-		load = 256
-		iam  = "<iam>"
+func runFunction(pCtx context.Context, pArgs []string) error {
+	friend := gFlags.Get("-f").GetStringValue(pArgs)
+	do := gFlags.Get("-d").GetStringValue(pArgs)
+
+	var (
+		isRemote = gFlags.Get("-r").GetBoolValue(pArgs)
+		isPublic = gFlags.Get("-p").GetBoolValue(pArgs)
 	)
 
-	hlsHost := gFlags.Get("-s").GetStringValue(pArgs)
-	hlsHTTP := &http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()}
+	hlsClient := hls_client.NewClient(
+		gFlags.Get("-s").GetStringValue(pArgs),
+		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
+		hls_client.WithRemote(isRemote),
+		hls_client.WithPublic(isPublic),
+	)
 
-	hlsClientRemote := hls_client.NewClient(hlsHost, hlsHTTP, hls_client.WithRemote(true))
-	hlsClientLocal := hls_client.NewClient(hlsHost, hlsHTTP)
-
-	friend := gFlags.Get("-f").GetStringValue(pArgs)
-	limit, err := hlsClientLocal.GetPushLimit(pCtx)
-	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
-		return
-	}
-
-	fmt.Printf("{\n\t\"friend_name\": \"%s\",\n\t\"payload_limit\": %d\n}\n\n", friend, limit)
-
-	count, err := hlsClientLocal.GetMsgBoxSize(pCtx, friend)
-	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
-		return
-	}
-
-	index := uint64(0)
-	if count >= load {
-		index = count - load
-	}
-
-	for ; index < count; index++ {
-		msg, err := hlsClientLocal.LoadMessageFromBoxByEnum(pCtx, friend, index)
+	switch do {
+	case "size":
+		size, err := hlsClient.GetMsgBoxSize(pCtx, friend)
 		if err != nil {
-			fmt.Printf("error: %s\n", err.Error())
-			return
+			return err
 		}
-		state := ""
-		sender := iam
-		msgData := msg.GetBody().GetData()
-		switch msg.GetHead().GetState() {
-		case dto.CIncomingState:
-			sender = friend
-			state = "<"
-		case dto.CDeliveredState:
-			state = "v"
-		case dto.CPublishedState:
-			sender = ""
-			state = "#"
-		case dto.CSendingState:
-			go hlsClientRemote.PushMessageToBox(pCtx, friend, msg.GetHead().GetUID(), msgData) // nolint:errcheck
-			state = ">"
+		fmt.Println(size)
+	case "push":
+		if isRemote && isPublic {
+			fmt.Println("warn: public is disabled with remote option (push runner)")
 		}
-		strMsg := string(msgData)
-		if chars.HasNotGraphicCharacters(strMsg) {
-			strMsg = "<binary data>"
+		data := gFlags.Get("-a").GetStringValue(pArgs)
+		uid := dto.NewMessageUID()
+		nid, _, err := hlsClient.PushMessageToBox(pCtx, friend, uid, []byte(data))
+		if err != nil {
+			return err
 		}
-		fmt.Printf("%s: %s [%s][%s]\n", sender, strMsg, state, msg.GetBody().GetTimestamp())
-	}
-
-	go func() {
+		fmt.Println(nid, uid)
+	case "load-by-uid":
+		uid := gFlags.Get("-a").GetStringValue(pArgs)
+		nid, msg, err := hlsClient.LoadMessageFromBoxByUID(pCtx, friend, uid)
+		if err != nil {
+			return err
+		}
+		fmt.Println(nid)
+		fmt.Println(msg.ToString())
+	case "load-by-nid":
+		nidStr := gFlags.Get("-a").GetStringValue(pArgs)
+		nid, err := strconv.ParseUint(nidStr, 10, 64)
+		if err != nil {
+			return err
+		}
+		msg, err := hlsClient.LoadMessageFromBoxByEnum(pCtx, friend, nid)
+		if err != nil {
+			return err
+		}
+		fmt.Println(msg.ToString())
+	case "listen":
+		if isRemote {
+			fmt.Println("warn: remote is always used (listen runner)")
+		}
+		if isPublic {
+			// public message can't be pushed to another node
+			return ErrAvailableOnlyForTypePersonal
+		}
 		for {
-			h, m, err := hlsClientRemote.ListenMsgbox(pCtx, "hls-notifier-cli")
+			head, body, err := hlsClient.ListenMsgbox(pCtx, "hls-publisher")
 			if err != nil {
-				fmt.Printf("error: %s\n", err.Error())
+				fmt.Printf("warn: %s\n", err.Error())
 				continue
 			}
-			if h[0] != friend {
+			if head[0] != friend {
 				continue
 			}
-			strMsg := string(m.GetData())
-			if chars.HasNotGraphicCharacters(strMsg) {
-				strMsg = "<binary data>"
-			}
-			fmt.Printf("%s: %s [%s]\n", friend, strMsg, m.GetTimestamp())
+			msg := dto.NewMessage(
+				dto.NewMessageHead(dto.CIncomingState, head[1]),
+				body,
+			)
+			fmt.Println(msg.ToString())
 		}
-	}()
-
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		msg := inputString(reader, "")
-		msgLen := uint64(len(msg))
-		if msgLen == 0 {
-			continue
-		}
-		if msgLen > limit {
-			fmt.Printf("ERROR: msglen(%d) > limit(%d)\n", msgLen, limit)
-			continue
-		}
-		go hlsClientRemote.PushMessageToBox(pCtx, friend, dto.NewMessageUID(), []byte(msg)) // nolint:errcheck
+	default:
+		return ErrUnknownAction
 	}
-}
 
-func inputString(reader *bufio.Reader, prefix string) string {
-	fmt.Print(prefix)
-	rawInput, err := reader.ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-	return strings.TrimSpace(rawInput)
+	return nil
 }

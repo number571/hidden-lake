@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -98,7 +99,7 @@ func HandleMsgboxPushAPI(
 			return
 		}
 
-		msg, err := pDatabase.LoadByUID(aliasNameForDB, msgUID)
+		index, msg, err := pDatabase.LoadByUID(aliasNameForDB, msgUID)
 		if err != nil { // nolint:nestif
 			if !errors.Is(err, database.ErrNotFoundMessage) {
 				pLogger.PushErro(logBuilder.WithMessage("load_message"))
@@ -114,12 +115,15 @@ func HandleMsgboxPushAPI(
 				dto.NewMessageHead(state, msgUID),
 				dto.NewMessageBody(msgBody, time.Now()),
 			)
-			if _, err := pDatabase.Push(aliasNameForDB, msg); err != nil {
+			index, err = pDatabase.Push(aliasNameForDB, msg)
+			if err != nil {
 				pLogger.PushErro(logBuilder.WithMessage("push_message"))
 				_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 				return
 			}
 		}
+
+		pW.Header().Set(hls_settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
 
 		if !isRemote {
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

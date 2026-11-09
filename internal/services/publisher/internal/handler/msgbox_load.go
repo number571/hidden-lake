@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -94,7 +95,7 @@ func HandleMsgboxLoadAPI(
 				_ = api.Response(pW, http.StatusBadRequest, "failed: message uid")
 				return
 			}
-			dbMsg, err = pDatabase.LoadByUID(aliasNameForDB, msgUID)
+			index, dbMsg, err = pDatabase.LoadByUID(aliasNameForDB, msgUID)
 		default:
 			pLogger.PushWarn(logBuilder.WithMessage("id_undefined"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: id undefined")
@@ -102,6 +103,8 @@ func HandleMsgboxLoadAPI(
 		}
 
 		if err == nil {
+			pW.Header().Set(settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
+
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, dbMsg.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 			return
@@ -145,11 +148,14 @@ func HandleMsgboxLoadAPI(
 			return
 		}
 
-		gotMsgUID := rsp.GetHead()[settings.CHeaderMessageUIDOnLoad]
-		if (msgUID != "" && msgUID != gotMsgUID) || !dto.MessageUIDIsValid(gotMsgUID) {
-			pLogger.PushWarn(logBuilder.WithMessage("invalid_uid"))
-			_ = api.Response(pW, http.StatusTeapot, "failed: got invalid uid")
-			return
+		// extract message UID from response header
+		if msgUID == "" {
+			msgUID = rsp.GetHead()[settings.CHeaderMessageAnotherIDOnLoad]
+			if !dto.MessageUIDIsValid(msgUID) {
+				pLogger.PushWarn(logBuilder.WithMessage("invalid_uid"))
+				_ = api.Response(pW, http.StatusTeapot, "failed: got invalid uid")
+				return
+			}
 		}
 
 		gotMsgStateStr := rsp.GetHead()[settings.CHeaderMessageStateOnLoad]
@@ -176,14 +182,18 @@ func HandleMsgboxLoadAPI(
 		}
 
 		msg := dto.NewMessage(
-			dto.NewMessageHead(msgState, gotMsgUID),
+			dto.NewMessageHead(msgState, msgUID),
 			dto.NewMessageBody(msgBody, time.Now()),
 		)
-		if _, err := pDatabase.Push(aliasNameForDB, msg); err != nil {
+
+		index, err = pDatabase.Push(aliasNameForDB, msg)
+		if err != nil {
 			pLogger.PushErro(logBuilder.WithMessage("push_message"))
 			_ = api.Response(pW, http.StatusInternalServerError, "failed: push message to database")
 			return
 		}
+
+		pW.Header().Set(settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, msg.ToString(), api.WithCustomContentType(api.CApplicationJSON))

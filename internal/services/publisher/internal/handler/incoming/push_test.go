@@ -173,14 +173,14 @@ func (p *tsDatabase) Recv(string, string) error {
 	return nil
 }
 
-func (p *tsDatabase) LoadByUID(string, string) (message_dto.IMessage, error) {
+func (p *tsDatabase) LoadByUID(string, string) (uint64, message_dto.IMessage, error) {
 	if !p.fLoadOK {
-		return nil, errors.New("some error") // nolint: err113
+		return 0, nil, errors.New("some error") // nolint: err113
 	}
 	if p.fMsg == nil {
-		return nil, database.ErrNotFoundMessage
+		return 0, nil, database.ErrNotFoundMessage
 	}
-	return p.fMsg, nil
+	return 0, p.fMsg, nil
 }
 
 func (p *tsDatabase) LoadByEnum(string, uint64) (message_dto.IMessage, error) {

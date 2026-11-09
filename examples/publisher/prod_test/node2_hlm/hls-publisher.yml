@@ -1,0 +1,9 @@
+settings: {}
+logging:
+- info
+- warn
+- erro
+address:
+  internal: :7070
+  external: 127.0.0.1:7071
+connection: 127.0.0.1:7572
