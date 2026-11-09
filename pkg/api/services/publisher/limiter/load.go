@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	hls_settings "github.com/number571/hidden-lake/internal/services/notifier/pkg/settings"
+	hls_settings "github.com/number571/hidden-lake/internal/services/publisher/pkg/settings"
 	"github.com/number571/hidden-lake/internal/utils/pldsize"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
@@ -24,6 +24,10 @@ var (
 	gLoadRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
+			WithHead(map[string]string{
+				hls_settings.CHeaderMessageStateOnLoad:     "0",
+				hls_settings.CHeaderAnotherMessageIDOnLoad: "0000000000000000000000",
+			}).
 			WithBody([]byte{}).
 			Build().
 			ToBytes(),

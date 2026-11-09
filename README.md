@@ -7,6 +7,11 @@
    		</strong>
 	</p>
 	<p align="center">
+		<a href="https://github.com/number571/hidden-lake">
+        	<img src="images/badge.svg" alt="Hidden Lake" />
+		</a>
+	</p>
+	<p align="center">
         <a href="https://github.com/topics/golang">
         	<img src="https://img.shields.io/github/go-mod/go-version/number571/hidden-lake" alt="Go" />
 		</a>
@@ -69,6 +74,9 @@
 	<p align="center">
 		<a href="https://habr.com/ru/users/Number571/articles/">
         	<img src="https://img.shields.io/badge/habr-629FBC.svg?&style=for-the-badge&logo=habr&logoColor=white" alt="Habr" />
+		</a>
+		<a href="https://vk.me/join/6Px6b0Qh/uZIK4ixUYWQm4Krepzq5xbYjYw=">
+        	<img src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white" alt="VKontakte" />
 		</a>
 		<a href="https://t.me/+9Kcxr8NyeU8zZDZi">
         	<img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />

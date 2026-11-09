@@ -23,7 +23,7 @@ var (
 	gPushRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
-			WithBody([]byte{}).
+			WithBody([]byte("18446744073709551616")).
 			Build().
 			ToBytes(),
 	))

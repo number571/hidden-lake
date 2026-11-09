@@ -1,7 +1,7 @@
 package config
 
 const (
-	errPrefix = "internal/composite/helpers/pkg/app/config = "
+	errPrefix = "internal/helpers/composite/pkg/app/config = "
 )
 
 type SError struct {

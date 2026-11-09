@@ -23,7 +23,7 @@ var (
 	gSizeRspSize = uint64(len(
 		hlk_response.NewResponseBuilder().
 			WithCode(200).
-			WithBody([]byte("0")).
+			WithBody([]byte("18446744073709551616")).
 			Build().
 			ToBytes(),
 	))

@@ -2,9 +2,42 @@
 
 <!-- ... -->
 
-## v1.11.3~
+## v1.12.0~
 
 *??? ??, ????*
+
+### IMPROVEMENTS
+
+- `cmd/hls/hls-notifier`: new service (inherits from hls-pinger, hls-messenger)
+- `cmd/hls/hls-publisher`: new service (inherits from hls-messenger)
+- `cmd/hlh`: created new class of applications - helpers
+- `cmd/hlh/hlh-composite`: rename cmd/hlc -> cmd/hlh/hlh-composite
+- `cmd/hlh/hlh-keyops`: created new application for key operations (generate, encapsulate, decapsulate)
+- `cmd/hls/*`: add limits of usage and standart size of packages
+- `cmd/*`: add proto descriptions / API calls into README of HLK, HLA, HLS applications
+- `cmd/hls/hls-filesharer`: change default option from public -> personal
+- `cmd/hls/hls-filesharer`: add cancel download function and view processes function
+- `cmd/hlk`: add anonymity_alg_type: qbp (by default) and silent (only e2ee, with anonymity problem)
+- `cmd/hls/hls-filesharer`: save downloaded file-info for check redownload file 
+- `pkg/api/hls/*/limiter`: add limiter struct functions
+
+### CHANGES
+
+- `go.mod`: update Go version 1.24.5 -> 1.25.0
+- `cmd/hls/hls-pinger`: deleted 
+- `cmd/hls/hls-messenger`: deleted 
+- `pkg/api/*/client`: refactoring interface functions 
+- `cmd/hls/hls-filesharer`: default page_offset=10 -> page_offset=5
+- `cmd/hlk`: change API: rename header "Hlk-Sender-Name"->"Hlk-Friend-Name", get/add/del friends calls
+- `examples/filesharer`: update test calls in the Makefile
+- `cmd/hls/*/incoming`: delete Content-Type from responses API    
+- `cmd/hls/hls-filesharer`: change API functions
+
+### BUG FIXES
+
+- `examples/filesharer`: add files into storage (examples not running without files)
+- `cmd/hls/*|cmd/hlk`: fix API http response codes in some calls
+- `cmd/hlk`: add check on null friend_name (aliasName) into API calls
 
 <!-- ... -->
 
