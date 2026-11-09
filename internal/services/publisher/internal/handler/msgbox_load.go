@@ -109,7 +109,6 @@ func HandleMsgboxLoadAPI( //nolint:maintidx
 
 		if err == nil {
 			pW.Header().Set(settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
-
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, dbMsg.ToString(), api.WithCustomContentType(api.CApplicationJSON))
 			return
