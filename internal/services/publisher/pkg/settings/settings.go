@@ -56,7 +56,7 @@ const (
 
 const (
 	CHeaderMessageStateOnLoad     = "M-S"
-	CHeaderMessageAnotherIDOnLoad = "M-I"
+	CHeaderAnotherMessageIDOnLoad = "M-I"
 )
 
 const (

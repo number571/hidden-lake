@@ -21,7 +21,7 @@ import (
 	hlk_request "github.com/number571/hidden-lake/pkg/network/request"
 )
 
-func HandleMsgboxLoadAPI(
+func HandleMsgboxLoadAPI( //nolint:maintidx
 	pCtx context.Context,
 	pLogger logger.ILogger,
 	pConfig config.IConfig,
@@ -82,6 +82,11 @@ func HandleMsgboxLoadAPI(
 
 		switch {
 		case msgNID != "":
+			if isRemote {
+				// need get message only from node by NID
+				err = database.ErrNotFoundMessage
+				break
+			}
 			index, err = strconv.ParseUint(msgNID, 10, 64)
 			if err != nil {
 				pLogger.PushWarn(logBuilder.WithMessage("msg_index"))
@@ -148,12 +153,24 @@ func HandleMsgboxLoadAPI(
 			return
 		}
 
-		// extract message UID from response header
+		// extract message UID from response header if used NID
 		if msgUID == "" {
-			msgUID = rsp.GetHead()[settings.CHeaderMessageAnotherIDOnLoad]
+			msgUID = rsp.GetHead()[settings.CHeaderAnotherMessageIDOnLoad]
 			if !dto.MessageUIDIsValid(msgUID) {
 				pLogger.PushWarn(logBuilder.WithMessage("invalid_uid"))
 				_ = api.Response(pW, http.StatusTeapot, "failed: got invalid uid")
+				return
+			}
+			index, msg, err := pDatabase.LoadByUID(aliasNameForDB, msgUID)
+			if err == nil {
+				pW.Header().Set(settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
+				pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+				_ = api.Response(pW, http.StatusOK, msg.ToString(), api.WithCustomContentType(api.CApplicationJSON))
+				return
+			}
+			if !errors.Is(err, database.ErrNotFoundMessage) {
+				pLogger.PushErro(logBuilder.WithMessage("load_message"))
+				_ = api.Response(pW, http.StatusInternalServerError, "failed: load message")
 				return
 			}
 		}

@@ -109,7 +109,7 @@ func HandleIncomingLoadHTTP(
 		}
 
 		pW.Header().Set(hls_publisher_settings.CHeaderMessageStateOnLoad, fmt.Sprintf("%d", msg.GetHead().GetState()))
-		pW.Header().Set(hls_publisher_settings.CHeaderMessageAnotherIDOnLoad, selectMessageID(msgUID, msg, index))
+		pW.Header().Set(hls_publisher_settings.CHeaderAnotherMessageIDOnLoad, selectMessageID(msgUID, msg, index))
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, msg.GetBody().GetData(), api.WithoutContentType())
