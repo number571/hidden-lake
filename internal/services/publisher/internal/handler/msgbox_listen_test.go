@@ -33,11 +33,14 @@ func TestHandleMsgboxListenAPI(t *testing.T) {
 		},
 	)
 
-	msg := dto.NewMessageBody([]byte("hello, world!"), time.Now())
+	msg := dto.NewMessage(
+		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageNullUID()),
+		dto.NewMessageBody([]byte("hello, world!"), time.Now()),
+	)
 	msgBroker := broker.NewDataBroker(256, 256)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		msgBroker.Produce(message.NewMessageContainer("abc", "", msg))
+		msgBroker.Produce(message.NewMessageContainer("abc", 0, msg))
 	}()
 
 	handlerX := HandleMsgboxListenAPI(ctx, httpLogger, msgBroker)
@@ -49,7 +52,7 @@ func TestHandleMsgboxListenAPI(t *testing.T) {
 	}
 }
 
-func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessageBody) error {
+func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessage) error {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/?friend=abc&sid=111", nil)
 
@@ -66,7 +69,7 @@ func chatSubscribeRequestOK(handler http.HandlerFunc, msgSend dto.IMessageBody) 
 		return err
 	}
 
-	msg, err := dto.LoadMessageBody(body)
+	msg, err := dto.LoadMessage(body)
 	if err != nil {
 		return err
 	}

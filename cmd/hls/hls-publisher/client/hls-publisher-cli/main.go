@@ -127,18 +127,14 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 			return ErrAvailableOnlyForTypePersonal
 		}
 		for {
-			head, body, err := hlsClient.ListenMessage(pCtx, "hls-publisher")
+			sender, _, msg, err := hlsClient.ListenMessage(pCtx, "hls-publisher")
 			if err != nil {
 				fmt.Printf("warn: %s\n", err.Error())
 				continue
 			}
-			if head[0] != friend {
+			if sender != friend {
 				continue
 			}
-			msg := dto.NewMessage(
-				dto.NewMessageHead(dto.CIncomingState, head[1]),
-				body,
-			)
 			fmt.Println(msg.ToString())
 		}
 	default:

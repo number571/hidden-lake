@@ -11,7 +11,7 @@ type IClient interface {
 	GetIndex(pCtx context.Context) error
 
 	GetPushLimit(pCtx context.Context) (uint64, error)
-	ListenMessage(pCtx context.Context, pSID string) ([2]string, message.IMessageBody, error)
+	ListenMessage(pCtx context.Context, pSID string) (string, uint64, message.IMessage, error)
 
 	GetBoxSize(pCtx context.Context, pFriend string) (uint64, error)
 	PushMessageToBox(pCtx context.Context, pFriend string, pUID string, pData []byte) (uint64, time.Time, error)

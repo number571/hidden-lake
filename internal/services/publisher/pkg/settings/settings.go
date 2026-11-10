@@ -50,7 +50,6 @@ const (
 
 const (
 	CHeaderFriendName = "Hls-Publisher-Friend-Name"
-	CHeaderMessageUID = "Hls-Publisher-Message-Uid"
 	CHeaderMessageNID = "Hls-Publisher-Message-Nid"
 )
 

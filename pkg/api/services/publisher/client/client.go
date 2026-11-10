@@ -177,7 +177,7 @@ func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, 
 	return index, msg, nil
 }
 
-func (p *sClient) ListenMessage(pCtx context.Context, pSid string) ([2]string, dto.IMessageBody, error) {
+func (p *sClient) ListenMessage(pCtx context.Context, pSid string) (string, uint64, dto.IMessage, error) {
 	for {
 		headers, res, err := api.Request(
 			pCtx,
@@ -188,19 +188,24 @@ func (p *sClient) ListenMessage(pCtx context.Context, pSid string) ([2]string, d
 			nil,
 		)
 		if err != nil {
-			return [2]string{}, nil, errors.Join(ErrBadRequest, err)
+			return "", 0, nil, errors.Join(ErrBadRequest, err)
 		}
 		if len(res) == 0 {
 			continue
 		}
-		msgBody, err := dto.LoadMessageBody(res)
+		msgBody, err := dto.LoadMessage(res)
 		if err != nil {
-			return [2]string{}, nil, errors.Join(ErrDecodeResponse, err)
+			return "", 0, nil, errors.Join(ErrDecodeResponse, err)
 		}
-		head := [2]string{
-			headers.Get(hls_settings.CHeaderFriendName),
-			headers.Get(hls_settings.CHeaderMessageUID),
+		friendName := headers.Get(hls_settings.CHeaderFriendName)
+		if friendName == "" {
+			return "", 0, nil, errors.Join(ErrDecodeResponse, err)
 		}
-		return head, msgBody, nil
+		msgNID := headers.Get(hls_settings.CHeaderMessageNID)
+		index, err := strconv.ParseUint(msgNID, 10, 64)
+		if err != nil {
+			return "", 0, nil, errors.Join(ErrDecodeResponse, err)
+		}
+		return friendName, index, msgBody, nil
 	}
 }

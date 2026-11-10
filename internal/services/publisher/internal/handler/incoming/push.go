@@ -91,7 +91,7 @@ func HandleIncomingPushHTTP(
 			return
 		}
 
-		msgContainer := message.NewMessageContainer(aliasName, msgUID, msg.GetBody())
+		msgContainer := message.NewMessageContainer(aliasName, index, msg)
 		pBroker.Produce(msgContainer)
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))

@@ -23,8 +23,11 @@ func TestMessageBroker(t *testing.T) {
 	}
 
 	friendName := "Alice"
-	msg := dto.NewMessageBody([]byte("hello, world"), time.Now())
-	msgBroker.Produce(NewMessageContainer(friendName, "", msg))
+	msg := dto.NewMessage(
+		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageNullUID()),
+		dto.NewMessageBody([]byte("hello, world"), time.Now()),
+	)
+	msgBroker.Produce(NewMessageContainer(friendName, 0, msg))
 
 	if msgBroker.CountSubscribers() != 1 {
 		t.Fatal("count subscribers != 1")
@@ -43,14 +46,17 @@ func TestMessageBroker(t *testing.T) {
 	if v.GetFriend() != friendName {
 		t.Fatal("x.GetFriend() != friendName")
 	}
-	if v.GetMessageBody().ToString() != msg.ToString() {
+	if v.GetMessage().ToString() != msg.ToString() {
 		t.Fatal("x.GetMessageBody().ToString() != msg.ToString()")
 	}
 
 	// check auto close channel after overflow
-	newMsg := dto.NewMessageBody([]byte("new_message"), time.Now())
+	newMsg := dto.NewMessage(
+		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageNullUID()),
+		dto.NewMessageBody([]byte("new_message"), time.Now()),
+	)
 	for range chanSize + 1 {
-		msgBroker.Produce(NewMessageContainer(friendName, "", newMsg))
+		msgBroker.Produce(NewMessageContainer(friendName, 0, newMsg))
 	}
 	if _, err := msgBroker.Consume(ctx, "consumer_id"); err == nil {
 		t.Fatal("success get value from closed consumer")
@@ -64,7 +70,7 @@ func TestMessageBroker(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	msgBroker.Produce(NewMessageContainer(friendName, "", newMsg))
+	msgBroker.Produce(NewMessageContainer(friendName, 0, newMsg))
 
 	x1, err := msgBroker.Consume(ctx, "consumer_id")
 	if err != nil {
@@ -77,7 +83,7 @@ func TestMessageBroker(t *testing.T) {
 	if v1.GetFriend() != friendName {
 		t.Fatal("x.GetFriend() != friendName")
 	}
-	if v1.GetMessageBody().ToString() != newMsg.ToString() {
+	if v1.GetMessage().ToString() != newMsg.ToString() {
 		t.Fatal("x.GetMessageBody().ToString() != newMsg.ToString()")
 	}
 

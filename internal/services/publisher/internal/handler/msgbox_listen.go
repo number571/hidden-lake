@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/number571/go-peer/pkg/logger"
@@ -56,9 +57,9 @@ func HandleMsgboxListenAPI(
 		}
 
 		pW.Header().Set(hls_settings.CHeaderFriendName, mc.GetFriend())
-		pW.Header().Set(hls_settings.CHeaderMessageUID, mc.GetMessageUID())
+		pW.Header().Set(hls_settings.CHeaderMessageNID, fmt.Sprintf("%d", mc.GetMsgNID())) //nolint:perfsprint
 
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
-		_ = api.Response(pW, http.StatusOK, mc.GetMessageBody().ToString(), api.WithCustomContentType(api.CApplicationJSON))
+		_ = api.Response(pW, http.StatusOK, mc.GetMessage().ToString(), api.WithCustomContentType(api.CApplicationJSON))
 	}
 }

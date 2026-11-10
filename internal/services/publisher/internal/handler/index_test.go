@@ -37,7 +37,7 @@ func TestErrorsAPI(t *testing.T) {
 	if _, err := client.GetBoxSize(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect GetBoxSize")
 	}
-	if _, _, err := client.ListenMessage(context.Background(), ""); err == nil {
+	if _, _, _, err := client.ListenMessage(context.Background(), ""); err == nil {
 		t.Fatal("success incorrect listenChat")
 	}
 	if _, _, err := client.PushMessageToBox(context.Background(), "", "", []byte{}); err == nil {

@@ -92,7 +92,7 @@ $ make request-node2
 ```
 1. GET      /api/index          | params = [] 
                                 |> description = get name of service
-2. GET/POST /api/chan/notify    | params = ["friend":string]
+2. GET/POST /api/chan/notify    | params = ["friend":string,"wait":?bool]
                                 |> description = get limit notify size / send notify to chan
 3. GET      /api/chan/listen    | params = ["sid":string]
                                 |> description = try get message from chan with longpoll method 
@@ -182,6 +182,7 @@ curl -i -X GET "http://localhost:9591/api/chan/listen?sid=some_application_id"
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Fri, 16 Jan 2026 18:57:22 GMT
+Hls-Notifier-Friend-Name: Bob
 Content-Length: 13
 
 hello, world!

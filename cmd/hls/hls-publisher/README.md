@@ -131,14 +131,14 @@ $ ARG='"hello, world!"' make request-test-push-remote
 ```
 1. GET          /api/index          | params = [] 
                                     |> description = get name of service
-3. GET/POST     /api/msgbox/push    | params = ["friend":string,"remote":?bool]
-                                    |> description = get limit message size / send message to chan
-4. GET          /api/msgbox/load    | params = ["friend":string,"nid":?uint64,"uid":?string,"remote":?bool]
-                                    |> description = get message from chan by index / uid
-5. GET          /api/msgbox/size    | params = ["friend":string,"remote":?bool]
-                                    |> description = get count of messages in the chan
-6. GET          /api/msgbox/listen  | params = ["friend":string]
-                                    |> description = try get message from chan with longpoll method 
+3. GET/POST     /api/msgbox/push    | params = ["friend":string,"remote":?bool,"public":?bool]
+                                    |> description = get limit message size / send message to box
+4. GET          /api/msgbox/load    | params = ["friend":string,"nid":?uint64,"uid":?string,"remote":?bool,"public":?bool]
+                                    |> description = get message from box by index / uid
+5. GET          /api/msgbox/size    | params = ["friend":string,"remote":?bool,"public":?bool]
+                                    |> description = get count of messages in the box
+6. GET          /api/msgbox/listen  | params = ["sid":string]
+                                    |> description = try get message from friends with longpoll method 
 ```
 
 ### 1. /api/index
@@ -162,7 +162,7 @@ Content-Length: 29
 hidden-lake-service=publisher
 ```
 
-### 2. /api/chan/notify
+### 2. /api/msgbox/push
 
 - `200` - return limit size (GET) or timestamp (POST)
 - `400` - invalid input params (friend, body)

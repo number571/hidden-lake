@@ -76,13 +76,15 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	msg := dto.NewMessageBody([]byte("hello, world!"), time.Now())
-
+	msg := dto.NewMessage(
+		dto.NewMessageHead(dto.CIncomingState, dto.NewMessageNullUID()),
+		dto.NewMessageBody([]byte("hello, world!"), time.Now()),
+	)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		msgBroker.Produce(message.NewMessageContainer("abc", "", msg))
+		msgBroker.Produce(message.NewMessageContainer("abc", 0, msg))
 	}()
-	_, gotMsg, err := client.ListenMessage(context.Background(), "sid")
+	_, _, gotMsg, err := client.ListenMessage(context.Background(), "sid")
 	if err != nil {
 		t.Fatal(err)
 	}
