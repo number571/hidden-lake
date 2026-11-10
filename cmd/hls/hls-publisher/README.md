@@ -131,11 +131,11 @@ $ ARG='"hello, world!"' make request-test-push-remote
 ```
 1. GET          /api/index          | params = [] 
                                     |> description = get name of service
-3. GET/POST     /api/msgbox/push    | params = ["friend":string,"remote":?bool,"public":?bool]
+3. GET/POST     /api/msgbox/push    | params = ["friend":string,"remote":?uint8,"public":?bool]
                                     |> description = get limit message size / send message to box
-4. GET          /api/msgbox/load    | params = ["friend":string,"nid":?uint64,"uid":?string,"remote":?bool,"public":?bool]
+4. GET          /api/msgbox/load    | params = ["friend":string,"nid":?uint64,"uid":?string,"remote":?uint8,"public":?bool]
                                     |> description = get message from box by index / uid
-5. GET          /api/msgbox/size    | params = ["friend":string,"remote":?bool,"public":?bool]
+5. GET          /api/msgbox/size    | params = ["friend":string,"remote":?uint8,"public":?bool]
                                     |> description = get count of messages in the box
 6. GET          /api/msgbox/listen  | params = ["sid":string]
                                     |> description = try get message from friends with longpoll method 

@@ -9,12 +9,12 @@ $ go install github.com/number571/hidden-lake/cmd/hls/hls-publisher/client/hls-p
 ## Running options
 
 ```bash
-$ hls-publisher-cli --service {{HLS-address}} --friend {{friend-name}} --do {{function-name}} --arg {{arguments}} --remote --public
+$ hls-publisher-cli --service {{HLS-address}} --friend {{friend-name}} --do {{function-name}} --arg {{arguments}} --remote {{remote-option}} --public
 # service = address of the HLS internal address (default localhost:9551)
 # friend  = alias name of the friend
 # do      = function to run [size|push|load-by-uid|load-by-nid|listen]
 # arg     = arguments of the function
-# remote  = send/recv messages to/from node storage (default false)
+# remote  = send/recv messages to/from node storage [disabled|enabled|enabled-without-wait-response] (default disabled)
 # public  = use public method of send/recv messages (default false)
 ```
 
@@ -35,12 +35,12 @@ $ hls-publisher-cli -f {{friend-name}} -d size --public
 
 ```bash
 ### Get count of messages from friend's box (personal from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d size --remote
+$ hls-publisher-cli -f {{friend-name}} -d size --remote on
 ```
 
 ```bash
 ### Get count of messages from friend's box (public from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d size --remote --public
+$ hls-publisher-cli -f {{friend-name}} -d size --remote on --public
 ```
 
 2. Push message
@@ -52,7 +52,7 @@ $ hls-publisher-cli -f {{friend-name}} -d push -a "{{message}}"
 
 ```bash
 ### Push message to remote friend's box (personal to node) ###
-$ hls-publisher-cli -f {{friend-name}} -d push -a "{{message}}" --remote
+$ hls-publisher-cli -f {{friend-name}} -d push -a "{{message}}" --remote <on|on-wwr>
 ```
 
 ```bash
@@ -61,7 +61,7 @@ $ hls-publisher-cli -f {{friend-name}} -d push -a "{{message}}" --public
 ```
 
 ```bash
-# (public to node not allowed!)
+# (public to node with remote option not allowed!)
 ```
 
 3. Listen messages
@@ -80,7 +80,7 @@ $ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}"
 
 ```bash
 ### Get message from remote box (personal from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}" --remote
+$ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}" --remote on
 ```
 
 ```bash
@@ -90,7 +90,7 @@ $ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}" --public
 
 ```bash
 ### Get message from remote box (public from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}" --remote --public
+$ hls-publisher-cli -f {{friend-name}} -d load-by-uid -a "{{UID}}" --remote on --public
 ```
 
 5. Load message by NID (number ID)
@@ -102,7 +102,7 @@ $ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}"
 
 ```bash
 ### Get message from remote box (personal from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}" --remote
+$ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}" --remote on
 ```
 
 ```bash
@@ -112,5 +112,5 @@ $ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}" --public
 
 ```bash
 ### Get message from remote box (public from node) ###
-$ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}" --remote --public
+$ hls-publisher-cli -f {{friend-name}} -d load-by-nid -a "{{NID}}" --remote on --public
 ```

@@ -15,8 +15,10 @@ func InitConfig(cfgPath string, initCfg *SConfig) (IConfig, error) {
 	}
 	if initCfg == nil {
 		initCfg = &SConfig{
-			FSettings: &SConfigSettings{},
-			FLogging:  []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
+			FSettings: &SConfigSettings{
+				FResponseEnabled: true,
+			},
+			FLogging: []string{logger.CLogInfo, logger.CLogWarn, logger.CLogErro},
 			FAddress: &SAddress{
 				FInternal: hls_notifier_settings.CDefaultInternalAddress,
 				FExternal: hls_notifier_settings.CDefaultExternalAddress,

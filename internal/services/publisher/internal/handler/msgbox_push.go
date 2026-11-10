@@ -73,7 +73,7 @@ func HandleMsgboxPushAPI(
 			return
 		}
 
-		isRemote, err := query.GetBoolValueFromQuery(queryParams, "remote")
+		remoteType, err := dto.ParseRemoteType(queryParams.Get("remote"))
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("remote_error"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: remote is unknown")
@@ -125,7 +125,7 @@ func HandleMsgboxPushAPI(
 
 		pW.Header().Set(hls_settings.CHeaderMessageNID, fmt.Sprintf("%d", index)) //nolint:perfsprint
 
-		if !isRemote {
+		if remoteType == dto.CRemoteDisabled {
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusCreated, msg.GetBody().GetTimestamp())
 			return
@@ -146,8 +146,20 @@ func HandleMsgboxPushAPI(
 		}
 		defer func() { _ = pProcessManager.Unlock(msgUID) }()
 
-		// try get response from node (delivery check)
 		req := request.NewMsgboxPushRequest(msgUID, msgBody)
+
+		if remoteType == dto.CRemoteEnabledWithoutWaitResponse {
+			if err := pHlkClient.SendRequest(pCtx, aliasName, req); err != nil {
+				pLogger.PushWarn(logBuilder.WithMessage("send request"))
+				_ = api.Response(pW, http.StatusServiceUnavailable, "failed: send request")
+				return
+			}
+			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
+			_ = api.Response(pW, http.StatusCreated, msg.GetBody().GetTimestamp())
+			return
+		}
+
+		// try get response from node (delivery check)
 		rsp, err := pHlkClient.FetchRequest(pCtx, aliasName, req)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("no_response"))

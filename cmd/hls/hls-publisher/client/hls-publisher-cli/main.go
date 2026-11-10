@@ -29,7 +29,8 @@ var (
 			WithDescription("set alias name of the friend").
 			WithDefinedValue(""),
 		flag.NewFlagBuilder("-r", "--remote").
-			WithDescription("use remote alg option"),
+			WithDescription("use remote alg option [off|on|on-wwr]").
+			WithDefinedValue("off"),
 		flag.NewFlagBuilder("-p", "--public").
 			WithDescription("use public alg option"),
 		flag.NewFlagBuilder("-d", "--do").
@@ -69,16 +70,24 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 	friend := gFlags.Get("-f").GetStringValue(pArgs)
 	do := gFlags.Get("-d").GetStringValue(pArgs)
 
-	var (
-		isRemote = gFlags.Get("-r").GetBoolValue(pArgs)
-		isPublic = gFlags.Get("-p").GetBoolValue(pArgs)
-	)
+	var remoteType dto.IRemoteType
+	switch gFlags.Get("-r").GetStringValue(pArgs) {
+	case "off":
+		remoteType = dto.CRemoteDisabled
+	case "on":
+		remoteType = dto.CRemoteEnabled
+	case "on-wwr":
+		remoteType = dto.CRemoteEnabledWithoutWaitResponse
+	default:
+		return ErrUnknownRemoteAlgOption
+	}
 
+	isPublic := gFlags.Get("-p").GetBoolValue(pArgs)
 	hlsClient := hls_client.NewClient(
 		gFlags.Get("-s").GetStringValue(pArgs),
 		&http.Client{Timeout: build.GetSettings().GetHttpCallbackTimeout()},
-		hls_client.WithRemote(isRemote),
 		hls_client.WithPublic(isPublic),
+		hls_client.WithRemoteType(remoteType),
 	)
 
 	switch do {
@@ -89,7 +98,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 		fmt.Println(size)
 	case "push":
-		if isRemote && isPublic {
+		if (remoteType != dto.CRemoteDisabled) && isPublic {
 			fmt.Println("warn: public is disabled with remote option (push runner)")
 		}
 		data := gFlags.Get("-a").GetStringValue(pArgs)
@@ -119,7 +128,7 @@ func runFunction(pCtx context.Context, pArgs []string) error {
 		}
 		fmt.Println(msg.ToString())
 	case "listen":
-		if isRemote {
+		if remoteType != dto.CRemoteDisabled {
 			fmt.Println("warn: remote is always used (listen runner)")
 		}
 		if isPublic {

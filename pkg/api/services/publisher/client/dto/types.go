@@ -2,6 +2,15 @@ package dto
 
 import "github.com/number571/go-peer/pkg/types"
 
+type IRemoteType uint8
+
+const (
+	CRemoteDisabled IRemoteType = 0 + iota
+	CRemoteEnabled
+	CRemoteEnabledWithoutWaitResponse
+	cEndRemoteUndefined
+)
+
 type IMessageState uint8
 
 const (

@@ -1,15 +1,17 @@
 package client
 
+import "github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
+
 type IClientOption func(*sClientOps)
 
 type sClientOps struct {
-	fRemote bool
-	fPublic bool
+	fRemoteType dto.IRemoteType
+	fPublic     bool
 }
 
-func WithRemote(v bool) IClientOption {
+func WithRemoteType(v dto.IRemoteType) IClientOption {
 	return func(o *sClientOps) {
-		o.fRemote = v
+		o.fRemoteType = v
 	}
 }
 

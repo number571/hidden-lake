@@ -28,7 +28,7 @@ func HandleIncomingLoadHTTP(
 	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseStatusMode(pConfig))
 
 		logBuilder := http_logger.NewLogBuilder(hls_publisher_settings.GetAppShortNameFMT(), pR)
 

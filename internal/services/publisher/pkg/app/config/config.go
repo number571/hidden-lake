@@ -15,6 +15,7 @@ var (
 )
 
 type SConfigSettings struct {
+	FResponseEnabled bool `json:"response_enabled,omitempty" yaml:"response_enabled,omitempty"`
 }
 
 type SConfig struct {
@@ -74,6 +75,10 @@ func LoadConfig(pFilepath string) (IConfig, error) {
 
 func (p *SConfig) GetSettings() IConfigSettings {
 	return p.FSettings
+}
+
+func (p *SConfigSettings) GetResponseEnabled() bool {
+	return p.FResponseEnabled
 }
 
 func (p *SConfig) isValid() bool {

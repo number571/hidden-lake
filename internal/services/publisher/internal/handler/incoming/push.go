@@ -29,7 +29,7 @@ func HandleIncomingPushHTTP(
 	pBroker broker.IDataBroker,
 ) http.HandlerFunc {
 	return func(pW http.ResponseWriter, pR *http.Request) {
-		pW.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
+		pW.Header().Set(hlk_settings.CHeaderResponseMode, getResponseStatusMode(pConfig))
 
 		logBuilder := http_logger.NewLogBuilder(hls_publisher_settings.GetAppShortNameFMT(), pR)
 
@@ -97,4 +97,11 @@ func HandleIncomingPushHTTP(
 		pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 		_ = api.Response(pW, http.StatusOK, fmt.Sprintf("%d", index), api.WithoutContentType()) //nolint:perfsprint
 	}
+}
+
+func getResponseStatusMode(pConfig config.IConfig) string {
+	if pConfig.GetSettings().GetResponseEnabled() {
+		return hlk_settings.CHeaderResponseModeON
+	}
+	return hlk_settings.CHeaderResponseModeOFF
 }

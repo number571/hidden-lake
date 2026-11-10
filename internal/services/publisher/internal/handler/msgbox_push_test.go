@@ -85,7 +85,7 @@ func chatMessageGetRequestOK(handler http.HandlerFunc) error {
 
 func chatMessagePostRequestOK(handler http.HandlerFunc) error {
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/?friend=abc&remote=true&uid="+dto.NewMessageUID(), bytes.NewBuffer([]byte("hello, world!")))
+	req := httptest.NewRequest(http.MethodPost, "/?friend=abc&remote=1&uid="+dto.NewMessageUID(), bytes.NewBuffer([]byte("hello, world!")))
 
 	handler(w, req)
 	res := w.Result()

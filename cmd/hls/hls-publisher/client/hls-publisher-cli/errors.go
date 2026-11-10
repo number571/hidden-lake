@@ -14,5 +14,6 @@ func (err *SError) Error() string {
 
 var (
 	ErrUnknownAction                = &SError{"unknown action"}
+	ErrUnknownRemoteAlgOption       = &SError{"unknown remote alg option"}
 	ErrAvailableOnlyForTypePersonal = &SError{"available only for type personal"}
 )

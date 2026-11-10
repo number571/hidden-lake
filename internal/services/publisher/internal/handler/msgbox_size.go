@@ -13,6 +13,7 @@ import (
 	http_logger "github.com/number571/hidden-lake/internal/utils/logger/http"
 	"github.com/number571/hidden-lake/internal/utils/query"
 	hlk_client "github.com/number571/hidden-lake/pkg/api/kernel/client"
+	"github.com/number571/hidden-lake/pkg/api/services/publisher/client/dto"
 	"github.com/number571/hidden-lake/pkg/api/services/publisher/request"
 )
 
@@ -41,10 +42,16 @@ func HandleMsgboxSizeAPI(
 			return
 		}
 
-		isRemote, err := query.GetBoolValueFromQuery(queryParams, "remote")
+		remoteType, err := dto.ParseRemoteType(queryParams.Get("remote"))
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("remote_error"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: remote is unknown")
+			return
+		}
+
+		if remoteType == dto.CRemoteEnabledWithoutWaitResponse {
+			pLogger.PushWarn(logBuilder.WithMessage("remote_type_unsupported"))
+			_ = api.Response(pW, http.StatusUnsupportedMediaType, "unsupported remote type")
 			return
 		}
 
@@ -60,7 +67,7 @@ func HandleMsgboxSizeAPI(
 			aliasNameForDB = pkg_settings.CUnknownCreatorName
 		}
 
-		if !isRemote {
+		if remoteType == dto.CRemoteDisabled {
 			size := pDatabase.Size(aliasNameForDB)
 			pLogger.PushInfo(logBuilder.WithMessage(http_logger.CLogSuccess))
 			_ = api.Response(pW, http.StatusOK, strconv.FormatUint(size, 10))

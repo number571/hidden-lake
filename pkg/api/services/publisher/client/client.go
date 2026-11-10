@@ -20,10 +20,10 @@ var (
 
 const (
 	cHandleIndexTemplate            = "http://" + "%s" + hls_settings.CHandleIndexPath
-	cHandleMsgboxPushTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s&remote=%t&pub=%t"
-	cHandleMsgboxSizeTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s&remote=%t&pub=%t"
-	cHandleMsgboxLoadByEnumTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&nid=%d&remote=%t&pub=%t"
-	cHandleMsgboxLoadByUIDTemplate  = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote=%t&pub=%t"
+	cHandleMsgboxPushTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxPushPath + "?friend=%s&uid=%s&remote=%d&pub=%t"
+	cHandleMsgboxSizeTemplate       = "http://" + "%s" + hls_settings.CHandleMsgboxSizePath + "?friend=%s&remote=%d&pub=%t"
+	cHandleMsgboxLoadByEnumTemplate = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&nid=%d&remote=%d&pub=%t"
+	cHandleMsgboxLoadByUIDTemplate  = "http://" + "%s" + hls_settings.CHandleMsgboxLoadPath + "?friend=%s&uid=%s&remote=%d&pub=%t"
 	cHandleMsgboxListenTemplate     = "http://" + "%s" + hls_settings.CHandleMsgboxListenPath + "?sid=%s"
 )
 
@@ -68,7 +68,7 @@ func (p *sClient) GetPushLimit(pCtx context.Context) (uint64, error) {
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, "_", "_", false, false),
+		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, "_", "_", 0, false),
 		nil,
 		nil,
 	)
@@ -87,7 +87,7 @@ func (p *sClient) GetBoxSize(pCtx context.Context, pFriend string) (uint64, erro
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleMsgboxSizeTemplate, p.fHost, url.QueryEscape(pFriend), p.fClientOps.fRemote, p.fClientOps.fPublic),
+		fmt.Sprintf(cHandleMsgboxSizeTemplate, p.fHost, url.QueryEscape(pFriend), p.fClientOps.fRemoteType, p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -112,7 +112,7 @@ func (p *sClient) PushMessageToBox(pCtx context.Context, pFriend string, pUID st
 		pCtx,
 		p.fClient,
 		http.MethodPost,
-		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, pFriend, pUID, p.fClientOps.fRemote, p.fClientOps.fPublic),
+		fmt.Sprintf(cHandleMsgboxPushTemplate, p.fHost, pFriend, pUID, p.fClientOps.fRemoteType, p.fClientOps.fPublic),
 		nil,
 		pBody,
 	)
@@ -136,7 +136,7 @@ func (p *sClient) LoadMessageFromBoxByEnum(pCtx context.Context, pFriend string,
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleMsgboxLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex, p.fClientOps.fRemote, p.fClientOps.fPublic),
+		fmt.Sprintf(cHandleMsgboxLoadByEnumTemplate, p.fHost, url.QueryEscape(pFriend), pIndex, p.fClientOps.fRemoteType, p.fClientOps.fPublic),
 		nil,
 		nil,
 	)
@@ -155,7 +155,7 @@ func (p *sClient) LoadMessageFromBoxByUID(pCtx context.Context, pFriend string, 
 		pCtx,
 		p.fClient,
 		http.MethodGet,
-		fmt.Sprintf(cHandleMsgboxLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID), p.fClientOps.fRemote, p.fClientOps.fPublic),
+		fmt.Sprintf(cHandleMsgboxLoadByUIDTemplate, p.fHost, url.QueryEscape(pFriend), url.QueryEscape(pUID), p.fClientOps.fRemoteType, p.fClientOps.fPublic),
 		nil,
 		nil,
 	)

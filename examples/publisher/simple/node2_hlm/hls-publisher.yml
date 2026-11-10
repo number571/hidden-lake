@@ -1,4 +1,5 @@
-settings: {}
+settings: 
+  response_enabled: true
 logging:
 - info
 - warn

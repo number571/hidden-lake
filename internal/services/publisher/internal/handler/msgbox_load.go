@@ -56,10 +56,16 @@ func HandleMsgboxLoadAPI( //nolint:maintidx
 			return
 		}
 
-		isRemote, err := query.GetBoolValueFromQuery(queryParams, "remote")
+		remoteType, err := dto.ParseRemoteType(queryParams.Get("remote"))
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithMessage("remote_error"))
 			_ = api.Response(pW, http.StatusBadRequest, "failed: remote is unknown")
+			return
+		}
+
+		if remoteType == dto.CRemoteEnabledWithoutWaitResponse {
+			pLogger.PushWarn(logBuilder.WithMessage("remote_type_unsupported"))
+			_ = api.Response(pW, http.StatusUnsupportedMediaType, "unsupported remote type")
 			return
 		}
 
@@ -82,7 +88,7 @@ func HandleMsgboxLoadAPI( //nolint:maintidx
 
 		switch {
 		case msgNID != "":
-			if isRemote {
+			if remoteType == dto.CRemoteEnabled {
 				// need get message only from node by NID
 				err = database.ErrNotFoundMessage
 				break
@@ -120,7 +126,7 @@ func HandleMsgboxLoadAPI( //nolint:maintidx
 			return
 		}
 
-		if !isRemote {
+		if remoteType == dto.CRemoteDisabled {
 			pLogger.PushWarn(logBuilder.WithMessage("not_found_message"))
 			_ = api.Response(pW, http.StatusNotFound, "failed: message not found")
 			return
