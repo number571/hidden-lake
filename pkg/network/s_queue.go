@@ -30,6 +30,7 @@ func newSilentQueueProcessor(pSettings queue.ISettings, pScheme layer2.IScheme) 
 	return &sSilentQueueProcessor{
 		fSettings: pSettings,
 		fScheme:   pScheme,
+		fState:    state.NewBoolState(),
 		fInQueue:  make(chan []byte, queuePoolCap),
 		fOutQueue: make(chan layer1.IMessage, queuePoolCap),
 	}
