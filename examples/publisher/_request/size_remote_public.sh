@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "<Bob's side>"
-go run ./../../cmd/hls/hls-publisher/client/hls-publisher-cli -s localhost:7070 -r enabled -p -f Alice -d size
+go run ./../../cmd/hls/hls-publisher/client/hls-publisher-cli -s localhost:7070 -r on -p -f Alice -d size
