@@ -6,6 +6,16 @@
 
 *??? ??, ????*
 
+### IMPROVEMENTS
+
+- `internal/kernel/pkg/sealed`: add in-memory kernel config (hlk-sealed): hybrid networks only (not the default network), validated aliases and relay addresses, warn/erro logging only (info would leak message-routing metadata)
+- `internal/kernel/pkg/sealed`: add hmac-keyed anti-replay database (bounded wait for the file lock, existing parent directory required, key-check record rejects a wrong key or a swapped file)
+- `internal/kernel/pkg/sealed`: add boot contract parsing (stdin json): unknown fields rejected, no panics on invalid keys, 64 hex tokens, loopback service address
+- `internal/kernel/pkg/sealed`: add service forwarder: only POST /push to a fixed URL, own headers only (Hlk-Sender-Name, Hlk-Auth), no redirects
+- `internal/kernel/pkg/sealed`: add authenticated internal api (Hlk-Auth, Host check, body limit, serialized friends api)
+- `internal/kernel/pkg/sealed`: add sealed app (boot from stdin, boot line wiped, node + tcp adapter in process, received messages relayed to all connections synchronously as hla-tcp does, READY handshake, stop on stdin EOF)
+- `cmd/hlk-sealed`: add new application - HLK without secrets on disk (contract v3)
+
 <!-- ... -->
 
 ## v1.11.2
