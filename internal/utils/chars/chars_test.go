@@ -10,6 +10,9 @@ func TestHasNotGraphicCharacters(t *testing.T) {
 	}
 
 	if !HasNotGraphicCharacters("hello,\nworld!") {
-		t.Fatal("message contains not graphic chars")
+		t.Fatal("message contains not graphic chars (1)")
+	}
+	if !HasNotGraphicCharacters("hello,\001world!") {
+		t.Fatal("message contains not graphic chars (2)")
 	}
 }

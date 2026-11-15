@@ -4,7 +4,7 @@ import "unicode"
 
 func HasNotGraphicCharacters(pS string) bool {
 	for _, c := range pS {
-		if !unicode.IsGraphic(c) {
+		if !unicode.IsPrint(c) {
 			return true
 		}
 	}

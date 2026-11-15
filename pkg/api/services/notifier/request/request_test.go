@@ -4,4 +4,8 @@ import (
 	"testing"
 )
 
-func TestNothing(_ *testing.T) {}
+func TestRequest(t *testing.T) {
+	t.Parallel()
+
+	_ = NewNotifyRequest([]byte{})
+}

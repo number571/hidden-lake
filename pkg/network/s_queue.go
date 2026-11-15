@@ -67,8 +67,12 @@ func (p *sSilentQueueProcessor) EnqueueMessage(pKey layer2.IParticipantKey, pByt
 	if err != nil {
 		return errors.Join(ErrEncryptMessage, err)
 	}
-	p.fInQueue <- rawMsg
-	return nil
+	select {
+	case p.fInQueue <- rawMsg:
+		return nil
+	default:
+		return ErrQueueOverflow
+	}
 }
 
 func (p *sSilentQueueProcessor) DequeueMessage(pCtx context.Context) layer1.IMessage {

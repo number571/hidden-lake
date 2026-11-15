@@ -19,4 +19,5 @@ var (
 	ErrRunning        = &SError{"node running"}
 	ErrPayloadLimit   = &SError{"payload limit"}
 	ErrEncryptMessage = &SError{"encrypt message"}
+	ErrQueueOverflow  = &SError{"queue overflow"}
 )
