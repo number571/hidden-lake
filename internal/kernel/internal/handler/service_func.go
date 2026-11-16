@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	anon_logger "github.com/number571/go-peer/pkg/anonymity/qb/logger"
 	"github.com/number571/go-peer/pkg/crypto/scheme/layer2"
@@ -36,10 +37,17 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		}
 
 		// generate new request to serivce
+		pushURL := fmt.Sprintf("http://%s%s", service, pRequest.GetPath())
+		if u, perr := url.Parse(pushURL); perr != nil || u.Host != service {
+			// the sender-controlled path must not change the host (e.g. a path
+			// like "@other/x" would turn the service address into userinfo)
+			pLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogErroProxyRequestType))
+			return nil, ErrInvalidServiceURL
+		}
 		pushReq, err := http.NewRequestWithContext(
 			pCtx,
 			pRequest.GetMethod(),
-			fmt.Sprintf("http://%s%s", service, pRequest.GetPath()),
+			pushURL,
 			bytes.NewReader(pRequest.GetBody()),
 		)
 		if err != nil {
@@ -53,8 +61,15 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 		}
 		setAliasNameToHeaders(pCfg, pushReq, pSender)
 
-		// send request and receive response from service
-		httpClient := &http.Client{Timeout: build.GetSettings().GetHttpHandleTimeout()}
+		// send request and receive response from service; do not follow redirects
+		// or honour environment proxies (the sender must not steer the request away)
+		httpClient := &http.Client{
+			Timeout:   build.GetSettings().GetHttpHandleTimeout(),
+			Transport: &http.Transport{Proxy: nil},
+			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
 		resp, err := httpClient.Do(pushReq)
 		if err != nil {
 			pLogger.PushWarn(logBuilder.WithType(internal_anon_logger.CLogWarnRequestToService))
@@ -87,10 +102,12 @@ func HandleServiceFunc(pCfg config.IConfig, pLogger logger.ILogger) handler.IHan
 }
 
 func setAliasNameToHeaders(pCfg config.IConfig, pReq *http.Request, pSender layer2.IParticipantKey) {
+	// drop any sender-supplied value first, so a peer cannot forge it
+	pReq.Header.Del(hlk_settings.CHeaderFriendName)
 	for aliasName, key := range pCfg.GetFriends() {
 		if key.ToString() == pSender.ToString() {
 			pReq.Header.Set(hlk_settings.CHeaderFriendName, aliasName)
-			break
+			return
 		}
 	}
 }

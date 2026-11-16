@@ -18,4 +18,5 @@ var (
 	ErrUndefinedService    = &SError{"undefined service"}
 	ErrLoadRequest         = &SError{"load request"}
 	ErrInvalidResponseMode = &SError{"invalid response mode"}
+	ErrInvalidServiceURL   = &SError{"request path changes the service host"}
 )

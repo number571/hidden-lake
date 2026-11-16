@@ -35,9 +35,11 @@
 
 ### BUG FIXES
 
+- `internal/kernel/internal/handler`: service forwarder no longer lets a sender's request path change the target host (a path like `@other/x` turned the service address into URL userinfo), does not follow redirects or environment proxies, and always overrides `Hlk-Friend-Name`
 - `examples/filesharer`: add files into storage (examples not running without files)
 - `cmd/hls/*|cmd/hlk`: fix API http response codes in some calls
 - `cmd/hlk`: add check on null friend_name (aliasName) into API calls
+### BUG FIXES
 
 <!-- ... -->
 

@@ -6,7 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"os"
+	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -249,4 +252,63 @@ func testStartClientHLS() (anonymity.INode, context.CancelFunc, error) {
 	}
 
 	return node, cancel, nil
+}
+
+// A sender-controlled path must not redirect the request to another host, and a
+// sender-supplied Hlk-Sender-Name must not pass through.
+func TestHandleServiceFuncRejectsHostInjection(t *testing.T) {
+	t.Parallel()
+
+	var attackerHit int32
+	attacker := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		atomic.AddInt32(&attackerHit, 1)
+		_, _ = w.Write([]byte("pwned"))
+	}))
+	defer attacker.Close()
+	attackerHost := strings.TrimPrefix(attacker.URL, "http://")
+
+	log := logger.NewLogger(logger.NewSettings(&logger.SSettings{}), func(_ logger.ILogArg) string { return "" })
+	handler := HandleServiceFunc(&tsConfig{fServiceAddr: "127.0.0.1:1"}, log)
+
+	for _, path := range []string{"@" + attackerHost + "/x", "@" + attackerHost, "@evil.example/x"} {
+		req := request.NewRequestBuilder().
+			WithMethod(http.MethodGet).
+			WithHost("hidden-some-host-ok").
+			WithPath(path).
+			Build()
+		if _, err := handler(context.Background(), tgPrivKey2.GetPubKey(), req); !errors.Is(err, ErrInvalidServiceURL) {
+			t.Fatalf("path %q: expected ErrInvalidServiceURL, got %v", path, err)
+		}
+	}
+	if atomic.LoadInt32(&attackerHit) != 0 {
+		t.Fatal("attacker host was contacted")
+	}
+}
+
+func TestHandleServiceFuncOverridesForgedSenderName(t *testing.T) {
+	t.Parallel()
+
+	got := make(chan string, 1)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got <- r.Header.Get(hlk_settings.CHeaderFriendName)
+		w.Header().Set(hlk_settings.CHeaderResponseMode, hlk_settings.CHeaderResponseModeON)
+	}))
+	defer srv.Close()
+
+	log := logger.NewLogger(logger.NewSettings(&logger.SSettings{}), func(_ logger.ILogArg) string { return "" })
+	handler := HandleServiceFunc(&tsConfig{fServiceAddr: strings.TrimPrefix(srv.URL, "http://")}, log)
+
+	// tgPrivKey2 is the friend "abc" in tsConfig; the forged header must be dropped.
+	req := request.NewRequestBuilder().
+		WithMethod(http.MethodGet).
+		WithHost("hidden-some-host-ok").
+		WithPath("/x").
+		WithHead(map[string]string{hlk_settings.CHeaderFriendName: "forged-alias"}).
+		Build()
+	if _, err := handler(context.Background(), tgPrivKey2.GetPubKey(), req); err != nil {
+		t.Fatal(err)
+	}
+	if name := <-got; name != "abc" {
+		t.Fatalf("service saw sender name %q, want \"abc\"", name)
+	}
 }
