@@ -6,6 +6,10 @@
 
 *??? ??, ????*
 
+### BUG FIXES
+
+- `internal/kernel/internal/handler`: service forwarder no longer lets a sender's request path change the target host (a path like `@other/x` turned the service address into URL userinfo), does not follow redirects or environment proxies, and always overrides `Hlk-Sender-Name`
+
 <!-- ... -->
 
 ## v1.11.2
